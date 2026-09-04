@@ -15,7 +15,7 @@ window.ProjectDetail = (function () {
   var OPEN_MS = 980;
   var COVER_AT = 0.55;
   var CLOSE_MS = 820;
-  var FLIP_MS = 1180;
+  var FLIP_MS = 1240;
 
   function create(options) {
     var panel = options.panel;
@@ -44,6 +44,7 @@ window.ProjectDetail = (function () {
     var openTimer = null;
     var flipping = false;
     var flipAnim = null;
+    var flipTimer = null;
     var drag = {
       tracking: false,
       pointerId: null,
@@ -92,10 +93,23 @@ window.ProjectDetail = (function () {
     }
 
     function cancelFlipAnim() {
+      clearTimeout(flipTimer);
+      flipTimer = null;
       if (flipAnim) {
         try { flipAnim.cancel(); } catch (err) {}
         flipAnim = null;
       }
+    }
+
+    function armFlipSettle(leaf, to) {
+      clearTimeout(flipTimer);
+      flipTimer = setTimeout(function () {
+        flipTimer = null;
+        if (mode === 'case' && flipping) {
+          clearInlineTurn(leaf);
+          settleFlip(to);
+        }
+      }, FLIP_MS + 120);
     }
 
     function makeSticky(tools) {
@@ -206,6 +220,10 @@ window.ProjectDetail = (function () {
 
       leaf.appendChild(front);
       leaf.appendChild(back);
+      var thickness = document.createElement('span');
+      thickness.className = 'sheet__thickness';
+      thickness.setAttribute('aria-hidden', 'true');
+      leaf.appendChild(thickness);
       sheet.appendChild(leaf);
       return sheet;
     }
@@ -253,7 +271,9 @@ window.ProjectDetail = (function () {
     }
 
     function setTurning(on) {
-      if (nodes.book) nodes.book.classList.toggle('is-turning', !!on);
+      if (!nodes.book) return;
+      nodes.book.classList.toggle('is-turning', !!on);
+      if (on) nodes.book.style.setProperty('--flip-ms', FLIP_MS + 'ms');
     }
 
     function paintSlideState(index) {
@@ -280,6 +300,8 @@ window.ProjectDetail = (function () {
     }
 
     function settleFlip(index) {
+      clearTimeout(flipTimer);
+      flipTimer = null;
       flipping = false;
       flipAnim = null;
       setTurning(false);
@@ -288,22 +310,26 @@ window.ProjectDetail = (function () {
     }
 
     function turnKeyframes(fromDeg, toDeg) {
-      var delta = toDeg - fromDeg;
-      function at(p, z) {
-        return 'rotateY(' + (fromDeg + delta * p) + 'deg) translateZ(' + z + 'px)';
+      var dir = toDeg >= fromDeg ? 1 : -1;
+      function at(absTurn, z) {
+        return 'rotateY(' + (fromDeg + dir * absTurn) + 'deg) translateZ(' + z + 'px)';
       }
-      /* Hold readable faces near 70° / 110°. Keep Z tiny near 90° — large Z +
-         edge-on rotate flings the projected leaf off-screen (cream void). */
+      /* Linear time. Hold the readable poses (70° / 110°). Rush 88–92° so the
+         leaf never parks edge-on. Z stays tiny near 90° — large Z flings the
+         projected leaf off-screen into a cream void. */
       return [
         { transform: at(0, 0), offset: 0 },
-        { transform: at(0.2, 12), offset: 0.14 },
-        { transform: at(0.36, 18), offset: 0.30 },
-        { transform: at(0.42, 14), offset: 0.40 },
-        { transform: at(0.5, 8), offset: 0.50 },
-        { transform: at(0.58, 14), offset: 0.60 },
-        { transform: at(0.68, 18), offset: 0.72 },
-        { transform: at(0.86, 10), offset: 0.88 },
-        { transform: at(1, 0), offset: 1 }
+        { transform: at(42, 10), offset: 0.12 },
+        { transform: at(70, 8), offset: 0.26 },
+        { transform: at(70, 8), offset: 0.38 },
+        { transform: at(82, 4), offset: 0.44 },
+        { transform: at(88, 2), offset: 0.48 },
+        { transform: at(92, 2), offset: 0.52 },
+        { transform: at(98, 4), offset: 0.56 },
+        { transform: at(110, 8), offset: 0.62 },
+        { transform: at(110, 8), offset: 0.74 },
+        { transform: at(148, 6), offset: 0.86 },
+        { transform: at(180, 0), offset: 1 }
       ];
     }
 
@@ -354,28 +380,32 @@ window.ProjectDetail = (function () {
 
       revealing.classList.add('is-receiving');
       if (forward) revealing.classList.add('is-below');
-      moving.classList.add('is-flipping');
+      revealing.classList.remove('is-turned');
       moving.style.zIndex = '40';
       revealing.style.zIndex = '20';
 
       var fromDeg = forward ? 0 : -180;
       var toDeg = forward ? -180 : 0;
+      /* Pose first, then drop is-turned — opacity on the leaf flattens 3D thickness. */
       leaf.style.transform = 'rotateY(' + fromDeg + 'deg) translateZ(0px)';
+      moving.classList.remove('is-turned');
+      moving.classList.add('is-flipping');
       void leaf.offsetWidth;
 
       flipAnim = leaf.animate(turnKeyframes(fromDeg, toDeg), {
         duration: FLIP_MS,
-        easing: 'cubic-bezier(0.37, 0.05, 0.2, 1)',
+        easing: 'linear',
         fill: 'forwards'
       });
 
-      flipAnim.onfinish = function () {
+      function done() {
+        if (!flipping) return;
         clearInlineTurn(leaf);
         settleFlip(to);
-      };
-      flipAnim.oncancel = function () {
-        if (mode === 'case' && flipping) settleFlip(to);
-      };
+      }
+      flipAnim.onfinish = done;
+      flipAnim.addEventListener('finish', done);
+      armFlipSettle(leaf, to);
     }
 
     function goToSlide(index, animate) {
@@ -414,7 +444,7 @@ window.ProjectDetail = (function () {
       var leaf = leafOf(current);
       if (!leaf) return;
       leaf.style.transition = 'none';
-      /* ~70°: front + edge readable; page beneath stays in frame. */
+      /* ~70°: front + free-edge thickness readable; page beneath stays in frame. */
       leaf.style.transform = 'rotateY(-70deg) translateZ(16px)';
       flipping = true;
     }
@@ -556,6 +586,8 @@ window.ProjectDetail = (function () {
     function finishHome(fromCase) {
       clearTimeout(closeTimer);
       clearTimeout(openTimer);
+      clearTimeout(flipTimer);
+      flipTimer = null;
       cancelFlipAnim();
       flipping = false;
       mode = 'off';
@@ -697,10 +729,14 @@ window.ProjectDetail = (function () {
           easing: 'linear',
           fill: 'forwards'
         });
-        flipAnim.onfinish = function () {
+        function done() {
+          if (!flipping) return;
           clearInlineTurn(leaf);
           settleFlip(to);
-        };
+        }
+        flipAnim.onfinish = done;
+        flipAnim.addEventListener('finish', done);
+        armFlipSettle(leaf, to);
       } else {
         var backDeg = armed === 'forward' ? 0 : -180;
         flipAnim = leaf.animate(turnKeyframes(current, backDeg), {
@@ -750,6 +786,7 @@ window.ProjectDetail = (function () {
         drag.sheet = moving;
         drag.leaf = leafOf(moving);
         drag.other = revealing;
+        moving.classList.remove('is-turned');
         moving.classList.add('is-flipping');
         moving.style.zIndex = '40';
         if (revealing) {
@@ -765,7 +802,9 @@ window.ProjectDetail = (function () {
         ? clamp(-dx / pageW, 0, 1)
         : clamp(dx / pageW, 0, 1);
       var deg = drag.armed === 'forward' ? progress * -180 : -180 + progress * 180;
-      var z = Math.sin(Math.abs(deg) * Math.PI / 180) * 16;
+      var abs = Math.abs(deg);
+      var z = Math.sin(abs * Math.PI / 180) * 8;
+      if (abs > 80 && abs < 100) z = 2;
       drag.leaf.style.transform = 'rotateY(' + deg.toFixed(2) + 'deg) translateZ(' + z.toFixed(1) + 'px)';
     }
 

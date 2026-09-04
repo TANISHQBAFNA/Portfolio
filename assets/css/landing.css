@@ -3556,6 +3556,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   opacity: 0;
   pointer-events: none;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   perspective: 4200px;
   perspective-origin: 50% 45%;
   overflow: visible;
@@ -3650,6 +3651,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   inset: 8px 10px;
   z-index: 12;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   perspective: 4200px;
   perspective-origin: 50% 45%;
   overflow: visible;
@@ -3680,7 +3682,9 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   bottom: 0;
   left: 50%;
   width: 50%;
+  overflow: visible;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   pointer-events: none;
   z-index: 1;
 }
@@ -3698,9 +3702,6 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   z-index: 40;
   pointer-events: none;
 }
-.sheet.is-flipping .sheet__leaf {
-  opacity: 1;
-}
 .sheet.is-receiving {
   z-index: 20;
   pointer-events: none;
@@ -3709,17 +3710,26 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 .sheet__leaf {
   position: absolute;
   inset: 0;
+  overflow: visible;
   transform-origin: left center; /* spine */
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   transform: rotateY(0deg);
-  will-change: transform;
   border-radius: 0 2px 2px 0;
-  box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.35);
+  background: transparent;
+  box-shadow: 0 10px 28px -18px rgba(40, 24, 8, 0.35);
 }
 
 .sheet.is-turned .sheet__leaf {
   transform: rotateY(-180deg);
-  opacity: 0;
+  visibility: hidden;
+}
+
+.sheet.is-flipping .sheet__leaf {
+  visibility: visible;
+  box-shadow:
+    16px 10px 36px -10px rgba(40, 24, 8, 0.48),
+    0 0 0 1px rgba(80, 55, 20, 0.12);
 }
 
 .sheet.is-below .sheet__leaf {
@@ -3743,8 +3753,9 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
     var(--sheet);
   border-radius: 0 2px 2px 0;
   box-shadow:
-    10px 0 32px -16px rgba(0, 0, 0, 0.4),
-    0 1px 0 rgba(255, 255, 255, 0.65) inset;
+    10px 0 32px -16px rgba(40, 24, 8, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    inset -3px 0 0 rgba(90, 65, 25, 0.16);
 }
 
 .sheet__face--back {
@@ -3774,22 +3785,52 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   color: rgba(42, 36, 24, 0.28);
 }
 
-/* Mid-turn: paper thickness + shade — keep the edge readable */
+/* Free-edge thickness: a plane standing off the right edge. At ~90° this
+   faces the camera as a paper edge while the receiving page stays in view. */
+.sheet__thickness {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  right: 0;
+  width: 22px;
+  transform-origin: right center;
+  transform: rotateY(90deg);
+  background:
+    repeating-linear-gradient(
+      180deg,
+      #efe0c4 0px,
+      #d9c194 3px,
+      #c4a56e 5px,
+      #b39058 6px
+    );
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.55),
+    inset -2px 0 0 rgba(70, 50, 20, 0.4),
+    10px 0 28px rgba(40, 24, 8, 0.4);
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+  pointer-events: none;
+  z-index: 7;
+}
+
+/* Spine-side catch light while the leaf is turning */
 .sheet.is-flipping .sheet__leaf::before {
   content: "";
   position: absolute;
   left: -1px;
   top: 0;
   bottom: 0;
-  width: 5px;
+  width: 6px;
   background:
-    linear-gradient(90deg, rgba(70, 50, 20, 0.55), #d7c49a 35%, #efe2c2 70%, rgba(255,255,255,0.35));
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-  transform: translateZ(2px);
+    linear-gradient(90deg, rgba(70, 50, 20, 0.55), #d7c49a 35%, #efe2c2 70%, rgba(255,255,255,0.4));
+  box-shadow: 0 0 12px rgba(40, 24, 8, 0.28);
+  transform: translateZ(1px);
   z-index: 8;
   pointer-events: none;
+  backface-visibility: hidden;
 }
 
+/* Lighting wash on the turning face — darkens as it approaches edge-on */
 .sheet.is-flipping .sheet__leaf::after {
   content: "";
   position: absolute;
@@ -3798,35 +3839,61 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   z-index: 5;
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.34),
-    transparent 18%,
-    transparent 68%,
-    rgba(0, 0, 0, 0.14)
+    rgba(40, 24, 8, 0.42),
+    transparent 22%,
+    transparent 62%,
+    rgba(40, 24, 8, 0.18)
   );
-  mix-blend-mode: multiply;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: leaf-shade var(--flip-ms, 1.24s) linear forwards;
 }
 
-/* Soft shade on the page beneath — never wipe it to blank cream */
+@keyframes leaf-shade {
+  0% { opacity: 0.12; }
+  26% { opacity: 0.42; }
+  38% { opacity: 0.48; }
+  50% { opacity: 0.62; }
+  62% { opacity: 0.4; }
+  74% { opacity: 0.36; }
+  100% { opacity: 0.08; }
+}
+
+/* Shadow on the page beneath — keep the receiving media readable */
 .sheet.is-receiving::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 12;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.16), transparent 48%);
-  animation: sheet-unshade 1.12s cubic-bezier(.33,.08,.18,1) forwards;
+  background: linear-gradient(
+    90deg,
+    rgba(40, 24, 8, 0.28),
+    rgba(40, 24, 8, 0.08) 32%,
+    transparent 64%
+  );
+  animation: sheet-unshade var(--flip-ms, 1.24s) linear forwards;
 }
 
 @keyframes sheet-unshade {
   0% { opacity: 0.35; }
-  45% { opacity: 0.5; }
+  26% { opacity: 0.7; }
+  38% { opacity: 0.78; }
+  50% { opacity: 0.28; }
+  62% { opacity: 0.55; }
+  74% { opacity: 0.42; }
   100% { opacity: 0; }
 }
 
 .sheet.is-hold.is-flipping .sheet__leaf::after,
 .sheet.is-hold.is-flipping .sheet__leaf::before {
+  animation: none;
   opacity: 1;
+}
+
+.case-folder__pages:has(.sheet.is-hold) .sheet.is-receiving::before {
+  animation: none;
+  opacity: 0.62;
 }
 
 /* Grab the right edge to peel the sheet */
@@ -4061,6 +4128,9 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   .sheet.is-flipping .sheet__leaf::after,
   .sheet.is-flipping .sheet__leaf::before,
   .sheet.is-receiving::before {
+    display: none;
+  }
+  .sheet__thickness {
     display: none;
   }
   .detail--folder.is-flipped .case-folder__cover {
