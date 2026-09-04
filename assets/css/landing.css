@@ -3333,7 +3333,7 @@ body:has(.stage.is-detail) .atmosphere {
 
 
 /* ===========================================================================
-   Folder mode (v=flipbook1) — opened case is a manila flip book.
+   Folder mode (v=flipbook6) — opened case is a manila flip book.
    Landing stays ink/navy. Live folder flies to center, unfolds into a two-page
    spread. Sheets are dual-face, bound at the spine. Softboard stays dead.
    =========================================================================== */
@@ -3363,7 +3363,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 .detail.detail--folder {
   display: block;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
 }
 .detail.detail--folder[hidden] { display: none; }
@@ -3380,7 +3380,6 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   background:
     radial-gradient(70% 55% at 50% 42%, rgba(0, 0, 0, 0.45), transparent 72%),
     rgba(8, 9, 24, 0.42);
-  backdrop-filter: blur(1.5px);
 }
 
 .detail--folder .detail__title {
@@ -3399,11 +3398,13 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   opacity: 0.22 !important;
   pointer-events: none;
   filter: saturate(0.7);
+  transition: opacity 0.9s ease, filter 0.9s ease;
 }
 .stage.is-detail:has(.detail--folder) .rail {
   transform: none !important;
   opacity: 0.28 !important;
   pointer-events: none;
+  transition: opacity 0.9s ease;
 }
 .stage.is-detail:has(.detail--folder) .rail .folder-slot.is-current .folder {
   visibility: hidden;
@@ -3419,7 +3420,8 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   display: flex;
   justify-content: center;
   align-items: stretch;
-  filter: drop-shadow(0 28px 48px rgba(0, 0, 0, 0.45));
+  overflow: visible;
+  perspective: 2800px;
 }
 
 .case-folder__shell {
@@ -3439,9 +3441,10 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
     linear-gradient(135deg, var(--manila), var(--manila-2) 55%, var(--manila-3));
   box-shadow:
     0 1px 0 rgba(255,255,255,0.45) inset,
-    0 18px 40px -22px rgba(0,0,0,0.55);
+    0 18px 40px -22px rgba(0,0,0,0.55),
+    0 28px 48px rgba(0, 0, 0, 0.45);
   color: var(--manila-ink);
-  overflow: visible;
+  overflow: hidden; /* kill turned-leaf ghosts under the shell */
   transform-origin: center center;
   transform-style: preserve-3d;
   perspective: 2400px;
@@ -3449,12 +3452,18 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
     width 0.56s cubic-bezier(.22,.8,.18,1),
     height 0.56s cubic-bezier(.22,.8,.18,1);
 }
+.detail--folder.is-flipped .case-folder__shell,
+.detail--folder.is-flying .case-folder__shell {
+  overflow: visible; /* allow the swinging leaf to clear the spine during a turn / fly */
+}
 
 .detail--folder.is-flying .case-folder__shell {
   transition: none;
+  will-change: transform;
 }
 
-.detail--folder.is-flipped .case-folder__shell {
+/* Size blooms with is-open; cover/book reveal waits for is-flipped. */
+.detail--folder.is-open .case-folder__shell {
   width: min(1100px, 94vw);
   height: min(640px, calc(100svh - var(--head-h) - 128px));
 }
@@ -3509,13 +3518,16 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
     linear-gradient(135deg, var(--manila), var(--manila-2) 55%, var(--manila-3));
   transform-origin: left center;
   transform: rotateY(0deg);
-  transition: transform 0.62s cubic-bezier(.22,.8,.18,1), opacity 0.4s ease;
+  transition: transform 0.32s ease, opacity 0.2s ease;
   pointer-events: none;
   backface-visibility: hidden;
 }
 .detail--folder.is-flipped .case-folder__cover {
-  transform: rotateY(-102deg);
+  transform: rotateY(-105deg);
   opacity: 0;
+  transition:
+    transform 0.78s cubic-bezier(.22,.8,.18,1),
+    opacity 0.42s ease 0.48s;
 }
 
 .case-folder__face-cat {
@@ -3544,13 +3556,15 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   opacity: 0;
   pointer-events: none;
   transform-style: preserve-3d;
-  perspective: 2400px;
-  perspective-origin: 50% 48%;
-  transition: opacity 0.35s ease 0.12s;
+  perspective: 4200px;
+  perspective-origin: 50% 45%;
+  overflow: visible;
+  transition: opacity 0.2s ease;
 }
 .detail--folder.is-flipped .case-folder__book {
   opacity: 1;
   pointer-events: auto;
+  transition: opacity 0.4s ease 0.08s;
 }
 
 .case-folder__panel {
@@ -3566,13 +3580,15 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 .case-folder__panel--left {
   border-radius: 3px 0 0 3px;
   overflow: hidden;
+  z-index: 2;
 }
 .case-folder__panel--right {
   border-radius: 0 3px 3px 0;
   overflow: visible;
-  transform-style: preserve-3d;
-  perspective: 2400px;
-  perspective-origin: left center;
+  z-index: 1;
+  /* Paper lives in the leaf stack — keep this panel from occluding mid-turn. */
+  background: transparent;
+  box-shadow: none;
 }
 
 .case-folder__spine {
@@ -3580,28 +3596,33 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   left: 50%;
   top: 0;
   bottom: 0;
-  width: 22px;
-  margin-left: -11px;
-  z-index: 18;
+  width: 18px;
+  margin-left: -9px;
+  z-index: 8;
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.18),
-    rgba(0, 0, 0, 0.04) 42%,
-    rgba(255, 255, 255, 0.18) 50%,
-    rgba(0, 0, 0, 0.06) 58%,
-    rgba(0, 0, 0, 0.16)
+    rgba(0, 0, 0, 0.16),
+    rgba(0, 0, 0, 0.03) 42%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(0, 0, 0, 0.05) 58%,
+    rgba(0, 0, 0, 0.14)
   );
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.1);
 }
 
 .case-folder__lining {
   height: 100%;
-  padding: clamp(28px, 4vw, 44px) clamp(22px, 3vw, 36px);
-}
-
-.case-folder__lining .case-folder__face-title {
-  font-size: clamp(26px, 3.2vw, 40px);
+  min-height: 0;
+  overflow: auto;
+  background:
+    linear-gradient(270deg, rgba(60, 40, 15, 0.08), transparent 18px),
+    repeating-linear-gradient(
+      180deg,
+      var(--sheet-back) 0,
+      var(--sheet-back) 27px,
+      rgba(80, 55, 20, 0.05) 28px
+    );
 }
 
 /* Remaining-sheet thickness on the right edge */
@@ -3626,15 +3647,39 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 
 .case-folder__pages {
   position: absolute;
-  inset: 8px 10px 8px 0;
+  inset: 8px 10px;
+  z-index: 12;
   transform-style: preserve-3d;
+  perspective: 4200px;
+  perspective-origin: 50% 45%;
   overflow: visible;
+  pointer-events: none;
+}
+.case-folder__book.is-turning { overflow: visible; }
+.case-folder__book.is-turning .case-folder__spine { z-index: 6; }
+.case-folder__pages::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+  z-index: 0;
+  border-radius: 0 2px 2px 0;
+  background:
+    linear-gradient(90deg, rgba(60, 40, 15, 0.08), transparent 16px),
+    var(--sheet);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) inset;
+  pointer-events: none;
 }
 
-/* ── Dual-face sheets ────────────────────────────────────────────────── */
+/* ── Dual-face sheets (half-width leaves, hinged at book spine) ──────── */
 .sheet {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 50%;
   transform-style: preserve-3d;
   pointer-events: none;
   z-index: 1;
@@ -3642,33 +3687,45 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 
 .sheet.is-below { z-index: 2; }
 .sheet.is-active {
-  z-index: 10;
+  z-index: 14;
   pointer-events: auto;
 }
-.sheet.is-turned { z-index: 5; }
+.sheet.is-turned {
+  z-index: 3;
+  pointer-events: none;
+}
 .sheet.is-flipping {
-  z-index: 24;
+  z-index: 40;
+  pointer-events: none;
+}
+.sheet.is-flipping .sheet__leaf {
+  opacity: 1;
+}
+.sheet.is-receiving {
+  z-index: 20;
   pointer-events: none;
 }
 
 .sheet__leaf {
   position: absolute;
   inset: 0;
-  transform-origin: left center;
+  transform-origin: left center; /* spine */
   transform-style: preserve-3d;
   transform: rotateY(0deg);
   will-change: transform;
   border-radius: 0 2px 2px 0;
+  box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.35);
 }
 
 .sheet.is-turned .sheet__leaf {
   transform: rotateY(-180deg);
+  opacity: 0;
 }
 
 .sheet.is-below .sheet__leaf {
   transform:
     rotateY(0deg)
-    translate3d(calc(var(--depth, 1) * 2px), calc(var(--depth, 1) * 2px), calc(var(--depth, 1) * -3px));
+    translate3d(calc(var(--depth, 1) * 2px), calc(var(--depth, 1) * 2px), 0);
 }
 
 .sheet__face {
@@ -3677,22 +3734,23 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   overflow: hidden;
+  transform-style: preserve-3d;
 }
 
 .sheet__face--front {
   background:
-    linear-gradient(90deg, rgba(60, 40, 15, 0.07), transparent 16px),
+    linear-gradient(90deg, rgba(60, 40, 15, 0.1), transparent 18px),
     var(--sheet);
   border-radius: 0 2px 2px 0;
   box-shadow:
-    8px 0 28px -18px rgba(0, 0, 0, 0.35),
+    10px 0 32px -16px rgba(0, 0, 0, 0.4),
     0 1px 0 rgba(255, 255, 255, 0.65) inset;
 }
 
 .sheet__face--back {
   transform: rotateY(180deg);
   background:
-    linear-gradient(270deg, rgba(60, 40, 15, 0.08), transparent 18px),
+    linear-gradient(270deg, rgba(60, 40, 15, 0.1), transparent 18px),
     repeating-linear-gradient(
       180deg,
       var(--sheet-back) 0,
@@ -3700,7 +3758,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
       rgba(80, 55, 20, 0.05) 28px
     );
   border-radius: 2px 0 0 2px;
-  box-shadow: -8px 0 28px -18px rgba(0, 0, 0, 0.3);
+  box-shadow: -10px 0 32px -16px rgba(0, 0, 0, 0.35);
 }
 
 .sheet__verso {
@@ -3716,17 +3774,19 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   color: rgba(42, 36, 24, 0.28);
 }
 
-/* Mid-turn: thickness + shade on the turning leaf */
+/* Mid-turn: paper thickness + shade — keep the edge readable */
 .sheet.is-flipping .sheet__leaf::before {
   content: "";
   position: absolute;
-  left: 0;
+  left: -1px;
   top: 0;
   bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, #d7c49a, #c4ae7e);
-  transform: translateZ(1px);
-  z-index: 6;
+  width: 5px;
+  background:
+    linear-gradient(90deg, rgba(70, 50, 20, 0.55), #d7c49a 35%, #efe2c2 70%, rgba(255,255,255,0.35));
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  transform: translateZ(2px);
+  z-index: 8;
   pointer-events: none;
 }
 
@@ -3738,32 +3798,34 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   z-index: 5;
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.28),
-    transparent 16%,
-    transparent 72%,
-    rgba(0, 0, 0, 0.12)
+    rgba(0, 0, 0, 0.34),
+    transparent 18%,
+    transparent 68%,
+    rgba(0, 0, 0, 0.14)
   );
   mix-blend-mode: multiply;
   backface-visibility: hidden;
 }
 
+/* Soft shade on the page beneath — never wipe it to blank cream */
 .sheet.is-receiving::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 12;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.32), transparent 52%);
-  animation: sheet-unshade 0.98s cubic-bezier(.45,.05,.22,1) forwards;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.16), transparent 48%);
+  animation: sheet-unshade 1.12s cubic-bezier(.33,.08,.18,1) forwards;
 }
 
 @keyframes sheet-unshade {
-  0% { opacity: 0.9; }
-  45% { opacity: 1; }
+  0% { opacity: 0.35; }
+  45% { opacity: 0.5; }
   100% { opacity: 0; }
 }
 
-.sheet.is-hold.is-flipping .sheet__leaf::after {
+.sheet.is-hold.is-flipping .sheet__leaf::after,
+.sheet.is-hold.is-flipping .sheet__leaf::before {
   opacity: 1;
 }
 
@@ -3771,6 +3833,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 .sheet.is-active .sheet__face--front {
   cursor: grab;
   touch-action: pan-y;
+  pointer-events: auto;
 }
 .sheet.is-active .sheet__face--front:active {
   cursor: grabbing;
@@ -3783,6 +3846,55 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.case-page--text .case-page__headline {
+  max-width: 18ch;
+  font-size: clamp(26px, 3.2vw, 42px);
+}
+.case-page--text .case-page__body {
+  max-width: 28ch;
+  font-size: clamp(16px, 1.4vw, 19px);
+}
+
+.case-page--media {
+  padding: clamp(14px, 2vw, 22px);
+  min-height: 0;
+  overflow: hidden;
+}
+.case-page--media.is-empty {
+  background:
+    linear-gradient(90deg, rgba(60, 40, 15, 0.06), transparent 16px),
+    var(--sheet);
+}
+.case-page--media .case-page__gallery {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  height: 100%;
+  align-content: stretch;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
+}
+.case-page--media .case-page__gallery:not(.is-single) {
+  grid-template-rows: 1fr 1fr;
+}
+.case-page--media .case-page__photo {
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 8px;
+}
+.case-page--media .case-page__photo img {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: contain;
+  object-position: center;
 }
 
 .case-page__kicker {
@@ -3906,7 +4018,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 }
 
 @media (max-width: 720px) {
-  .detail--folder.is-flipped .case-folder__shell {
+  .detail--folder.is-open .case-folder__shell {
     width: min(100vw - 20px, 560px);
     height: min(78svh, 640px);
   }

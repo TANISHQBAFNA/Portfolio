@@ -2,19 +2,20 @@
  * ProjectDetail — live folder opens as a centered manila flip book.
  * ---------------------------------------------------------------------------
  * Softboard is gone. Click a live rail folder → it flies to center, expands,
- * and unfolds into a two-page spread. Each slide is a dual-face sheet bound
- * at the spine. Next / Prev (and edge drag) turns the top sheet. Mid-turn
- * shows the page edge, the verso, and the stack underneath. Escape / Home
- * closes: one folder returns to the rail. Non-live folders never open.
+ * expands at viewport center, then unfolds. Each slide is a dual-face sheet
+ * hinged at the book spine (full-spread stack). Next / Prev turns one leaf
+ * over the spine — mid-turn shows edge, verso, and the page beneath. Counter
+ * updates only when the turn settles. Escape / Home: one folder returns.
+ * Non-live folders never open. Softboard stays dead.
  */
 window.ProjectDetail = (function () {
   'use strict';
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var OPEN_MS = 720;
-  var CLOSE_MS = 760;
-  var FLIP_MS = 980;
-  var UNFOLD_MS = 560;
+  var OPEN_MS = 980;
+  var COVER_AT = 0.55;
+  var CLOSE_MS = 820;
+  var FLIP_MS = 1180;
 
   function create(options) {
     var panel = options.panel;
@@ -28,9 +29,8 @@ window.ProjectDetail = (function () {
       pages: panel.querySelector('[data-case-pages]'),
       cover: panel.querySelector('[data-case-cover]'),
       book: panel.querySelector('[data-case-book]'),
-      faceTitle: panel.querySelector('[data-case-face-title]'),
+      leftPage: panel.querySelector('[data-left-page]'),
       faceYear: panel.querySelector('[data-case-face-year]'),
-      faceCat: panel.querySelector('[data-case-face-cat]'),
       coverTitle: panel.querySelector('[data-case-cover-title]'),
       coverCat: panel.querySelector('[data-case-cover-cat]')
     };
@@ -140,61 +140,69 @@ window.ProjectDetail = (function () {
       return figure;
     }
 
+    function appendText(parent, slide, index, project) {
+      var kicker = document.createElement('p');
+      kicker.className = 'case-page__kicker';
+      kicker.textContent = slide.title || ('Page ' + pad(index + 1));
+      parent.appendChild(kicker);
+
+      var headline = document.createElement('h3');
+      headline.className = 'case-page__headline';
+      writeText(headline, slide.headline || slide.title || project.title);
+      parent.appendChild(headline);
+
+      if (slide.body) {
+        var body = document.createElement('p');
+        body.className = 'case-page__body';
+        writeText(body, slide.body);
+        parent.appendChild(body);
+      }
+
+      if (index === 0 && (project.tools || []).length) {
+        parent.appendChild(makeSticky(project.tools));
+      }
+    }
+
+    function makeMediaFace(slide) {
+      var front = document.createElement('div');
+      front.className = 'sheet__face sheet__face--front case-page case-page--media';
+      var images = slide.images || [];
+      if (!images.length) {
+        front.classList.add('is-empty');
+        return front;
+      }
+      var gallery = document.createElement('div');
+      gallery.className = 'case-page__gallery';
+      gallery.classList.toggle('is-single', images.length === 1);
+      images.forEach(function (img) {
+        gallery.appendChild(makeImage(img));
+      });
+      front.appendChild(gallery);
+      return front;
+    }
+
     function makePage(slide, index, project) {
       var sheet = document.createElement('article');
       sheet.className = 'sheet';
       sheet.setAttribute('data-page', '');
       sheet.setAttribute('data-index', String(index));
 
+      var sr = document.createElement('span');
+      sr.className = 'visually-hidden';
+      sr.setAttribute('data-page-title', '');
+      writeText(sr, slide.headline || slide.title || project.title);
+      sheet.appendChild(sr);
+
       var leaf = document.createElement('div');
       leaf.className = 'sheet__leaf';
 
-      var front = document.createElement('div');
-      front.className = 'sheet__face sheet__face--front case-page';
-
-      var kicker = document.createElement('p');
-      kicker.className = 'case-page__kicker';
-      kicker.textContent = slide.title || ('Page ' + pad(index + 1));
-      front.appendChild(kicker);
-
-      var headline = document.createElement('h3');
-      headline.className = 'case-page__headline';
-      headline.setAttribute('data-page-title', '');
-      writeText(headline, slide.headline || slide.title || project.title);
-      front.appendChild(headline);
-
-      if (slide.body) {
-        var body = document.createElement('p');
-        body.className = 'case-page__body';
-        writeText(body, slide.body);
-        front.appendChild(body);
-      }
-
-      if (index === 0 && (project.tools || []).length) {
-        front.appendChild(makeSticky(project.tools));
-      }
-
-      var images = slide.images || [];
-      if (images.length) {
-        var gallery = document.createElement('div');
-        gallery.className = 'case-page__gallery';
-        gallery.classList.toggle('is-single', images.length === 1);
-        images.forEach(function (img) {
-          gallery.appendChild(makeImage(img));
-        });
-        front.appendChild(gallery);
-      }
+      var front = makeMediaFace(slide);
 
       var back = document.createElement('div');
-      back.className = 'sheet__face sheet__face--back';
+      back.className = 'sheet__face sheet__face--back case-page case-page--text';
       back.setAttribute('aria-hidden', 'true');
-      var verso = document.createElement('div');
-      verso.className = 'sheet__verso';
-      var folio = document.createElement('span');
-      folio.className = 'sheet__folio';
-      folio.textContent = pad(index + 1);
-      verso.appendChild(folio);
-      back.appendChild(verso);
+      var next = slides[index + 1];
+      if (next) appendText(back, next, index + 1, project);
 
       leaf.appendChild(front);
       leaf.appendChild(back);
@@ -203,10 +211,8 @@ window.ProjectDetail = (function () {
     }
 
     function paintFace(project) {
-      if (nodes.faceTitle) nodes.faceTitle.textContent = project.title || '';
       if (nodes.coverTitle) nodes.coverTitle.textContent = project.title || '';
       if (nodes.faceYear) nodes.faceYear.textContent = project.year || '';
-      if (nodes.faceCat) nodes.faceCat.textContent = project.category || '';
       if (nodes.coverCat) nodes.coverCat.textContent = project.category || '';
       if (nodes.shell) {
         if (project.tone) nodes.shell.dataset.tone = project.tone;
@@ -234,8 +240,26 @@ window.ProjectDetail = (function () {
       );
     }
 
+    function currentProject() {
+      return projects[openIndex] || {};
+    }
+
+    function paintLeft(index) {
+      if (!nodes.leftPage) return;
+      nodes.leftPage.textContent = '';
+      var slide = slides[index];
+      var project = currentProject();
+      if (slide) appendText(nodes.leftPage, slide, index, project);
+    }
+
+    function setTurning(on) {
+      if (nodes.book) nodes.book.classList.toggle('is-turning', !!on);
+    }
+
     function paintSlideState(index) {
       slideIndex = index;
+      paintLeft(index);
+      setTurning(false);
       var pages = pageNodes();
       var remaining = pages.length - 1 - index;
       pages.forEach(function (page, i) {
@@ -258,6 +282,7 @@ window.ProjectDetail = (function () {
     function settleFlip(index) {
       flipping = false;
       flipAnim = null;
+      setTurning(false);
       if (mode !== 'case') return;
       paintSlideState(index);
     }
@@ -267,12 +292,18 @@ window.ProjectDetail = (function () {
       function at(p, z) {
         return 'rotateY(' + (fromDeg + delta * p) + 'deg) translateZ(' + z + 'px)';
       }
+      /* Hold readable faces near 70° / 110°. Keep Z tiny near 90° — large Z +
+         edge-on rotate flings the projected leaf off-screen (cream void). */
       return [
-        { transform: at(0, 0) },
-        { transform: at(0.32, 36), offset: 0.28 },
-        { transform: at(0.5, 48), offset: 0.48 },
-        { transform: at(0.68, 36), offset: 0.70 },
-        { transform: at(1, 0) }
+        { transform: at(0, 0), offset: 0 },
+        { transform: at(0.2, 12), offset: 0.14 },
+        { transform: at(0.36, 18), offset: 0.30 },
+        { transform: at(0.42, 14), offset: 0.40 },
+        { transform: at(0.5, 8), offset: 0.50 },
+        { transform: at(0.58, 14), offset: 0.60 },
+        { transform: at(0.68, 18), offset: 0.72 },
+        { transform: at(0.86, 10), offset: 0.88 },
+        { transform: at(1, 0), offset: 1 }
       ];
     }
 
@@ -287,8 +318,8 @@ window.ProjectDetail = (function () {
 
       flipping = true;
       cancelFlipAnim();
-      slideIndex = to;
-      if (options.onSlideChange) options.onSlideChange(to, slides.length);
+      setTurning(true);
+      /* slideIndex + counter stay on `from` until settleFlip. */
 
       var forward = to > from;
       var moving = forward ? current : target;
@@ -306,27 +337,35 @@ window.ProjectDetail = (function () {
         if (forward) {
           if (i < from) page.classList.add('is-turned');
           else if (i === from) page.classList.add('is-active');
-          else page.classList.add('is-below');
+          else {
+            page.classList.add('is-below');
+            page.style.setProperty('--depth', String(i - from));
+          }
         } else {
           if (i < to) page.classList.add('is-turned');
           else if (i === to) page.classList.add('is-turned');
           else if (i === from) page.classList.add('is-active');
-          else page.classList.add('is-below');
+          else {
+            page.classList.add('is-below');
+            page.style.setProperty('--depth', String(i - from));
+          }
         }
       });
 
       revealing.classList.add('is-receiving');
+      if (forward) revealing.classList.add('is-below');
       moving.classList.add('is-flipping');
-      moving.style.zIndex = '30';
+      moving.style.zIndex = '40';
+      revealing.style.zIndex = '20';
 
       var fromDeg = forward ? 0 : -180;
       var toDeg = forward ? -180 : 0;
-      leaf.style.transform = 'rotateY(' + fromDeg + 'deg)';
+      leaf.style.transform = 'rotateY(' + fromDeg + 'deg) translateZ(0px)';
       void leaf.offsetWidth;
 
       flipAnim = leaf.animate(turnKeyframes(fromDeg, toDeg), {
         duration: FLIP_MS,
-        easing: 'cubic-bezier(0.45, 0.05, 0.22, 1)',
+        easing: 'cubic-bezier(0.37, 0.05, 0.2, 1)',
         fill: 'forwards'
       });
 
@@ -368,13 +407,15 @@ window.ProjectDetail = (function () {
       var current = pages[0];
       var next = pages[1];
       if (!current || !next) return;
-      next.classList.add('is-receiving');
+      next.classList.add('is-receiving', 'is-below');
+      next.style.zIndex = '20';
       current.classList.add('is-flipping', 'is-hold');
-      current.style.zIndex = '30';
+      current.style.zIndex = '40';
       var leaf = leafOf(current);
       if (!leaf) return;
       leaf.style.transition = 'none';
-      leaf.style.transform = 'rotateY(-68deg) translateZ(48px)';
+      /* ~70°: front + edge readable; page beneath stays in frame. */
+      leaf.style.transform = 'rotateY(-70deg) translateZ(16px)';
       flipping = true;
     }
 
@@ -401,6 +442,19 @@ window.ProjectDetail = (function () {
       el.style.opacity = '';
     }
 
+    function centerDelta(src, dest) {
+      var sx = src.left + src.width / 2;
+      var sy = src.top + src.height / 2;
+      var dx = dest.left + dest.width / 2;
+      var dy = dest.top + dest.height / 2;
+      return {
+        x: sx - dx,
+        y: sy - dy,
+        scaleX: src.width / Math.max(dest.width, 1),
+        scaleY: src.height / Math.max(dest.height, 1)
+      };
+    }
+
     function flyFromRail(trigger) {
       var shell = nodes.shell;
       if (!shell) return;
@@ -408,47 +462,47 @@ window.ProjectDetail = (function () {
         ? trigger
         : (trigger && trigger.closest ? trigger.closest('.folder') : null);
       var src = rectOf(folder) || rectOf(trigger);
-      var dest = rectOf(shell);
-      if (!src || !dest || reduceMotion.matches) {
+      if (!src || reduceMotion.matches) {
         panel.classList.add('is-open', 'is-flipped');
         return;
       }
 
-      panel.classList.add('is-flying');
+      /* Beat 1: open-sized shell, cover still closed, CENTER→CENTER bloom. */
+      panel.classList.add('is-flying', 'is-open');
       panel.classList.remove('is-flipped');
-
-      var sx = src.left;
-      var sy = src.top;
-      var sw = src.width;
-      var sh = src.height;
-      var dx = dest.left;
-      var dy = dest.top;
-      var dw = dest.width;
-      var dh = dest.height;
-
       shell.style.transition = 'none';
-      shell.style.transformOrigin = 'top left';
+      void shell.offsetWidth;
+      var dest = rectOf(shell);
+      if (!dest) {
+        panel.classList.add('is-open', 'is-flipped');
+        panel.classList.remove('is-flying');
+        return;
+      }
+
+      var map = centerDelta(src, dest);
+      shell.style.transformOrigin = '50% 50%';
       shell.style.zIndex = '90';
-      var scaleX = sw / Math.max(dw, 1);
-      var scaleY = sh / Math.max(dh, 1);
       shell.style.transform =
-        'translate(' + (sx - dx).toFixed(1) + 'px,' + (sy - dy).toFixed(1) + 'px) scale(' +
-        scaleX.toFixed(4) + ',' + scaleY.toFixed(4) + ')';
+        'translate(' + map.x.toFixed(1) + 'px,' + map.y.toFixed(1) + 'px) scale(' +
+        map.scaleX.toFixed(4) + ',' + map.scaleY.toFixed(4) + ')';
       void shell.offsetWidth;
 
       requestAnimationFrame(function () {
         shell.style.transition =
-          'transform ' + (OPEN_MS / 1000) + 's cubic-bezier(.22,.8,.18,1)';
-        shell.style.transform = 'none';
-        panel.classList.add('is-open');
+          'transform ' + (OPEN_MS / 1000) + 's cubic-bezier(.22,.72,.16,1)';
+        shell.style.transform = 'translate(0px, 0px) scale(1, 1)';
       });
 
       clearTimeout(openTimer);
       openTimer = setTimeout(function () {
+        panel.classList.add('is-flipped');
+      }, Math.round(OPEN_MS * COVER_AT));
+
+      setTimeout(function () {
         clearFlyStyles(shell);
         panel.classList.remove('is-flying');
-        panel.classList.add('is-flipped');
-      }, OPEN_MS + 40);
+        if (!panel.classList.contains('is-flipped')) panel.classList.add('is-flipped');
+      }, OPEN_MS + 80);
     }
 
     function flyToRail(trigger) {
@@ -475,20 +529,17 @@ window.ProjectDetail = (function () {
       requestAnimationFrame(function () {
         var dest = rectOf(folder);
         if (!src || !dest) return;
-        var dx = src.left - dest.left;
-        var dy = src.top - dest.top;
-        var scaleX = src.width / Math.max(dest.width, 1);
-        var scaleY = src.height / Math.max(dest.height, 1);
-        folder.style.transformOrigin = 'top left';
+        var map = centerDelta(src, dest);
+        folder.style.transformOrigin = '50% 50%';
         folder.style.zIndex = '95';
         folder.style.transform =
-          'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(' +
-          scaleX.toFixed(4) + ',' + scaleY.toFixed(4) + ')';
+          'translate(' + map.x.toFixed(1) + 'px,' + map.y.toFixed(1) + 'px) scale(' +
+          map.scaleX.toFixed(4) + ',' + map.scaleY.toFixed(4) + ')';
         void folder.offsetWidth;
         requestAnimationFrame(function () {
           folder.style.transition =
             'transform ' + (CLOSE_MS / 1000) + 's cubic-bezier(.22,.8,.18,1)';
-          folder.style.transform = 'none';
+          folder.style.transform = 'translate(0px, 0px) scale(1, 1)';
         });
       });
 
@@ -518,7 +569,9 @@ window.ProjectDetail = (function () {
       if (nodes.card) nodes.card.hidden = true;
       clearFlyStyles(nodes.shell);
       if (nodes.pages) nodes.pages.innerHTML = '';
+      if (nodes.leftPage) nodes.leftPage.textContent = '';
       if (nodes.title) nodes.title.textContent = '';
+      setTurning(false);
       panel.hidden = true;
       var slots = options.slots || [];
       slots.forEach(function (slot) { slot.classList.remove('is-current'); });
@@ -590,7 +643,7 @@ window.ProjectDetail = (function () {
       if (options.onOpen) options.onOpen(index, slides.length);
 
       if (/[?&]hold=flip/i.test(location.search)) {
-        var wait = reduceMotion.matches ? 80 : OPEN_MS + UNFOLD_MS + 80;
+        var wait = reduceMotion.matches ? 80 : OPEN_MS + 160;
         setTimeout(function () {
           if (mode === 'case') holdMidFlip();
         }, wait);
@@ -640,8 +693,8 @@ window.ProjectDetail = (function () {
         var to = armed === 'forward' ? slideIndex + 1 : slideIndex - 1;
         var toDeg = armed === 'forward' ? -180 : 0;
         flipAnim = leaf.animate(turnKeyframes(current, toDeg), {
-          duration: Math.max(280, FLIP_MS * (Math.abs(toDeg - current) / 180)),
-          easing: 'cubic-bezier(0.45, 0.05, 0.22, 1)',
+          duration: Math.max(420, FLIP_MS * (Math.abs(toDeg - current) / 180)),
+          easing: 'linear',
           fill: 'forwards'
         });
         flipAnim.onfinish = function () {
@@ -698,27 +751,32 @@ window.ProjectDetail = (function () {
         drag.leaf = leafOf(moving);
         drag.other = revealing;
         moving.classList.add('is-flipping');
-        moving.style.zIndex = '30';
-        if (revealing) revealing.classList.add('is-receiving', 'is-below');
+        moving.style.zIndex = '40';
+        if (revealing) {
+          revealing.classList.add('is-receiving', 'is-below');
+          revealing.style.zIndex = '20';
+        }
         if (drag.leaf) drag.leaf.style.transition = 'none';
       }
       if (!drag.leaf) return;
-      var width = nodes.pages.getBoundingClientRect().width || 400;
+      var pageW = (drag.sheet && drag.sheet.getBoundingClientRect().width)
+        || ((nodes.pages.getBoundingClientRect().width || 800) / 2);
       var progress = drag.armed === 'forward'
-        ? clamp(-dx / width, 0, 1)
-        : clamp(dx / width, 0, 1);
+        ? clamp(-dx / pageW, 0, 1)
+        : clamp(dx / pageW, 0, 1);
       var deg = drag.armed === 'forward' ? progress * -180 : -180 + progress * 180;
-      var z = Math.sin(Math.abs(deg) * Math.PI / 180) * 42;
+      var z = Math.sin(Math.abs(deg) * Math.PI / 180) * 16;
       drag.leaf.style.transform = 'rotateY(' + deg.toFixed(2) + 'deg) translateZ(' + z.toFixed(1) + 'px)';
     }
 
     function onPointerUp(event) {
       if (!drag.tracking) return;
       var dx = event.clientX - drag.startX;
-      var width = (nodes.pages && nodes.pages.getBoundingClientRect().width) || 400;
+      var pageW = (drag.sheet && drag.sheet.getBoundingClientRect().width)
+        || ((nodes.pages && nodes.pages.getBoundingClientRect().width || 800) / 2);
       var progress = drag.armed === 'forward'
-        ? clamp(-dx / width, 0, 1)
-        : clamp(dx / width, 0, 1);
+        ? clamp(-dx / pageW, 0, 1)
+        : clamp(dx / pageW, 0, 1);
       var commit = progress > 0.28 || Math.abs(dx) > 72;
       if (drag.armed === 'maybe' || !drag.leaf) {
         drag.tracking = false;

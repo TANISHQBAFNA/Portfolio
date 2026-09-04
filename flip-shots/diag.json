@@ -1,0 +1,45 @@
+{
+  "sheets": [
+    {
+      "cls": "sheet is-turned",
+      "z": "4",
+      "leaf": {
+        "transform": "matrix3d(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1)",
+        "origin": "0px 294px",
+        "style": ""
+      }
+    },
+    {
+      "cls": "sheet is-active",
+      "z": "13",
+      "leaf": {
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "origin": "0px 294px",
+        "style": ""
+      }
+    },
+    {
+      "cls": "sheet is-below",
+      "z": "12",
+      "leaf": {
+        "transform": "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 2, -3, 1)",
+        "origin": "0px 294px",
+        "style": ""
+      }
+    },
+    {
+      "cls": "sheet is-below",
+      "z": "11",
+      "leaf": {
+        "transform": "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4, 4, -6, 1)",
+        "origin": "0px 294px",
+        "style": ""
+      }
+    }
+  ],
+  "pagesOverflow": "visible",
+  "pagesPerspective": "2400px",
+  "bookTS": "preserve-3d",
+  "bodyReduced": false,
+  "openClass": "detail detail--folder is-flipped is-open"
+}
