@@ -1,0 +1,3958 @@
+/* ===========================================================================
+   Tanishq Bafna — portfolio landing
+   Editorial, horizontal, dependency-free.
+
+   Palette: ink base + warm paper folders + one accent (vermilion).
+   Layout : 12-column grid, deliberately asymmetric, viewport-locked on desktop.
+   =========================================================================== */
+
+/* ── tokens ───────────────────────────────────────────────────────────── */
+:root {
+  /* Indigo ground and teal accents carried over from tanishqbafna.com,
+     where #00a0a0 is the link colour, #56c6c6 its lighter partner and
+     #282846 the dark. */
+  --ink:        #10112a;
+  --ink-raised: #1b1c39;
+  --paper:      #efeae1;
+  --paper-2:    #e2dbcf;
+  --paper-3:    #d5cdbf;
+
+  --fog:   #f7f5f1;
+  --fog-2: rgba(247, 245, 241, 0.68);
+  --fog-3: rgba(247, 245, 241, 0.60);   /* WCAG AA at small sizes on ink */
+  --rule:  rgba(247, 245, 241, 0.14);
+
+  --graphite:   #1a1a1e;
+  --graphite-2: rgba(26, 26, 30, 0.66);
+  --graphite-3: rgba(26, 26, 30, 0.64);   /* WCAG AA at small sizes on paper */
+
+  --accent:      #00a0a0;  /* graphics, indicators, large type only */
+  --accent-soft: #56c6c6;  /* accent-coloured small text on ink   (AA) */
+  --accent-deep: #00615f;  /* accent-coloured small text on paper (AA) */
+
+  --font-display: 'Instrument Serif', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  --gutter:  clamp(20px, 4vw, 64px);
+  /* Must be at least what the masthead actually measures — the deck panel is
+     positioned at `top: var(--head-h)`, so a token smaller than the real header
+     slides the top of a slide underneath it. Checked against the rendered
+     height after shrinking the name and the role, not guessed. */
+  --head-h:  clamp(42px, 5vh, 52px);
+  /* Where the row starts: low, so the folders sit on the bottom edge with roughly
+     45% of each below the fold. Whichever is lower of 72% down the viewport or the
+     point that leaves that much under the fold — bounded at 82svh so an unusually
+     tall window cannot push the hero out of proportion. */
+  /* the shorter header hands its height to the row: a little lower on the screen
+     and showing more of each folder above the fold */
+  --rail-top: min(80svh, max(69svh, calc(100svh - var(--card-h) * 0.60)));
+  /* The folder is proportioned, not fixed: its height follows its width, so it
+     reads the same shape on a laptop and on a 27-inch screen instead of
+     stretching into a sliver. Capped so it can never outgrow the viewport. */
+  --card-ratio: 1.28;
+  --card-h: min(calc(var(--card-w) * var(--card-ratio)), 70svh);
+  /* Hovering pulls a folder up until this much of it is on screen. 0.90 leaves
+     the cover's bottom edge just below the fold, so it sits a touch higher —
+     enough to clear the whole cover and the "open" row under it. Derived from
+     the geometry, so it stays true if --card-h or --rail-top change. */
+  /* Hover brings the folder up whole — all of it, including the padding beneath
+     its cover, which is the breathing room the card already carries. --hover-clear
+     is the little extra so the sheet and shadow behind it clear the edge too. */
+  --hover-reveal: 1;
+  --hover-clear:  12px;
+  /* max(): were a folder ever fully on screen at rest the arithmetic would go
+     negative and push it *down* on hover. It always rises. */
+  --hover-lift: max(14px, calc(var(--card-h) * var(--hover-reveal) + var(--hover-clear)
+                               - 100svh + var(--rail-top)));
+  /* Inside a case study the row sits lower, so the same reveal needs a longer
+     lift — one rule, one result: hover always shows a whole folder. */
+  --peek-lift:  max(14px, calc(var(--card-h) * var(--hover-reveal) + var(--hover-clear)
+                               - var(--peek)));
+  --lift:       calc(var(--peek-lift) + 30px);   /* clip headroom above the row */
+  /* The panel's column gutter, and the ONLY gutter inside it. Because 12 columns
+     with this gap make 6 columns + 5 gaps exactly equal to half the width,
+     `repeat(2, 1fr)` at the same gap lands precisely on the 6|7 grid line — which
+     is how the slide's two text columns share their edge with the panel grid. The
+     imagery goes further and runs on all twelve columns at this same gap, so an
+     uneven 7-against-5 split lands on real grid lines too. Three different
+     gutters is what made the slides look arbitrary. */
+  --col-gap: clamp(16px, 2vw, 32px);
+  /* how far a slide travels as it is pushed out and the next pushed in */
+  /* A full screen width, not a nudge. With no fade to hide it, the outgoing
+     slide has to be genuinely OFF the screen before its content is swapped —
+     otherwise you would watch the words change in mid-air. `100vw` clears any
+     element that starts inside the viewport, whatever its width or position;
+     `.stage` clips the overflow so nothing scrolls. */
+  --swap-shift: 100vw;
+  --swap-out-ms: 680ms;   /* must match SWAP_OUT_MS in project-detail.js */
+  --swap-in-ms: 900ms;
+  /* Gentler than it was. The old curve (0.5, 0, 0.75, 0.35) yanked the content
+     away almost immediately, which across a whole screen width is what read as
+     harsh — a full-width move needs both a longer duration AND a curve that
+     leaves gradually. */
+  --ease-in: cubic-bezier(0.32, 0, 0.7, 0.16);
+  /* how far the whole page travels when a project opens or closes — further
+     than a slide swap, because it is a bigger move */
+  --page-shift: 100vw;
+  /* overshoots slightly, so the row's last movement is DOWNWARD into place */
+  --ease-settle: cubic-bezier(0.33, 1.32, 0.62, 1);
+  --slide-img-max: 62svh;  /* only a ceiling — the row track is the real bound,
+                              so imagery grows to whatever the slide has spare */
+  --pill-h:    66px;   /* rendered height of the control pill; the deck panel
+                          reserves this band so nothing runs under it */
+  --peek:      50px;   /* of a folder left visible while a deck is open: its number,
+                          stopping just short of the first line of text */
+  --card-w:   clamp(268px, 25vw, 358px);
+  --rail-gap: clamp(14px, 1.7vw, 28px);
+  /* The closing panel absorbs exactly the space the last folder cannot fill,
+     so the rail ends on a composed frame instead of dead canvas. */
+  --end-w:    max(240px, calc(100vw - var(--card-w) - var(--gutter) * 2 - var(--rail-gap)));
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --felt: #10112a;
+  --felt-moss: rgba(0, 160, 160, 0.12);
+  --felt-deep: rgba(8, 10, 32, 0.55);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+body.landing {
+  background: var(--ink);
+  color: var(--fog);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Desktop and tablet: the page itself never scrolls vertically. */
+@media (min-width: 768px) {
+  html, body { overflow: hidden; }
+}
+
+h1, h2, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img { display: block; max-width: 100%; }
+
+a { color: inherit; text-decoration: none; }
+
+:where(a, button):focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  top: 10px; left: 10px;
+  z-index: 60;
+  padding: 10px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+  transition: transform 0.24s var(--ease);
+}
+.skip-link:focus { transform: translateY(0); }
+
+.kicker {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fog-3);
+}
+
+/* ── atmosphere: wash, desk light, cursor light, grain, vignette ──────── */
+.atmosphere { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+.atmosphere__wash {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(52vw 46vw at 84% -8%, rgba(0, 160, 160, 0.13), transparent 68%),
+    radial-gradient(46vw 40vw at 4% 12%, rgba(255, 255, 255, 0.055), transparent 70%);
+}
+
+/* light pooling on the "desk" the folders sit on */
+.atmosphere__desk {
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 58% at 50% 106%, rgba(255, 255, 255, 0.11), transparent 68%);
+}
+
+.atmosphere__light {
+  position: absolute; inset: 0;
+  background: radial-gradient(520px circle at var(--x, -400px) var(--y, -400px),
+              rgba(255, 255, 255, 0.05), transparent 45%);
+}
+
+.atmosphere__grain {
+  position: absolute; inset: 0;
+  opacity: 0.055;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+
+.atmosphere::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 92% 84% at 48% 40%, transparent 44%, rgba(0, 0, 0, 0.62) 100%);
+}
+
+/* ── stage ────────────────────────────────────────────────────────────── */
+.stage { position: relative; z-index: 1; }
+
+/* Fixed, not just tall: a fixed subtree cannot give the document scrollable
+   overflow, so nothing (focus, anchor jumps) can shift the composition. */
+@media (min-width: 768px) {
+  .stage {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;   /* fallback */
+    overflow: clip;     /* clip cannot be scrolled — focus can never shift the page */
+  }
+}
+
+/* ── deck progress ────────────────────────────────────────────────────────
+   A hairline across the top edge while a case study is open. With ten or more
+   slides a bar reads position far better than a row of dots ever could.    */
+.deck-progress {
+  position: absolute;
+  top: 100%;              /* the header's lower edge, whatever its height */
+  left: 0; right: 0;
+  height: 3px;
+  /* Same colour as the header's own hairline, which this sits on: unfilled, it
+     reads as that rule; filled, the rule lights up along its length. */
+  background: var(--rule);
+  pointer-events: none;
+}
+.deck-progress[hidden] { display: none; }
+
+.deck-progress__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s var(--ease);
+  background: linear-gradient(90deg, #2f6f9e 0%, var(--accent) 55%, #6fd6c6 100%);
+  box-shadow: 0 0 10px rgba(0, 160, 160, 0.55), 0 0 22px rgba(0, 160, 160, 0.28);
+}
+
+
+/* ── first-load sequence ──────────────────────────────────────────────────
+   One orchestrated arrival rather than scattered effects: the header settles,
+   the portrait and hero copy follow, and the folders come up from below the
+   fold in order, as though the row were being laid out on the desk. Driven by
+   `is-intro` on the stage, which JS adds on load — so with no JS, or with
+   reduced motion, everything is simply there.                              */
+@keyframes intro-head {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes intro-portrait {
+  from { opacity: 0; transform: translateY(22px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes intro-folder {
+  from { opacity: 0; transform: translateY(var(--intro-rise)); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes intro-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.stage.is-intro .masthead {
+  animation: intro-head 0.62s var(--ease) backwards;
+}
+.stage.is-intro .portrait {
+  animation: intro-portrait 0.78s var(--ease) 0.1s backwards;
+}
+
+/* Far enough to start fully below the fold, so they genuinely rise into view. */
+.stage.is-intro .folder-slot {
+  --intro-rise: calc(100svh - var(--rail-top) + 24px);
+  animation: intro-folder 0.78s var(--ease) backwards;
+  animation-delay: calc(0.26s + var(--enter-index, 0) * 0.085s);
+}
+.stage.is-intro .rail__end {
+  animation: intro-fade 0.7s var(--ease) 0.75s backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage.is-intro .masthead,
+  .stage.is-intro .portrait,
+  .stage.is-intro .folder-slot,
+  .stage.is-intro .rail__end { animation: none; }
+}
+
+/* ── PortfolioHeader ──────────────────────────────────────────────────── */
+.masthead {
+  position: relative;     /* also the containing block for .deck-progress */
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: clamp(16px, 2vw, 32px);
+  align-items: start;
+  padding: clamp(5px, 0.7vh, 8px) var(--gutter);
+  border-bottom: 1px solid var(--rule);
+  background: linear-gradient(to bottom, rgba(16, 17, 42, 0.88), rgba(16, 17, 42, 0.34));
+  backdrop-filter: blur(6px);
+}
+
+@media (min-width: 768px) {
+  .masthead {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    min-height: var(--head-h);
+  }
+}
+
+.masthead__identity { grid-column: 1 / span 4; }
+
+.masthead__name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(0.94rem, 1.16vw, 1.14rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+.masthead__name:hover { color: var(--accent-soft); }
+
+.masthead__role {
+  margin-top: 1px;
+  font-size: 0.54rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fog-3);
+}
+.masthead__role span { color: var(--accent); padding: 0 2px; }
+
+
+.masthead__nav { grid-column: 7 / span 6; justify-self: end; }
+.masthead__nav ul { display: flex; gap: clamp(12px, 1.4vw, 22px); }
+.masthead__nav a {
+  position: relative;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--fog-2);
+  padding-bottom: 3px;
+  transition: color 0.22s var(--ease);
+}
+.masthead__nav a::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease);
+}
+.masthead__nav a:hover { color: var(--fog); }
+.masthead__nav a:hover::after { transform: scaleX(1); }
+
+
+/* ── HeroIntro ────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: clamp(16px, 2vw, 32px);
+  padding: clamp(12px, 1.8vh, 22px) var(--gutter) clamp(28px, 4vh, 44px);
+}
+
+@media (min-width: 768px) {
+  .hero {
+    position: absolute;
+    left: 0; right: 0;
+    top: var(--head-h);
+    height: calc(var(--rail-top) - var(--head-h));
+    grid-template-rows: auto 1fr auto;
+    /* NOTE this overrides the base `.hero` padding — editing that one alone
+       changes nothing at this width. */
+    padding: clamp(14px, 2.4vh, 30px) var(--gutter) clamp(14px, 2.4vh, 28px);
+    /* drifts against the rail — depth, not a ride */
+    transform: translateX(calc(var(--rail-progress, 0) * -3vw));
+    opacity: calc(1 - var(--rail-progress, 0) * 0.16);
+    transition: opacity 0.4s linear;
+    will-change: transform;
+    /* Meet the rail at --rail-top; never eat folder tab/title clicks. */
+    pointer-events: none;
+  }
+}
+
+/* portrait */
+/* Four columns instead of three, and its frame capped rather than stretched to
+   the hero's full height — a wide, shallow crop rather than a tall narrow one.
+   `justify-content: center` keeps it on the hero's centre line once it no longer
+   fills the column. */
+.portrait {
+  grid-column: 1 / span 4;
+  grid-row: 1 / span 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+}
+
+@media (min-width: 768px) {
+  .portrait { transform: translateX(calc(var(--rail-progress, 0) * 1.1vw)); }
+}
+
+.portrait__frame {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ink-raised);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  box-shadow: 0 40px 80px -50px rgba(0, 0, 0, 0.9);
+}
+
+/* Wide and shallow rather than tall and narrow: capped, instead of stretched to
+   the hero's full height. This has to come AFTER the base rule above — `flex: 1`
+   there sets `flex-basis: 0` and grows, which beats a `height` for a flex item's
+   main size, so declared earlier it did nothing. Desktop only: mobile sets its
+   own 4:5 crop, and putting the height in the base rule overrode that instead. */
+@media (min-width: 768px) {
+  .portrait__frame { flex: 0 1 auto; height: clamp(240px, 42svh, 420px); }
+}
+
+.portrait__frame::after {   /* film-like top light */
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(190deg, rgba(255, 255, 255, 0.10), transparent 42%);
+  pointer-events: none;
+}
+
+.portrait__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.24) contrast(1.04);
+  transform: scale(1.02);
+  transition: transform 0.9s var(--ease), filter 0.5s var(--ease);
+}
+.portrait:hover .portrait__img { transform: scale(1.05); filter: grayscale(0) contrast(1.06); }
+
+.portrait.is-pending .portrait__img,
+.portrait.is-missing .portrait__img { visibility: hidden; }
+
+.portrait__placeholder {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: clamp(14px, 1.6vw, 22px);
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 9px),
+    var(--ink-raised);
+}
+.portrait.is-pending .portrait__placeholder,
+.portrait.is-missing .portrait__placeholder { display: flex; }
+
+.portrait__placeholder-kicker {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+.portrait__placeholder-path {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  color: var(--fog-2);
+  word-break: break-all;
+}
+.portrait__placeholder-note { font-size: 0.68rem; line-height: 1.45; color: var(--fog-3); }
+
+/* hero typography — headline anchored to the bottom of its column */
+/* The heading is centred against the PORTRAIT, not hung from the bottom of its
+   grid row — the two read as a pair, so their centre lines should agree. The
+   portrait spans all three hero rows, so centring in row 2 lands on its middle. */
+.hero__type {
+  grid-column: 5 / span 7;
+  grid-row: 2;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vh, 20px);
+}
+
+.hero__heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, min(4.3vw, 6.4vh), 4.3rem);
+  line-height: 0.99;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  max-width: 22ch;
+}
+.hero__heading em { font-style: italic; color: var(--accent-soft); }
+
+.hero__support {
+  max-width: 44ch;
+  font-size: clamp(0.82rem, 0.95vw, 0.96rem);
+  line-height: 1.62;
+  color: var(--fog-2);
+}
+
+/* The last line of the type block, below the support copy. It is a child of
+   `.hero__type` (a flex column), NOT a grid item of `.hero` — so grid-column and
+   grid-row do nothing here and are deliberately absent. */
+.hero__facts {
+  margin-top: clamp(4px, 0.8vh, 10px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(10px, 1.4vw, 20px);
+  padding-top: clamp(9px, 1.3vh, 15px);
+  border-top: 1px solid var(--rule);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--fog-3);
+}
+.hero__facts li { display: flex; align-items: center; gap: clamp(10px, 1.4vw, 20px); }
+.hero__facts li:not(:last-child)::after {
+  content: '';
+  width: 3px; height: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* reveal */
+.reveal { opacity: 0; transform: translateY(14px); }
+.reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+/* ── HorizontalNavigation ─────────────────────────────────────────────── */
+.rail-controls {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 20px);
+  padding: 0 var(--gutter) clamp(14px, 2vh, 20px);
+}
+
+@media (min-width: 768px) {
+  /* The landing carries no controls at all — wheel, drag and the arrow keys
+     move the rail. The pill belongs to a project, and arrives with one. */
+  .rail-controls {
+    position: fixed;
+    left: 50%;
+    bottom: clamp(16px, 2.6vh, 30px);
+    z-index: 80;
+    gap: 16px;
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(16, 17, 42, 0.76);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 22px 40px -26px rgba(0, 0, 0, 0.95);
+
+    opacity: 0;
+    visibility: hidden;          /* also drops it out of the tab order */
+    transform: translate(-50%, 16px);
+    transition: opacity 0.4s var(--ease), transform 0.52s var(--ease),
+                visibility 0.4s var(--ease);
+  }
+  .stage.is-detail .rail-controls {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);   /* rises into place from below */
+    /* lands after the folder has finished its move */
+    transition-delay: 0.38s;
+  }
+}
+
+
+.rail-controls__buttons { display: flex; align-items: center; gap: 8px; }
+
+.rail-controls__counter {
+  min-width: 52px;
+  text-align: center;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--fog-2);
+}
+.rail-controls__counter[hidden] { display: none; }
+
+.rail-btn--home[hidden] { display: none; }
+.rail-btn--home svg { stroke-linecap: round; stroke-linejoin: round; }
+
+.rail-btn {
+  width: 44px; height: 44px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  color: var(--fog);
+  cursor: pointer;
+  transition: background 0.24s var(--ease), border-color 0.24s var(--ease),
+              color 0.24s var(--ease), transform 0.24s var(--ease);
+}
+.rail-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.4; }
+.rail-btn:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+.rail-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+
+
+/* ── ProjectDetail ────────────────────────────────────────────────────────
+   Opening a folder docks it into the portrait column and hands the hero
+   headline over to the project. Same grid, so nothing jumps.              */
+.detail[hidden] { display: none; }
+/* While the folder is in flight it must cross above the row it came from;
+   at rest the row goes back on top. */
+.detail.is-flying { z-index: 70; }
+
+/* The landing's "desk light" pools at the bottom of the screen, behind the row
+   of folders — which is hidden while a project is open, so the deck lost every
+   depth cue and the screens ended up floating in a flat field. This puts the
+   light back, behind the slide's own imagery, so the screens read as sitting ON
+   something. Same trick as the desk, moved to where the content now is. */
+.detail::before {
+  content: '';
+  position: absolute;
+  inset: 30% 0 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(90% 62% at 50% 96%, rgba(255, 255, 255, 0.085), transparent 72%),
+    radial-gradient(58% 50% at 12% 88%, rgba(0, 160, 160, 0.07), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+.stage.is-detail .detail::before { opacity: 1; }
+.stage.is-detail .detail.detail--board::before,
+.detail.detail--board::before {
+  content: none;
+  opacity: 0;
+}
+
+/* Opened case: ONE felt, on the document. Stage/board stay transparent so a
+   nested dark field cannot form behind the paper. */
+.stage.is-detail {
+  background: transparent;
+}
+.stage.is-detail .masthead {
+  background: transparent;
+  border-bottom-color: rgba(243, 234, 210, 0.14);
+}
+body:has(.stage.is-detail) {
+  background-color: var(--felt);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  background-attachment: fixed;
+}
+body:has(.stage.is-detail) .atmosphere {
+  display: none;
+}
+
+.detail {
+  position: relative;
+  z-index: 35;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: var(--col-gap);
+  row-gap: clamp(18px, 3vh, 28px);
+  padding: clamp(24px, 4vh, 44px) var(--gutter);
+}
+
+@media (min-width: 768px) {
+  .detail {
+    position: absolute;
+    left: 0; right: 0;
+    top: var(--head-h);
+    height: calc(var(--rail-top) - var(--head-h));
+    grid-template-rows: 1fr auto;
+    padding: clamp(18px, 3vh, 40px) var(--gutter) clamp(14px, 2.4vh, 28px);
+  }
+}
+
+/* ── the folder tucks away, it does not vanish ────────────────────────────
+   Past the opening slide the case study's own material takes the folder's
+   columns — but the folder itself slides down to the bottom-left and stays there
+   with only its top edge showing: the year on its tab, the project name, the
+   blurb and the clipped tools slip. Its cover image ends up below the fold, so
+   the imagery on screen is the case study's, not the folder's.
+
+   It reads as the folder you opened, still on the desk, and it is the only thing
+/* Past the opening slide the folder card exits downward — the same pure
+   translateY motion the header text uses when leaving slide 0. No opacity change:
+   the card simply slides out of view below the viewport. pointer-events are cut
+   so the invisible card cannot intercept clicks on the slide content above it. */
+.detail.hide-folder .detail__card {
+  transform: translateY(100vh);
+  pointer-events: none;
+  transition: transform var(--swap-out-ms, 600ms) var(--ease);
+}
+@media (max-width: 767px) {
+  .detail.hide-folder .detail__card { display: none; }
+}
+
+
+/* the docked folder — the rail card itself, so it needs no styling of its own
+   beyond the entrance motion and a couple of inert-state tweaks */
+.detail__card {
+  grid-column: 1 / span 3;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* Animate the card back in (slide-up + fade) when returning to slide 0.
+     The hide-folder state owns its own transition out; this covers the return. */
+  transition: transform var(--swap-out-ms, 600ms) var(--ease),
+              opacity    var(--swap-out-ms, 600ms) var(--ease);
+}
+/* the folder flies here from the rail; project-detail.js owns the transform */
+.detail__card .folder--docked { will-change: transform; }
+
+.folder--docked {
+  flex: 1;
+  min-height: 0;
+  cursor: default;
+  filter: brightness(1);
+  transform: none;
+}
+.folder--docked .folder__tab-index { color: var(--accent-deep); }
+.folder--docked .folder__body { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 40px 70px -34px rgba(0, 0, 0, 0.95); }
+
+/* the project takes over the headline */
+.detail__type {
+  grid-column: 4 / span 7;
+  margin-top: clamp(4.6rem, 8vh, 7.2rem);
+  /* no align-self: the panel's align-items decides, and in deck mode that is
+     `start` so the heading lines up with the top of the imagery */
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.5vh, 18px);
+}
+.detail__type > * {
+  opacity: 0;
+  transform: translateX(52px);
+  transition: opacity 0.56s var(--ease), transform 0.56s var(--ease);
+}
+.detail.is-open .detail__type > * { opacity: 1; transform: none; }
+.detail.is-open .detail__type > *:nth-child(1) { transition-delay: 0.10s; }
+.detail.is-open .detail__type > *:nth-child(2) { transition-delay: 0.16s; }
+.detail.is-open .detail__type > *:nth-child(3) { transition-delay: 0.22s; }
+.detail.is-open .detail__type > *:nth-child(4) { transition-delay: 0.28s; }
+.detail.is-open .detail__type > *:nth-child(5) { transition-delay: 0.34s; }
+
+/* The project name carries NO visual weight on a slide — the folder on the
+   opening slide says whose deck this is, and the slides themselves are the case
+   study. It stays in the DOM because it is the panel's accessible name
+   (`aria-labelledby`) and the element that takes focus on open, so a screen
+   reader still announces the project; it simply is not drawn. Out of flow, so
+   it costs the grid nothing. */
+.detail__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+/* The title only ever receives focus programmatically (tabindex="-1"), so it is
+   announced on open without drawing a ring the user did not ask for. */
+.detail__title:focus, .detail__title:focus-visible { outline: none; }
+
+.detail__slide {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 58ch;
+  padding-top: clamp(4px, 0.8vh, 10px);
+}
+
+/* The page transition. `is-open` is added a frame after the panel is shown and
+   removed the instant Home (or Esc) is pressed, so this one rule gives both
+   halves: the slide's content arrives from the right, and leaves to the right. */
+.detail:not(.is-open) .detail__type,
+.detail:not(.is-open) .detail__media {
+  transform: translateX(var(--page-shift));
+}
+
+/* ── the slide swap ───────────────────────────────────────────────────────
+   A deck transition, not a morph: the whole slide — its words and its pictures
+   together — leaves in the direction of travel and the next one is pushed in
+   from the other side. The previous version animated each picture from where
+   the last slide had put it, which meant images sliding diagonally past each
+   other on every step; a slide is one object, so it moves as one. */
+/* The docked folder travels WITH the words. It only exists on the opening slide,
+   so this matters for exactly one step in each direction — but that step was the
+   broken-looking one: the text slid away while the folder stood still and then
+   blinked out of existence when `hide-folder` landed.
+
+   It is deliberately absent from the open/close rule below. `open()` measures the
+   folder's target rect for its flight home from the rail while `is-open` is still
+   off; if the card were parked a screen-width to the right at that moment, the
+   flight would aim off-screen. The card has its own choreography there — the
+   FLIP — and only joins in for slide-to-slide swaps. */
+/* Slide content: transform-only transitions. The content stays fully opaque the
+   whole way across — you see it leave and see the next one arrive. ease-in on the
+   way out accelerates it away; ease on the way in settles it naturally so the
+   pair reads as one push rather than two separate moves. */
+.detail__type,
+.detail__media {
+  transition: transform var(--swap-in-ms) var(--ease);
+}
+/* Folder card transition:
+   - Rail fly-in: 850ms spring curve (matches words sliding in on open)
+   - Slide-down hide / return: swap timing so it leaves and returns with the header.
+   The hide-folder state overrides transform with its own transition declaration
+   (higher specificity), so only the fly-in uses the 850ms curve. */
+.detail__card {
+  transition: transform var(--swap-in-ms) var(--ease);
+}
+
+.detail.is-out .detail__type,
+.detail.is-out .detail__media {
+  transition: transform var(--swap-out-ms) var(--ease-in);
+  transform: translateX(calc(var(--swap-shift) * -1));
+}
+.detail.is-out.dir-back .detail__type,
+.detail.is-out.dir-back .detail__media {
+  transform: translateX(var(--swap-shift));
+}
+/* When leaving the first slide (title slide), the header slides down — no fade,
+   same pure-translateY motion as the folder card. */
+.detail.is-out.from-first .detail__type,
+.detail.is-out.from-first .detail__card {
+  transition: transform var(--swap-out-ms) cubic-bezier(0.32, 1.06, 0.5, 1);
+  transform: translateY(100vh);
+}
+/* The docked folder's arrival on open. It rides the same distance and curve as the
+   words, so the cover screen slides in as one piece. Separate from the
+   `:not(.is-open)` rule the words use, because `close()` drops `is-open` before
+   `flipBack()` measures the folder — see the note in `open()`. */
+.detail.card-in .detail__card {
+  transform: translateX(var(--page-shift));
+  transition: none;
+}
+
+/* `transition: none` while the incoming offset is taken, so only the travel
+   back to rest is animated */
+.detail.is-in .detail__type,
+.detail.is-in .detail__media {
+  transform: translateX(var(--swap-shift));
+  transition: none;
+}
+.detail.is-in.dir-back .detail__type,
+.detail.is-in.dir-back .detail__media {
+  transform: translateX(calc(var(--swap-shift) * -1));
+}
+/* When returning to the first slide, the header enters upwards from the bottom and fades in */
+.detail.is-in.to-first .detail__type {
+  transform: translateY(100vh);
+  opacity: 0;
+  transition: none;
+}
+.detail.is-in.to-first .detail__card {
+  transform: translateY(100vh);
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .detail__type, .detail__media, .detail__card { transition: none; }
+  .detail.is-out .detail__type, .detail.is-out .detail__media,
+  .detail.is-in .detail__type, .detail.is-in .detail__media,
+  .detail:not(.is-open) .detail__type, .detail:not(.is-open) .detail__media,
+  .detail.is-out.from-first .detail__type, .detail.is-in.to-first .detail__type,
+  .detail.is-out.from-first .detail__card, .detail.is-in.to-first .detail__card {
+    transform: none;
+    opacity: 1;
+  }
+  /* the tuck is a position, not a flourish — it stays, it just gets there at once */
+  .detail.hide-folder .detail__card { transition: none; }
+  /* Getting out of the way is not motion. The blanket reduced-motion rule lower
+     down sets `.hero { opacity: 1 !important }` for the first-load reveal, which
+     would otherwise leave the hero showing THROUGH an open project. */
+  .stage.hero-away .hero { opacity: 0 !important; visibility: hidden; }
+}
+
+.detail__slide-label {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+
+/* The slide's claim. Sits under the project name, which stays constant across a
+   deck — so this is the line that actually changes as you page through. */
+.detail__slide-headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  /* Sized up to just under the ceiling: at two lines this measures ~90px, and
+     the paragraph beside it measures ~98px, so the claim never becomes the thing
+     that decides the band's height — which is what keeps the imagery on one line
+     across a deck. Going much past 3vw pushes a long claim to three lines and
+     starts moving it. */
+  font-size: clamp(1.55rem, 2.9vw, 3rem);
+  line-height: 1.06;
+  letter-spacing: -0.018em;
+  color: var(--fog);
+  text-wrap: balance;
+  max-width: 32ch;
+}
+.detail__slide-headline[hidden] { display: none; }
+/* Prose, not a list: a slide is a paragraph or two of plain language. The measure
+   is capped well short of the column so lines stay readable — 648px of 16px text
+   would run to about 80 characters a line, which is twice a comfortable read. */
+.detail__slide-body {
+  font-family: 'Montserrat', var(--font-body);
+  font-size: clamp(1.12rem, 1.42vw, 1.38rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--fog-2);
+  max-width: 42ch;
+  text-wrap: pretty;
+}
+
+/* The keyword treatment from the hero heading, reused inline: the words that
+   carry the sentence, in accent italics. `*marked*` in project-data.js. */
+.detail__slide-body em,
+.detail__slide-headline em,
+.detail__points em {
+  font-style: italic;
+  color: var(--accent-soft);
+  font-weight: inherit;
+}
+.detail__slide-body[hidden] { display: none; }
+
+/* Three to five short lines, which is what a reviewer actually reads on a slide. */
+.detail__points {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(7px, 1vh, 11px);
+  max-width: 48ch;
+}
+.detail__points[hidden] { display: none; }
+
+.detail__points li {
+  position: relative;
+  padding-left: 20px;
+  font-size: clamp(0.86rem, 1vw, 1.02rem);
+  line-height: 1.5;
+  color: var(--fog-2);
+}
+.detail__points li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 7px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.detail__actions { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(14px, 2vw, 26px); }
+
+.detail__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--accent);
+  color: var(--ink);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: background 0.24s var(--ease), transform 0.24s var(--ease);
+}
+.detail__cta[hidden] { display: none; }
+.detail__cta span { transition: transform 0.24s var(--ease); }
+.detail__cta:hover { background: var(--accent-soft); transform: translateY(-2px); }
+.detail__cta:hover span { transform: translateX(5px); }
+
+.detail__close {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 2px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--fog-2);
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.24s var(--ease), border-color 0.24s var(--ease);
+}
+.detail__close:hover { color: var(--fog); border-color: var(--accent); }
+
+/* the hero steps aside while a project is open */
+/* Opening a project sends the hero out to the LEFT; closing brings it back in
+   from the left. It is on its own class rather than `is-detail` because that one
+   is not removed until the folder has finished flying home — the hero has to
+   start moving the moment Home is pressed, not half a second later. */
+.hero {
+  transition: transform 0.72s var(--ease), visibility 0.72s var(--ease);
+}
+.stage.hero-away .hero {
+  /* no fade here either: the hero slides right off the side and back on */
+  visibility: hidden;              /* out of the tab order, not just invisible */
+  pointer-events: none;
+  transform: translateX(calc(var(--page-shift) * -1));
+}
+
+@media (max-width: 767px) {
+  .detail { grid-template-columns: 1fr; }
+  .detail__card { grid-column: 1; }
+  /* Same height as the folder in the row below it. `flex: 0 0 auto` matters:
+     the dock has no fixed height here, so flex-basis would otherwise win over
+     the height and collapse the card to its content. */
+  .folder--docked { flex: 0 0 auto; height: clamp(430px, 66svh, 560px); }
+  .detail__type { grid-column: 1; }
+  .detail__actions { gap: 14px; }
+  .detail__cta, .detail__close { min-height: 44px; }
+  .stage.is-detail .hero { display: none; }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .detail__card, .detail__type > * { opacity: 1 !important; transform: none !important; }
+}
+
+/* deck mode geometry: the row sinks to a peeking strip, and the slide takes
+   the room it leaves behind */
+@media (min-width: 768px) {
+  .stage.is-detail .detail {
+    /* One set of terms for the panel's box, reused below to derive how tall the
+       imagery may be. Kept as named steps so the two can never drift apart. */
+    --deck-trim: clamp(12px, 1.8vh, 22px);
+    --deck-pad-top: clamp(12px, 2vh, 22px);
+    --deck-pad-bottom: calc(var(--pill-h) + clamp(14px, 2.2vh, 26px));
+    --deck-band: clamp(148px, 16.5svh, 168px);
+    --deck-gap: clamp(14px, 2.2vh, 26px);
+    /* Air kept above and below the block no matter what. Without it a slide
+       carrying one big image expands to fill the panel edge to edge and sits
+       flush while a two-image slide breathes — centring alone does not give the
+       full ones any room, because the image simply grows into it. */
+    --deck-breathe: clamp(18px, 3.4vh, 44px);
+    /* the tallest the imagery may be, and — less a caption's worth — the tallest
+       a single image may be. Images carry it directly now that figures are
+       content-sized, which is what lets them sit on a shared baseline. */
+    --deck-media-max: calc(var(--deck-content) - var(--deck-band) - var(--deck-gap)
+                           - var(--deck-breathe) * 2);
+    --deck-caption: 28px;
+    /* what the content box actually measures, inside the padding */
+    --deck-content: calc(100svh - var(--head-h) - var(--deck-trim)
+                         - var(--deck-pad-top) - var(--deck-pad-bottom));
+
+    /* nothing sits at the bottom while a project is open, so take the full height */
+    height: calc(100svh - var(--head-h) - var(--deck-trim));
+    /* The pill sits at the bottom centre now, so the band it needs is reserved
+       there — which hands the whole top of the panel back to the content. */
+    padding-top: var(--deck-pad-top);
+    padding-bottom: var(--deck-pad-bottom);
+    /* EVERY slide is built the same way: the slide's words, then its imagery
+       taking whatever is left. One shape for the whole deck — no slide reflows
+       into a different arrangement as you page. */
+    /* `minmax`, not `auto`: the words reserve a band, so the imagery begins at
+       the same y as you page. The floor fits a real paragraph of the target
+       length — a claim plus a ~45-word paragraph, which sets four lines and
+       measures 140px — so copy fills the band instead of rattling around in it.
+       The lower bound is in px, not svh: the type scales with viewport WIDTH, so
+       a height-only floor would fall below the text on a short window.
+
+       Both rows are content-sized (`auto`, not `1fr`) and `align-content: center`
+       splits what is left over ABOVE and BELOW the pair. So the words and the
+       imagery read as one block sitting in the middle of the panel, rather than
+       hanging from the top with all the slack pooled underneath. */
+    grid-template-rows: minmax(var(--deck-band), auto) auto;
+    row-gap: var(--deck-gap);
+    align-content: center;
+    align-items: start;
+  }
+  .stage.is-detail .detail__type { grid-row: 1; }
+  .stage.is-detail .detail__media { grid-row: 2; }
+  /* The opening slide's folder is the hero of that slide, so it is deliberately
+     larger than the one in the rail — four columns instead of three, and taller. */
+  .stage.is-detail .detail__card {
+    grid-row: 1 / span 2;
+    height: min(calc(var(--card-h) * 1.32), 100%);
+    /* Transition only the folder's fly-in from the rail. */
+    transition: transform 850ms cubic-bezier(0.32, 1.06, 0.5, 1),
+                opacity    var(--swap-out-ms, 600ms) var(--ease);
+  }
+  .stage.is-detail .detail:not(.hide-folder) .detail__card { grid-column: 1 / span 4; }
+  .stage.is-detail .detail:not(.hide-folder) .detail__type,
+  .stage.is-detail .detail:not(.hide-folder) .detail__media { grid-column: 5 / span 8; }
+
+  /* ── the opening slide is a TITLE slide ─────────────────────────────────
+     It carries no imagery — the folder's own cover is the picture, and a second
+     one only competed with it — so the folder and the words take the full height
+     between them and share a centre line rather than hanging from the top. */
+  .stage.is-detail .detail:not(.hide-folder) .detail__card,
+  .stage.is-detail .detail:not(.hide-folder) .detail__type {
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+  /* one column, so the claim can run at title size with the points beneath it
+     instead of being squeezed into half of eight columns */
+  .stage.is-detail .detail:not(.hide-folder) .detail__slide {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(14px, 2vh, 22px);
+  }
+  .stage.is-detail .detail:not(.hide-folder) .detail__slide-headline {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: clamp(2.1rem, 3.9vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.024em;
+    max-width: 22ch;
+  }
+  .stage.is-detail .detail:not(.hide-folder) .detail__slide-body,
+  .stage.is-detail .detail:not(.hide-folder) .detail__points {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  /* hide-folder: the card is off-screen via CSS translateY; no sizing needed */
+  .stage.is-detail .detail.hide-folder .detail__type,
+  .stage.is-detail .detail.hide-folder .detail__media { grid-column: 1 / span 12; }
+}
+
+
+/* ── slide imagery ────────────────────────────────────────────────────────
+   Slides carry images more often than not, so the panel has a media region. It
+   always sits in the row beneath the slide's words — there is no second
+   arrangement — and takes whatever height the words leave behind.
+
+   Sizing rule: every image is shown WHOLE, never cropped. Each is scaled to fit
+   its column and the row, whichever binds first, with `width`/`height: auto` so
+   the aspect ratio is kept and nothing is stretched or letterboxed. Note that
+   this only ever scales an image down: export screens at ~1600px wide or they
+   will not fill the row. See assets/img/README.md.                          */
+.detail__media {
+  display: grid;
+  gap: var(--col-gap);
+  min-height: 0;
+  align-content: start;
+}
+.detail__media[hidden] { display: none; }
+/* A statement slide shows no pictures even if the slide carries some, so the type
+   is self-contained: marking a slide `statement` is the whole decision. Outside
+   the desktop block on purpose — it has to hold on mobile too. */
+.detail[data-slide-type="statement"] .detail__media { display: none; }
+
+.detail__media figure {
+  margin: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* not stretch: an image must be free to be narrower than its cell, or a
+     height cap would widen its box past its own aspect and letterbox it */
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.detail__media img {
+  display: block;
+  max-width: 100%;
+  min-height: 0;
+  border: 1px solid var(--rule);
+  /* lit from above: a bright top edge and a dark bottom one is what makes a
+     flat rectangle read as a panel with thickness */
+  border-top-color: rgba(255, 255, 255, 0.30);
+  border-bottom-color: rgba(0, 0, 0, 0.38);
+  border-radius: 14px;
+  background: var(--ink-raised);
+  /* two shadows, not one: a tight contact shadow that says "this is resting on
+     a surface", and a wide ambient one that says "and it is above it" */
+  box-shadow:
+    0 2px 8px -2px rgba(0, 0, 0, 0.55),
+    0 28px 54px -24px rgba(0, 0, 0, 0.88);
+}
+
+.detail__media figure.is-device {
+  background: linear-gradient(180deg, #24253f 0%, #141428 100%);
+  border-radius: 28px;
+  padding: 12px 11px 16px;
+  box-shadow:
+    0 2px 6px -2px rgba(0, 0, 0, 0.5),
+    0 36px 64px -28px rgba(0, 0, 0, 0.9);
+}
+.detail__media figure.is-device img {
+  border: 0;
+  border-radius: 16px;
+  box-shadow: none;
+  background: #0e0e18;
+}
+
+.detail__media figcaption {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fog-3);
+}
+
+/* A single image is never cropped — it sizes to whichever limit it meets first.
+   Deliberately sets NO max-height: this selector outranks `.detail__media img`,
+   so a cap here would outbid the real one and, now that figures are content-height
+   rather than filling their row, `100%` resolves against an indefinite height and
+   means "unbounded" — which let a lone image render 829px tall and, being
+   bottom-aligned, overflow upward across the slide's own words. */
+.detail__media[data-count="1"] img {
+  width: auto;
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  /* Outside deck mode the panel is a plain two-column read. */
+  .detail__type { grid-column: 4 / span 7; }
+  .detail.has-media .detail__type { grid-column: 4 / span 9; }
+  .detail.has-media .detail__media { grid-column: 4 / span 9; max-height: 100%; }
+
+  /* ── the one slide arrangement ──────────────────────────────────────────
+     The slide's words sit across the top in two columns — claim on the left,
+     points on the right — and the imagery takes the whole row beneath them.
+     Every slide, whatever it carries: the deck never changes shape under you. */
+  .detail__slide {
+    max-width: none;
+    padding-top: 0;
+    display: grid;
+    /* two halves, on the panel's own gutter — the split falls exactly where a
+       two-image row splits beneath it */
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--col-gap);
+    row-gap: clamp(10px, 1.4vh, 16px);
+    align-items: start;
+  }
+  /* the eyebrow runs across the top, so the claim and the points below it start
+     on ONE edge instead of the points aligning to a 0.68rem label */
+  .detail__slide-label { grid-column: 1 / -1; grid-row: 1; }
+  .detail__slide-headline { grid-column: 1; grid-row: 2; max-width: none; }
+  .detail__slide-body { grid-column: 2; grid-row: 2; }
+  .detail__points { grid-column: 2; grid-row: 2; max-width: none; }
+
+  /* Now that the row is content-sized, THIS is what stops a tall image pushing
+     the block past the panel: the most the imagery may take is the content box
+     less the words' band and the gap. Derived from the same terms as the panel's
+     own height, so a viewport of any depth stays consistent. `--slide-img-max`
+     is a second, softer ceiling; whichever is smaller wins. */
+  .detail.has-media .detail__media {
+    max-height: var(--deck-media-max);
+    align-self: stretch;
+    align-items: end;
+    /* the media runs on the panel's OWN twelve columns at the panel's own gutter,
+       so an asymmetric span still lands on a real grid line */
+    grid-template-columns: repeat(12, 1fr);
+    align-content: end;
+    align-items: end;
+  }
+
+  /* ── slide types ────────────────────────────────────────────────────────
+     A deck of fifteen identical slides reads as one long slide, however well
+     that one slide is built. The variation comes from what a slide IS, marked in
+     the content (`type`), not from shuffling boxes around per index — that was
+     tried and it just made everything small and busy.
+
+     Both types work by overriding the SAME budget the default layout uses, so
+     the derived image cap follows automatically and nothing can overflow.
+
+     `full` — this slide is about the picture. The words compress to a tighter
+     band and the imagery takes what that frees up, roughly a third taller. */
+  /* `.stage.is-detail .detail` is where the budget is declared, so an override
+     has to match at least that specificity or it is silently ignored — which is
+     exactly what happened the first time this was written. */
+  .stage.is-detail .detail[data-slide-type="full"] {
+    --deck-band: clamp(104px, 11.5svh, 124px);
+    --deck-breathe: clamp(10px, 1.6vh, 22px);
+  }
+  .detail[data-slide-type="full"] .detail__slide-body { max-width: 62ch; }
+
+  /* `statement` — a beat between sections: no imagery, the claim at title size,
+     sitting in the middle of the screen with nothing to compete with. */
+  .detail[data-slide-type="statement"] .detail__slide {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(14px, 2.2vh, 24px);
+  }
+  .detail[data-slide-type="statement"] .detail__slide-headline {
+    grid-column: 1;
+    grid-row: 2;
+    /* the only thing on the slide, so it carries the weight of one */
+    font-size: clamp(2.1rem, 4.3vw, 4.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.026em;
+    max-width: 21ch;
+  }
+  .detail[data-slide-type="statement"] .detail__slide-body {
+    grid-column: 1;
+    grid-row: 3;
+    max-width: 54ch;
+  }
+
+  /* ── where the pictures sit ─────────────────────────────────────────────
+     A two-column grid. Both pictures the same size, sitting level, on the
+     panel's own gutter — so spanning six of the media's twelve columns is
+     exactly half the width, and the pair's outer edges line up with the words
+     above it. No alternating, no offsets, no bleed: the imagery is the evidence,
+     and it reads fastest when every slide puts it in the same place. */
+  .detail__media[data-count="1"] figure { grid-column: 1 / -1; }
+  .detail__media[data-count="2"] figure:nth-child(1) { grid-column: 1 / span 6; }
+  .detail__media[data-count="2"] figure:nth-child(2) { grid-column: 7 / span 6; }
+  /* the right-hand picture hangs from the right edge, so if a real screenshot's
+     aspect makes it narrower than its column the pair's outer edges still agree */
+  .detail__media[data-count="2"] figure:nth-child(2) { align-items: flex-end; }
+  .detail__media[data-count="2"] figure:nth-child(2) figcaption { text-align: right; }
+  .detail__media figure { justify-content: flex-end; }
+  .detail__media img {
+    /* auto, NOT 100%: with a definite width a binding `max-height` clamps the
+       height and leaves the width alone, which stretches the picture. Left auto,
+       both axes scale together and the image is only ever smaller, never wrong. */
+    width: auto;
+    height: auto;
+    flex: 0 1 auto;
+    min-height: 0;
+    max-height: min(var(--slide-img-max),
+                    calc(var(--deck-media-max) - var(--deck-caption)));
+  }
+}
+
+@media (max-width: 767px) {
+  .detail__media { grid-column: 1; grid-template-columns: 1fr !important; }
+  .detail__media img { width: auto; height: auto; max-height: 44svh; }
+}
+
+/* ── ProjectRail ──────────────────────────────────────────────────────── */
+.rail { position: relative; pointer-events: none; }
+
+@media (min-width: 768px) {
+  .rail {
+    position: absolute;
+    left: 0; right: 0;
+    /* pulled up by --lift and padded back down, so the scroll box has room
+       for a lifted folder instead of clipping it */
+    top: calc(var(--rail-top) - var(--lift));
+    height: calc(var(--card-h) + var(--lift));
+    z-index: 60;             /* the row is never underneath page content */
+    /* opening a project slides the whole row down to its peeking position —
+       a transform, not `top`, so it animates on the compositor. Coming back it
+       uses a slightly overshooting curve, so the row rises past where it belongs
+       and drops the last few pixels into place: the movement you actually notice
+       on the way home is downward. */
+    transition: transform 0.84s var(--ease-settle);
+  }
+  /* Held at the peeking position — this is where the folder flies back to when a
+     project closes, so the row must be here to receive it. */
+  .stage.is-detail .rail {
+    transform: translateY(calc(100svh - var(--peek) - var(--rail-top)));
+  }
+  /* While a project is actually open, the row drops off the bottom entirely and
+     fades. Hidden, not removed: `close()` clears this class before measuring the
+     flight home, so the row is back in place to land on. */
+  .stage.is-detail.rail-away .rail {
+    transform: translateY(calc(100svh - var(--rail-top) + var(--lift) + 40px));
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.62s var(--ease), opacity 0.42s var(--ease);
+  }
+  .stage.is-detail.rail-away .folder-slot,
+  .stage.is-detail.rail-away .rail__end {
+    pointer-events: none;
+  }
+  /* It is in the dock now. Its own slot keeps its box — the FLIP home needs
+     somewhere to aim — but everything after it slides across to close the gap. */
+  .stage.is-detail .rail .folder-slot.is-current .folder { visibility: hidden; }
+  .stage.is-detail .rail .folder-slot.is-current ~ .folder-slot,
+  .stage.is-detail .rail .folder-slot.is-current ~ .rail__end {
+    transform: translateX(calc((var(--card-w) + var(--rail-gap)) * -1));
+  }
+}
+
+.rail__track {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rail-gap);
+  height: 100%;
+  padding-block: var(--lift) 0;
+  padding-inline: var(--gutter);
+  overflow-clip-margin: var(--lift);
+  overflow-x: auto;
+  overflow-y: hidden;   /* fallback */
+  overflow-y: clip;     /* a lifted folder must not make the rail scrollable */
+  overscroll-behavior-x: contain;
+  /* The clip headroom is a tall transparent band reaching up over the hero. It
+     must not intercept clicks or text selection there — only folders do. */
+  pointer-events: none;
+  scroll-padding-inline-start: var(--gutter);
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.rail__track::-webkit-scrollbar { display: none; }
+
+/* On pointer-fine desktop the rail is driven from JS, so CSS snap steps aside. */
+@media (min-width: 768px) and (pointer: fine) {
+  .rail__track { scroll-snap-type: none; }
+}
+.rail__track[data-dragging] { cursor: grabbing; }
+
+.rail__fallback { padding: 24px var(--gutter); display: grid; gap: 12px; }
+.rail__fallback a { color: var(--fog-2); text-decoration: underline; }
+
+/* end-of-rail panel: gives the trailing space a job */
+.rail__end {
+  flex: 0 0 auto;
+  pointer-events: auto;
+  width: var(--end-w);
+  height: 100%;
+  /* the row sits low, so this has to say its piece inside the visible band —
+     nothing below the fold is reachable on desktop */
+  padding-top: clamp(18px, 2.6vh, 30px);
+  border-top: 1px solid var(--rule);
+}
+.rail__end-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(7px, 1vh, 12px);
+  max-width: 38ch;
+}
+.rail__end-headline {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.8vw, 1.7rem);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+}
+.rail__end-kicker {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+.rail__end-line { font-size: 0.76rem; line-height: 1.55; color: var(--fog-2); max-width: 32ch; }
+
+.rail__end-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: clamp(2px, 0.6vh, 8px);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.rail__end-social a {
+  color: var(--fog-3);
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.24s var(--ease), border-color 0.24s var(--ease);
+}
+.rail__end-social a:hover { color: var(--fog); border-color: var(--accent); }
+.rail__end-link {
+  align-self: flex-start;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  transition: border-color 0.26s var(--ease), color 0.26s var(--ease);
+}
+.rail__end-link span { display: inline-block; transition: transform 0.26s var(--ease); }
+.rail__end-link:hover { border-color: var(--accent); }
+.rail__end-link:hover span { transform: translateX(6px); }
+
+/* ── ProjectFolderCard ────────────────────────────────────────────────── */
+.folder-slot {
+  position: relative;
+  flex: 0 0 auto;
+  pointer-events: auto;
+  transition: transform 0.52s var(--ease);
+  width: var(--card-w);
+  height: 100%;
+  scroll-snap-align: start;
+}
+/* the folder under the cursor paints over its neighbours */
+.folder-slot:hover, .folder-slot:focus-within { z-index: 4; }
+
+/* ── folder stock ─────────────────────────────────────────────────────────
+   Real folders come in different colours, and a shelf of identical ones reads
+   flat. Each folder sets its own three tones via `data-tone`; everything inside
+   it draws from these rather than the global paper tokens, so one attribute
+   re-stocks the whole card. The default is the manila the folder started as. */
+.folder {
+  --f-paper:   var(--paper);
+  --f-paper-2: var(--paper-2);
+  --f-paper-3: var(--paper-3);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: var(--graphite);
+  cursor: pointer;
+  transform: translateY(0);
+  transform-origin: 50% 100%;
+  transition: transform 0.44s var(--ease), filter 0.44s var(--ease), opacity 0.44s var(--ease);
+  filter: brightness(0.94);
+}
+
+/* ── tools, clipped on like a slip of paper ───────────────────────────────
+   A real folder gets a note paperclipped to it, so the tools live on one rather
+   than in another row of metadata. It sits at the top-RIGHT because the index
+   tab already owns the top-left, and it is `pointer-events: none` so it can
+   overhang the folder's edge without eating clicks meant for the folder. */
+.folder__attach {
+  position: absolute;
+  /* On the COVER, top-right — never over category / title / blurb. */
+  top: 8px;
+  bottom: auto;
+  right: 8px;
+  z-index: 6;
+  width: clamp(84px, 30%, 112px);
+  max-width: 42%;
+  transform: rotate(2.2deg);
+  transform-origin: 50% 0;
+  pointer-events: none;
+}
+.folder__attach[hidden] { display: none; }
+
+.folder__attach-slip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 8px 7px;
+  background: linear-gradient(to bottom, var(--paper), var(--paper-2));
+  color: var(--ink);
+  border-radius: 2px;
+  /* lifted off the folder it is clipped to, hence its own shadow */
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) inset,
+              0 10px 18px -10px rgba(0, 0, 0, 0.8);
+}
+
+/* the clip is drawn over the slip's top edge and reaches above it, so it reads
+   as holding the paper against the folder rather than sitting beside it */
+.folder__clip {
+  position: absolute;
+  /* upright, over the slip's top edge. It can overhang the SLIP now without
+     leaving the folder, because the slip sits well inside the folder's own
+     bounds rather than up in the hero's space. */
+  /* The SVG is 22×54, so its rendered height is width × 2.45, and the multiplier
+     below is the fraction standing above the slip. It can be a generous third now
+     that the slip sits on the folder's paper: the overhang has card stock behind
+     it, so it reads as gripping both. When the slip was flush with the folder's
+     top edge this same overhang hung in the dark and looked like it was dangling. */
+  --clip-w: clamp(13px, 4.4%, 17px);
+  top: calc(var(--clip-w) * 2.45 * -0.32);
+  left: 50%;
+  width: var(--clip-w);
+  margin-left: calc(var(--clip-w) / -2);
+  height: auto;
+  z-index: 2;
+  color: #9aa0ad;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.55));
+}
+
+.folder__attach-label {
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--graphite-3);
+}
+.folder__attach-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px 6px;
+  font-size: 0.57rem;
+  line-height: 1.34;
+  color: var(--graphite);
+}
+/* a hairline dot between tools, so they read as a list without commas */
+.folder__attach-tool + .folder__attach-tool::before {
+  content: '';
+  display: inline-block;
+  width: 3px; height: 3px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--graphite-3);
+  vertical-align: 2px;
+}
+
+/* Four stocks. Kept close in value so the row still reads as one set — a folder
+   changing colour should register as different card stock, not as a different
+   brand. All four keep the same dark text on them, so contrast is unaffected. */
+.folder[data-tone="sage"] {
+  --f-paper:   #e7eae2;
+  --f-paper-2: #dae0d3;
+  --f-paper-3: #ccd4c4;
+}
+.folder[data-tone="kraft"] {
+  --f-paper:   #ece2d2;
+  --f-paper-2: #ded2bd;
+  --f-paper-3: #d0c3ab;
+}
+.folder[data-tone="slate"] {
+  --f-paper:   #e4e6eb;
+  --f-paper-2: #d5d9e1;
+  --f-paper-3: #c6cbd6;
+}
+
+/* second sheet, peeking out of the folder */
+.folder::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 30px -7px -9px 8px;
+  background: var(--f-paper-3);
+  border-radius: 2px;
+  box-shadow: 0 30px 60px -34px rgba(0, 0, 0, 0.9);
+}
+
+.folder:hover, .folder:focus-visible {
+  transform: translateY(calc(var(--hover-lift) * -1));
+  filter: brightness(1);
+}
+
+/* ── deck mode ────────────────────────────────────────────────────────────
+   The folder design never changes — not its width, padding, type or contents.
+   Opening a project only moves the row down so just each number shows, dims it
+   so the slide leads, and lifts one on hover. The folder that is open is not
+   here at all: it has moved into the dock, leaving its place empty.        */
+.stage.is-detail .rail .folder { transform: translateY(0); filter: brightness(0.8) saturate(0.7); }
+.stage.is-detail .rail .folder-slot:hover .folder,
+.stage.is-detail .rail .folder-slot:focus-within .folder {
+  transform: translateY(calc(var(--peek-lift) * -1));
+  filter: brightness(1);
+}
+
+/* the closing panel belongs to the landing, not to a deck */
+.rail__end { transition: opacity 0.3s var(--ease), width 0.44s var(--ease); }
+.stage.is-detail .rail__end {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  border-top-color: transparent;
+  pointer-events: none;
+}
+
+/* the tab */
+.folder__tab {
+  display: flex;
+  align-items: center;
+  /* Content-sized, and `align-self` is what makes that true: the folder is a
+     column flex container, so a `width: auto` item STRETCHES to its full width and
+     the max-width was all that stopped it — which left a 222px tab and no room
+     beside it. A folder tab is a small tab. */
+  align-self: flex-start;
+  width: auto;
+  max-width: 58%;
+  padding: 7px 15px 6px;
+  background: var(--f-paper-2);
+  border-radius: 3px 10px 0 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.folder__tab-index {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+  color: var(--graphite-2);
+  transition: color 0.3s var(--ease);
+}
+/* Accent marks intent, not position: a folder under the cursor, or the project
+   currently open. The resting row reads as one set of numbers. */
+.folder:hover .folder__tab-index,
+.folder:focus-visible .folder__tab-index { color: var(--accent-deep); }
+
+/* the body */
+.folder__body {
+  position: relative;      /* the sheets are positioned against this */
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1vh, 13px);
+  padding: clamp(16px, 1.5vw, 24px);
+  background: var(--f-paper);
+  border-radius: 0 3px 3px 3px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 34px 66px -36px rgba(0, 0, 0, 0.92);
+}
+
+.folder__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-right: 0;
+  padding-bottom: clamp(7px, 0.9vh, 11px);
+  border-bottom: 1px solid rgba(26, 26, 30, 0.14);
+}
+.folder__category {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--graphite-2);
+}
+.folder__year {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  color: var(--graphite-3);
+  white-space: nowrap;
+}
+
+.folder__title {
+  padding-right: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.85vw, 2rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.folder__blurb {
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--graphite-2);
+}
+
+/* Always on show. It used to expand on hover, which stole height from the cover
+   and made the image visibly shrink — hover should move the folder, not reflow
+   its insides. */
+/* ── role and scope, as written on the sheet ──────────────────────────────
+   Two fields side by side rather than two lines of "label: value". They used to
+   be one size and one colour with the label inline, which gave the eye nothing
+   to land on — you had to read it to find out what it was. Now the label is a
+   small caps kicker above its value, the value carries the weight, and a
+   hairline separates the two fields the way a ruled form would.
+
+   It lives only on the sheet that pulls out of the folder, so it can afford the
+   width: two columns, the scope column wider because its value is longer. */
+.folder__meta {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  column-gap: clamp(12px, 1.6vw, 22px);
+}
+.folder__meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+/* the ruled divide between the two fields */
+.folder__meta-row + .folder__meta-row {
+  padding-left: clamp(12px, 1.6vw, 22px);
+  border-left: 1px solid rgba(26, 26, 30, 0.16);
+}
+.folder__meta-key {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+.folder__meta-value {
+  font-family: var(--font-display);
+  font-size: clamp(0.82rem, 0.95vw, 1rem);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* cover */
+/* ── the cover, and the sheets tucked inside it ───────────────────────────
+   Role and scope are no longer printed on the resting card — they are on the
+   front sheet, which slides up out of the folder on hover. That hands the cover
+   the height those two rows used to take, and gives the hover something to say
+   rather than just lifting the card. */
+.folder__cover {
+  position: relative;
+  flex: 1;
+  min-height: 120px;
+  overflow: hidden;              /* the sheets are clipped INTO the folder */
+  background: var(--f-paper-2);
+  border-radius: 2px;
+}
+
+.folder__pages {
+  position: absolute;
+  top: 0;
+  left: 3%;
+  right: 3%;
+  height: 62%;
+  /* Behind the folder's face. `.folder` sets `isolation: isolate`, so a negative
+     z-index here paints under the body's own background without escaping the
+     folder — which is what lets the sheets hide completely at rest. */
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Filed in the folder: each sheet's top sits level with the folder's face, so
+   the face covers them entirely. On hover they rise UP out of the top edge —
+   which is the way papers actually come out of a folder. They used to slide out
+   of the bottom, which is the one direction a folder does not open. */
+.folder__page {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  /* the documents stay white-ish whatever colour the folder itself is */
+  background: linear-gradient(to bottom, #fdfcfa, #f4f1ea);
+  border-radius: 3px 3px 1px 1px;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.9) inset,
+              0 -12px 24px -14px rgba(0, 0, 0, 0.6);
+  transform: translateY(0);
+  transition: transform 0.52s var(--ease);
+}
+/* Nearly the folder's own width — they are the documents it holds, not notes.
+   Offset a couple of percent each so the stack still reads as loose paper. */
+.folder__page--1 { z-index: 3; left: 0;  right: 3%; }
+.folder__page--2 { z-index: 2; left: 2%; right: 1%; }
+.folder__page--3 { z-index: 1; left: 4%; right: 0;  }
+
+/* The front sheet comes out furthest, since it carries the words — and far enough
+   that BOTH meta rows clear the folder's top edge. At 62px the scope row still sat
+   inside the tab band, where the year tab (opaque paper, drawn above) covered its
+   lower half. All three slant to the right, by decreasing amounts, so the stack
+   fans one way rather than wobbling. */
+.folder:hover .folder__page--1,
+.folder:focus-visible .folder__page--1 { transform: translateY(-96px) rotate(2.8deg); }
+.folder:hover .folder__page--2,
+.folder:focus-visible .folder__page--2 { transform: translateY(-62px) rotate(1.8deg); }
+.folder:hover .folder__page--3,
+.folder:focus-visible .folder__page--3 { transform: translateY(-34px) rotate(0.9deg); }
+
+/* Not on the docked folder. In a case study the card sits at the top of the panel,
+   so sheets rising out of it would push into the masthead — and the slide's own
+   words already carry the project's details. */
+.folder--docked .folder__pages { display: none; }
+
+/* ── the sticky-note variant ──────────────────────────────────────────────
+   Not everything gets paperclipped. One folder carries a sticky note instead:
+   no clip, a squarer block, a warmer stock, and a stronger tilt — it was stuck
+   on by thumb, not filed. `data-attach="note"` on the folder switches it. */
+.folder[data-attach="note"] .folder__clip { display: none; }
+
+.folder[data-attach="note"] .folder__attach {
+  top: 8px;
+  right: 8px;
+  width: clamp(72px, 26%, 96px);
+  transform: rotate(-3.4deg);
+}
+.folder[data-attach="note"] .folder__attach-slip {
+  --note:    #f8ecac;
+  --note-2:  #f2e296;
+  --note-lit:#fdf8d8;   /* the back of the sheet, seen through the curl */
+  --curl: 16px;
+
+  position: relative;
+  aspect-ratio: auto;
+  padding: 8px 8px 12px;
+  background: linear-gradient(172deg, var(--note) 0%, var(--note-2) 100%);
+  border-radius: 1px;
+  /* sits ON the folder, so a short contact shadow rather than a floating one */
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.42) inset,
+              0 7px 13px -7px rgba(0, 0, 0, 0.7);
+}
+
+/* ── the peeled corner ────────────────────────────────────────────────────
+   Two triangles filling one square at the bottom-right. `::after` is the part
+   of the note that is NO LONGER THERE — filled with the folder's own stock, so
+   it reads as the corner having lifted away from the card. `::before` is the
+   lifted flap itself, the same triangle mirrored across the fold, showing the
+   lighter back of the sheet and casting a shadow inward.
+
+   The shadow is a `filter`, not a `box-shadow`: both triangles are made with
+   `clip-path`, and a box-shadow would be clipped away with the shape. */
+.folder[data-attach="note"] .folder__attach-slip::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: var(--curl);
+  height: var(--curl);
+  background: var(--f-paper);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+.folder[data-attach="note"] .folder__attach-slip::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--curl);
+  height: var(--curl);
+  background: linear-gradient(318deg, var(--note-2) 0%, var(--note) 44%, var(--note-lit) 100%);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  filter: drop-shadow(-2px -2px 3px rgba(0, 0, 0, 0.34));
+}
+
+.folder[data-attach="note"] .folder__title { padding-right: 0; }
+.folder[data-attach="note"] .folder__attach-label { color: #8a7434; }
+.folder[data-attach="note"] .folder__attach-list { color: #4a3f18; }
+.folder[data-attach="note"] .folder__attach-tool + .folder__attach-tool::before {
+  background: #a08b45;
+}
+
+/* the meta reads off the front sheet */
+.folder__page--1 .folder__meta {
+  /* at the sheet's TOP, because that is the strip that clears the folder's edge */
+  padding: 9px clamp(11px, 1.2vw, 16px) 0;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease) 0.14s;
+}
+.folder:hover .folder__page--1 .folder__meta,
+.folder:focus-visible .folder__page--1 .folder__meta { opacity: 1; }
+
+/* No hover to give: on a touch screen the sheets are already out, or the role and
+   scope would be unreachable for a sighted visitor entirely. This has to come
+   AFTER the resting rules above — it is the same specificity, so source order is
+   what decides it, and placed before them it lost silently. */
+@media (hover: none) {
+  .folder__page--1 { transform: translateY(-96px) rotate(2.8deg); }
+  .folder__page--2 { transform: translateY(-62px) rotate(1.8deg); }
+  .folder__page--3 { transform: translateY(-34px) rotate(0.9deg); }
+  .folder__page--1 .folder__meta { opacity: 1; transition: none; }
+}
+.folder__cover-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.01);
+  transition: transform 0.7s var(--ease);
+}
+.folder:hover .folder__cover-img { transform: scale(1.045); }
+
+.folder__cover[data-missing]::before {
+  content: 'Cover placeholder';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--graphite-3);
+  background: repeating-linear-gradient(135deg, rgba(26, 26, 30, 0.05) 0 1px, transparent 1px 10px);
+}
+
+.folder__cover-tag {
+  position: absolute;
+  left: 10px; top: 10px;
+  padding: 4px 8px;
+  background: rgba(239, 234, 225, 0.92);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--graphite-2);
+}
+
+/* ── tablet ───────────────────────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* --card-h is trimmed here so the folder still fits the deck panel once the
+     pill's band is reserved — the rail and the dock must stay the same height */
+  :root { --card-w: clamp(240px, 34vw, 300px); }
+  .masthead__identity { grid-column: 1 / span 6; }
+  .portrait { grid-column: 1 / span 4; }
+  .hero__type, .hero__facts { grid-column: 5 / span 8; }
+
+  /* a folder needs more than three of twelve columns at this width */
+  .detail__card { grid-column: 1 / span 4; }
+  .detail__type,
+  .detail.has-media .detail__type,
+  .detail.has-media .detail__media { grid-column: 5 / span 8; }
+}
+
+/* short desktop viewports: give the folders more of the screen */
+@media (min-width: 1024px) and (max-height: 760px) {
+  :root { --card-ratio: 1.18; --head-h: 60px; }
+  .masthead { padding-block: 8px; }
+}
+
+/* ── mobile: vertical flow, native touch scrolling, no clipping ───────── */
+@media (max-width: 767px) {
+  :root { --card-h: auto; --card-w: min(78vw, 330px); --end-w: min(78vw, 320px); --lift: 0px; }
+
+  .stage { min-height: 100%; }
+
+  .masthead {
+    grid-template-columns: 1fr;
+    row-gap: 14px;
+    align-items: start;
+  }
+  .masthead__identity { grid-column: 1; }
+  .masthead__nav { grid-column: 1; grid-row: 2; justify-self: start; }
+  .masthead__nav ul { gap: 18px; }
+  .masthead__nav a { font-size: 0.78rem; padding: 6px 0; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    row-gap: clamp(18px, 4vh, 28px);
+    padding-top: clamp(22px, 5vh, 36px);
+  }
+  .portrait { grid-column: 1; grid-row: auto; }
+  .portrait__frame { aspect-ratio: 4 / 5; max-height: 52svh; flex: none; }
+  .hero__type, .hero__facts { grid-column: 1; grid-row: auto; }
+  .hero__heading { font-size: clamp(1.95rem, 8.6vw, 2.9rem); max-width: none; }
+  .hero__support { max-width: none; font-size: 0.88rem; }
+
+  .rail-controls { display: none; }                      /* landing: swipe instead */
+  .stage.is-detail .rail-controls {
+    display: flex;
+    justify-content: flex-start;
+    gap: 14px;
+    padding-top: 8px;
+  }
+  .rail-btn { width: 48px; height: 48px; }
+
+  .rail__track {
+    align-items: stretch;
+    padding-bottom: clamp(28px, 6vh, 48px);
+    scroll-snap-type: x mandatory;
+  }
+  .folder-slot { height: auto; }
+  .folder { height: clamp(430px, 66svh, 560px); transform: none; filter: none; }
+  .folder::after { inset: 30px -6px -8px 7px; }
+  .folder__title { font-size: 1.55rem; }
+  /* the slip is taller here (its list wraps in a narrower folder), so it reaches
+     into the blurb — which is the one thing that can afford to give way */
+  .folder__blurb { font-size: 0.82rem; padding-right: 0; }
+  .rail__end { height: auto; padding-top: 22px; }
+}
+
+/* ── reduced motion ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .hero, .portrait { transform: none !important; opacity: 1 !important; }
+  .folder { transform: none !important; }
+  .folder:hover, .folder:focus-visible { transform: translateY(-6px) !important; }
+  .atmosphere__light { display: none; }
+  .portrait__img { transform: none !important; }
+  /* the row still moves — it just gets there immediately */
+  .rail, .rail-controls { transition: none !important; }
+}
+
+/* ── mobile deck mode ─────────────────────────────────────────────────────
+   Nothing sinks or flies on a phone: the page scrolls, the row keeps its place,
+   and the open project is simply marked. Declared last so it wins over the
+   desktop deck rules.                                                      */
+@media (max-width: 767px) {
+  .stage.is-detail .rail .folder { filter: none; transform: none; }
+  .stage.is-detail .rail .folder-slot.is-current .folder {
+    visibility: visible;
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .stage.is-detail .rail__end { display: none; }
+  /* Same height as the folder in the row below it. `flex: 0 0 auto` matters:
+     the dock has no fixed height here, so flex-basis would otherwise win over
+     the height and collapse the card to its content. */
+  .folder--docked { flex: 0 0 auto; height: clamp(430px, 66svh, 560px); }
+}
+
+/* ===========================================================================
+   Softboard — the case study is a wall you look around, not a slide deck.
+   Photos on CSS thumbtacks. Copy on torn lined notebook paper. A slack
+   coral thread runs beat to beat. Desktop pans; phone walks the thread.
+   =========================================================================== */
+
+.detail.detail--board {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+
+.detail.detail--board[hidden] { display: none; }
+
+@media (min-width: 768px) {
+  .detail.detail--board {
+    position: absolute;
+    left: 0; right: 0;
+    top: var(--head-h);
+    height: calc(var(--rail-top) - var(--head-h));
+    padding: 0;
+  }
+}
+
+
+/* Landing stays still. Felt tray slides in from the right. Folder flies on top. */
+.stage.is-detail .hero,
+.stage.is-detail.hero-away .hero {
+  transform: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+.stage.is-detail .rail,
+.stage.is-detail.rail-away .rail {
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+.stage.is-returning .detail__card,
+.stage.is-returning .detail.detail--board .detail__card,
+.stage.is-detail.is-returning .detail.detail--board .detail__card,
+.stage.is-detail.is-returning .detail.detail--board:not(.hide-folder) .detail__card {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+.stage.is-returning .rail .folder-slot.is-current .folder {
+  visibility: visible !important;
+}
+.stage.is-returning .rail .folder-slot.is-current ~ .folder-slot,
+.stage.is-returning .rail .folder-slot.is-current ~ .rail__end {
+  transform: none !important;
+}
+.stage.is-detail .detail.detail--board {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 100svh;
+  padding: 0;
+  padding-top: var(--head-h);
+  display: block;
+  z-index: 70;
+  grid-template-rows: none;
+  grid-template-columns: none;
+  row-gap: 0;
+  column-gap: 0;
+  align-content: stretch;
+  align-items: stretch;
+  overflow: hidden;
+  background: transparent;
+  transform: none;
+}
+.stage.is-detail .detail.detail--board .board {
+  transform: translateX(110%);
+  transition: transform 0.8s cubic-bezier(.22, .82, .18, 1);
+}
+.stage.is-detail .detail.detail--board.is-open .board {
+  transform: translateX(0);
+}
+.detail.detail--board .thumbtack--dock {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  z-index: 20;
+}
+@media (max-width: 767px) {
+  .stage.is-detail .hero {
+    display: block !important;
+  }
+}
+
+/* Opened folder pins onto the felt tray. */
+.detail.detail--board .detail__card,
+.stage.is-detail .detail.detail--board .detail__card,
+.stage.is-detail .detail.detail--board:not(.hide-folder) .detail__card {
+  display: none !important;
+}
+.detail.detail--board .folder--docked {
+  display: flex;
+  height: auto;
+  transform: rotate(-3.2deg);
+  transform-origin: 50% 12px;
+}
+.detail.detail--board .folder--docked .folder__cover,
+.detail.detail--board .folder--docked .folder__cover-img,
+.detail.detail--board .folder--docked .folder__cover-tag,
+.detail.detail--board .folder--docked .folder__attach {
+  display: none !important;
+}
+.detail.detail--board .folder--docked .folder__title {
+  font-size: clamp(1.65rem, 2.1vw, 2.15rem);
+}
+
+.detail.detail--board .detail__card {
+  will-change: transform;
+}
+.detail.detail--board.is-open .folder--docked {
+  transform: rotate(-3.2deg);
+}
+
+.rail-controls__zoom { display: none !important; }
+.detail.detail--board .board__thread { display: none !important; }
+
+.detail.detail--board .board {
+  position: absolute;
+  top: var(--head-h);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.detail.detail--board .board.is-grabbing,
+.detail.detail--board .board.is-grabbing * {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.detail.detail--board .board__world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2800px;
+  height: 1600px;
+  transform: translate(0px, 0px);
+  will-change: transform;
+  overflow: visible;
+  background: none;
+}
+
+.detail.detail--board .board__thread {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.detail.detail--board .board__thread [data-board-thread-shadow] {
+  fill: none;
+  stroke: #6a241c;
+  stroke-width: 11;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.28;
+  transform: translate(1.6px, 2px);
+}
+
+.detail.detail--board .board__thread [data-board-thread-core] {
+  fill: none;
+  stroke: #9a3228;
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.detail.detail--board .board__thread [data-board-thread-cord] {
+  fill: none;
+  stroke: #f05a45;
+  stroke-width: 6.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.detail.detail--board .board__thread [data-board-thread-highlight] {
+  fill: none;
+  stroke: #f7b4a6;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 7 11;
+  opacity: 0.85;
+}
+
+/* Overhand knot: a filled pretzel of the coral cord, not two overlapping ovals.
+   Brass pin stays a CSS thumbtack on the paper; this sits slightly offset in JS. */
+.detail.detail--board .board__thread [data-knot-rope] {
+  fill: #e24e3a;
+  stroke: #8a2e24;
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.detail.detail--board .beat {
+  position: absolute;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  align-content: start;
+  width: 92vw;
+  height: auto;
+  padding: 28px 56px 56px 56px;
+  row-gap: calc(clamp(48px, 8vh, 104px) * var(--photo-fit, 1));
+  column-gap: clamp(36px, 5vw, 88px);
+  overflow: visible;
+  pointer-events: none;
+  --photo-fit: 1;
+}
+
+.detail.detail--board .beat__paper,
+.detail.detail--board .board-photo,
+.detail.detail--board .beat__cta {
+  pointer-events: auto;
+}
+
+/* Cream stock only: red margin line, no all-over blue rules.
+   Rules live on body/points so they sit in the descender gutter. */
+.detail.detail--board .beat__sheet {
+  position: relative;
+  z-index: 6;
+  grid-column: 2;
+  grid-row: 1;
+  width: min(38vw, 440px);
+  margin: 0 auto 8px;
+}
+
+.detail.detail--board .beat__paper {
+  position: relative;
+  z-index: 6;
+  width: 100%;
+  margin: 0;
+  padding: 56px 40px 32px 48px;
+  color: #2a2420;
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 400;
+  line-height: 1.25;
+  background-color: #f3ead2;
+  background-image: linear-gradient(rgba(196, 69, 50, 0.42), rgba(196, 69, 50, 0.42));
+  background-size: 1.5px 100%;
+  background-position: 32px 0;
+  background-repeat: no-repeat;
+  box-shadow:
+    0 3px 0 rgba(255, 248, 230, 0.7) inset,
+    0 18px 28px -16px rgba(18, 32, 34, 0.5);
+}
+
+/* Torn deckle tops: 20+ irregular points, no repeating tooth pitch.
+   Long almost-flat run, one deep bite, one tiny nick. Square sides/bottom. */
+.detail.detail--board .beat:nth-child(3n+1) .beat__paper {
+  clip-path: polygon(
+    0% 8px,
+    2.8% 7px, 6.4% 11px, 10% 9px, 12.2% 1px, 16.8% 8px,
+    21% 10px, 25.6% 7px, 30% 6px, 35.4% 5px, 41% 5px,
+    46.8% 4px, 52% 4px, 57.6% 5px, 63% 4px, 68.4% 5px,
+    72% 13px, 75.2% 28px, 78.8% 10px, 83% 8px, 87.5% 15px,
+    92% 6px, 96.4% 9px, 100% 4px,
+    100% 100%,
+    0% 100%
+  );
+}
+
+.detail.detail--board .beat:nth-child(3n+2) .beat__paper {
+  clip-path: polygon(
+    0% 10px,
+    4.2% 14px, 8% 12px, 11.6% 16px, 14.8% 27px, 18% 9px,
+    22.4% 11px, 27% 8px, 32.6% 6px, 37% 7px, 42.2% 6px,
+    47% 8px, 52.4% 7px, 57% 5px, 62.8% 5px, 68% 4px,
+    73.5% 4px, 79% 5px, 84.2% 4px, 88% 6px, 91.4% 1px,
+    94.8% 7px, 100% 5px,
+    100% 100%,
+    0% 100%
+  );
+}
+
+.detail.detail--board .beat:nth-child(3n+3) .beat__paper {
+  clip-path: polygon(
+    0% 5px,
+    3.6% 8px, 7% 4px, 9.8% 28px, 13.4% 9px, 18% 12px,
+    23.2% 8px, 28% 7px, 33.6% 1px, 38% 6px, 43.4% 8px,
+    48% 5px, 53.2% 5px, 58% 4px, 64.4% 4px, 70% 5px,
+    75.6% 4px, 80% 5px, 84.8% 16px, 89% 7px, 93.6% 12px,
+    97.2% 3px, 100% 8px,
+    100% 100%,
+    0% 100%
+  );
+}
+
+.detail.detail--board .beat__paper:focus,
+.detail.detail--board .beat__paper:focus-visible {
+  outline: 2px solid #f05a45;
+  outline-offset: 6px;
+}
+
+.detail.detail--board .beat__label {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #3a5a5c;
+  line-height: 1.3;
+}
+
+.detail.detail--board .beat__headline {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2.05rem;
+  line-height: 1.16;
+  letter-spacing: -0.018em;
+  color: #2a2420;
+  text-wrap: balance;
+}
+
+.detail.detail--board .beat__body,
+.detail.detail--board .beat__points {
+  --rule: 30px;
+}
+
+.detail.detail--board .beat__body {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: var(--rule);
+  color: #2a2420;
+  max-width: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--rule) - 1px),
+    rgba(74, 110, 148, 0.18) calc(var(--rule) - 1px),
+    rgba(74, 110, 148, 0.18) var(--rule)
+  );
+  background-size: 100% var(--rule);
+  background-position: 0 0;
+}
+
+.detail.detail--board .beat__headline em,
+.detail.detail--board .beat__body em,
+.detail.detail--board .beat__points em {
+  font-style: italic;
+  color: #8f3428;
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+.detail.detail--board .beat__points {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail.detail--board .beat__points li {
+  --rule: 30px;
+  position: relative;
+  padding-left: 18px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: var(--rule);
+  color: #2a2420;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--rule) - 1px),
+    rgba(74, 110, 148, 0.18) calc(var(--rule) - 1px),
+    rgba(74, 110, 148, 0.18) var(--rule)
+  );
+  background-size: 100% var(--rule);
+  background-position: 0 0;
+}
+
+.detail.detail--board .beat__points li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.7em;
+  width: 7px;
+  height: 1px;
+  background: #f05a45;
+}
+
+.detail.detail--board .beat__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 10px 16px;
+  background: #c44532;
+  color: #f3ead2;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.detail.detail--board .beat__cta:hover { background: #e24e3a; color: #f3ead2; }
+
+.detail.detail--board .thumbtack {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  z-index: 6;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  pointer-events: none;
+}
+
+.detail.detail--board .thumbtack::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #f0d9a8 0 16%, #d4a054 44%, #a07838 74%, #6a5228 100%);
+  box-shadow:
+    0 1px 0 rgba(246, 226, 186, 0.55) inset,
+    0 3px 5px rgba(28, 24, 16, 0.42);
+}
+
+.detail.detail--board .thumbtack::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, rgba(248, 232, 196, 0.88), transparent 65%);
+}
+
+/* Pin variance: size, scale, and brass hue, no new assets. */
+.detail.detail--board .beat:nth-child(3n+1) .thumbtack {
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+}
+.detail.detail--board .beat:nth-child(3n+2) .thumbtack {
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+}
+.detail.detail--board .beat:nth-child(3n) .thumbtack {
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+}
+.detail.detail--board .beat:nth-child(odd) .thumbtack::before {
+  transform: scale(1.08);
+}
+.detail.detail--board .beat:nth-child(3n) .thumbtack::before {
+  filter: hue-rotate(-12deg) saturate(1.05);
+}
+.detail.detail--board .beat:nth-child(3n+2) .thumbtack::before {
+  filter: hue-rotate(8deg) brightness(1.05);
+}
+
+.detail.detail--board:not(.is-home) .beat > .thumbtack--paper {
+  display: none;
+}
+
+.detail.detail--board .thumbtack--blank {
+  top: 0;
+  left: 50%;
+  margin-left: -10px;
+}
+
+
+.detail.detail--board .beat:not(.is-active) .beat__tools { display: none; }
+.detail.detail--board .beat__tools {
+  position: absolute;
+  top: 22px;
+  right: -36px;
+  width: 128px;
+  padding: 10px 10px 16px;
+  background: #f3e27a;
+  color: #4a3f18;
+  transform: rotate(5deg);
+  transform-origin: 20% 0;
+  z-index: 11;
+  pointer-events: none;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.45) inset, 0 12px 18px -12px rgba(12,22,24,0.5);
+}
+.detail.detail--board .beat__tools-label {
+  margin: 0 0 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a7434;
+}
+.detail.detail--board .beat__tools-list {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  line-height: 1.3;
+  color: #4a3f18;
+}
+
+.detail.detail--board .thumbtack--thread {
+  /* Sibling of the torn paper, sitting in the torn margin ABOVE the words
+     so clip-path cannot swallow it. Right side: rope leaves east, not
+     across the headline. */
+  top: 6px;
+  left: auto;
+  right: 10%;
+  margin-left: 0;
+  z-index: 9;
+}
+
+.detail.detail--board .beat__media {
+  position: relative;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: clamp(28px, 4.5vw, 80px);
+  width: max-content;
+  max-width: none;
+  flex: 0 0 auto;
+  margin-top: 12px;
+  min-height: 0;
+  z-index: 5;
+}
+
+.detail.detail--board .board-photo {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: start;
+  width: min(28vw, 420px);
+  max-width: 420px;
+  flex: 0 0 auto;
+  height: auto;
+  margin: 0;
+  aspect-ratio: auto;
+  z-index: 5;
+  --tilt: 0deg;
+  transform: rotate(var(--tilt));
+  transform-origin: 50% 12px;
+}
+
+.detail.detail--board .beat[data-spread="triangle"] .beat__media .board-photo:nth-child(1) {
+  margin-top: calc(12px * var(--photo-fit, 1));
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.detail.detail--board .beat[data-spread="triangle"] .beat__media .board-photo:nth-child(2) {
+  position: relative;
+  top: auto;
+  right: auto;
+  margin: 0;
+}
+
+.detail.detail--board .board-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border: 0;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.detail.detail--board .board-photo.is-print {
+  padding: 10px 10px 36px;
+  background: #f4ead0;
+  box-shadow:
+    0 1px 0 rgba(255, 248, 230, 0.7) inset,
+    0 18px 28px -14px rgba(12, 22, 24, 0.55);
+}
+
+.detail.detail--board .board-photo.is-photo,
+.detail.detail--board .board-photo.is-sticky {
+  padding: 10px 10px 36px;
+  background: #f4ead0;
+  box-shadow:
+    0 1px 0 rgba(255, 248, 230, 0.7) inset,
+    0 18px 28px -14px rgba(12, 22, 24, 0.55);
+}
+
+.detail.detail--board .board-photo.is-photo::after,
+.detail.detail--board .board-photo.is-sticky::after,
+.detail.detail--board .board-photo.is-sticky::before {
+  content: none;
+}
+
+.detail.detail--board .board-photo.is-photo img {
+  object-fit: contain;
+}
+
+.detail.detail--board .board-photo.is-sticky {
+  padding: 14px 12px 28px;
+  background: #f3e27a;
+  box-shadow: 0 16px 24px -12px rgba(12, 22, 24, 0.42);
+}
+
+.detail.detail--board .board-photo.is-sticky::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, transparent 50%, var(--felt) 50%);
+  pointer-events: none;
+}
+
+.detail.detail--board .board-photo.is-sticky::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 22px;
+  height: 22px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  background: linear-gradient(135deg, #f7eb9a, #e8d45c);
+  filter: drop-shadow(-1px -1px 2px rgba(80, 60, 10, 0.28));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.detail.detail--board .board-photo.is-device,
+.detail.detail--board .board-photo.is-device.is-print {
+  padding: 10px 10px 36px;
+  background: #f4ead0;
+  border-radius: 0;
+  box-shadow:
+    0 1px 0 rgba(255, 248, 230, 0.7) inset,
+    0 18px 28px -14px rgba(12, 22, 24, 0.55);
+}
+
+.detail.detail--board .board-photo.is-device img {
+  max-height: none;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  object-fit: contain;
+  background: #f4ead0;
+}
+
+.detail.detail--board .board-photo figcaption {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  color: #5c5348;
+  padding: 0;
+}
+
+.detail.detail--board .board-photo.is-photo figcaption,
+.detail.detail--board .board-photo.is-sticky figcaption {
+  color: #3a3428;
+}
+
+.detail.detail--board .board-photo__hole {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 5;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #2a2420;
+  box-shadow:
+    inset 0 1px 2px rgba(16, 14, 12, 0.75),
+    0 0 0 1px rgba(212, 160, 84, 0.28);
+}
+
+.detail.detail--board .board-photo.is-empty,
+.detail.detail--board .board-photo.is-broken {
+  min-width: 0;
+  min-height: 0;
+  background: #cfc4a8;
+}
+
+.detail.detail--board .board-photo.is-broken img,
+.detail.detail--board .board-photo.is-empty img {
+  visibility: hidden;
+}
+
+.detail.detail--board .beat__paper {
+  --tilt: 0deg;
+  transform: rotate(var(--tilt));
+  transform-origin: 50% 8px;
+}
+
+.detail.detail--board .beat__paper > .thumbtack--paper {
+  top: 10px;
+  left: 14px;
+  margin-left: 0;
+  z-index: 8;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .detail.detail--board.is-home .home-name,
+  .detail.detail--board.is-home .home-talk,
+  .detail.detail--board.is-home .home-note,
+  .detail.detail--board.is-home .board-photo {
+    animation: board-wind 6.8s ease-in-out infinite;
+  }
+  .detail.detail--board.is-home .board-photo {
+    animation-duration: 7.4s;
+    animation-direction: reverse;
+  }
+  .detail.detail--board.is-home .home-talk { animation-delay: -2.4s; animation-duration: 7.8s; }
+  .detail.detail--board.is-home .home-note { animation-delay: -1.1s; }
+
+  .detail.detail--board:not(.is-home) .beat.is-swaying .beat__paper {
+    animation: board-wind-once 1.15s ease-out;
+  }
+  .detail.detail--board:not(.is-home) .beat.is-swaying .board-photo {
+    animation: board-wind-once 1.28s ease-out reverse;
+  }
+  .detail.detail--board:not(.is-home) .beat.is-swaying .board-photo:nth-child(2) {
+    animation-delay: 0.07s;
+  }
+}
+
+@keyframes board-wind {
+  0%, 100% { transform: rotate(var(--tilt)); }
+  50% { transform: rotate(calc(var(--tilt) + 0.85deg)); }
+}
+
+@keyframes board-wind-once {
+  0% { transform: rotate(var(--tilt)); }
+  38% { transform: rotate(calc(var(--tilt) + 1.35deg)); }
+  100% { transform: rotate(var(--tilt)); }
+}
+
+.detail.detail--board .board__thread [data-home-ropes] { display: none; }
+.detail.detail--board.is-home .board__thread [data-board-thread-shadow],
+.detail.detail--board.is-home .board__thread [data-board-thread-core],
+.detail.detail--board.is-home .board__thread [data-board-thread-cord],
+.detail.detail--board.is-home .board__thread [data-board-thread-highlight],
+.detail.detail--board.is-home .board__thread [data-board-knot] { display: none; }
+.detail.detail--board.is-home .board__thread [data-home-ropes] { display: block; }
+
+.detail.detail--board .rope--coral [data-rope-shadow] { stroke: #6a241c; stroke-width: 11; fill: none; stroke-linecap: round; opacity: 0.28; transform: translate(1.6px, 2px); }
+.detail.detail--board .rope--coral [data-rope-core] { stroke: #9a3228; stroke-width: 9; fill: none; stroke-linecap: round; }
+.detail.detail--board .rope--coral [data-rope-cord] { stroke: #f05a45; stroke-width: 6.5; fill: none; stroke-linecap: round; }
+.detail.detail--board .rope--coral [data-rope-highlight] { stroke: #f7b4a6; stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-dasharray: 7 11; opacity: 0.85; }
+
+.detail.detail--board .rope--teal [data-rope-shadow] { stroke: #164844; stroke-width: 11; fill: none; stroke-linecap: round; opacity: 0.28; transform: translate(1.6px, 2px); }
+.detail.detail--board .rope--teal [data-rope-core] { stroke: #1e6e6a; stroke-width: 9; fill: none; stroke-linecap: round; }
+.detail.detail--board .rope--teal [data-rope-cord] { stroke: #2a9b96; stroke-width: 6.5; fill: none; stroke-linecap: round; }
+.detail.detail--board .rope--teal [data-rope-highlight] { stroke: #9ee0dc; stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-dasharray: 7 11; opacity: 0.85; }
+
+.detail.detail--board .rope--kraft [data-rope-shadow] { stroke: #5c3d1e; stroke-width: 11; fill: none; stroke-linecap: round; opacity: 0.28; transform: translate(1.6px, 2px); }
+.detail.detail--board .rope--kraft [data-rope-core] { stroke: #8a5a28; stroke-width: 9; fill: none; stroke-linecap: round; }
+.detail.detail--board .rope--kraft [data-rope-cord] { stroke: #c4a06a; stroke-width: 6.5; fill: none; stroke-linecap: round; }
+.detail.detail--board .rope--kraft [data-rope-highlight] { stroke: #ead7b0; stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-dasharray: 7 11; opacity: 0.85; }
+
+.detail.detail--board .rope--gold [data-rope-shadow] { stroke: #6a4e10; stroke-width: 11; fill: none; stroke-linecap: round; opacity: 0.28; transform: translate(1.6px, 2px); }
+.detail.detail--board .rope--gold [data-rope-core] { stroke: #9a7414; stroke-width: 9; fill: none; stroke-linecap: round; }
+.detail.detail--board .rope--gold [data-rope-cord] { stroke: #d4a017; stroke-width: 6.5; fill: none; stroke-linecap: round; }
+.detail.detail--board .rope--gold [data-rope-highlight] { stroke: #f3d98a; stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-dasharray: 7 11; opacity: 0.85; }
+
+.home-hub,
+.home-cluster {
+  position: absolute;
+  pointer-events: none;
+}
+
+.home-hub {
+  z-index: 6;
+  width: min(42vw, 420px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.home-hub .thumbtack--hub {
+  position: relative;
+  top: auto;
+  left: auto;
+  margin: 0 0 12px 12px;
+  width: 26px;
+  height: 26px;
+  z-index: 9;
+}
+
+.home-name,
+.home-talk,
+.home-note,
+.home-cluster .beat__paper {
+  pointer-events: auto;
+  font-family: var(--font-display);
+  color: #2a2420;
+  --tilt: -1.1deg;
+}
+
+.home-name {
+  width: 100%;
+  padding: 28px 24px 26px 44px;
+  z-index: 6;
+  clip-path: polygon(
+    0% 8px,
+    2.8% 7px, 6.4% 11px, 10% 9px, 12.2% 1px, 16.8% 8px,
+    21% 10px, 25.6% 7px, 30% 6px, 35.4% 5px, 41% 5px,
+    46.8% 4px, 52% 4px, 57.6% 5px, 63% 4px, 68.4% 5px,
+    72% 13px, 75.2% 28px, 78.8% 10px, 83% 8px, 87.5% 15px,
+    92% 6px, 96.4% 9px, 100% 4px,
+    100% 100%,
+    0% 100%
+  );
+}
+
+.home-name__who {
+  margin: 0 0 10px;
+  font-size: clamp(2.1rem, 4.2vw, 3.1rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.home-name__what {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.home-talk {
+  width: min(220px, 70%);
+  margin-left: 56px;
+  padding: 18px 16px 16px 36px;
+  --tilt: 1.6deg;
+  z-index: 6;
+  clip-path: polygon(
+    0% 10px,
+    4.2% 14px, 8% 12px, 11.6% 16px, 14.8% 27px, 18% 9px,
+    22.4% 11px, 27% 8px, 32.6% 6px, 37% 7px, 42.2% 6px,
+    47% 8px, 52.4% 7px, 57% 5px, 62.8% 5px, 68% 4px,
+    73.5% 4px, 79% 5px, 84.2% 4px, 88% 6px, 91.4% 1px,
+    94.8% 7px, 100% 5px,
+    100% 100%,
+    0% 100%
+  );
+}
+
+.home-talk__label {
+  display: block;
+  font-size: 1.55rem;
+  line-height: 1.1;
+}
+
+.home-talk__line {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.home-cluster {
+  width: min(34vw, 360px);
+  z-index: 6;
+}
+
+.home-cluster.is-ready {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.home-cluster .board-photo {
+  width: min(28vh, 220px);
+  pointer-events: auto;
+}
+
+.home-cluster .beat__paper {
+  width: min(100%, 280px);
+  padding: 22px 18px 20px 40px;
+  margin-top: 14px;
+}
+
+.home-cluster .beat__label { margin-bottom: 6px; }
+
+.home-cluster .beat__headline {
+  font-size: 1.45rem;
+  margin: 0;
+}
+
+.home-note {
+  width: min(100%, 240px);
+  padding: 18px 16px 16px 36px;
+  --tilt: -0.8deg;
+}
+
+.home-note p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.3;
+  color: #2a2420;
+}
+
+.stage.is-home .rail-controls {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.stage.is-home .detail.detail--board {
+  display: none;
+}
+
+.detail.detail--board .board-photo.is-empty::after,
+.detail.detail--board .board-photo.is-broken::after {
+  content: none;
+}
+
+.detail.detail--board .detail__title {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.stage.is-detail .deck-progress__fill {
+  background: linear-gradient(90deg, #c44532 0%, #f05a45 55%, #f07a5a 100%);
+  box-shadow: 0 0 10px rgba(240, 90, 69, 0.35);
+}
+
+@media (min-width: 1440px) {
+  .detail.detail--board .beat__paper {
+    width: min(38vw, 540px);
+    font-size: 1.14rem;
+  }
+  .detail.detail--board .beat__headline { font-size: 1.95rem; }
+  .detail.detail--board .beat__body,
+  .detail.detail--board .beat__points li { font-size: 1.14rem; }
+  .detail.detail--board .beat__body,
+  .detail.detail--board .beat__points,
+  .detail.detail--board .beat__points li { --rule: 32px; }
+  .detail.detail--board .board-photo { width: min(30vw, 440px); max-width: 440px; }
+  .detail.detail--board .beat__media { width: 100%; max-width: none; }
+}
+
+@media (min-width: 1920px) {
+  .detail.detail--board .beat__paper {
+    width: min(32vw, 580px);
+    font-size: 1.2rem;
+  }
+  .detail.detail--board .beat__headline { font-size: 2.15rem; }
+  .detail.detail--board .beat__body,
+  .detail.detail--board .beat__points li { font-size: 1.2rem; }
+  .detail.detail--board .beat__body,
+  .detail.detail--board .beat__points,
+  .detail.detail--board .beat__points li { --rule: 34px; }
+  .detail.detail--board .board-photo { width: min(26vw, 460px); max-width: 460px; }
+  .detail.detail--board .beat__media { width: 100%; max-width: none; }
+}
+
+/* Short laptop / short window: paper + both photos + captions stay in view
+   above the control pill. Width queries above still apply on tall 1440/1920. */
+@media (min-width: 768px) and (max-height: 820px) {
+  .detail.detail--board .beat {
+    padding: 12px 16px 8px;
+    row-gap: calc(clamp(8px, 1.6vh, 16px) * var(--photo-fit, 1));
+  }
+  .detail.detail--board .beat__paper {
+    padding: 36px 18px 16px 36px;
+    font-size: 1rem;
+  }
+  .detail.detail--board .beat__headline { font-size: 1.46rem; margin-bottom: 8px; }
+  .detail.detail--board .beat__body,
+  .detail.detail--board .beat__points li { font-size: 0.98rem; }
+  .detail.detail--board .beat__body,
+  .detail.detail--board .beat__points,
+  .detail.detail--board .beat__points li { --rule: 26px; }
+  .detail.detail--board .board-photo { width: min(32vw, 380px); max-width: 380px; }
+  .detail.detail--board .board-photo.is-empty,
+  .detail.detail--board .board-photo.is-broken {
+    min-width: 0;
+    min-height: 0;
+  }
+  .detail.detail--board .beat[data-spread="triangle"] .beat__media .board-photo:nth-child(1) {
+    margin-top: calc(6px * var(--photo-fit, 1));
+  }
+  .detail.detail--board .beat__media { gap: calc(clamp(36px, 5vw, 88px) * var(--photo-fit, 1)); }
+}
+
+@media (max-width: 767px) {
+  .stage.is-detail {
+    position: relative;
+    height: 100svh;
+    overflow: hidden;
+    --head-h: 110px;
+  }
+  .stage.is-detail .rail {
+    display: none;
+    pointer-events: none;
+  }
+  .stage.is-detail .masthead {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: transparent;
+  }
+  .detail.detail--board {
+    position: absolute;
+    left: 0; right: 0;
+    top: 0;
+    bottom: 0;
+    height: 100svh;
+    padding-top: var(--head-h);
+    overflow: hidden;
+    background: none;
+  }
+
+  .detail.detail--board .detail__card { left: 10px; top: 10px; width: min(160px, 42vw); height: min(210px, 32vh); }
+
+  .detail.detail--board .board {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--head-h);
+    bottom: 64px;
+    height: auto;
+    cursor: default;
+    touch-action: pan-y;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    background: none;
+  }
+
+  .detail.detail--board .board__world {
+    position: relative;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .detail.detail--board .beat {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto auto;
+    justify-items: center;
+    align-content: start;
+    width: min(96vw, 440px);
+    min-height: 0;
+    height: auto;
+    padding: 16px 10px 10px;
+    row-gap: 22px;
+    column-gap: 12px;
+    overflow: visible;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    transform: none;
+  }
+
+  .detail.detail--board .beat__sheet {
+    grid-column: 2;
+    grid-row: 1;
+    width: min(64vw, 268px);
+    margin: 0 auto;
+  }
+
+  .detail.detail--board .beat__paper {
+    width: 100%;
+    margin: 0;
+    font-size: 0.8rem;
+    padding: 28px 12px 12px 24px;
+  }
+
+  .detail.detail--board .beat__headline { font-size: 1.02rem; margin-bottom: 6px; }
+
+  .detail.detail--board .beat__body,
+  .detail.detail--board .beat__points li { font-size: 0.82rem; }
+
+  .detail.detail--board .beat__body,
+  .detail.detail--board .beat__points,
+  .detail.detail--board .beat__points li { --rule: 24px; }
+
+  .detail.detail--board .thumbtack--paper {
+    top: 10px;
+    left: 14px;
+    margin-left: 0;
+    z-index: 8;
+  }
+
+  .detail.detail--board .thumbtack--thread {
+    top: 8px;
+    right: 14%;
+  }
+
+  .detail.detail--board .beat__media {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 22px;
+    width: 100%;
+    flex: 0 0 auto;
+    margin-top: 0;
+    min-height: 0;
+    left: auto;
+    right: auto;
+    top: auto;
+    height: auto;
+  }
+
+  .detail.detail--board .board-photo {
+    flex: 0 0 auto;
+    width: min(42vw, 156px);
+    max-width: 156px;
+  }
+
+  .detail.detail--board .beat[data-spread="triangle"] .beat__media .board-photo:nth-child(1) {
+    margin-top: 10px;
+    margin-right: 0;
+  }
+
+  .detail.detail--board .beat[data-spread="triangle"] .beat__media .board-photo:nth-child(2) {
+    margin-top: 0;
+    margin-left: 0;
+  }
+
+  .detail.detail--board .board-photo.is-photo::after {
+    width: 32px;
+    height: 36px;
+    right: -8px;
+    top: -6px;
+  }
+
+  .detail.detail--board .beat__media .board-photo:nth-child(1),
+  .detail.detail--board .beat__media .board-photo:nth-child(2) {
+    top: auto;
+    left: auto;
+  }
+
+  .detail.detail--board .board-photo img,
+  .detail.detail--board .board-photo.is-device img {
+    max-width: none;
+    max-height: none;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    margin: 0;
+  }
+
+  .home-hub,
+  .home-cluster {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    width: min(92vw, 420px);
+    margin: 0 auto;
+    min-height: calc(100svh - 108px);
+    height: calc(100svh - 108px);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .home-name { font-size: 1.05rem; }
+  .home-name__who { font-size: 2.2rem; }
+
+  .stage.is-detail .rail-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 10px;
+    z-index: 80;
+    display: flex;
+    transform: translateX(-50%);
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(20, 44, 46, 0.72);
+  }
+  .stage.is-home .rail-controls {
+    position: sticky;
+    bottom: 8px;
+    z-index: 8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail.detail--board .board { scroll-behavior: auto; }
+  .detail.detail--board .board__world { transition: none; }
+  .detail.detail--board .beat { transform: none; }
+  .detail.detail--board .beat__paper,
+  .detail.detail--board .board-photo,
+  .detail.detail--board .home-name,
+  .detail.detail--board .home-talk,
+  .detail.detail--board .home-note {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+.stage.is-detail .deck-progress {
+  /* thread progress: same hairline, warmer fill owned above */
+}
+
+
+/* ===========================================================================
+   Folder mode (v=flipbook1) — opened case is a manila flip book.
+   Landing stays ink/navy. Live folder flies to center, unfolds into a two-page
+   spread. Sheets are dual-face, bound at the spine. Softboard stays dead.
+   =========================================================================== */
+
+/* Kill softboard felt takeover when a folder case is open — stay on ink. */
+body:has(.stage.is-detail:has(.detail--folder)) {
+  background-color: var(--ink);
+  background-image: none;
+}
+body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
+  display: block;
+}
+.stage.is-detail:has(.detail--folder) {
+  background: transparent;
+}
+.stage.is-detail:has(.detail--folder) .masthead {
+  background: rgba(16, 17, 42, 0.72);
+  backdrop-filter: blur(10px);
+  border-bottom-color: var(--rule);
+}
+
+.detail--folder .board,
+.detail--folder .detail__card {
+  display: none !important;
+}
+
+.detail.detail--folder {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
+.detail.detail--folder[hidden] { display: none; }
+
+.stage.is-detail .detail.detail--folder {
+  position: fixed;
+  inset: 0;
+  top: 0;
+  height: 100svh;
+  padding: calc(var(--head-h) + 18px) var(--gutter) 96px;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(70% 55% at 50% 42%, rgba(0, 0, 0, 0.45), transparent 72%),
+    rgba(8, 9, 24, 0.42);
+  backdrop-filter: blur(1.5px);
+}
+
+.detail--folder .detail__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Dim landing under the open case; keep it visible as context */
+.stage.is-detail:has(.detail--folder) .hero {
+  transform: none !important;
+  visibility: visible !important;
+  opacity: 0.22 !important;
+  pointer-events: none;
+  filter: saturate(0.7);
+}
+.stage.is-detail:has(.detail--folder) .rail {
+  transform: none !important;
+  opacity: 0.28 !important;
+  pointer-events: none;
+}
+.stage.is-detail:has(.detail--folder) .rail .folder-slot.is-current .folder {
+  visibility: hidden;
+}
+.stage.is-returning:has(.detail--folder) .rail .folder-slot.is-current .folder {
+  visibility: visible !important;
+}
+
+/* ── Manila shell: closed card, then a two-page spread ───────────────── */
+.case-folder {
+  width: auto;
+  padding-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  filter: drop-shadow(0 28px 48px rgba(0, 0, 0, 0.45));
+}
+
+.case-folder__shell {
+  --manila: #f0e2c4;
+  --manila-2: #e6d3a8;
+  --manila-3: #d9c28c;
+  --manila-ink: #2a2418;
+  --sheet: #fbf7ef;
+  --sheet-back: #f0e4cc;
+  position: relative;
+  width: min(380px, 78vw);
+  height: min(486px, 62svh);
+  min-height: 0;
+  border-radius: 6px 14px 12px 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.28), transparent 28%),
+    linear-gradient(135deg, var(--manila), var(--manila-2) 55%, var(--manila-3));
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.45) inset,
+    0 18px 40px -22px rgba(0,0,0,0.55);
+  color: var(--manila-ink);
+  overflow: visible;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  perspective: 2400px;
+  transition:
+    width 0.56s cubic-bezier(.22,.8,.18,1),
+    height 0.56s cubic-bezier(.22,.8,.18,1);
+}
+
+.detail--folder.is-flying .case-folder__shell {
+  transition: none;
+}
+
+.detail--folder.is-flipped .case-folder__shell {
+  width: min(1100px, 94vw);
+  height: min(640px, calc(100svh - var(--head-h) - 128px));
+}
+
+.case-folder__shell[data-tone="kraft"] {
+  --manila: #edd7b0;
+  --manila-2: #e0c392;
+  --manila-3: #d2b078;
+}
+.case-folder__shell[data-tone="teal"],
+.case-folder__shell[data-tone="sage"] {
+  --manila: #d9ebe6;
+  --manila-2: #c5ddd6;
+  --manila-3: #aeccc3;
+}
+.case-folder__shell[data-tone="slate"] {
+  --manila: #e4e2dc;
+  --manila-2: #d5d2ca;
+  --manila-3: #c4c0b6;
+}
+
+.case-folder__tab {
+  position: absolute;
+  top: -14px;
+  left: 28px;
+  min-width: 108px;
+  height: 28px;
+  padding: 0 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #f6ead0, var(--manila-2));
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.35) inset;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  z-index: 8;
+}
+
+/* Closed face. Swings away once the spread opens. */
+.case-folder__cover {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  padding: 36px 28px 28px;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.22), transparent 36%),
+    linear-gradient(135deg, var(--manila), var(--manila-2) 55%, var(--manila-3));
+  transform-origin: left center;
+  transform: rotateY(0deg);
+  transition: transform 0.62s cubic-bezier(.22,.8,.18,1), opacity 0.4s ease;
+  pointer-events: none;
+  backface-visibility: hidden;
+}
+.detail--folder.is-flipped .case-folder__cover {
+  transform: rotateY(-102deg);
+  opacity: 0;
+}
+
+.case-folder__face-cat {
+  margin: 0 0 8px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+.case-folder__face-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.12;
+  color: var(--manila-ink);
+}
+
+/* ── Open book ───────────────────────────────────────────────────────── */
+.case-folder__book {
+  position: absolute;
+  inset: 14px 12px 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  opacity: 0;
+  pointer-events: none;
+  transform-style: preserve-3d;
+  perspective: 2400px;
+  perspective-origin: 50% 48%;
+  transition: opacity 0.35s ease 0.12s;
+}
+.detail--folder.is-flipped .case-folder__book {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.case-folder__panel {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.18), transparent 28%),
+    var(--manila-2);
+  box-shadow: inset 0 0 0 1px rgba(60, 40, 15, 0.08);
+}
+
+.case-folder__panel--left {
+  border-radius: 3px 0 0 3px;
+  overflow: hidden;
+}
+.case-folder__panel--right {
+  border-radius: 0 3px 3px 0;
+  overflow: visible;
+  transform-style: preserve-3d;
+  perspective: 2400px;
+  perspective-origin: left center;
+}
+
+.case-folder__spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 22px;
+  margin-left: -11px;
+  z-index: 18;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.18),
+    rgba(0, 0, 0, 0.04) 42%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(0, 0, 0, 0.06) 58%,
+    rgba(0, 0, 0, 0.16)
+  );
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.12);
+}
+
+.case-folder__lining {
+  height: 100%;
+  padding: clamp(28px, 4vw, 44px) clamp(22px, 3vw, 36px);
+}
+
+.case-folder__lining .case-folder__face-title {
+  font-size: clamp(26px, 3.2vw, 40px);
+}
+
+/* Remaining-sheet thickness on the right edge */
+.case-folder__edge {
+  position: absolute;
+  right: -7px;
+  top: 10px;
+  bottom: 10px;
+  width: 7px;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  pointer-events: none;
+}
+.case-folder__edge span {
+  background: #efe4cc;
+  border-right: 1px solid rgba(80, 55, 20, 0.18);
+  box-shadow: 1px 0 0 rgba(255, 255, 255, 0.35) inset;
+}
+.case-folder__edge span:nth-child(2) { background: #e8d8b6; }
+.case-folder__edge span:nth-child(3) { background: #dfcda4; }
+
+.case-folder__pages {
+  position: absolute;
+  inset: 8px 10px 8px 0;
+  transform-style: preserve-3d;
+  overflow: visible;
+}
+
+/* ── Dual-face sheets ────────────────────────────────────────────────── */
+.sheet {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sheet.is-below { z-index: 2; }
+.sheet.is-active {
+  z-index: 10;
+  pointer-events: auto;
+}
+.sheet.is-turned { z-index: 5; }
+.sheet.is-flipping {
+  z-index: 24;
+  pointer-events: none;
+}
+
+.sheet__leaf {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  will-change: transform;
+  border-radius: 0 2px 2px 0;
+}
+
+.sheet.is-turned .sheet__leaf {
+  transform: rotateY(-180deg);
+}
+
+.sheet.is-below .sheet__leaf {
+  transform:
+    rotateY(0deg)
+    translate3d(calc(var(--depth, 1) * 2px), calc(var(--depth, 1) * 2px), calc(var(--depth, 1) * -3px));
+}
+
+.sheet__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.sheet__face--front {
+  background:
+    linear-gradient(90deg, rgba(60, 40, 15, 0.07), transparent 16px),
+    var(--sheet);
+  border-radius: 0 2px 2px 0;
+  box-shadow:
+    8px 0 28px -18px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.65) inset;
+}
+
+.sheet__face--back {
+  transform: rotateY(180deg);
+  background:
+    linear-gradient(270deg, rgba(60, 40, 15, 0.08), transparent 18px),
+    repeating-linear-gradient(
+      180deg,
+      var(--sheet-back) 0,
+      var(--sheet-back) 27px,
+      rgba(80, 55, 20, 0.05) 28px
+    );
+  border-radius: 2px 0 0 2px;
+  box-shadow: -8px 0 28px -18px rgba(0, 0, 0, 0.3);
+}
+
+.sheet__verso {
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.sheet__folio {
+  font-family: var(--font-display);
+  font-size: 42px;
+  letter-spacing: 0.08em;
+  color: rgba(42, 36, 24, 0.28);
+}
+
+/* Mid-turn: thickness + shade on the turning leaf */
+.sheet.is-flipping .sheet__leaf::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #d7c49a, #c4ae7e);
+  transform: translateZ(1px);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.sheet.is-flipping .sheet__leaf::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.28),
+    transparent 16%,
+    transparent 72%,
+    rgba(0, 0, 0, 0.12)
+  );
+  mix-blend-mode: multiply;
+  backface-visibility: hidden;
+}
+
+.sheet.is-receiving::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.32), transparent 52%);
+  animation: sheet-unshade 0.98s cubic-bezier(.45,.05,.22,1) forwards;
+}
+
+@keyframes sheet-unshade {
+  0% { opacity: 0.9; }
+  45% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.sheet.is-hold.is-flipping .sheet__leaf::after {
+  opacity: 1;
+}
+
+/* Grab the right edge to peel the sheet */
+.sheet.is-active .sheet__face--front {
+  cursor: grab;
+  touch-action: pan-y;
+}
+.sheet.is-active .sheet__face--front:active {
+  cursor: grabbing;
+}
+
+/* ── Page content ────────────────────────────────────────────────────── */
+.case-page {
+  padding: clamp(18px, 2.4vw, 32px);
+  color: #1d1a14;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.case-page__kicker {
+  margin: 0 0 10px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+
+.case-page__headline {
+  margin: 0 0 14px;
+  max-width: 16ch;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.6vw, 36px);
+  line-height: 1.14;
+  font-weight: 400;
+  color: #17140f;
+  padding-bottom: 4px;
+}
+.case-page__headline em {
+  font-style: italic;
+  color: #0d5f5d;
+}
+
+.case-page__body {
+  margin: 0 0 18px;
+  max-width: 42ch;
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.5;
+  color: rgba(29, 26, 20, 0.86);
+}
+.case-page__body em {
+  font-style: italic;
+  color: #0d5f5d;
+}
+
+.case-page__sticky {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  width: min(148px, 38%);
+  padding: 12px 12px 14px;
+  background: #ffe56a;
+  box-shadow: 2px 6px 14px rgba(0,0,0,0.16);
+  transform: rotate(3.5deg);
+  z-index: 2;
+}
+.case-page__sticky-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(40, 30, 0, 0.55);
+}
+.case-page__sticky-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.35;
+  color: #2a2208;
+}
+.case-page__sticky-list li + li { margin-top: 4px; }
+
+.case-page__gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: auto;
+}
+.case-page__gallery.is-single {
+  grid-template-columns: 1fr;
+  max-width: 100%;
+}
+.case-page__photo {
+  margin: 0;
+  background: #fff;
+  border: 1px solid rgba(40, 30, 10, 0.1);
+  padding: 8px 8px 6px;
+  box-shadow: 0 10px 22px -16px rgba(0,0,0,0.45);
+}
+.case-page__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 160px;
+  object-fit: cover;
+  background: #efe8da;
+}
+.case-page__photo.is-device img {
+  object-fit: contain;
+  background: #f7f1e6;
+}
+.case-page__photo figcaption {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: rgba(29, 26, 20, 0.62);
+}
+.case-page__photo.is-empty {
+  min-height: 100px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #f3ece0,
+    #f3ece0 8px,
+    #ebe2d2 8px,
+    #ebe2d2 16px
+  );
+}
+
+.case-page:has(.case-page__sticky) .case-page__headline,
+.case-page:has(.case-page__sticky) .case-page__body {
+  padding-right: min(156px, 34%);
+}
+
+@media (max-width: 720px) {
+  .detail--folder.is-flipped .case-folder__shell {
+    width: min(100vw - 20px, 560px);
+    height: min(78svh, 640px);
+  }
+  .case-folder__book {
+    grid-template-columns: 0.42fr 1fr;
+  }
+  .case-page__sticky {
+    position: static;
+    width: auto;
+    margin: 0 0 14px;
+    transform: rotate(1.5deg);
+  }
+  .case-page:has(.case-page__sticky) .case-page__headline,
+  .case-page:has(.case-page__sticky) .case-page__body {
+    padding-right: 0;
+  }
+  .case-page__gallery {
+    grid-template-columns: 1fr;
+  }
+  .stage.is-detail .detail.detail--folder {
+    padding: calc(var(--head-h) + 10px) 12px 88px;
+  }
+  .case-page {
+    padding: 18px 14px 22px;
+  }
+  .case-folder__lining {
+    padding: 18px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-folder__cover,
+  .case-folder__book,
+  .case-folder__shell,
+  .sheet__leaf,
+  .sheet.is-receiving::before {
+    transition: none !important;
+    animation: none !important;
+  }
+  .sheet.is-flipping .sheet__leaf::after,
+  .sheet.is-flipping .sheet__leaf::before,
+  .sheet.is-receiving::before {
+    display: none;
+  }
+  .detail--folder.is-flipped .case-folder__cover {
+    transform: none;
+    opacity: 0;
+  }
+}

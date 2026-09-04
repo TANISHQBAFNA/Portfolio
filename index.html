@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tanishq Bafna — Product Designer / UX Designer</title>
+  <meta name="description"
+    content="Tanishq Bafna is a product and UX designer working on fintech platforms, complex financial products and the design systems that hold them together." />
+  <meta name="theme-color" content="#10112a" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/landing.css?v=flipbook3" />
+</head>
+
+<body class="landing">
+  <a class="skip-link" href="#work">Skip to work</a>
+
+  <!-- ambient material layers: grain, vignette, cursor light -->
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere__wash"></div>
+    <div class="atmosphere__desk"></div>
+    <div class="atmosphere__light" data-cursor-light></div>
+    <div class="atmosphere__grain"></div>
+  </div>
+
+  <div class="stage is-home" data-stage>
+
+    <!-- ── PortfolioHeader ───────────────────────────────────────── -->
+    <header class="masthead">
+      <div class="masthead__identity">
+        <a class="masthead__name" href="index.html">Tanishq&nbsp;Bafna</a>
+        <p class="masthead__role">Product Designer <span aria-hidden="true">/</span> UX Designer</p>
+      </div>
+
+
+      <nav class="masthead__nav" aria-label="Primary">
+        <ul>
+          <li><a href="#project-detail" data-nav-work>Work</a></li>
+          <li><a href="About%20me.html">About</a></li>
+          <li><a href="resume.pdf">Resume</a></li>
+        </ul>
+      </nav>
+
+      <!-- case-study progress: sits on the header's lower edge, so it tracks the
+           bar's height at every breakpoint. Hidden on the landing. -->
+      <div class="deck-progress" data-deck-progress hidden aria-hidden="true">
+        <span class="deck-progress__fill" data-deck-progress-fill></span>
+      </div>
+    </header>
+
+    <!-- ── HeroIntro ─────────────────────────────────────────────── -->
+    <section class="hero" data-hero aria-labelledby="hero-heading">
+      <figure class="portrait is-pending" data-portrait>
+        <div class="portrait__frame">
+          <img class="portrait__img" src="assets/img/tanishq-portrait.jpg" alt="Tanishq Bafna" width="880" height="1100"
+            decoding="async" fetchpriority="high" />
+          <div class="portrait__placeholder">
+            <span class="portrait__placeholder-kicker">Portrait placeholder</span>
+            <span class="portrait__placeholder-path">assets/img/tanishq-portrait.jpg</span>
+            <span class="portrait__placeholder-note">Add a 4:5 portrait at this path to replace the frame.</span>
+          </div>
+        </div>
+      </figure>
+
+
+      <div class="hero__type">
+        <h1 class="hero__heading reveal" id="hero-heading">
+          I design <em>thoughtful</em> digital experiences for complex financial products.
+        </h1>
+        <p class="hero__support reveal">
+          Complex products, made simple enough to trust — in banking,
+          in AI, and on a phone.
+        </p>
+
+        <!-- below the support copy: it reads as the last line of that block, so
+             it is a child of .hero__type rather than a grid item of .hero -->
+        <ul class="hero__facts reveal" aria-label="Practice areas">
+          <li>Product&nbsp;Design</li>
+          <li>UX&nbsp;Strategy</li>
+          <li>Design&nbsp;Systems</li>
+          <li>Prototyping</li>
+        </ul>
+      </div>
+
+    </section>
+
+  <!-- ── ProjectDetail: centered manila folder / flip book ──── -->
+  <section class="detail detail--folder" id="project-detail" data-detail data-case hidden aria-labelledby="detail-title">
+    <div class="detail__card" data-detail-card hidden></div>
+    <h2 class="detail__title" id="detail-title" data-detail-title tabindex="-1"></h2>
+
+    <div class="case-folder" data-case-folder>
+      <div class="case-folder__shell" data-case-shell data-tone="kraft">
+        <div class="case-folder__tab" aria-hidden="true">
+          <span data-case-face-year></span>
+        </div>
+
+        <div class="case-folder__book" data-case-book>
+          <div class="case-folder__panel case-folder__panel--left" data-case-left>
+            <div class="case-folder__lining">
+              <p class="case-folder__face-cat" data-case-face-cat></p>
+              <p class="case-folder__face-title" data-case-face-title></p>
+            </div>
+          </div>
+          <div class="case-folder__spine" aria-hidden="true"></div>
+          <div class="case-folder__panel case-folder__panel--right">
+            <div class="case-folder__edge" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="case-folder__pages" data-case-pages>
+              <!-- dual-face sheets injected from project.slides -->
+            </div>
+          </div>
+        </div>
+
+        <div class="case-folder__cover" data-case-cover aria-hidden="true">
+          <p class="case-folder__face-cat" data-case-cover-cat></p>
+          <p class="case-folder__face-title" data-case-cover-title></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HorizontalNavigation ──────────────────────────────────── -->
+  <div class="rail-controls" data-rail-controls>
+    <button class="rail-btn rail-btn--home" type="button" data-rail-home aria-label="Back to all projects" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M4 11.5 12 4l8 7.5M6.5 10v9h11v-9" />
+      </svg>
+    </button>
+
+
+    <div class="rail-controls__buttons">
+      <button class="rail-btn" type="button" data-rail-prev aria-label="Previous project" aria-controls="work">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M15 5 8 12l7 7" />
+        </svg>
+      </button>
+      <p class="rail-controls__counter" data-rail-counter hidden aria-hidden="true">
+        <span data-rail-counter-current>01</span> / <span data-rail-counter-total>03</span>
+      </p>
+      <button class="rail-btn" type="button" data-rail-next aria-label="Next project" aria-controls="work">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── ProjectRail ───────────────────────────────────────────── -->
+  <section class="rail" id="work" aria-labelledby="work-heading" data-rail>
+    <h2 class="visually-hidden" id="work-heading">Projects</h2>
+    <ol class="rail__track" data-rail-track>
+      <!-- Folder cards are inserted before this closing panel. -->
+      <li class="rail__end">
+        <div class="rail__end-inner">
+          <p class="rail__end-kicker">End of selected work</p>
+          <p class="rail__end-headline">Got a hard problem<br />hiding inside a product?</p>
+          <p class="rail__end-line">More case studies, process notes and shipped work available on request.</p>
+          <a class="rail__end-link" href="contact.html">
+            Get in touch <span aria-hidden="true">&rarr;</span>
+          </a>
+          <ul class="rail__end-social">
+            <li><a href="https://www.linkedin.com/in/tanishqbafna/" rel="noopener">LinkedIn</a></li>
+            <li><a href="https://www.behance.net/tanishqhbafna" rel="noopener">Behance</a></li>
+            <li><a href="https://github.com/TANISHQBAFNA" rel="noopener">GitHub</a></li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <noscript>
+    <ul class="rail__fallback">
+      <li><a href="#">01 — SME Banking, Intellect Design · 2025 to present</a></li>
+      <li><a href="#">02 — Plootus.ai · 2025 to 2026</a></li>
+      <li>03 — Daughters App · Aug 2023 to present</li>
+      <li><a href="#">04 — Agentic AI Workflow Design, October + AIDLC</a></li>
+    </ul>
+  </noscript>
+
+  <p class="rail-status visually-hidden" role="status" aria-live="polite" data-rail-status></p>
+  </div>
+
+  <!-- ProjectFolderCard markup contract -->
+  <template id="folder-template">
+    <li class="folder-slot">
+      <a class="folder" href="#project-detail" data-folder>
+        <span class="folder__tab"><span class="folder__tab-index"></span></span>
+
+        <span class="folder__body">
+          <span class="folder__head">
+            <span class="folder__category"></span>
+          </span>
+
+          <span class="folder__title"></span>
+          <span class="folder__blurb"></span>
+
+          <span class="folder__cover">
+            <img class="folder__cover-img" alt="" width="640" height="440" loading="lazy" decoding="async" />
+            <span class="folder__cover-tag"></span>
+            <!-- tools sit on the cover so category, title and blurb stay readable.
+                 pointer-events stay none; the whole folder remains the open hit. -->
+            <span class="folder__attach" data-tools-slip hidden>
+              <svg class="folder__clip" viewBox="0 0 22 54" aria-hidden="true" focusable="false">
+                <path d="M15.5 12v27a5.5 5.5 0 0 1-11 0V14a3.5 3.5 0 0 1 7 0v25" fill="none" stroke="currentColor"
+                  stroke-width="2.2" stroke-linecap="round" />
+              </svg>
+              <span class="folder__attach-slip">
+                <span class="folder__attach-label">Tools</span>
+                <span class="folder__attach-list" data-tools></span>
+              </span>
+            </span>
+          </span>
+
+          <!-- Sheets filed IN the folder. At rest they sit behind its face; on
+               hover they rise out of its top edge, papers-out-of-a-folder, and
+               the front one carries the role and scope. -->
+          <span class="folder__pages">
+            <span class="folder__page folder__page--3" aria-hidden="true"></span>
+            <span class="folder__page folder__page--2" aria-hidden="true"></span>
+            <span class="folder__page folder__page--1">
+              <span class="folder__meta">
+                <span class="folder__meta-row"><span class="folder__meta-key">Role</span><span
+                    class="folder__meta-value" data-role></span></span>
+                <span class="folder__meta-row"><span class="folder__meta-key">Scope</span><span
+                    class="folder__meta-value" data-scope></span></span>
+              </span>
+            </span>
+          </span>
+        </span>
+      </a>
+    </li>
+  </template>
+
+  <script src="assets/js/project-data.js?v=flipbook3" defer></script>
+  <script src="assets/js/folder-card.js?v=flipbook3" defer></script>
+  <script src="assets/js/project-rail.js?v=flipbook3" defer></script>
+  <script src="assets/js/project-detail.js?v=flipbook3" defer></script>
+  <script src="assets/js/landing.js?v=flipbook3" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="1600" height="1000" role="img" aria-label="Placeholder flow">
+  <rect width="800" height="500" fill="#e6dfd3"/>
+  <g fill="none" stroke="#1a1a1e" stroke-opacity=".22" stroke-width="1.6">
+    <rect x="48" y="196" width="150" height="108" rx="4"/>
+    <rect x="248" y="196" width="150" height="108" rx="4"/>
+    <rect x="448" y="196" width="150" height="108" rx="4"/>
+    <rect x="648" y="196" width="104" height="108" rx="4"/>
+  </g>
+  <path d="M198 250h50M398 250h50M598 250h50" stroke="#00a0a0" stroke-width="2"/>
+  <g fill="#00a0a0"><circle cx="248" cy="250" r="3.5"/><circle cx="448" cy="250" r="3.5"/><circle cx="648" cy="250" r="3.5"/></g>
+  <rect x="448" y="196" width="150" height="108" rx="4" fill="#00a0a0" fill-opacity=".14"/>
+  <g fill="#1a1a1e" fill-opacity=".26">
+    <rect x="70" y="228" width="90" height="9" rx="4"/><rect x="70" y="248" width="60" height="9" rx="4"/>
+    <rect x="270" y="228" width="90" height="9" rx="4"/><rect x="270" y="248" width="70" height="9" rx="4"/>
+    <rect x="470" y="228" width="90" height="9" rx="4"/><rect x="470" y="248" width="52" height="9" rx="4"/>
+    <rect x="670" y="228" width="62" height="9" rx="4"/>
+  </g>
+  <path d="M48 120h704M48 380h704" stroke="#1a1a1e" stroke-opacity=".12" stroke-width="1"/>
+</svg>

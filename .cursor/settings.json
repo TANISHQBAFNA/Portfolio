@@ -1,0 +1,13 @@
+{
+  "plugins": {
+    "ponytail/ponytail": {
+      "enabled": true
+    },
+    "caveman/caveman": {
+      "enabled": true
+    },
+    "claude-plugins-official/playground": {
+      "enabled": true
+    }
+  }
+}
