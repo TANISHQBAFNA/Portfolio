@@ -14,7 +14,7 @@
 window.ProjectRail = (function () {
   'use strict';
 
-  var LERP = 0.17;            // restrained: settles in ~250ms, no long glide
+  var LERP = 0.085;           // softer glide: settles ~450–550ms
   var WHEEL_STEP = 40;        // wheel px that counts as a deliberate gesture
   var WHEEL_QUIET = 140;      // ms of stillness that ends a gesture
   var DRAG_THRESHOLD = 6;     // px before a mouse drag suppresses the click
@@ -163,6 +163,10 @@ window.ProjectRail = (function () {
     function onWheel(event) {
       if (locked) return;   // the board owns wheel while a project is open
       if (!isManaged() || event.ctrlKey) return;   // ctrl+wheel is browser zoom
+      var rise = parseFloat(document.documentElement.style.getPropertyValue('--rise') || '1');
+      if (document.documentElement.classList.contains('is-home-scroll') && rise > 0.01) {
+        return;
+      }
       var delta = normaliseWheel(event);
       if (!delta) return;
       event.preventDefault();
@@ -303,11 +307,15 @@ window.ProjectRail = (function () {
       if (!slot || !isManaged() || !keyboardIntent) return;
       goToIndex(slots.indexOf(slot));
       // Folders extend past the bottom edge, so the browser's own
-      // scroll-into-view would drag the composition up. Undo it everywhere.
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+      // scroll-into-view would drag the composition up. Undo it only
+      // while a case is open — home now owns vertical scroll.
       var stage = track.closest('[data-stage]');
-      if (stage) { stage.scrollTop = 0; stage.scrollLeft = 0; }
+      if (stage && stage.classList.contains('is-detail')) {
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        stage.scrollTop = 0;
+        stage.scrollLeft = 0;
+      }
       track.scrollTop = 0;
     });
 

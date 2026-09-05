@@ -10,7 +10,51 @@
 
   var stage = document.querySelector('[data-stage]');
   var track = document.querySelector('[data-rail-track]');
-  var projects = window.PORTFOLIO_PROJECTS || [];
+  var html = document.documentElement;
+  var WORK = [
+    {
+      re: /sme banking/i,
+      cardTitle: 'SME Banking',
+      cardCaption: 'Intellect · Fintech · Money flows that finish',
+      cardImage: 'assets/img/work/cin-work-sme.png',
+      tone: 'cream'
+    },
+    {
+      re: /agentic|workflow/i,
+      cardTitle: 'AI workflow',
+      cardCaption: 'AI · Banking · Surfaces that explain themselves',
+      cardImage: 'assets/img/work/cin-work-helix.png',
+      tone: 'cream'
+    },
+    {
+      re: /plootus/i,
+      cardTitle: 'Plootus',
+      cardCaption: 'AI · Sales · Agents that call, dashboards that read',
+      cardImage: 'assets/img/work/cin-work-plootus.png',
+      tone: 'cream'
+    },
+    {
+      re: /daughters/i,
+      cardTitle: 'Daughters',
+      cardCaption: 'iOS · Care · First session completes the job',
+      cardImage: 'assets/img/work/cin-work-daughters.png',
+      tone: 'cream'
+    }
+  ];
+  var source = window.PORTFOLIO_PROJECTS || [];
+  var projects = WORK.map(function (spec) {
+    var found = null;
+    source.forEach(function (project) {
+      if (!found && spec.re.test(project.title)) found = project;
+    });
+    if (!found) return null;
+    found.cardTitle = spec.cardTitle;
+    found.cardCaption = spec.cardCaption;
+    found.cardImage = spec.cardImage;
+    found.cover = spec.cardImage;
+    found.bentoTone = spec.tone;
+    return found;
+  }).filter(Boolean);
 
   var indexCurrent = document.querySelector('[data-index-current]');
   var indexTotal = document.querySelector('[data-index-total]');
@@ -47,26 +91,13 @@
   /* ── hero reveal ────────────────────────────────────────────────────── */
 
   function revealHero() {
-    var items = document.querySelectorAll('.reveal');
-    if (reduceMotion.matches) {
-      items.forEach(function (item) { item.classList.add('is-revealed'); });
-      document.body.classList.add('is-ready');
+    if (window.IrisMotion && window.IrisMotion.revealLanding) {
+      window.IrisMotion.revealLanding(html, reduceMotion);
       return;
     }
-    items.forEach(function (item, i) {
-      item.style.transitionDelay = (0.08 + i * 0.075) + 's';
-    });
-    // Both a frame and a timer, and the work is idempotent. The hero's heading
-    // starts at `opacity: 0` and this is what turns it on — so if the frame
-    // never arrives (loaded in a background tab, a throttled renderer) the
-    // headline would simply never appear. Every other released-on-a-frame state
-    // in this codebase carries the same belt; this one was missing it.
-    var reveal = function () {
-      document.body.classList.add('is-ready');
-      items.forEach(function (item) { item.classList.add('is-revealed'); });
-    };
-    requestAnimationFrame(reveal);
-    setTimeout(reveal, 140);
+    var items = document.querySelectorAll(".reveal");
+    items.forEach(function (item) { item.classList.add("is-revealed"); item.style.opacity = "1"; item.style.visibility = "visible"; });
+    document.body.classList.add("is-ready");
   }
 
   /* ── portrait: keep a labelled placeholder until the real file loads ── */
@@ -110,23 +141,517 @@
 
   /* ── first-load sequence ────────────────────────────────────────────── */
 
-  var INTRO_MS = 1500;   // longest delay + duration, plus a little
+  var CURTAIN_TEXT = 'Tanishq Bafna'; /* full name — never "Tanishq." */
+  var NAME_BEATS = ['Tanishk Bafnaa', 'Tanish Bafna', 'Tanishq Bafna'];
+  var HOLD_MS = 900; /* beat after the real name lands, before lift */
+  var EXIT_MS = 900;
+  var MOVE_MS = 900;
 
-  function playIntro() {
-    if (!stage || reduceMotion.matches) return;
-    stage.classList.add('is-intro');
-    // Dropped once it has played, so nothing lingers to interfere with the
-    // transform-driven hover and deck states.
-    setTimeout(function () { stage.classList.remove('is-intro'); }, INTRO_MS);
+  function isDesktop() {
+    return window.matchMedia('(min-width: 768px)').matches;
+  }
+
+  var bentoTarget = 0;
+  var bentoState = { p: 0 };
+  var bentoTween = null;
+  var bentoInputWired = false;
+
+  function riseMax() {
+    var run = document.querySelector('.scroll-run');
+    return Math.max(1, (run ? run.offsetHeight : window.innerHeight * 2) - window.innerHeight);
+  }
+
+  function applyRiseFromPanel(p) {
+    var rise = 1 - Math.max(0, Math.min(1, p));
+    html.style.setProperty('--rise', rise.toFixed(4));
+    html.style.setProperty('--nav-out', '0');
+    html.classList.remove('is-nav-away');
+    html.classList.toggle('is-projects-in', p > 0.08);
+  }
+
+  function tweenBento(next, immediate) {
+    bentoTarget = Math.max(0, Math.min(1, next));
+
+    if (immediate || reduceMotion.matches || typeof gsap === 'undefined') {
+      if (bentoTween && bentoTween.kill) bentoTween.kill();
+      bentoTween = null;
+      bentoState.p = bentoTarget;
+      applyRiseFromPanel(bentoTarget);
+      return;
+    }
+
+    bentoTween = gsap.to(bentoState, {
+      p: bentoTarget,
+      duration: 0.85,
+      ease: 'power3.out',
+      overwrite: true,
+      onUpdate: function () { applyRiseFromPanel(bentoState.p); }
+    });
+  }
+
+  function progressFromScroll() {
+    return Math.max(0, Math.min(1, window.scrollY / riseMax()));
+  }
+
+  function wireBentoInput() {
+    if (bentoInputWired) return;
+    bentoInputWired = true;
+
+    window.addEventListener('scroll', function () {
+      if (!html.classList.contains('is-home-scroll')) return;
+      if (stage && stage.classList.contains('is-detail')) return;
+      tweenBento(progressFromScroll());
+    }, { passive: true });
+
+    var workLink = document.querySelector('[data-nav-work]');
+    if (workLink) {
+      workLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (stage && stage.classList.contains('is-detail')) return;
+        window.scrollTo({
+          top: riseMax(),
+          behavior: reduceMotion.matches ? 'auto' : 'smooth'
+        });
+        tweenBento(1);
+      });
+    }
+  }
+
+  function enableHomeScroll() {
+    if (!isDesktop() || (stage && stage.classList.contains('is-detail'))) {
+      html.classList.remove('is-home-scroll');
+      return;
+    }
+    html.classList.add('is-home-scroll');
+    wireBentoInput();
+    tweenBento(progressFromScroll(), true);
+  }
+
+  function lockHomeScroll() {
+    html.classList.remove('is-home-scroll');
+    tweenBento(1, true);
+  }
+
+  function unlockHomeScroll() {
+    enableHomeScroll();
+    if (html.classList.contains('is-home-scroll')) {
+      window.scrollTo(0, riseMax());
+      tweenBento(1, true);
+    }
+  }
+
+
+
+  function playCurtain(done) {
+    var curtain = document.getElementById('curtain');
+    var brand = curtain ? curtain.querySelector('.curtain__brand') : null;
+    var mark = document.getElementById('curtain-mark');
+    var identity = document.querySelector('.masthead__identity');
+    var logo = document.querySelector('.masthead__name');
+    var skip = /[?&]open=/.test(location.search);
+    var BOLD = '800'; /* curtain + logo stay this weight — no mid-flight jump */
+
+    function revealMasthead() {
+      if (logo) {
+        logo.style.fontWeight = BOLD;
+        logo.classList.add('is-arrived');
+        logo.classList.remove('is-awaiting-curtain');
+      }
+      if (identity) identity.classList.remove('is-awaiting-curtain');
+    }
+
+    if (logo) {
+      logo.classList.add('is-awaiting-curtain');
+      logo.textContent = CURTAIN_TEXT;
+      logo.style.fontWeight = BOLD;
+    }
+    if (identity) identity.classList.add('is-awaiting-curtain');
+
+    if (!curtain || !brand || !mark || skip) {
+      if (curtain) curtain.classList.add('is-skipped');
+      html.classList.remove('is-curtain');
+      revealMasthead();
+      revealHero();
+      if (done) done();
+      return;
+    }
+    /* Reduced motion: still show the coffee curtain, skip the typewriter + fly */
+    if (reduceMotion.matches) {
+      html.classList.add('is-curtain');
+      mark.textContent = CURTAIN_TEXT;
+      mark.style.opacity = '1';
+      mark.style.color = '#f4efe6';
+      whenPageLoaded(function () {
+        setTimeout(function () {
+          revealHero();
+          if (typeof gsap !== 'undefined') {
+            curtain.classList.add('is-lifting');
+            gsap.to(curtain, { yPercent: -110, duration: 0.55, ease: 'power3.inOut', force3D: true });
+          } else {
+            curtain.classList.add('is-fading');
+          }
+          setTimeout(function () {
+            curtain.classList.add('is-done');
+            curtain.style.display = 'none';
+            html.classList.remove('is-curtain');
+            revealMasthead();
+            if (done) done();
+          }, 500);
+        }, 500);
+      });
+      return;
+    }
+
+    html.classList.add('is-curtain');
+    mark.style.fontFamily = '"Syne", sans-serif';
+    mark.style.fontWeight = BOLD;
+    mark.style.fontSynthesis = 'none';
+    /* Match navbar logo size exactly (shared --mark-size) */
+    if (logo) {
+      mark.style.fontSize = window.getComputedStyle(logo).fontSize;
+      mark.style.letterSpacing = window.getComputedStyle(logo).letterSpacing;
+      mark.style.lineHeight = window.getComputedStyle(logo).lineHeight;
+    }
+    mark.style.whiteSpace = 'nowrap';
+    mark.style.color = '#f4efe6';
+    mark.style.margin = '0';
+    mark.style.opacity = '1';
+    mark.textContent = '';
+
+    var typedReady = false;
+    var loadReady = document.readyState === 'complete';
+    var liftStarted = false;
+
+    function makeChar(ch) {
+      var s = document.createElement('span');
+      s.className = ch === ' ' ? 'curtain__ch curtain__ch--space' : 'curtain__ch';
+      s.textContent = ch === ' ' ? '\u00a0' : ch;
+      s.style.fontWeight = BOLD;
+      return s;
+    }
+
+    function readMark() {
+      return Array.prototype.map.call(mark.children, function (el) {
+        return el.classList.contains('curtain__ch--space') ? ' ' : el.textContent;
+      }).join('');
+    }
+
+    function diffChars(from, to) {
+      var a = from.split('');
+      var b = to.split('');
+      var m = a.length;
+      var n = b.length;
+      var dp = [];
+      var i;
+      var j;
+      for (i = 0; i <= m; i++) {
+        dp[i] = [];
+        for (j = 0; j <= n; j++) dp[i][j] = 0;
+      }
+      for (i = 1; i <= m; i++) {
+        for (j = 1; j <= n; j++) {
+          dp[i][j] = a[i - 1] === b[j - 1]
+            ? dp[i - 1][j - 1] + 1
+            : Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
+      }
+      var ops = [];
+      i = m;
+      j = n;
+      while (i > 0 || j > 0) {
+        if (i > 0 && j > 0 && a[i - 1] === b[j - 1]) {
+          ops.push({ type: 'keep', ch: a[i - 1] });
+          i -= 1;
+          j -= 1;
+        } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+          ops.push({ type: 'ins', ch: b[j - 1] });
+          j -= 1;
+        } else {
+          ops.push({ type: 'del', ch: a[i - 1] });
+          i -= 1;
+        }
+      }
+      ops.reverse();
+      return ops;
+    }
+
+    function paintName(text, donePaint) {
+      mark.textContent = '';
+      var nodes = text.split('').map(makeChar);
+      nodes.forEach(function (el) { mark.appendChild(el); });
+      if (typeof gsap === 'undefined') {
+        if (donePaint) donePaint();
+        return;
+      }
+      gsap.set(nodes, { opacity: 0, y: 8, filter: 'blur(7px)' });
+      gsap.to(nodes, {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.9,
+        stagger: 0.045,
+        ease: 'power3.out',
+        onComplete: donePaint
+      });
+    }
+
+    function morphName(toText, doneMorph) {
+      if (typeof gsap === 'undefined') {
+        mark.textContent = '';
+        toText.split('').forEach(function (ch) { mark.appendChild(makeChar(ch)); });
+        if (doneMorph) doneMorph();
+        return;
+      }
+
+      var ops = diffChars(readMark(), toText);
+      var existing = Array.prototype.slice.call(mark.children);
+      var ei = 0;
+      var insertEls = [];
+      var deleteEls = [];
+
+      ops.forEach(function (op) {
+        if (op.type === 'keep') {
+          ei += 1;
+        } else if (op.type === 'del') {
+          deleteEls.push(existing[ei]);
+          ei += 1;
+        } else {
+          var el = makeChar(op.ch);
+          mark.insertBefore(el, existing[ei] || null);
+          insertEls.push(el);
+        }
+      });
+
+      deleteEls.forEach(function (el) {
+        if (!el) return;
+        el.style.width = el.getBoundingClientRect().width + 'px';
+        el.style.overflow = 'hidden';
+      });
+      insertEls.forEach(function (el) {
+        var w = el.getBoundingClientRect().width;
+        gsap.set(el, { width: 0, opacity: 0, y: 10, overflow: 'hidden', filter: 'blur(8px)' });
+        el.setAttribute('data-w', String(w));
+      });
+
+      var tl = gsap.timeline({ onComplete: doneMorph });
+      if (deleteEls.length) {
+        tl.to(deleteEls, {
+          opacity: 0,
+          y: -12,
+          width: 0,
+          filter: 'blur(8px)',
+          duration: 0.72,
+          stagger: 0.08,
+          ease: 'power2.in',
+          onComplete: function () {
+            deleteEls.forEach(function (el) {
+              if (el && el.parentNode) el.parentNode.removeChild(el);
+            });
+          }
+        }, 0);
+      }
+      if (insertEls.length) {
+        tl.to(insertEls, {
+          opacity: 1,
+          y: 0,
+          width: function (i, el) { return Number(el.getAttribute('data-w')); },
+          filter: 'blur(0px)',
+          duration: 0.82,
+          stagger: 0.08,
+          ease: 'power3.out',
+          onComplete: function () {
+            insertEls.forEach(function (el) {
+              el.style.width = '';
+              el.style.overflow = '';
+              el.style.filter = '';
+            });
+          }
+        }, deleteEls.length ? 0.08 : 0);
+      }
+      if (!deleteEls.length && !insertEls.length && doneMorph) doneMorph();
+    }
+
+    function playNameBeats(doneBeats) {
+      var step = 0;
+      var BEAT_HOLD = 1400;
+
+      function afterBeat() {
+        if (NAME_BEATS[step] === CURTAIN_TEXT && loadReady) {
+          setTimeout(doneBeats, HOLD_MS);
+          return;
+        }
+        var next = (step + 1) % NAME_BEATS.length;
+        morphName(NAME_BEATS[next], function () {
+          step = next;
+          setTimeout(afterBeat, BEAT_HOLD);
+        });
+      }
+
+      paintName(NAME_BEATS[0], function () {
+        setTimeout(afterBeat, BEAT_HOLD);
+      });
+    }
+
+    function beginLift() {
+      if (liftStarted || !typedReady || !loadReady) return;
+      liftStarted = true;
+
+      if (!logo || !identity) {
+        revealHero();
+        curtain.classList.add('is-done');
+        html.classList.remove('is-curtain');
+        revealMasthead();
+        if (done) done();
+        setTimeout(function () { curtain.style.display = 'none'; }, EXIT_MS + 40);
+        return;
+      }
+
+      var ink = getComputedStyle(html).getPropertyValue('--curtain-ink').trim() || '#1E1510';
+      var logoStyle = window.getComputedStyle(logo);
+
+      /* Flatten typed spans so the name is one solid word */
+      mark.textContent = CURTAIN_TEXT;
+      mark.style.fontFamily = '"Syne", sans-serif';
+      mark.style.fontWeight = BOLD;
+      mark.style.fontSynthesis = 'none';
+      mark.style.fontSize = logoStyle.fontSize;
+      mark.style.letterSpacing = logoStyle.letterSpacing;
+      mark.style.lineHeight = logoStyle.lineHeight;
+      mark.style.whiteSpace = 'nowrap';
+      mark.style.color = '#f4efe6';
+      mark.style.margin = '0';
+      if (typeof gsap !== 'undefined') gsap.set(mark, { y: 0, opacity: 1, clearProps: 'transform' });
+
+      /* Pin the same name node over the page so it can rise with the curtain
+         and slide left into the masthead seat. No clone, so nothing flashes. */
+      var from = brand.getBoundingClientRect();
+      var to = logo.getBoundingClientRect();
+      curtain.style.transition = 'none';
+      curtain.classList.add('is-lifting');
+      curtain.style.pointerEvents = 'none';
+      brand.classList.add('is-flying');
+      brand.style.position = 'fixed';
+      brand.style.left = from.left + 'px';
+      brand.style.top = from.top + 'px';
+      brand.style.margin = '0';
+      brand.style.padding = '0';
+      brand.style.zIndex = '220';
+      brand.style.pointerEvents = 'none';
+      brand.style.willChange = 'transform';
+      document.body.appendChild(brand);
+
+      from = brand.getBoundingClientRect();
+      var dx = to.left - from.left;
+      var dy = to.top - from.top;
+      var ease = 'power3.inOut';
+      var dur = MOVE_MS / 1000;
+
+      function finishLift() {
+        revealMasthead();
+        if (brand.parentNode) brand.parentNode.removeChild(brand);
+        curtain.classList.add('is-done');
+        curtain.style.display = 'none';
+        html.classList.remove('is-curtain');
+        if (done) done();
+      }
+
+      /* Landing rises with the curtain, not after it. */
+      revealHero();
+
+      /* One clock: curtain goes up, name goes up and left, same duration and ease. */
+      if (typeof gsap !== 'undefined') {
+        var motion = { p: 0 };
+        gsap.set(curtain, { yPercent: 0, force3D: true });
+        gsap.set(brand, { x: 0, y: 0, force3D: true });
+        gsap.to(motion, {
+          p: 1,
+          duration: dur,
+          ease: ease,
+          onUpdate: function () {
+            var p = motion.p;
+            gsap.set(curtain, { yPercent: -110 * p, force3D: true });
+            gsap.set(brand, { x: dx * p, y: dy * p, force3D: true });
+          },
+          onComplete: finishLift
+        });
+        gsap.to(mark, { color: ink, duration: dur, ease: ease, overwrite: true });
+      } else {
+        curtain.classList.add('is-fading');
+        brand.style.transition = 'transform ' + MOVE_MS + 'ms cubic-bezier(0.65, 0, 0.35, 1)';
+        mark.style.transition = 'color ' + MOVE_MS + 'ms cubic-bezier(0.65, 0, 0.35, 1)';
+        requestAnimationFrame(function () {
+          brand.style.transform = 'translate(' + dx + 'px, ' + dy + 'px)';
+          mark.style.color = ink;
+        });
+        setTimeout(finishLift, MOVE_MS + 40);
+      }
+    }
+
+    playNameBeats(function () {
+      typedReady = true;
+      beginLift();
+    });
+
+    if (!loadReady) {
+      window.addEventListener('load', function () {
+        loadReady = true;
+        beginLift();
+      }, { once: true });
+    }
   }
 
   /* ── boot ───────────────────────────────────────────────────────────── */
 
   renderProjects();
-  playIntro();
   wirePortrait();
   wireCursorLight();
-  revealHero();
+  if (window.IrisMotion && window.IrisMotion.wireParticles) window.IrisMotion.wireParticles(reduceMotion);
+  html.style.setProperty('--rise', /[?&]open=/.test(location.search) ? '0' : '1');
+  html.style.setProperty('--nav-out', '0');
+
+  function whenPageLoaded(done) {
+    if (document.readyState === 'complete') {
+      done();
+      return;
+    }
+    window.addEventListener('load', done, { once: true });
+  }
+
+  function whenSyneReady(done) {
+    var finished = false;
+    var finish = function () {
+      if (finished) return;
+      finished = true;
+      done();
+    };
+    /* Curtain must not type in a fallback face */
+    if (document.fonts && document.fonts.load) {
+      Promise.all([
+        document.fonts.load('800 2.5rem "Syne"'),
+        document.fonts.load('800 1.2rem "Syne"'),
+        document.fonts.load('700 2.5rem "Syne"')
+      ]).then(function () {
+        return document.fonts.ready;
+      }).then(finish).catch(finish);
+      setTimeout(finish, 1800);
+    } else {
+      finish();
+    }
+  }
+
+  whenSyneReady(function () {
+    var curtainEl = document.getElementById('curtain');
+    if (curtainEl) {
+      curtainEl.classList.remove('is-skipped', 'is-done', 'is-fading');
+      curtainEl.style.display = '';
+      curtainEl.style.opacity = '';
+      curtainEl.style.transform = '';
+    }
+    html.classList.remove('curtain-skip');
+    playCurtain(function () {
+      if (!/[?&]open=/.test(location.search)) enableHomeScroll();
+    });
+  });
 
   if (track && track.querySelectorAll('.folder-slot').length) {
     var detail = null;   // assigned below; the rail's callbacks close over it
@@ -154,21 +679,40 @@
 
     /* ── folder mode: while a project is open the controls walk its pages ── */
 
+    var beatName = document.querySelector('[data-rail-beat-name]');
+    var deckSlides = [];
+
     function paintDeckControls(index, count) {
       if (slideCurrent) slideCurrent.textContent = pad(index + 1);
       if (slideTotal) slideTotal.textContent = pad(count);
       if (prevButton) prevButton.disabled = index <= 0;
       if (nextButton) nextButton.disabled = index >= count - 1;
 
-      // A single slide is its own whole story, so show it as complete.
+      var here = deckSlides[index] || {};
+      var next = deckSlides[index + 1];
+      if (beatName) beatName.textContent = here.title || here.headline || '';
+      if (nextButton) {
+        nextButton.setAttribute(
+          'aria-label',
+          next && next.title ? 'Turn to ' + next.title : 'Next page'
+        );
+      }
+      if (prevButton) {
+        var prev = deckSlides[index - 1];
+        prevButton.setAttribute(
+          'aria-label',
+          prev && prev.title ? 'Turn back to ' + prev.title : 'Previous page'
+        );
+      }
+
       if (deckProgressFill) {
         var through = count > 1 ? (index + 1) / count : 1;
         deckProgressFill.style.transform = 'scaleX(' + through.toFixed(4) + ')';
       }
       if (status) {
-        var pageTitle = document.querySelector('[data-page][data-index="' + index + '"] [data-page-title]');
-        var label = pageTitle ? pageTitle.textContent : '';
-        status.textContent = 'Page ' + (index + 1) + ' of ' + count + (label ? ': ' + label : '');
+        var label = here.title || here.headline || '';
+        status.textContent = (label ? label + '. ' : '') +
+          'Beat ' + (index + 1) + ' of ' + count;
       }
     }
 
@@ -205,20 +749,27 @@
       stage: stage,
       projects: projects,
       slots: slots,
-      onOpen: function (index, slideCount) {
+      onOpen: function (index, slideCount, slides) {
+        deckSlides = slides || [];
         slots.forEach(function (slot, i) {
           var link = slot.querySelector('[data-folder]');
           if (link) link.setAttribute('aria-expanded', i === index ? 'true' : 'false');
         });
         enterDeckMode(index, slideCount);
+        lockHomeScroll();
       },
-      onSlideChange: function (index, count) { paintDeckControls(index, count); },
+      onSlideChange: function (index, count, slides) {
+        if (slides) deckSlides = slides;
+        paintDeckControls(index, count);
+      },
       onClose: function () {
+        deckSlides = [];
         slots.forEach(function (slot) {
           var link = slot.querySelector('[data-folder]');
           if (link) link.setAttribute('aria-expanded', 'false');
         });
         exitDeckMode();
+        unlockHomeScroll();
       }
     });
 
@@ -271,61 +822,31 @@
 
     homeButton.addEventListener('click', function () { detail.close(); });
 
-    /* ── fill the screen when the columns actually fit ─────────────────────
-       The rail is a scrolling row by necessity, not by preference. When the
-       viewport is wide enough to hold every folder plus the closing panel at a
-       sensible width, they are sized to fill it exactly — no scroll, nothing
-       clipped off the right edge, and the arrows disable themselves because
-       there is nowhere to go. Below that, the folders keep their minimum width
-       and the row scrolls as before. Derived from the live column count, so
-       adding a project needs no change here. */
-
-    var MIN_FILL_W = 300;   // below this a folder is too cramped to fill with
-    var root = document.documentElement;
-
-    function fitRail() {
-      if (!window.matchMedia('(min-width: 768px)').matches) {
-        root.style.removeProperty('--card-w');
-        root.style.removeProperty('--end-w');
-        delete track.dataset.fills;
-        return;
-      }
-
-      // Measure with any previous override cleared, so this is idempotent.
-      root.style.removeProperty('--card-w');
-      root.style.removeProperty('--end-w');
-
-      var styles = getComputedStyle(track);
-      var columns = track.children.length;               // folders + closing panel
-      var gutters = parseFloat(styles.paddingInlineStart) + parseFloat(styles.paddingInlineEnd);
-      var gaps = parseFloat(styles.columnGap) * (columns - 1);
-      var per = (track.clientWidth - gutters - gaps) / columns;
-
-      if (per >= MIN_FILL_W) {
-        root.style.setProperty('--card-w', per.toFixed(2) + 'px');
-        root.style.setProperty('--end-w', per.toFixed(2) + 'px');
-        track.dataset.fills = 'true';
-      } else {
-        delete track.dataset.fills;
-      }
-    }
-
-    fitRail();
     rail.measure();
-    window.addEventListener('resize', function () { fitRail(); rail.measure(); });
+    window.addEventListener('resize', function () {
+      rail.measure();
+      if (stage && !stage.classList.contains('is-detail')) enableHomeScroll();
+    });
 
-    // "Work" moves to the first project instead of jumping the document.
     var workLink = document.querySelector('[data-nav-work]');
     if (workLink) {
       workLink.addEventListener('click', function (event) {
         event.preventDefault();
-        detail.close();
+        if (stage.classList.contains('is-detail')) {
+          detail.close();
+          return;
+        }
+        window.scrollTo({
+          top: riseMax(),
+          behavior: reduceMotion.matches ? 'auto' : 'smooth'
+        });
+        tweenBento(1);
       });
     }
 
     // Fonts land after first paint and change card widths.
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(function () { fitRail(); rail.measure(); });
+      document.fonts.ready.then(function () { rail.measure(); });
     }
   }
 

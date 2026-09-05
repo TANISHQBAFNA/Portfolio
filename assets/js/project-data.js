@@ -1,5 +1,5 @@
 /**
- * projectData — single source of truth for the project rail and detail view.
+ * projectData - single source of truth for the project rail and detail view.
  * ---------------------------------------------------------------------------
  * Edit / reorder / add entries here. The rail, the counter, the keyboard
  * navigation and the detail panel all derive from this array.
@@ -8,15 +8,15 @@
  * title    project name, rendered in the display serif
  * category product / discipline label shown above the title
  * blurb    ONE line on the folder. Keep it under ~90 characters.
- * detail   2–4 sentences shown on the opening slide of the project deck.
+ * detail   2-4 sentences shown on the opening slide of the project deck.
  * slides   the presentation deck for this project. Each slide is
  *            { title, headline, body, images?, type? }
  *          Board placement is computed in project-detail.js (wander path).
  *          `type` is optional and changes what KIND of slide it is:
- *            'full'      — one big picture; only bites on a one-image slide
- *            'statement' — no pictures at all, claim at title size, a section beat
+ *            'full'      - one big picture; only bites on a one-image slide
+ *            'statement' - no pictures at all, claim at title size, a section beat
  *          Leave it off for the default two-column grid.
- *          `body` is the slide's paragraph — plain language, ~45 words, which
+ *          `body` is the slide's paragraph - plain language, ~45 words, which
  *          sets four lines and fills the band the layout reserves for it. Wrap a
  *          word or phrase in *asterisks* to give it the accent italics the hero
  *          heading uses; it works in `headline` too. Keep it to the words that
@@ -24,28 +24,28 @@
  *          A `points` array is still rendered when a slide genuinely is a list,
  *          but `body` wins if both are present.
  *          `images` takes plain paths or { src, alt, caption } objects. TWO is
- *          the maximum per slide — more and none of them is readable. A pair is
+ *          the maximum per slide - more and none of them is readable. A pair is
  *          laid out as a simple two-column grid: same size, sitting level, every
  *          slide the same. Every
- *          slide is arranged the same way — claim and paragraph across the top,
- *          imagery in the row beneath — so a slide has no layout to choose.
+ *          slide is arranged the same way - claim and paragraph across the top,
+ *          imagery in the row beneath - so a slide has no layout to choose.
  *          With no images the words simply take the whole panel.
- *          >>> Every slide below is DUMMY CONTENT — copy and imagery both. The
+ *          >>> Every slide below is DUMMY CONTENT - copy and imagery both. The
  *          decks are structured like real case studies (context → problem →
  *          research → design → outcome) so the layout can be judged at real
  *          length, but no claim in them is yours until you write it. Square
  *          brackets mark where a specific number or result belongs. <<<
- * year     free text ("2025 — Present", "2022 — 2024", "Ongoing")
+ * year     free text ("2025 - Present", "2022 - 2024", "Ongoing")
  * role     shown on hover and in the detail view
  * scope    shown on hover and in the detail view
  * href     "#" = no case study page yet. Point at a real page when one exists.
  * cover    16:11-ish image. SVG placeholders ship in assets/img/covers/.
  * coverTag short caption printed over the cover
  * status   "live" (href goes somewhere) | "placeholder" (no page yet)
- * tools    what you built it with — rendered on a slip of paper clipped to the
+ * tools    what you built it with - rendered on a slip of paper clipped to the
  *          folder. Two to four reads best; leave the field off for no slip.
- * tone     card stock: 'manila' (default) | 'sage' | 'kraft' | 'slate'. Purely
- *          cosmetic — a shelf of identical folders reads flat.
+ * tone     card stock: 'coral' | 'mint' | 'butter' | 'lavender' | 'sky'
+ *          (landing assigns these in order). Legacy manila/sage/kraft/slate still paint.
  * attach   how the tools are attached: 'clip' (default) | 'note' for a sticky
  *          note instead. One note in a row of clips is the point; more is noise.
  */
@@ -56,13 +56,13 @@ window.PORTFOLIO_PROJECTS = [
     tone: 'manila',
     tools: ['Figma', 'Design tokens', 'Storybook'],
     category: 'Fintech Product Design',
-    blurb: 'Making business banking — payments, approvals, onboarding — simpler to trust.',
-    detail: 'Product design for SME and corporate banking at Intellect Design — payments, approvals, onboarding and the design system that keeps them consistent across web and mobile. Replace this paragraph with the framing you want to lead with.',
+    blurb: 'Making business banking - payments, approvals, onboarding - simpler to trust.',
+    detail: 'Product design for SME and corporate banking at Intellect Design - payments, approvals, onboarding and the design system that keeps them consistent across web and mobile. Replace this paragraph with the framing you want to lead with.',
     slides: [
       {
         title: "Context",
         headline: "Where this sat, and why it was *worth doing*",
-        body: "[Where this sat — company, product, moment. Who asked for it and why. What existed before you started.]",
+        body: "[Where this sat - company, product, moment. Who asked for it and why. What existed before you started.]",
       },
       {
         title: "The brief",
@@ -77,7 +77,7 @@ window.PORTFOLIO_PROJECTS = [
         title: "Who it is for",
         type: "full",
         headline: "The people on this product do not want the same things",
-        body: "[Who uses this — one line each, two or three of them. What they were doing instead. The one thing they could not do.]",
+        body: "[Who uses this - one line each, two or three of them. What they were doing instead. The one thing they could not do.]",
         images: [
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "Dashboard, first-run state" }
         ]
@@ -140,7 +140,7 @@ window.PORTFOLIO_PROJECTS = [
       {
         title: "The design system",
         headline: "One set of parts, so every screen behaves the same way",
-        body: "[What is in the system — colour, type, components. The rule that saved you the most time. The gap you know is still there.]",
+        body: "[What is in the system - colour, type, components. The rule that saved you the most time. The gap you know is still there.]",
         images: [
           { src: "assets/img/slides/slide-04.svg", alt: "", caption: "Token architecture" },
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "Component library" }
@@ -160,7 +160,7 @@ window.PORTFOLIO_PROJECTS = [
         headline: "We put it in front of people before we built it",
         body: "[Who you tested with, and how many. The top thing they got stuck on. What you changed as a result.]",
         images: [
-          { src: "assets/img/slides/slide-03.svg", alt: "", caption: "Someone using it — a still from a session" },
+          { src: "assets/img/slides/slide-03.svg", alt: "", caption: "Someone using it - a still from a session" },
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "What you changed afterwards" }
         ],
       },
@@ -183,7 +183,7 @@ window.PORTFOLIO_PROJECTS = [
         ],
       }
     ],
-    year: '2025 — Present',
+    year: '2025 - Present',
     role: 'Product Designer',
     scope: 'Web + mobile, design system',
     href: '#',
@@ -203,24 +203,24 @@ window.PORTFOLIO_PROJECTS = [
       {
         title: "The bet",
         headline: "Four people, four different answers, *one set of numbers*",
-        body: "A sales team runs *AI agents* that call and email prospects. The boss, the manager and the rep all read the same numbers, and each of them needs a *different answer* out of them — while someone non-technical has to set the agents up safely. I designed the dashboards, the setup and the rules that hold it together.",
+        body: "A sales team runs *AI agents* that call and email prospects. The boss, the manager and the rep all read the same numbers, and each of them needs a *different answer* out of them - while someone non-technical has to set the agents up safely. I designed the dashboards, the setup and the rules that hold it together.",
       },
       {
         title: "Project",
         headline: "Five parts of the product, four dashboards, one design system",
-        body: "Role — [add your title]. Team and timeline — [add]. Status — [pick one: shipped, pilot, prototype, self-initiated]. Five parts of the product, four dashboards, one design system. Every number shown here is *sample data*, not a result.",
+        body: "Role - [add your title]. Team and timeline - [add]. Status - [pick one: shipped, pilot, prototype, self-initiated]. Five parts of the product, four dashboards, one design system. Every number shown here is *sample data*, not a result.",
         images: [
-          { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The main dashboard, full width — what the product actually is" },
-          { src: "assets/img/slides/slide-03.svg", alt: "", caption: "Contact sheet — every screen that shipped, as thumbnails" }
+          { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The main dashboard, full width - what the product actually is" },
+          { src: "assets/img/slides/slide-03.svg", alt: "", caption: "Contact sheet - every screen that shipped, as thumbnails" }
         ],
       },
       {
         title: "The product",
         headline: "AI agents do the outreach; everyone reads the results",
-        body: "Agents call, email and message a list of prospects, and *every run is recorded* — so you can check what the AI actually did. The dashboards on top change depending on who signs in; 1,500 prospects move through five parts of the product.",
+        body: "Agents call, email and message a list of prospects, and *every run is recorded* - so you can check what the AI actually did. The dashboards on top change depending on who signs in; 1,500 prospects move through five parts of the product.",
         images: [
           { src: "assets/img/slides/slide-04.svg", alt: "", caption: "Map of the five parts and how deep each one goes" },
-          { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The product at rest — the screen people open first" }
+          { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The product at rest - the screen people open first" }
         ]
       },
       {
@@ -228,7 +228,7 @@ window.PORTFOLIO_PROJECTS = [
         headline: "A sales boss and a sales rep cannot share one dashboard",
         body: "The boss asks whether they will hit the number this quarter. The rep asks who to call today. One shared dashboard makes *both of them hunt* for their half of it. And separately: nobody deploys an AI they cannot *predict*.",
         images: [
-          { src: "assets/img/slides/slide-04.svg", alt: "", caption: "Side-by-side of what each role needs — almost no overlap" },
+          { src: "assets/img/slides/slide-04.svg", alt: "", caption: "Side-by-side of what each role needs - almost no overlap" },
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The boss's dashboard, full length" }
         ],
       },
@@ -238,23 +238,23 @@ window.PORTFOLIO_PROJECTS = [
         headline: "What people were doing before this",
         body: "[How the team got these answers before. What it cost them: time, arguments, missed follow-ups. Who felt it worst, and why the obvious fix would not work.]",
         images: [
-          { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The old way — a spreadsheet, a rival tool, or a photo of the wall chart" },
+          { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The old way - a spreadsheet, a rival tool, or a photo of the wall chart" },
           { src: "assets/img/slides/slide-02.svg", alt: "", caption: "The workaround, drawn as steps" }
         ],
       },
       {
         title: "What I tried",
         headline: "What I tried first, and why it did not hold up",
-        body: "[The first version — what it was. What broke, and how you noticed. What you changed.] If no earlier frames survive, say so plainly rather than implying they do.",
+        body: "[The first version - what it was. What broke, and how you noticed. What you changed.] If no earlier frames survive, say so plainly rather than implying they do.",
         images: [
-          { src: "assets/img/slides/slide-02.svg", alt: "", caption: "First attempt — a wireframe or an abandoned frame" },
+          { src: "assets/img/slides/slide-02.svg", alt: "", caption: "First attempt - a wireframe or an abandoned frame" },
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "Where it went instead" }
         ],
       },
       {
         title: "One screen, four people",
         headline: "Same building blocks, four different dashboards",
-        body: "One screen, four versions — boss, director, manager, rep. Each shows *different numbers* behind different filters, and the rep's swaps charts for a to-do list. The cards and colours stay the same, so it still reads as *one product*.",
+        body: "One screen, four versions - boss, director, manager, rep. Each shows *different numbers* behind different filters, and the rep's swaps charts for a to-do list. The cards and colours stay the same, so it still reads as *one product*.",
         images: [
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "Close-up: what the boss sees" },
           { src: "assets/img/slides/slide-03.svg", alt: "", caption: "Close-up: what the rep sees" }
@@ -272,7 +272,7 @@ window.PORTFOLIO_PROJECTS = [
       {
         title: "Setting up an agent",
         headline: "Eight small steps instead of one long form",
-        body: "Setting up an agent means seven unrelated decisions. On one screen that looks impossible; as *eight small steps*, each one is easy. Personality is five sliders, not a prompt box — *no technical skill needed* — and the last step summarises it all.",
+        body: "Setting up an agent means seven unrelated decisions. On one screen that looks impossible; as *eight small steps*, each one is easy. Personality is five sliders, not a prompt box - *no technical skill needed* - and the last step summarises it all.",
         images: [
           { src: "assets/img/slides/slide-02.svg", alt: "", caption: "All eight steps in a row" },
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The personality step, with the sliders" }
@@ -290,7 +290,7 @@ window.PORTFOLIO_PROJECTS = [
       {
         title: "Craft",
         headline: "Every number has context, and every screen shares the same parts",
-        body: "A percentage always carries the count behind it — *60% of 258*, never a bare 60%. One card design is reused more than forty times, and six written rules kept five areas consistent. Honest gap: spacing never got written down.",
+        body: "A percentage always carries the count behind it - *60% of 258*, never a bare 60%. One card design is reused more than forty times, and six written rules kept five areas consistent. Honest gap: spacing never got written down.",
         images: [
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "One card pulled apart, with each piece labelled" },
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The same card in three different places" }
@@ -299,7 +299,7 @@ window.PORTFOLIO_PROJECTS = [
       {
         title: "The journey",
         headline: "From signing in to checking what the AI did",
-        body: "Sign in, build an agent, correct it, launch it, read the results — the *only path* that touches every part of the product. It ends in *evidence* rather than a confirmation screen. Ten screens, numbered, with one line of intent each.",
+        body: "Sign in, build an agent, correct it, launch it, read the results - the *only path* that touches every part of the product. It ends in *evidence* rather than a confirmation screen. Ten screens, numbered, with one line of intent each.",
         images: [
           { src: "assets/img/slides/slide-02.svg", alt: "", caption: "The ten-screen path, numbered" },
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "Reading what it did" }
@@ -318,7 +318,7 @@ window.PORTFOLIO_PROJECTS = [
         title: "What I owned",
         type: "full",
         headline: "What I owned, and what I gave up to move fast",
-        body: "[Add: what you led.] [Add: what you did not own — brand, copy, data.] I chose a *dark theme first*, which is why light mode came later and is unfinished, and chose dense screens for people who scan — at the cost of a long page.",
+        body: "[Add: what you led.] [Add: what you did not own - brand, copy, data.] I chose a *dark theme first*, which is why light mode came later and is unfinished, and chose dense screens for people who scan - at the cost of a long page.",
         images: [
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "Dark and light side by side, showing what light mode still misses" }
         ]
@@ -328,12 +328,12 @@ window.PORTFOLIO_PROJECTS = [
         headline: "What shipped, and the first thing I would change",
         body: "[What shipped, in one line.] [Add a real number here, or say plainly that it was not measured.] Light mode arrived late and parts of it never got themed; next time I would *set the colours up once* and switch themes, rather than patch them afterwards.",
         images: [
-          { src: "assets/img/slides/slide-01.svg", alt: "", caption: "What shipped — the strongest single screen, full width" },
+          { src: "assets/img/slides/slide-01.svg", alt: "", caption: "What shipped - the strongest single screen, full width" },
           { src: "assets/img/slides/slide-01.svg", alt: "", caption: "The two light-mode problems, each marked with its fix" }
         ],
       }
     ],
-    year: '2025 — 2026',
+    year: '2025 - 2026',
     role: 'Product Designer',
     scope: 'Product UI + flows',
     href: '#',
@@ -349,13 +349,15 @@ window.PORTFOLIO_PROJECTS = [
     tools: ['Figma', 'Prototyping', 'iOS HIG'],
     category: 'Mobile Product Design',
     blurb: 'Making a women\'s faith app usable on iOS before it launched.',
+    hook: 'The first session had to work, or there was no product.',
+    stamp: 'Filed',
     detail: 'Daughters App is an upcoming iPhone product for women who want to practise faith together. I was the Product/UX Designer. The first session had to complete that job, or there was nothing to launch.',
     slides: [
       {
         title: 'The first session',
-        type: 'full',
+        type: 'open',
         headline: 'The first session had to work, or there was no product',
-        body: 'Daughters App is an upcoming iPhone product for women who want to *pray and practise faith together*. I designed the structure, the primary flow, and the screens. If a woman could not complete that job in session one, there was nothing to launch.',
+        body: 'An iPhone product for women who want to *pray and practise faith together*. If she could not complete that job in session one, there was nothing to launch.',
         images: [
           { src: 'assets/img/daughters/daughters-hero.webp', alt: 'Daughters iPhone mockups', caption: 'The product, in the hand', frame: 'print' },
           { src: 'assets/img/daughters/mockup-1.webp', alt: 'Daughters home mockup', caption: 'Home, as designed', frame: 'photo' }
@@ -363,36 +365,43 @@ window.PORTFOLIO_PROJECTS = [
       },
       {
         title: 'What I owned',
+        type: 'scope',
         headline: 'What I owned, and what I did not',
-        body: 'Product/UX Designer, Aug 2023 to present. I produced *20+ wireframes, prototypes, and high-fidelity screens* in Figma from stakeholder feedback, information architecture, and personas. I did not write the theology or build the backend.',
-        images: [
-          { src: 'assets/img/daughters/daughters-bento.webp', alt: 'Daughters feature overview', caption: 'What the product holds', frame: 'sticky' },
-          { src: 'assets/img/daughters/daughters-web.webp', alt: 'Daughters on the web', caption: 'The same product, on the web', frame: 'print' }
-        ]
+        body: 'I produced *20+ wireframes, prototypes, and high-fidelity screens* from stakeholder feedback, information architecture, and personas. I did not write the theology or build the backend.',
+        owned: ['Primary iOS flow', '20+ screens and prototypes', 'Accessibility'],
+        not: ['Theology', 'Backend', 'A live launch']
       },
       {
         title: 'The problem',
+        type: 'problem',
         headline: 'Too many jobs before the first success',
-        body: 'She opened the app to *pray*. The first path also asked her to set up a feed, join groups, and meet an AI Bible companion. In a faith product, confusion is not a small issue. People leave, and they do not come back.',
+        body: 'She opened the app to *pray*. The first path asked for everything else first.',
+        marks: [
+          { label: 'Set up a feed', strike: true },
+          { label: 'Join groups', strike: true },
+          { label: 'Meet an AI Bible companion', strike: true },
+          { label: 'Pray', keep: true }
+        ],
         images: [
-          { src: 'assets/img/daughters/homepage.webp', alt: 'Daughters home screen', caption: 'Home, first session', frame: 'device' },
-          { src: 'assets/img/daughters/homepage---notification.webp', alt: 'Daughters home with a notification', caption: 'Home, with a notification', frame: 'device' }
+          { src: 'assets/img/daughters/homepage.webp', alt: 'Daughters home screen', caption: 'Home, first session', frame: 'device' }
         ]
       },
       {
         title: 'The decision',
+        type: 'statement',
         headline: 'First session completes one job, and nothing else',
-        body: 'The first success became a prayer. Social extras moved later. We could have kept groups, a customisable feed, and Bible GPT in first-run. I recommended *protecting the job*. Those features still belong in the product. They do not belong before the first success.',
+        body: 'Social extras moved later. Groups, a customisable feed, and Bible GPT still belong in the product. They do not belong before the first success.',
+        aside: 'Protect the job.',
         images: [
-          { src: 'assets/img/daughters/flow-diagram-2.webp', alt: 'Earlier primary user flow', caption: 'Primary flow, first version' },
-          { src: 'assets/img/daughters/flow-diagram.webp', alt: 'Later primary user flow', caption: 'Primary flow, latest version' }
+          { src: 'assets/img/daughters/flow-diagram-2.webp', alt: 'Earlier primary user flow', caption: 'Primary flow, first version', stamp: 'Was' },
+          { src: 'assets/img/daughters/flow-diagram.webp', alt: 'Later primary user flow', caption: 'Primary flow, latest version', stamp: 'Now' }
         ]
       },
       {
         title: 'What the screens had to do',
-        type: 'full',
+        type: 'craft',
         headline: 'Behave like iOS, not like a brochure',
-        body: 'The interface had to feel like an iPhone product, not a marketing site squeezed onto a phone. It had to work for people who are not young, not expert, and not perfectly sighted. I designed against those constraints, using *iOS patterns and WCAG practices*.',
+        body: 'It had to work for people who are not young, not expert, and not perfectly sighted. I designed against those constraints, using *iOS patterns and WCAG practices*.',
         images: [
           { src: 'assets/img/daughters/daughters-wireframe.webp', alt: 'Early Daughters wireframes', caption: 'Early wireframes', frame: 'print' },
           { src: 'assets/img/daughters/mockup-2.webp', alt: 'Daughters iPhone mockup', caption: 'High-fidelity, in a phone', frame: 'photo' }
@@ -400,18 +409,20 @@ window.PORTFOLIO_PROJECTS = [
       },
       {
         title: 'Prayer is the product',
-        type: 'full',
+        type: 'proof',
         headline: 'Prayer is the product, not the decoration',
-        body: 'The live product still holds a virtual Wailing Wall, prayer notes, groups, and a Bible companion. Those are *what the product is*. The proof of the design is whether the first session can complete a prayer without help.',
+        body: 'A virtual Wailing Wall, prayer notes, groups, a Bible companion. Those are *what the product is*. Proof is whether the first session can complete a prayer without help.',
         images: [
           { src: 'assets/img/daughters/mockup-4.webp', alt: 'Prayer mockup on iPhone', caption: 'Prayer, in the hand', frame: 'sticky' },
           { src: 'assets/img/daughters/mockup-5.webp', alt: 'Prayer notes mockup', caption: 'Notes on the wall', frame: 'print' }
         ]
       },
       {
-        title: 'The rest of the product',
-        headline: 'Groups, a feed, and a profile come after the first success',
-        body: 'Once the first prayer is possible, the rest of the product can show up: a feed, a journal, a group chat. This product was upcoming. I will not claim live retention, revenue, or worldwide impact. What existed was a *designed primary path* and a Figma source of truth.',
+        title: 'After the first success',
+        type: 'close',
+        headline: 'The rest of the product can wait',
+        body: 'A feed, a journal, a group chat. This product was upcoming. I will not claim live retention or revenue. What existed was a *designed primary path* and a Figma source of truth.',
+        aside: 'No live metrics claimed.',
         images: [
           { src: 'assets/img/daughters/profile-page---feed.webp', alt: 'Daughters profile feed', caption: 'Profile and feed', frame: 'device' },
           { src: 'assets/img/daughters/chat---prayer-chain.webp', alt: 'Prayer chain in group chat', caption: 'A prayer chain', frame: 'device' }
@@ -462,7 +473,7 @@ window.PORTFOLIO_PROJECTS = [
       {
         title: "Context",
         headline: "Repetitive design work, and whether *software could take it*",
-        body: "[Where this sat — company, product, moment. Who asked for it and why. What existed before you started.]",
+        body: "[Where this sat - company, product, moment. Who asked for it and why. What existed before you started.]",
       },
       {
         title: "The problem",
