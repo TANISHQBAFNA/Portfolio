@@ -1,6 +1,6 @@
 # AEO for tanishqbafna.com
 
-Answer-engine signals so a hiring manager (or ChatGPT / Perplexity / Bing) can cite Tanishq Bafna as a UX / product designer in Mumbai. Free only. This does **not** make ChatGPT recommend him. It makes the site easier to parse, locate, and quote.
+Answer-engine signals so a hiring manager (or ChatGPT / Perplexity / Bing) can cite Tanishq Bafna as a UX / product designer in Mumbai, open across domains. Banking, AI, and consumer apps on the site are proof — not a closed lane. Free only. This does **not** make ChatGPT recommend him. It makes the site easier to parse, locate, and quote.
 
 ## What this PR added
 
@@ -9,12 +9,12 @@ Answer-engine signals so a hiring manager (or ChatGPT / Perplexity / Bing) can c
 | Mumbai as home | Person JSON-LD on `index.html` and `about.html` (`homeLocation` + `addressLocality: Mumbai`, `addressCountry: IN`). Human line on About: “based in Mumbai.” |
 | `sameAs` | LinkedIn, Behance, GitHub — copied from `contact.html`, not invented. |
 | FAQ + FAQPage | Visible Q&A on `about.html`, matching JSON-LD. |
-| `llms.txt` | Mumbai, fintech + AI, Plootus as the named proof, contact URL, cite do’s and don’ts. |
+| `llms.txt` | Mumbai, open across domains, Plootus/Intellect/Daughters as proof (not a lane lock), contact URL, cite do’s and don’ts. |
 | Crawl files | `robots.txt` (AI crawlers allowed), `sitemap.xml`. |
 | IndexNow stub | Key file at `/92733d8cd52c4c378948e6b9b0aaad21.txt` (see below). |
 | Canonical About | `about.html` is the About URL. `About me.html` stays as a legacy alias with `rel=canonical` pointing here. |
 
-Plootus is the named proof because that is how the home rail labels the AI sales case (`Plootus` / `Plootus.ai` in `project-data.js`). Do not swap in another name without reading the rail.
+Plootus is one named proof because that is how the home rail labels the AI sales case (`Plootus` / `Plootus.ai` in `project-data.js`). Intellect (banking) and Daughters (consumer iOS) are the other on-site proofs. Do not swap names without reading the rail, and do not cite any of them as the only field he works in.
 
 ## What you must fill or check
 
@@ -36,11 +36,11 @@ Plootus is the named proof because that is how the home rail labels the AI sales
 
 Answer engines cross-check. The site saying Mumbai is weak if LinkedIn and Behance say Virginia.
 
-- LinkedIn headline: Mumbai · Product / UX designer · fintech + AI. Same spelling: **Tanishq Bafna**.
+- LinkedIn headline: Mumbai · Product / UX designer · open across domains. Same spelling: **Tanishq Bafna**. Do not write “fintech/AI only.”
 - LinkedIn location: Mumbai, India.
 - Behance location: Mumbai (not Blacksburg).
 - Same three profile URLs everywhere (`sameAs`).
-- One proof in the headline (Plootus or SME banking), not a list of tools.
+- One proof in the headline if you want a hook (Plootus, SME banking, or Daughters) — as an example, not as the whole identity.
 
 ## Search Console and Bing (free)
 
