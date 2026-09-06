@@ -3800,6 +3800,199 @@ body.leaf-page {
   --coffee: #1E1510;
   background: var(--cream);
   color: var(--coffee);
+  height: auto;
+  min-height: 100%;
+  overflow: auto;
+}
+
+html.is-light-home body.leaf-page .masthead__nav ul {
+  flex-direction: row;
+  align-items: baseline;
+  gap: clamp(18px, 2.2vw, 32px);
+}
+
+body.leaf-page .masthead__nav a[aria-current="page"] {
+  color: var(--coffee, #1E1510);
+}
+
+body.leaf-page .masthead__role {
+  color: rgba(30, 21, 16, 0.62);
+  font-family: "Outfit", system-ui, sans-serif;
+}
+
+/* Leaf pages must scroll. The landing locks html/body/.stage so the curtain
+   and rail cannot shift; that lock would hide About FAQ below the fold. */
+html:has(body.leaf-page),
+html:has(body.leaf-page) body {
+  height: auto;
+  min-height: 100%;
+  overflow: auto;
+}
+
+@media (min-width: 768px) {
+  html:has(body.leaf-page),
+  html:has(body.leaf-page) body {
+    overflow: auto;
+    height: auto;
+  }
+
+  html.is-light-home:has(body.leaf-page) .stage,
+  body.leaf-page .stage {
+    position: relative !important;
+    inset: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    height: auto !important;
+    min-height: 100svh;
+  }
+}
+
+body.leaf-page .leaf {
+  position: relative;
+  z-index: 1;
+  max-width: 42rem;
+  padding: 0 var(--gutter) clamp(72px, 12vh, 128px);
+}
+
+body.leaf-page .leaf h1 {
+  margin: 0 0 1.15rem;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.85rem, 4.6vw, 3.15rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--coffee);
+}
+
+body.leaf-page .leaf h1 em {
+  font-style: italic;
+  color: var(--teal);
+}
+
+body.leaf-page .leaf p,
+body.leaf-page .leaf dd {
+  font-family: "Outfit", system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(30, 21, 16, 0.84);
+}
+
+body.leaf-page .leaf p + p {
+  margin-top: 1rem;
+}
+
+body.leaf-page .leaf__lede {
+  margin: 0 0 1.6rem;
+  font-size: clamp(1.12rem, 2vw, 1.28rem);
+  line-height: 1.45;
+  color: var(--coffee);
+}
+
+body.leaf-page .leaf__list {
+  margin: 2rem 0 0;
+  padding: 0;
+  border-top: 1px solid rgba(30, 21, 16, 0.14);
+}
+
+body.leaf-page .leaf__item {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid rgba(30, 21, 16, 0.14);
+}
+
+body.leaf-page .leaf__item dt {
+  margin: 0;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+body.leaf-page .leaf__item dd {
+  margin: 0;
+}
+
+body.leaf-page .leaf__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 1.75rem;
+  margin: 2.4rem 0 0;
+}
+
+body.leaf-page .leaf__links a,
+body.leaf-page .leaf a {
+  color: var(--teal);
+  text-decoration: none;
+}
+
+body.leaf-page .leaf__links a {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+body.leaf-page .leaf a:hover,
+body.leaf-page .leaf__links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+body.leaf-page .leaf__note {
+  margin-top: 1.25rem;
+  font-size: 0.92rem;
+  color: rgba(30, 21, 16, 0.62);
+}
+
+body.leaf-page .leaf__faq {
+  margin: 3rem 0 0;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(30, 21, 16, 0.14);
+}
+
+body.leaf-page .leaf__faq h2 {
+  margin: 0 0 1.4rem;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+body.leaf-page .leaf__qa + .leaf__qa {
+  margin-top: 1.35rem;
+}
+
+body.leaf-page .leaf__qa h3 {
+  margin: 0 0 0.4rem;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--coffee);
+}
+
+html.is-light-home.is-dark body.leaf-page .leaf h1,
+html.is-light-home.is-dark body.leaf-page .leaf__lede,
+html.is-light-home.is-dark body.leaf-page .leaf__qa h3 {
+  color: var(--cream);
+}
+
+html.is-light-home.is-dark body.leaf-page .leaf p,
+html.is-light-home.is-dark body.leaf-page .leaf dd {
+  color: rgba(244, 239, 230, 0.84);
+}
+
+html.is-light-home.is-dark body.leaf-page .leaf__list,
+html.is-light-home.is-dark body.leaf-page .leaf__item,
+html.is-light-home.is-dark body.leaf-page .leaf__faq {
+  border-color: rgba(244, 239, 230, 0.16);
 }
 
 /* ==========================================================================
