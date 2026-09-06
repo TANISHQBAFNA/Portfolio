@@ -70,3 +70,7 @@ Submitting a sitemap and IndexNow tells Bing the pages exist. It does not rank y
 | `About me.html` | Old filename. Same visible copy. `rel=canonical` → `about.html`. Person schema only (no second FAQPage). |
 
 Do not put a different job title, city, or `sameAs` list on the alias.
+
+## Positioning lock (2026-09-06)
+
+Tanishk is **open across fields** as a product/UX designer based in Mumbai. Fintech, banking, and AI cases are **proof**, not a lane lock. Do not describe him as fintech-only or AI-only in schema, FAQ, or llms.txt.
