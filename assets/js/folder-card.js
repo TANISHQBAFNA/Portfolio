@@ -18,19 +18,17 @@ window.FolderCard = (function () {
     var link = slot.querySelector('[data-folder]');
     var title = project.cardTitle || project.title;
     var caption = project.cardCaption || project.coverTag || project.category || '';
-    var live = project.status === 'live';
 
     slot.dataset.position = String(position);
     slot.style.setProperty('--enter-index', String(position));
 
-    link.href = live ? '#project-detail' : '#work';
+    link.href = '#project-study';
     var label = title + '. ' + caption + '. ';
-    label += live ? 'Open case. ' : 'Case not published. ';
+    label += 'Open project screen. ';
     label += 'Project ' + (position + 1) + ' of ' + total + '.';
     link.setAttribute('aria-label', label);
     link.setAttribute('aria-expanded', 'false');
-    if (live) link.setAttribute('aria-controls', 'project-detail');
-    else link.removeAttribute('aria-controls');
+    link.setAttribute('aria-controls', 'project-study');
 
     fill(slot, '.work-card__title', title);
     fill(slot, '.work-card__caption', caption);

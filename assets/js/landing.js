@@ -240,7 +240,7 @@
   }
 
   function enableHomeScroll() {
-    if (!isDesktop() || (stage && stage.classList.contains('is-detail'))) {
+    if (!isDesktop() || (stage && stage.classList.contains('is-detail')) || html.classList.contains('is-study')) {
       html.classList.remove('is-home-scroll');
       return;
     }
@@ -835,63 +835,48 @@
       if (indexCurrent) indexCurrent.textContent = pad(rail.activeIndex() + 1);
     }
 
-    /* ── detail view: a folder click pulls the project out of the pile ── */
+    /* ── cinematic study: a card click opens the motion screen ── */
     var slots = rail.slots();
-    detail = window.ProjectDetail.create({
-      panel: document.querySelector('[data-detail]'),
-      stage: stage,
-      projects: projects,
-      slots: slots,
-      onOpen: function (index, slideCount, slides) {
-        deckSlides = slides || [];
-        slots.forEach(function (slot, i) {
-          var link = slot.querySelector('[data-folder]');
-          if (link) link.setAttribute('aria-expanded', i === index ? 'true' : 'false');
-        });
-        enterDeckMode(index, slideCount);
-        lockHomeScroll();
-      },
-      onSlideChange: function (index, count, slides) {
-        if (slides) deckSlides = slides;
-        paintDeckControls(index, count);
-      },
-      onClose: function () {
-        deckSlides = [];
-        slots.forEach(function (slot) {
-          var link = slot.querySelector('[data-folder]');
-          if (link) link.setAttribute('aria-expanded', 'false');
-        });
-        exitDeckMode();
-        unlockHomeScroll();
-      }
-    });
+    var studyRoot = document.querySelector('[data-study]');
+    detail = window.ProjectStudy && studyRoot
+      ? window.ProjectStudy.create({
+        root: studyRoot,
+        projects: projects,
+        onOpen: function (index) {
+          slots.forEach(function (slot, i) {
+            var link = slot.querySelector('[data-folder]');
+            if (link) link.setAttribute('aria-expanded', i === index ? 'true' : 'false');
+          });
+          lockHomeScroll();
+        },
+        onClose: function () {
+          slots.forEach(function (slot) {
+            var link = slot.querySelector('[data-folder]');
+            if (link) link.setAttribute('aria-expanded', 'false');
+          });
+          unlockHomeScroll();
+        }
+      })
+      : null;
 
     var openQuery = /[?&]open=([^&]+)/.exec(location.search);
-    if (openQuery) {
+    if (openQuery && detail) {
       var needle = decodeURIComponent(openQuery[1]).replace(/\+/g, ' ').toLowerCase();
       projects.forEach(function (project, i) {
-        if (project.status === 'live' && project.title.toLowerCase().indexOf(needle) !== -1) {
+        if (project.title.toLowerCase().indexOf(needle) !== -1) {
           var deepLink = slots[i] && slots[i].querySelector('[data-folder]');
           detail.open(i, deepLink);
-          var pageQuery = /[?&]page=(\d+)/.exec(location.search);
-          if (pageQuery) {
-            var pageNum = parseInt(pageQuery[1], 10);
-            if (!isNaN(pageNum) && pageNum > 1) {
-              setTimeout(function () { detail.goToSlide(pageNum - 1, false); }, 50);
-            }
-          }
         }
       });
     }
 
     function openSlot(slot, trigger, event) {
-      if (!slot) return;
+      if (!slot || !detail) return;
       var index = slots.indexOf(slot);
       if (index < 0) return;
       if (event) event.preventDefault();
       var project = projects[index];
-      // Empty / non-live folders stay on the rail — no fake case.
-      if (!project || project.status !== 'live') return;
+      if (!project) return;
       detail.open(index, trigger || slot.querySelector('[data-folder]'));
     }
 
@@ -913,20 +898,22 @@
       openSlot(slot, link, event);
     });
 
-    homeButton.addEventListener('click', function () { detail.close(); });
+    if (homeButton) {
+      homeButton.addEventListener('click', function () { if (detail) detail.close(); });
+    }
 
     rail.measure();
     window.addEventListener('resize', function () {
       rail.measure();
-      if (stage && !stage.classList.contains('is-detail')) enableHomeScroll();
+      if (stage && !stage.classList.contains('is-detail') && !html.classList.contains('is-study')) enableHomeScroll();
     });
 
     var workLink = document.querySelector('[data-nav-work]');
     if (workLink) {
       workLink.addEventListener('click', function (event) {
         event.preventDefault();
-        if (stage.classList.contains('is-detail')) {
-          detail.close();
+        if (stage.classList.contains('is-detail') || (detail && detail.isOpen())) {
+          if (detail) detail.close();
           return;
         }
         window.scrollTo({
