@@ -3037,6 +3037,8 @@ html.is-light-home {
   --brand-sand: var(--cream);
   --brand-cream: var(--cream);
   --projects-panel: var(--coffee);
+  --panel-radius: clamp(24px, 2.8vw, 36px);
+  --panel-flush: 0;
   --on-dark: var(--cream);
   --accent: var(--teal);
   --accent-soft: var(--teal);
@@ -3343,7 +3345,7 @@ html.is-light-home .hero__heading {
 html.is-light-home .hero__kicker {
   display: block;
   font-family: "Syne", ui-sans-serif, system-ui, sans-serif !important;
-  font-size: clamp(1.85rem, 4.4vw, 4.25rem);
+  font-size: clamp(1.4rem, 3.1vw, 2.55rem);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;
@@ -3469,6 +3471,8 @@ html.is-light-home .portrait { display: none !important; }
     height: 100svh;
     z-index: 40;
     background: var(--projects-panel, #1E1510);
+    border-radius: calc(var(--panel-radius) * (1 - var(--panel-flush, 0)));
+    overflow: hidden;
     pointer-events: none;
     visibility: visible;
     opacity: 1;
@@ -3486,7 +3490,7 @@ html.is-light-home .portrait { display: none !important; }
     height: auto;
     align-items: stretch;
     gap: 16px;
-    padding: 28px var(--gutter) 36px;
+    padding: var(--gutter);
     overflow: hidden;
     grid-template-columns: 1.35fr 1fr 1fr;
     grid-template-rows: 1fr 1fr;
@@ -3591,7 +3595,7 @@ html.is-light-home .work-card__caption {
       "sme helix"
       "plootus daughters";
     gap: 12px;
-    padding: 20px var(--gutter) 24px;
+    padding: var(--gutter);
   }
   html.is-light-home .masthead__nav ul { gap: 1.15rem; }
   html.is-light-home .hero {
@@ -3691,6 +3695,8 @@ html.is-light-home .work-card__caption {
     opacity: 1 !important;
     z-index: 4;
     background: var(--projects-panel, #1E1510);
+    border-radius: calc(var(--panel-radius) * (1 - var(--panel-flush, 0)));
+    overflow: hidden;
   }
   html.is-light-home .rail__track {
     display: flex;
@@ -3699,7 +3705,7 @@ html.is-light-home .work-card__caption {
     min-height: 0;
     overflow: visible;
     gap: 14px;
-    padding: 22px var(--gutter) calc(28px + env(safe-area-inset-bottom, 0px));
+    padding: var(--gutter);
     pointer-events: auto;
   }
   html.is-light-home .folder-slot,

@@ -105,25 +105,38 @@
       var cellH = h / rows;
       var i;
       var j;
+      function addNode(x, y, col, row) {
+        var px = Math.max(12, Math.min(w - 12, x));
+        var py = Math.max(12, Math.min(h - 12, y));
+        nodes.push({
+          x: px,
+          y: py,
+          ox: px,
+          oy: py,
+          r: 1.15 + Math.random() * 1.1,
+          phase: Math.random() * Math.PI * 2,
+          ampX: 7 + Math.random() * 8,
+          ampY: 6 + Math.random() * 7,
+          spX: 0.22 + Math.random() * 0.12,
+          spY: 0.18 + Math.random() * 0.12,
+          col: col,
+          row: row
+        });
+      }
       for (j = 0; j < rows; j++) {
         for (i = 0; i < cols; i++) {
-          var jx = (Math.random() - 0.5) * cellW * 0.55;
-          var jy = (Math.random() - 0.5) * cellH * 0.55;
-          nodes.push({
-            x: (i + 0.5) * cellW + jx,
-            y: (j + 0.5) * cellH + jy,
-            ox: (i + 0.5) * cellW + jx,
-            oy: (j + 0.5) * cellH + jy,
-            r: 1.15 + Math.random() * 1.1,
-            phase: Math.random() * Math.PI * 2,
-            ampX: 7 + Math.random() * 8,
-            ampY: 6 + Math.random() * 7,
-            spX: 0.22 + Math.random() * 0.12,
-            spY: 0.18 + Math.random() * 0.12,
-            col: i,
-            row: j
-          });
+          if (Math.random() < 0.14) continue;
+          addNode(
+            (i + Math.random()) * cellW,
+            (j + Math.random()) * cellH,
+            i,
+            j
+          );
         }
+      }
+      var extra = Math.round((cols * rows) * 0.12);
+      for (i = 0; i < extra; i++) {
+        addNode(Math.random() * w, Math.random() * h, -1, -1);
       }
       cellSize = Math.max(cellW, cellH);
       LINK = cellSize * 1.35;

@@ -161,9 +161,31 @@
     return Math.max(1, (run ? run.offsetHeight : window.innerHeight * 2) - window.innerHeight);
   }
 
+  function panelFlushFromRise(rise) {
+    if (rise <= 0) return 1;
+    if (rise >= 0.05) return 0;
+    return 1 - rise / 0.05;
+  }
+
+  function updatePanelFlush() {
+    if (isDesktop()) {
+      var rise = parseFloat(html.style.getPropertyValue('--rise') || '1');
+      html.style.setProperty('--panel-flush', panelFlushFromRise(rise).toFixed(4));
+      return;
+    }
+    var rail = document.querySelector('.rail');
+    if (!rail) return;
+    var top = rail.getBoundingClientRect().top;
+    var flush = 0;
+    if (top <= 0) flush = 1;
+    else if (top < 32) flush = 1 - top / 32;
+    html.style.setProperty('--panel-flush', flush.toFixed(4));
+  }
+
   function applyRiseFromPanel(p) {
     var rise = 1 - Math.max(0, Math.min(1, p));
     html.style.setProperty('--rise', rise.toFixed(4));
+    html.style.setProperty('--panel-flush', panelFlushFromRise(rise).toFixed(4));
     html.style.setProperty('--nav-out', '0');
     html.classList.remove('is-nav-away');
     html.classList.toggle('is-projects-in', p > 0.08);
@@ -674,6 +696,9 @@
   if (window.IrisMotion && window.IrisMotion.wireParticles) window.IrisMotion.wireParticles(reduceMotion);
   html.style.setProperty('--rise', /[?&]open=/.test(location.search) ? '0' : '1');
   html.style.setProperty('--nav-out', '0');
+  updatePanelFlush();
+  window.addEventListener('scroll', updatePanelFlush, { passive: true });
+  window.addEventListener('resize', updatePanelFlush);
 
   function whenPageLoaded(done) {
     if (document.readyState === 'complete') {
