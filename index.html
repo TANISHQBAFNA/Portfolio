@@ -8,6 +8,17 @@
   <meta name="description"
     content="Tanishq Bafna is a product and UX designer working on fintech platforms, complex financial products and the design systems that hold them together." />
   <meta name="theme-color" content="#f4efe6" />
+  <script>
+    (function () {
+      try {
+        try { localStorage.removeItem('tb-theme'); } catch (e) {}
+        var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) document.documentElement.classList.add('is-dark');
+        else document.documentElement.classList.remove('is-dark');
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#1E1510' : '#f4efe6');
+      } catch (e) {}
+    })();
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +30,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/landing.css?v=hz76" />
+  <link rel="stylesheet" href="assets/css/landing.css?v=hz92" />
 </head>
 
 <body class="landing">
@@ -76,10 +87,8 @@
           </span>
         </h1>
         <p class="hero__support reveal">
-          At the intersection of<br>
-          people and technology<br>
-          through first-principles<br>
-          thinking.
+          At the intersection of people and technology<br>
+          through first-principles thinking.
         </p>
       </div>
 
@@ -90,6 +99,20 @@
         </div>
       </figure>
     </section>
+
+    <button type="button" class="theme-tab" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode">
+      <span class="theme-tab__icon theme-tab__icon--moon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.4 14.6A8.4 8.4 0 0 1 9.4 3.6 8.6 8.6 0 1 0 20.4 14.6z" />
+        </svg>
+      </span>
+      <span class="theme-tab__icon theme-tab__icon--sun" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4.1" />
+          <path d="M12 3.2v1.7M12 19.1v1.7M4.9 4.9l1.2 1.2M17.9 17.9l1.2 1.2M3.2 12h1.7M19.1 12h1.7M4.9 19.1l1.2-1.2M17.9 6.1l1.2-1.2" />
+        </svg>
+      </span>
+    </button>
 
   <!-- ── ProjectDetail: centered manila folder / flip book ──── -->
   <section class="detail detail--folder" id="project-detail" data-detail data-case hidden aria-labelledby="detail-title">
@@ -198,12 +221,12 @@
   </template>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="assets/js/iris-motion.js?v=hz76" defer></script>
-  <script src="assets/js/project-data.js?v=hz76" defer></script>
-  <script src="assets/js/folder-card.js?v=hz76" defer></script>
-  <script src="assets/js/project-rail.js?v=hz76" defer></script>
-  <script src="assets/js/project-detail.js?v=hz76" defer></script>
-  <script src="assets/js/landing.js?v=hz76" defer></script>
+  <script src="assets/js/iris-motion.js?v=hz92" defer></script>
+  <script src="assets/js/project-data.js?v=hz92" defer></script>
+  <script src="assets/js/folder-card.js?v=hz92" defer></script>
+  <script src="assets/js/project-rail.js?v=hz92" defer></script>
+  <script src="assets/js/project-detail.js?v=hz92" defer></script>
+  <script src="assets/js/landing.js?v=hz92" defer></script>
 </body>
 
 </html>

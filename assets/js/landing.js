@@ -143,7 +143,7 @@
 
   var CURTAIN_TEXT = 'Tanishq Bafna'; /* full name — never "Tanishq." */
   var NAME_BEATS = ['Tanishk Bafnaa', 'Tanish Bafna', 'Tanishq Bafna'];
-  var HOLD_MS = 900; /* beat after the real name lands, before lift */
+  var HOLD_MS = 400; /* short beat on the real name, then lift */
   var EXIT_MS = 900;
   var MOVE_MS = 900;
 
@@ -240,7 +240,36 @@
     }
   }
 
+  function systemDark() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
 
+  function applyTheme(dark) {
+    html.classList.toggle('is-dark', !!dark);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#1E1510' : '#f4efe6');
+    var btn = document.querySelector('[data-theme-toggle]');
+    if (btn) {
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+  }
+
+  function wireTheme() {
+    applyTheme(systemDark());
+    var btn = document.querySelector('[data-theme-toggle]');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        applyTheme(!html.classList.contains('is-dark'));
+      });
+    }
+    var media = window.matchMedia('(prefers-color-scheme: dark)');
+    function onSystem(e) {
+      applyTheme(e.matches);
+    }
+    if (media.addEventListener) media.addEventListener('change', onSystem);
+    else if (media.addListener) media.addListener(onSystem);
+  }
 
   function playCurtain(done) {
     var curtain = document.getElementById('curtain');
@@ -388,8 +417,8 @@
         opacity: 1,
         y: 0,
         filter: 'blur(0px)',
-        duration: 0.9,
-        stagger: 0.045,
+        duration: 0.55,
+        stagger: 0.028,
         ease: 'power3.out',
         onComplete: donePaint
       });
@@ -440,8 +469,8 @@
           y: -12,
           width: 0,
           filter: 'blur(8px)',
-          duration: 0.72,
-          stagger: 0.08,
+          duration: 0.38,
+          stagger: 0.04,
           ease: 'power2.in',
           onComplete: function () {
             deleteEls.forEach(function (el) {
@@ -456,8 +485,8 @@
           y: 0,
           width: function (i, el) { return Number(el.getAttribute('data-w')); },
           filter: 'blur(0px)',
-          duration: 0.82,
-          stagger: 0.08,
+          duration: 0.42,
+          stagger: 0.04,
           ease: 'power3.out',
           onComplete: function () {
             insertEls.forEach(function (el) {
@@ -473,7 +502,7 @@
 
     function playNameBeats(doneBeats) {
       var step = 0;
-      var BEAT_HOLD = 1400;
+      var BEAT_HOLD = 580;
 
       function afterBeat() {
         if (NAME_BEATS[step] === CURTAIN_TEXT && loadReady) {
@@ -602,9 +631,46 @@
 
   /* ── boot ───────────────────────────────────────────────────────────── */
 
+  function fitHeroType() {
+    var box = document.querySelector('.hero__type');
+    var words = document.querySelectorAll('.hero__accent, .hero__word');
+    if (!box || !words.length) return;
+    var target = box.clientWidth;
+    if (target < 40) return;
+
+    var current = parseFloat(window.getComputedStyle(words[0]).fontSize);
+    if (!current) return;
+    var longest = 0;
+    var i;
+    for (i = 0; i < words.length; i++) {
+      longest = Math.max(longest, words[i].getBoundingClientRect().width);
+    }
+    if (longest < 1) return;
+    var size = current * (target / longest) * 0.995;
+    size = Math.max(18, Math.min(size, 420));
+    html.style.setProperty('--shout', size.toFixed(2) + 'px');
+  }
+
+  function wireHeroFit() {
+    var queued = false;
+    function requestFit() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () {
+        queued = false;
+        fitHeroType();
+      });
+    }
+    window.addEventListener('resize', requestFit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(requestFit);
+    requestFit();
+  }
+
   renderProjects();
+  wireTheme();
   wirePortrait();
   wireCursorLight();
+  wireHeroFit();
   if (window.IrisMotion && window.IrisMotion.wireParticles) window.IrisMotion.wireParticles(reduceMotion);
   html.style.setProperty('--rise', /[?&]open=/.test(location.search) ? '0' : '1');
   html.style.setProperty('--nav-out', '0');
@@ -640,6 +706,7 @@
   }
 
   whenSyneReady(function () {
+    fitHeroType();
     var curtainEl = document.getElementById('curtain');
     if (curtainEl) {
       curtainEl.classList.remove('is-skipped', 'is-done', 'is-fading');
@@ -649,6 +716,7 @@
     }
     html.classList.remove('curtain-skip');
     playCurtain(function () {
+      fitHeroType();
       if (!/[?&]open=/.test(location.search)) enableHomeScroll();
     });
   });

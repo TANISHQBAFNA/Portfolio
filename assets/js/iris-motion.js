@@ -67,9 +67,10 @@
    */
   function wireParticles(reduceMotion) {
     var canvas = document.querySelector("[data-particles]");
-    if (!canvas || reduceMotion.matches || !window.matchMedia("(pointer: fine)").matches) return;
+    if (!canvas || reduceMotion.matches) return;
     var ctx = canvas.getContext("2d");
     if (!ctx) return;
+    var finePointer = window.matchMedia("(pointer: fine)").matches;
 
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var w = 0;
@@ -79,7 +80,7 @@
     var nodes = [];
     var LINK = 150;
     var LINK_BREAK = 190;
-    var GLOW = 210;
+    var GLOW = 185;
     var MAX_DEG = 4;
     var MIN_ANGLE = 0.55;
     var liveLinks = {};
@@ -98,8 +99,8 @@
     function spawn() {
       nodes = [];
       liveLinks = {};
-      var cols = Math.max(9, Math.round(w / 82));
-      var rows = Math.max(8, Math.round(h / 74));
+      var cols = Math.max(finePointer ? 9 : 6, Math.round(w / (finePointer ? 82 : 108)));
+      var rows = Math.max(finePointer ? 8 : 6, Math.round(h / (finePointer ? 74 : 96)));
       var cellW = w / cols;
       var cellH = h / rows;
       var i;
@@ -113,10 +114,12 @@
             y: (j + 0.5) * cellH + jy,
             ox: (i + 0.5) * cellW + jx,
             oy: (j + 0.5) * cellH + jy,
-            vx: (Math.random() - 0.5) * 0.012,
-            vy: (Math.random() - 0.5) * 0.012,
             r: 1.15 + Math.random() * 1.1,
             phase: Math.random() * Math.PI * 2,
+            ampX: 7 + Math.random() * 8,
+            ampY: 6 + Math.random() * 7,
+            spX: 0.22 + Math.random() * 0.12,
+            spY: 0.18 + Math.random() * 0.12,
             col: i,
             row: j
           });
@@ -128,8 +131,18 @@
       liveLinks = {};
     }
 
+    function dist2cursor(x, y) {
+      if (mx < -1000) return 9999;
+      var dx = mx - x;
+      var dy = my - y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
     function tick(now) {
       var tNow = (now || 0) * 0.001;
+      var tint = document.documentElement.classList.contains('is-dark')
+        ? [244, 239, 230]
+        : [120, 88, 62];
       ctx.clearRect(0, 0, w, h);
 
       var i;
@@ -146,30 +159,26 @@
 
       for (i = 0; i < nodes.length; i++) {
         a = nodes[i];
-        a.vx += (a.ox - a.x) * 0.00018;
-        a.vy += (a.oy - a.y) * 0.00018;
-        a.vx += Math.sin(tNow * 0.06 + a.phase) * 0.0014;
-        a.vy += Math.cos(tNow * 0.05 + a.phase * 1.3) * 0.0014;
-        a.vx += Math.sin(tNow * 0.028 + a.phase * 2.1) * 0.0008;
-        a.vy += Math.cos(tNow * 0.032 + a.phase * 0.7) * 0.0008;
-        a.vx += Math.sin(tNow * 0.012 + a.phase * 0.4) * 0.00045;
-        a.vy += Math.cos(tNow * 0.014 + a.phase * 1.7) * 0.00045;
-        var pdx = mx - a.x;
-        var pdy = my - a.y;
+        var wx = Math.sin(tNow * a.spX + a.phase) * a.ampX
+          + Math.sin(tNow * 0.09 + a.row * 0.21) * 4.2;
+        var wy = Math.cos(tNow * a.spY + a.phase * 1.17) * a.ampY
+          + Math.cos(tNow * 0.075 + a.col * 0.17) * 3.8;
+        var tx = a.ox + wx;
+        var ty = a.oy + wy;
+        var pdx = mx - tx;
+        var pdy = my - ty;
         var pd = Math.sqrt(pdx * pdx + pdy * pdy) || 1;
         if (pd < 220) {
-          var pull = (1 - pd / 220) * 0.00055;
-          a.vx += (pdx / pd) * pull;
-          a.vy += (pdy / pd) * pull;
+          var pull = (1 - pd / 220) * 10;
+          tx += (pdx / pd) * pull;
+          ty += (pdy / pd) * pull;
         }
-        a.vx *= 0.996;
-        a.vy *= 0.996;
-        a.x += a.vx;
-        a.y += a.vy;
-        if (a.x < 8) { a.x = 8; a.vx *= -0.5; }
-        if (a.x > w - 8) { a.x = w - 8; a.vx *= -0.5; }
-        if (a.y < 8) { a.y = 8; a.vy *= -0.5; }
-        if (a.y > h - 8) { a.y = h - 8; a.vy *= -0.5; }
+        a.x += (tx - a.x) * 0.045;
+        a.y += (ty - a.y) * 0.045;
+        if (a.x < 8) a.x = 8;
+        if (a.x > w - 8) a.x = w - 8;
+        if (a.y < 8) a.y = 8;
+        if (a.y > h - 8) a.y = h - 8;
       }
 
       var deg = [];
@@ -254,47 +263,63 @@
         var strength = liveLinks[linkKeys[k]];
         t = Math.max(0, 1 - dist / Math.max(LINK_BREAK, dist)) * strength;
 
+        var nx = -dy / dist;
+        var ny = dx / dist;
+        var bow = Math.sin(tNow * 0.26 + i * 0.31 + j * 0.19) * 3.2 * strength;
+        var cx = (a.x + b.x) * 0.5 + nx * bow;
+        var cy = (a.y + b.y) * 0.5 + ny * bow;
+        var lg = Math.max(0, 1 - dist2cursor(cx, cy) / GLOW);
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
+        ctx.quadraticCurveTo(cx, cy, b.x, b.y);
         ctx.shadowBlur = 0;
-        ctx.strokeStyle = "rgba(120, 88, 62, " + ((0.028 + t * 0.03) * strength) + ")";
-        ctx.lineWidth = 0.55 + t * 0.16;
+        if (lg > 0.06) {
+          ctx.shadowColor = "rgba(0, 160, 160, " + (0.10 + lg * 0.22) + ")";
+          ctx.shadowBlur = 3 + lg * 8;
+          ctx.strokeStyle = "rgba(0, 160, 160, " + ((0.04 + t * 0.04 + lg * 0.22) * strength) + ")";
+          ctx.lineWidth = 0.6 + t * 0.18 + lg * 0.7;
+        } else {
+          ctx.strokeStyle = "rgba(" + tint[0] + ", " + tint[1] + ", " + tint[2] + ", " + ((0.028 + t * 0.03) * strength) + ")";
+          ctx.lineWidth = 0.55 + t * 0.16;
+        }
         ctx.stroke();
+        ctx.shadowBlur = 0;
       }
 
       ctx.shadowBlur = 0;
       for (i = 0; i < nodes.length; i++) {
         a = nodes[i];
-        dx = mx - a.x;
-        dy = my - a.y;
-        md = Math.sqrt(dx * dx + dy * dy);
-        glow = (mx > -1000 && md < GLOW) ? 1 - md / GLOW : 0;
-        var radius = a.r * 1.08 + glow * 1.15;
+        md = dist2cursor(a.x, a.y);
+        glow = md < GLOW ? 1 - md / GLOW : 0;
         ctx.beginPath();
-        if (glow > 0.06) {
-          ctx.shadowColor = "rgba(0, 160, 160, " + (0.18 + glow * 0.36) + ")";
-          ctx.shadowBlur = 5 + glow * 12;
-          ctx.fillStyle = "rgba(0, 160, 160, " + (0.3 + glow * 0.42) + ")";
+        if (glow > 0.05) {
+          ctx.shadowColor = "rgba(0, 160, 160, " + (0.16 + glow * 0.26) + ")";
+          ctx.shadowBlur = 4 + glow * 7;
+          ctx.fillStyle = "rgba(0, 160, 160, " + (0.58 + glow * 0.28) + ")";
+          ctx.arc(a.x, a.y, a.r * 1.06 + glow * 1.35, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
         } else {
           ctx.shadowBlur = 0;
-          ctx.fillStyle = "rgba(120, 88, 62, 0.08)";
+          ctx.fillStyle = "rgba(" + tint[0] + ", " + tint[1] + ", " + tint[2] + ", 0.10)";
+          ctx.arc(a.x, a.y, a.r * 1.08, 0, Math.PI * 2);
+          ctx.fill();
         }
-        ctx.arc(a.x, a.y, radius, 0, Math.PI * 2);
-        ctx.fill();
       }
 
       requestAnimationFrame(tick);
     }
 
-    window.addEventListener("pointermove", function (e) {
-      mx = e.clientX;
-      my = e.clientY;
-    }, { passive: true });
-    window.addEventListener("pointerleave", function () {
-      mx = -9999;
-      my = -9999;
-    });
+    if (finePointer) {
+      window.addEventListener("pointermove", function (e) {
+        mx = e.clientX;
+        my = e.clientY;
+      }, { passive: true });
+      window.addEventListener("pointerleave", function () {
+        mx = -9999;
+        my = -9999;
+      });
+    }
     window.addEventListener("resize", function () {
       resize();
       spawn();
