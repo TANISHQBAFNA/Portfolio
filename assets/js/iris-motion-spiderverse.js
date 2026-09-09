@@ -197,12 +197,24 @@
     }, lastEnd + 40));
   }
 
+  function isShown(el) {
+    return !!(el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+  }
+
   function burstHero(reduceMotion, heavy) {
     var shouts = document.querySelectorAll(".hero__kicker, .hero__accent, .hero__word");
     shouts.forEach(function (el) {
+      if (!isShown(el)) return;
       window.setTimeout(function () {
         burstGlitch(el, reduceMotion, heavy);
       }, Math.round(rand(0, heavy ? 90 : 240)));
+    });
+  }
+
+  function burstLogos(reduceMotion, heavy) {
+    document.querySelectorAll(".masthead__name.glitch").forEach(function (logo) {
+      if (!isShown(logo)) return;
+      burstGlitch(logo, reduceMotion, heavy);
     });
   }
 
@@ -224,19 +236,16 @@
     var htmlEl = document.documentElement;
     var curtain = document.getElementById("curtain");
     var curtainUp = htmlEl.classList.contains("is-curtain") && curtain && !curtain.classList.contains("is-done");
+    var onStudy = htmlEl.classList.contains("is-study");
     var mark;
-    var logo;
     slamming = true;
     hitchSlam(reduceMotion);
     if (curtainUp) {
       mark = document.querySelector(".curtain__mark.glitch");
-      if (mark) burstGlitch(mark, reduceMotion, true);
+      if (mark && isShown(mark)) burstGlitch(mark, reduceMotion, true);
     } else {
-      burstHero(reduceMotion, true);
-      logo = document.querySelector(".masthead__name.glitch");
-      if (logo) {
-        window.setTimeout(function () { burstGlitch(logo, reduceMotion, true); }, Math.round(rand(30, 140)));
-      }
+      if (!onStudy) burstHero(reduceMotion, true);
+      window.setTimeout(function () { burstLogos(reduceMotion, true); }, Math.round(rand(30, 140)));
     }
     window.setTimeout(function () { slamming = false; }, 1300);
   }
@@ -247,12 +256,9 @@
     if (reduceMotion && reduceMotion.matches) return;
 
     function cycle() {
-      if (!slamming) {
-        var logo = document.querySelector(".masthead__name.glitch");
+      if (!slamming && !document.documentElement.classList.contains("is-study")) {
         burstHero(reduceMotion);
-        if (logo) {
-          window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, Math.round(rand(120, 520)));
-        }
+        window.setTimeout(function () { burstLogos(reduceMotion, false); }, Math.round(rand(120, 520)));
       }
       var wait = Math.round(rand(7000, 14000));
       glitchTimers.push(window.setTimeout(cycle, wait));
@@ -628,6 +634,7 @@
     wireParticles: wireParticles,
     burstGlitch: burstGlitch,
     burstBig: burstBig,
+    burstLogos: burstLogos,
     hitchCurtain: hitchCurtain,
     startGlitchLoop: startGlitchLoop
   };

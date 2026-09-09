@@ -159,9 +159,9 @@
   /* ── first-load sequence ────────────────────────────────────────────── */
 
   var CURTAIN_TEXT = 'Tanishq Bafna'; /* full name — never "Tanishq." */
-  var NAME_BEATS = ['Tanishk Bafnaa', 'Tanish Bafna', 'Tanishq Bafna'];
   var MARK_FONT = '"Syne", "Noto Sans Devanagari", "Noto Sans Arabic", "Noto Sans SC", "Noto Sans", sans-serif';
-  var HOLD_MS = 400; /* short beat on the real name, then lift */
+  var LOADER_MS = 10000;
+  var VARIATION_MS = 3000;
   var EXIT_MS = 900;
   var MOVE_MS = 900;
 
@@ -415,6 +415,7 @@
     var typedReady = false;
     var loadReady = document.readyState === 'complete';
     var liftStarted = false;
+    var curtainTimers = [];
 
     function makeChar(ch) {
       var s = document.createElement('span');
@@ -424,65 +425,19 @@
       return s;
     }
 
-    function readMark() {
-      return Array.prototype.map.call(mark.children, function (el) {
-        return el.classList.contains('curtain__ch--space') ? ' ' : el.textContent;
-      }).join('');
-    }
-
-    function diffChars(from, to) {
-      var a = from.split('');
-      var b = to.split('');
-      var m = a.length;
-      var n = b.length;
-      var dp = [];
-      var i;
-      var j;
-      for (i = 0; i <= m; i++) {
-        dp[i] = [];
-        for (j = 0; j <= n; j++) dp[i][j] = 0;
-      }
-      for (i = 1; i <= m; i++) {
-        for (j = 1; j <= n; j++) {
-          dp[i][j] = a[i - 1] === b[j - 1]
-            ? dp[i - 1][j - 1] + 1
-            : Math.max(dp[i - 1][j], dp[i][j - 1]);
-        }
-      }
-      var ops = [];
-      i = m;
-      j = n;
-      while (i > 0 || j > 0) {
-        if (i > 0 && j > 0 && a[i - 1] === b[j - 1]) {
-          ops.push({ type: 'keep', ch: a[i - 1] });
-          i -= 1;
-          j -= 1;
-        } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
-          ops.push({ type: 'ins', ch: b[j - 1] });
-          j -= 1;
-        } else {
-          ops.push({ type: 'del', ch: a[i - 1] });
-          i -= 1;
-        }
-      }
-      ops.reverse();
-      return ops;
-    }
-
     function armMarkGlitch(text) {
-      var latin = text || readMark() || CURTAIN_TEXT;
+      var latin = text || CURTAIN_TEXT;
       mark.classList.add('glitch');
       mark.setAttribute('data-text', latin);
       mark.setAttribute('data-latin', latin);
       mark.setAttribute('aria-label', CURTAIN_TEXT);
     }
 
-    var curtainGlitchId = 0;
-    function pulseCurtainGlitch() {
+    function pulseCurtainVariation() {
       if (liftStarted || reduceMotion.matches) return;
-      armMarkGlitch(readMark() || CURTAIN_TEXT);
+      armMarkGlitch(CURTAIN_TEXT);
       if (window.IrisMotion && window.IrisMotion.burstGlitch) {
-        window.IrisMotion.burstGlitch(mark, reduceMotion);
+        window.IrisMotion.burstGlitch(mark, reduceMotion, true);
       }
     }
 
@@ -491,9 +446,7 @@
       var nodes = text.split('').map(makeChar);
       nodes.forEach(function (el) { mark.appendChild(el); });
       armMarkGlitch(text);
-      window.setTimeout(function () { pulseCurtainGlitch(); }, 180);
       if (typeof gsap === 'undefined') {
-        pulseCurtainGlitch();
         if (donePaint) donePaint();
         return;
       }
@@ -509,115 +462,23 @@
       });
     }
 
-    function morphName(toText, doneMorph) {
-      if (typeof gsap === 'undefined') {
-        mark.textContent = '';
-        toText.split('').forEach(function (ch) { mark.appendChild(makeChar(ch)); });
-        armMarkGlitch(toText);
-        pulseCurtainGlitch();
-        if (doneMorph) doneMorph();
-        return;
-      }
-
-      var ops = diffChars(readMark(), toText);
-      var existing = Array.prototype.slice.call(mark.children);
-      var ei = 0;
-      var insertEls = [];
-      var deleteEls = [];
-
-      ops.forEach(function (op) {
-        if (op.type === 'keep') {
-          ei += 1;
-        } else if (op.type === 'del') {
-          deleteEls.push(existing[ei]);
-          ei += 1;
-        } else {
-          var el = makeChar(op.ch);
-          mark.insertBefore(el, existing[ei] || null);
-          insertEls.push(el);
-        }
-      });
-
-      deleteEls.forEach(function (el) {
-        if (!el) return;
-        el.style.width = el.getBoundingClientRect().width + 'px';
-        el.style.overflow = 'hidden';
-      });
-      insertEls.forEach(function (el) {
-        var w = el.getBoundingClientRect().width;
-        gsap.set(el, { width: 0, opacity: 0, y: 10, overflow: 'hidden', filter: 'blur(8px)' });
-        el.setAttribute('data-w', String(w));
-      });
-
-      var tl = gsap.timeline({
-        onComplete: function () {
-          pulseCurtainGlitch();
-          if (doneMorph) doneMorph();
-        }
-      });
-      if (deleteEls.length) {
-        tl.to(deleteEls, {
-          opacity: 0,
-          y: -12,
-          width: 0,
-          filter: 'blur(8px)',
-          duration: 0.38,
-          stagger: 0.04,
-          ease: 'power2.in',
-          onComplete: function () {
-            deleteEls.forEach(function (el) {
-              if (el && el.parentNode) el.parentNode.removeChild(el);
-            });
-          }
-        }, 0);
-      }
-      if (insertEls.length) {
-        tl.to(insertEls, {
-          opacity: 1,
-          y: 0,
-          width: function (i, el) { return Number(el.getAttribute('data-w')); },
-          filter: 'blur(0px)',
-          duration: 0.42,
-          stagger: 0.04,
-          ease: 'power3.out',
-          onComplete: function () {
-            insertEls.forEach(function (el) {
-              el.style.width = '';
-              el.style.overflow = '';
-              el.style.filter = '';
-            });
-          }
-        }, deleteEls.length ? 0.08 : 0);
-      }
-    }
-
     function playNameBeats(doneBeats) {
-      var step = 0;
-      var BEAT_HOLD = 580;
-
-      function afterBeat() {
-        if (NAME_BEATS[step] === CURTAIN_TEXT && loadReady) {
-          pulseCurtainGlitch();
-          setTimeout(doneBeats, HOLD_MS);
-          return;
-        }
-        var next = (step + 1) % NAME_BEATS.length;
-        morphName(NAME_BEATS[next], function () {
-          step = next;
-          setTimeout(afterBeat, BEAT_HOLD);
-        });
+      var at;
+      paintName(CURTAIN_TEXT);
+      for (at = VARIATION_MS; at < LOADER_MS; at += VARIATION_MS) {
+        curtainTimers.push(window.setTimeout(pulseCurtainVariation, at));
       }
-
-      paintName(NAME_BEATS[0], function () {
-        pulseCurtainGlitch();
-        setTimeout(afterBeat, BEAT_HOLD);
-      });
+      curtainTimers.push(window.setTimeout(function () {
+        armMarkGlitch(CURTAIN_TEXT);
+        if (doneBeats) doneBeats();
+      }, LOADER_MS));
     }
 
     function beginLift() {
       if (liftStarted || !typedReady || !loadReady) return;
       liftStarted = true;
-      if (curtainGlitchId) window.clearTimeout(curtainGlitchId);
+      curtainTimers.forEach(function (id) { window.clearTimeout(id); });
+      curtainTimers = [];
 
       if (!logo || !identity) {
         revealHero();
@@ -647,9 +508,6 @@
       mark.setAttribute('data-latin', CURTAIN_TEXT);
       mark.setAttribute('aria-label', CURTAIN_TEXT);
       mark.classList.add('glitch');
-      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
-        window.IrisMotion.burstGlitch(mark, reduceMotion);
-      }
       if (typeof gsap !== 'undefined') gsap.set(mark, { y: 0, opacity: 1, clearProps: 'transform' });
       if (window.IrisMotion && window.IrisMotion.hitchCurtain) {
         window.IrisMotion.hitchCurtain(curtain, reduceMotion);
