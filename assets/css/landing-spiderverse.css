@@ -4882,14 +4882,14 @@ html.is-spiderverse .curtain__halftone {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.2;
+  opacity: 0.28;
   mix-blend-mode: screen;
   background-color: transparent;
   background-image: url("../img/spiderverse-curtain-dots.svg?v=sv10");
   background-size: 18px 18px;
   background-repeat: repeat;
-  -webkit-mask-image: radial-gradient(ellipse 95% 72% at 50% 100%, #000 0%, rgba(0, 0, 0, 0.55) 32%, rgba(0, 0, 0, 0.12) 52%, transparent 68%);
-  mask-image: radial-gradient(ellipse 95% 72% at 50% 100%, #000 0%, rgba(0, 0, 0, 0.55) 32%, rgba(0, 0, 0, 0.12) 52%, transparent 68%);
+  -webkit-mask-image: radial-gradient(ellipse 95% 72% at 50% 100%, #fff 0%, rgba(255, 255, 255, 0.55) 32%, rgba(255, 255, 255, 0.12) 52%, transparent 68%);
+  mask-image: radial-gradient(ellipse 95% 72% at 50% 100%, #fff 0%, rgba(255, 255, 255, 0.55) 32%, rgba(255, 255, 255, 0.12) 52%, transparent 68%);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
@@ -5637,7 +5637,7 @@ html.is-spiderverse.is-print .study__veil {
 html.is-spiderverse.is-print .curtain__halftone {
   background-image: url("../img/spiderverse-curtain-dots.svg?v=sv10");
   mix-blend-mode: multiply;
-  opacity: 0.16;
+  opacity: 0.22;
 }
 html.is-spiderverse.is-print .study__veil-halftone {
   background-image: url("../img/spiderverse-panel.svg?v=sv10");
