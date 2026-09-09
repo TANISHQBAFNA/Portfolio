@@ -5092,12 +5092,12 @@ html.is-spiderverse .glitch::after {
 html.is-spiderverse .hero__kicker.glitch::before,
 html.is-spiderverse .hero__accent.glitch::before,
 html.is-spiderverse .hero__word.glitch::before {
-  transform: translate(-2.5px, 0);
+  transform: translate(-2px, 0);
 }
 html.is-spiderverse .hero__kicker.glitch::after,
 html.is-spiderverse .hero__accent.glitch::after,
 html.is-spiderverse .hero__word.glitch::after {
-  transform: translate(2.5px, 0);
+  transform: translate(2px, 0);
 }
 
 html.is-spiderverse .hero__kicker.glitch::before,
@@ -5165,29 +5165,29 @@ html.is-spiderverse .hero__word.glitch::after {
 @keyframes sv-slice-hero-a {
   0%, 90%, 100% {
     clip-path: inset(0 0 52% 0);
-    transform: translate(-2.5px, 0);
+    transform: translate(-2px, 0);
   }
   93% {
     clip-path: inset(10% 0 34% 0);
-    transform: translate(-4px, 0);
+    transform: translate(-3.5px, 0);
   }
   96% {
     clip-path: inset(36% 0 10% 0);
-    transform: translate(3px, 0);
+    transform: translate(2.5px, 0);
   }
 }
 @keyframes sv-slice-hero-b {
   0%, 91%, 100% {
     clip-path: inset(40% 0 0 0);
-    transform: translate(2.5px, 0);
+    transform: translate(2px, 0);
   }
   94% {
     clip-path: inset(12% 0 30% 0);
-    transform: translate(4px, 0);
+    transform: translate(3.5px, 0);
   }
   97% {
     clip-path: inset(48% 0 0 0);
-    transform: translate(-3px, 0);
+    transform: translate(-2.5px, 0);
   }
 }
 
@@ -5216,12 +5216,12 @@ html.is-spiderverse .hero__word.is-glitching::after {
   50% { clip-path: inset(14% 0 30% 0); transform: translate(3.5px, 0); }
 }
 @keyframes sv-burst-hero-a {
-  0%, 100% { clip-path: inset(0 0 52% 0); transform: translate(-2.5px, 0); }
-  45% { clip-path: inset(10% 0 30% 0); transform: translate(-4px, 0); }
+  0%, 100% { clip-path: inset(0 0 52% 0); transform: translate(-2px, 0); }
+  45% { clip-path: inset(10% 0 30% 0); transform: translate(-3.5px, 0); }
 }
 @keyframes sv-burst-hero-b {
-  0%, 100% { clip-path: inset(40% 0 0 0); transform: translate(2.5px, 0); }
-  50% { clip-path: inset(12% 0 28% 0); transform: translate(4px, 0); }
+  0%, 100% { clip-path: inset(40% 0 0 0); transform: translate(2px, 0); }
+  50% { clip-path: inset(12% 0 28% 0); transform: translate(3.5px, 0); }
 }
 
 html.is-spiderverse .masthead__name.glitch:hover {
