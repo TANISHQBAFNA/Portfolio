@@ -3386,7 +3386,7 @@ html.is-spiderverse .hero__word {
   white-space: nowrap;
 }
 html.is-spiderverse .hero__accent {
-  color: var(--accent, #00a0a0) !important;
+  color: #00a0a0 !important;
 }
 html.is-spiderverse .hero__word {
   color: var(--fg) !important;
@@ -3797,7 +3797,9 @@ html.is-spiderverse .hero__role {
 html.is-spiderverse .hero__support {
   color: var(--fg) !important;
 }
-html.is-spiderverse .hero__accent,
+html.is-spiderverse .hero__accent {
+  color: #00a0a0 !important;
+}
 html.is-spiderverse .hero__display em,
 html.is-spiderverse .masthead__nav-num,
 html.is-spiderverse .hero__role span {
@@ -5041,7 +5043,6 @@ html.is-spiderverse.is-print .atmosphere__chroma {
 }
 
 /* ── type: shout stays cream; RGB lives in glitch plates ─────────────── */
-html.is-spiderverse .hero__accent,
 html.is-spiderverse .hero__display em,
 html.is-spiderverse .hero__word,
 html.is-spiderverse .hero__kicker {
@@ -5070,7 +5071,6 @@ html.is-spiderverse .hero__heading {
   z-index: 2;
 }
 html.is-spiderverse .hero__kicker,
-html.is-spiderverse .hero__accent,
 html.is-spiderverse .hero__word {
   background-image: radial-gradient(circle, rgba(14, 16, 24, 0.22) 0.4px, transparent 0.65px);
   background-size: 3.25px 3.25px;
@@ -5080,7 +5080,6 @@ html.is-spiderverse .hero__word {
   color: var(--fg) !important;
 }
 html.is-spiderverse.is-print .hero__kicker,
-html.is-spiderverse.is-print .hero__accent,
 html.is-spiderverse.is-print .hero__word {
   background-image: radial-gradient(circle, rgba(14, 16, 24, 0.16) 0.4px, transparent 0.65px);
   -webkit-text-fill-color: rgba(14, 16, 24, 0.94);
@@ -5368,7 +5367,7 @@ html.is-spiderverse .work-card__cap::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-panel.svg?v=sv18");
+  background-image: url("../img/spiderverse-panel.svg?v=sv19");
   background-size: 8px 8px;
   background-repeat: repeat;
   opacity: 0.08;
@@ -5635,7 +5634,6 @@ html.is-spiderverse.is-print .study__curtain-name {
   text-shadow: none;
 }
 html.is-spiderverse.is-print .hero__kicker,
-html.is-spiderverse.is-print .hero__accent,
 html.is-spiderverse.is-print .hero__word,
 html.is-spiderverse.is-print .hero__role,
 html.is-spiderverse.is-print .hero__support,
@@ -5646,9 +5644,19 @@ html.is-spiderverse.is-print .masthead__nav-label {
   color: #0e1018 !important;
 }
 html.is-spiderverse.is-print .hero__kicker,
-html.is-spiderverse.is-print .hero__accent,
 html.is-spiderverse.is-print .hero__word {
   -webkit-text-fill-color: rgba(14, 16, 24, 0.94);
+}
+
+/* THOUGHTFUL: production teal, not comic cyan / ink Ben-Day */
+html.is-spiderverse .hero__accent,
+html.is-spiderverse.is-print .hero__accent,
+html.is-spiderverse.is-dark .hero__accent {
+  color: #00a0a0 !important;
+  -webkit-text-fill-color: #00a0a0;
+  background-image: none;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
 }
 html.is-spiderverse.is-print .rail.bento,
 html.is-spiderverse.is-print .rail {
