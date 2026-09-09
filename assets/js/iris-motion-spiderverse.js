@@ -116,8 +116,8 @@
   }
 
   /**
-   * Comic ink threads — sparse graphic strokes with occasional CMYK
-   * plate offsets. Not a recolor of the cream-home constellation mesh.
+   * Constellation web — same structure/behavior as production iris-motion.js.
+   * Night tints cream on ink; print/light uses production coffee mesh + teal glow.
    */
   function wireParticles(reduceMotion) {
     var canvas = document.querySelector("[data-particles]");
@@ -132,12 +132,13 @@
     var mx = -9999;
     var my = -9999;
     var nodes = [];
-    var LINK = 220;
-    var LINK_BREAK = 280;
-    var REACH = 170;
-    var MAX_DEG = 2;
-    var MIN_ANGLE = 0.78;
+    var LINK = 150;
+    var LINK_BREAK = 190;
+    var GLOW = 185;
+    var MAX_DEG = 4;
+    var MIN_ANGLE = 0.55;
     var liveLinks = {};
+    var cellSize = 120;
 
     function resize() {
       w = window.innerWidth;
@@ -152,47 +153,49 @@
     function spawn() {
       nodes = [];
       liveLinks = {};
-      var cols = Math.max(finePointer ? 4 : 3, Math.round(w / (finePointer ? 172 : 210)));
-      var rows = Math.max(finePointer ? 4 : 3, Math.round(h / (finePointer ? 158 : 196)));
+      var cols = Math.max(finePointer ? 9 : 6, Math.round(w / (finePointer ? 82 : 108)));
+      var rows = Math.max(finePointer ? 8 : 6, Math.round(h / (finePointer ? 74 : 96)));
       var cellW = w / cols;
       var cellH = h / rows;
       var i;
       var j;
       function addNode(x, y, col, row) {
-        var px = Math.max(16, Math.min(w - 16, x));
-        var py = Math.max(16, Math.min(h - 16, y));
+        var px = Math.max(12, Math.min(w - 12, x));
+        var py = Math.max(12, Math.min(h - 12, y));
         nodes.push({
           x: px,
           y: py,
           ox: px,
           oy: py,
-          r: 1.8 + Math.random() * 1.4,
-          weight: 3.2 + Math.random() * 3.1,
-          tick: true,
-          fringe: Math.random() < 0.38,
+          r: 1.15 + Math.random() * 1.1,
           phase: Math.random() * Math.PI * 2,
-          ampX: 5 + Math.random() * 6,
-          ampY: 4 + Math.random() * 5,
-          spX: 0.14 + Math.random() * 0.08,
-          spY: 0.12 + Math.random() * 0.08,
+          ampX: 7 + Math.random() * 8,
+          ampY: 6 + Math.random() * 7,
+          spX: 0.22 + Math.random() * 0.12,
+          spY: 0.18 + Math.random() * 0.12,
           col: col,
           row: row
         });
       }
       for (j = 0; j < rows; j++) {
         for (i = 0; i < cols; i++) {
-          if (Math.random() < 0.48) continue;
+          if (Math.random() < 0.14) continue;
           addNode(
-            (i + 0.18 + Math.random() * 0.64) * cellW,
-            (j + 0.18 + Math.random() * 0.64) * cellH,
+            (i + Math.random()) * cellW,
+            (j + Math.random()) * cellH,
             i,
             j
           );
         }
       }
-      cellW = Math.max(cellW, cellH);
-      LINK = cellW * 1.55;
-      LINK_BREAK = cellW * 2.05;
+      var extra = Math.round((cols * rows) * 0.12);
+      for (i = 0; i < extra; i++) {
+        addNode(Math.random() * w, Math.random() * h, -1, -1);
+      }
+      cellSize = Math.max(cellW, cellH);
+      LINK = cellSize * 1.35;
+      LINK_BREAK = cellSize * 1.75;
+      liveLinks = {};
     }
 
     function dist2cursor(x, y) {
@@ -202,24 +205,12 @@
       return Math.sqrt(dx * dx + dy * dy);
     }
 
-    function strokeThread(ax, ay, cx, cy, bx, by, width, color) {
-      ctx.beginPath();
-      ctx.moveTo(ax, ay);
-      ctx.quadraticCurveTo(cx, cy, bx, by);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.lineCap = "butt";
-      ctx.lineJoin = "miter";
-      ctx.miterLimit = 2;
-      ctx.stroke();
-    }
-
     function tick(now) {
       var tNow = (now || 0) * 0.001;
-      var print = document.documentElement.classList.contains("is-print");
-      var ink = print ? "30, 21, 16" : "232, 220, 200";
+      var tint = document.documentElement.classList.contains('is-print')
+        ? [120, 88, 62]
+        : [244, 239, 230];
       ctx.clearRect(0, 0, w, h);
-      ctx.shadowBlur = 0;
 
       var i;
       var j;
@@ -229,28 +220,32 @@
       var dy;
       var dist;
       var t;
+      var glow;
+      var md;
       var k;
 
       for (i = 0; i < nodes.length; i++) {
         a = nodes[i];
-        var wx = Math.sin(tNow * a.spX + a.phase) * a.ampX;
-        var wy = Math.cos(tNow * a.spY + a.phase * 1.13) * a.ampY;
+        var wx = Math.sin(tNow * a.spX + a.phase) * a.ampX
+          + Math.sin(tNow * 0.09 + a.row * 0.21) * 4.2;
+        var wy = Math.cos(tNow * a.spY + a.phase * 1.17) * a.ampY
+          + Math.cos(tNow * 0.075 + a.col * 0.17) * 3.8;
         var tx = a.ox + wx;
         var ty = a.oy + wy;
         var pdx = mx - tx;
         var pdy = my - ty;
         var pd = Math.sqrt(pdx * pdx + pdy * pdy) || 1;
-        if (pd < REACH) {
-          var pull = (1 - pd / REACH) * 7;
+        if (pd < 220) {
+          var pull = (1 - pd / 220) * 10;
           tx += (pdx / pd) * pull;
           ty += (pdy / pd) * pull;
         }
-        a.x += (tx - a.x) * 0.04;
-        a.y += (ty - a.y) * 0.04;
-        if (a.x < 10) a.x = 10;
-        if (a.x > w - 10) a.x = w - 10;
-        if (a.y < 10) a.y = 10;
-        if (a.y > h - 10) a.y = h - 10;
+        a.x += (tx - a.x) * 0.045;
+        a.y += (ty - a.y) * 0.045;
+        if (a.x < 8) a.x = 8;
+        if (a.x > w - 8) a.x = w - 8;
+        if (a.y < 8) a.y = 8;
+        if (a.y > h - 8) a.y = h - 8;
       }
 
       var deg = [];
@@ -269,7 +264,7 @@
           dx = b.x - a.x;
           dy = b.y - a.y;
           dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist <= LINK && dist > 18) {
+          if (dist <= LINK && dist > 8) {
             candidates.push({ j: j, d: dist, ang: Math.atan2(dy, dx) });
           }
         }
@@ -302,7 +297,7 @@
       for (k = 0; k < linkKeys.length; k++) {
         var lk = linkKeys[k];
         if (proposed[lk]) {
-          liveLinks[lk] = Math.min(1, liveLinks[lk] + 0.028);
+          liveLinks[lk] = Math.min(1, liveLinks[lk] + 0.02);
         } else {
           var parts0 = lk.split(":");
           a = nodes[+parts0[0]];
@@ -311,17 +306,16 @@
           dx = a.x - b.x;
           dy = a.y - b.y;
           dist = Math.sqrt(dx * dx + dy * dy);
-          var fade = dist > LINK_BREAK ? 0.04 : 0.016;
+          var fade = dist > LINK_BREAK ? 0.03 : 0.012;
           liveLinks[lk] -= fade;
           if (liveLinks[lk] <= 0) delete liveLinks[lk];
         }
       }
       var propKeys = Object.keys(proposed);
       for (k = 0; k < propKeys.length; k++) {
-        if (liveLinks[propKeys[k]] == null) liveLinks[propKeys[k]] = 0.08;
+        if (liveLinks[propKeys[k]] == null) liveLinks[propKeys[k]] = 0.06;
       }
 
-      ctx.globalCompositeOperation = "source-over";
       linkKeys = Object.keys(liveLinks);
       for (k = 0; k < linkKeys.length; k++) {
         var parts = linkKeys[k].split(":");
@@ -335,35 +329,47 @@
         dist = Math.sqrt(dx * dx + dy * dy) || 1;
         var strength = liveLinks[linkKeys[k]];
         t = Math.max(0, 1 - dist / Math.max(LINK_BREAK, dist)) * strength;
+
         var nx = -dy / dist;
         var ny = dx / dist;
-        var bow = Math.sin(tNow * 0.18 + i * 0.41 + j * 0.23) * 9.5 * strength;
+        var bow = Math.sin(tNow * 0.26 + i * 0.31 + j * 0.19) * 3.2 * strength;
         var cx = (a.x + b.x) * 0.5 + nx * bow;
         var cy = (a.y + b.y) * 0.5 + ny * bow;
-        var near = Math.max(0, 1 - dist2cursor(cx, cy) / REACH);
-        var width = (a.weight + b.weight) * 0.5 + t * 0.8 + near * 0.6;
-        var alpha = (0.16 + t * 0.14 + near * 0.08) * strength;
-        var fringe = a.fringe || b.fringe || ((i * 11 + j * 5) % 7 === 0);
-        if (fringe && strength > 0.35) {
-          strokeThread(a.x - 1.6, a.y, cx - 1.4, cy, b.x - 1.6, b.y, Math.max(1.2, width * 0.72), "rgba(61, 232, 245, " + (0.14 * strength) + ")");
-          strokeThread(a.x + 1.6, a.y, cx + 1.4, cy, b.x + 1.6, b.y, Math.max(1.1, width * 0.68), "rgba(255, 78, 184, " + (0.11 * strength) + ")");
+        var lg = Math.max(0, 1 - dist2cursor(cx, cy) / GLOW);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.quadraticCurveTo(cx, cy, b.x, b.y);
+        ctx.shadowBlur = 0;
+        if (lg > 0.06) {
+          ctx.shadowColor = "rgba(0, 160, 160, " + (0.10 + lg * 0.22) + ")";
+          ctx.shadowBlur = 3 + lg * 8;
+          ctx.strokeStyle = "rgba(0, 160, 160, " + ((0.04 + t * 0.04 + lg * 0.22) * strength) + ")";
+          ctx.lineWidth = 0.6 + t * 0.18 + lg * 0.7;
+        } else {
+          ctx.strokeStyle = "rgba(" + tint[0] + ", " + tint[1] + ", " + tint[2] + ", " + ((0.028 + t * 0.03) * strength) + ")";
+          ctx.lineWidth = 0.55 + t * 0.16;
         }
-        strokeThread(a.x, a.y, cx, cy, b.x, b.y, width, "rgba(" + ink + ", " + alpha + ")");
+        ctx.stroke();
+        ctx.shadowBlur = 0;
       }
 
+      ctx.shadowBlur = 0;
       for (i = 0; i < nodes.length; i++) {
         a = nodes[i];
-        var nAlpha = 0.28 + Math.max(0, 1 - dist2cursor(a.x, a.y) / REACH) * 0.18;
-        ctx.fillStyle = "rgba(" + ink + ", " + nAlpha + ")";
-        if (a.tick) {
-          ctx.save();
-          ctx.translate(a.x, a.y);
-          ctx.rotate(a.phase * 0.35);
-          ctx.fillRect(-a.r * 0.45, -a.r * 1.6, a.r * 0.9, a.r * 3.2);
-          ctx.restore();
+        md = dist2cursor(a.x, a.y);
+        glow = md < GLOW ? 1 - md / GLOW : 0;
+        ctx.beginPath();
+        if (glow > 0.05) {
+          ctx.shadowColor = "rgba(0, 160, 160, " + (0.16 + glow * 0.26) + ")";
+          ctx.shadowBlur = 4 + glow * 7;
+          ctx.fillStyle = "rgba(0, 160, 160, " + (0.58 + glow * 0.28) + ")";
+          ctx.arc(a.x, a.y, a.r * 1.06 + glow * 1.35, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
         } else {
-          ctx.beginPath();
-          ctx.arc(a.x, a.y, a.r * 0.85, 0, Math.PI * 2);
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "rgba(" + tint[0] + ", " + tint[1] + ", " + tint[2] + ", 0.10)";
+          ctx.arc(a.x, a.y, a.r * 1.08, 0, Math.PI * 2);
           ctx.fill();
         }
       }

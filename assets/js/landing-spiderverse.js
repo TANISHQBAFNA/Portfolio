@@ -86,20 +86,9 @@
     if (endPanel) track.insertBefore(fragment, endPanel);
     else track.appendChild(fragment);
     if (indexTotal) indexTotal.textContent = pad(projects.length);
-    armPanelGlitch();
-  }
-
-  function armPanelGlitch() {
-    document.querySelectorAll('.work-card__title').forEach(function (el) {
-      var text = (el.textContent || '').trim();
-      if (!text) return;
-      el.setAttribute('data-text', text);
-      el.classList.add('glitch');
-    });
   }
 
   function wireStudyCurtainGlitch() {
-    var fly = document.querySelector('[data-study-fly]');
     var veil = document.querySelector('[data-study-veil]');
     var lastWipe = html.classList.contains('is-study-wipe');
 
@@ -109,31 +98,11 @@
       }
     }
 
-    function armFly() {
-      if (!fly) return;
-      var text = (fly.textContent || '').trim();
-      if (!text) return;
-      fly.setAttribute('data-text', text);
-      fly.classList.add('glitch');
-      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
-        window.IrisMotion.burstGlitch(fly, reduceMotion);
-      }
-    }
-
     new MutationObserver(function () {
       var wipe = html.classList.contains('is-study-wipe');
-      if (wipe && !lastWipe) {
-        hitchVeil();
-        armFly();
-      }
+      if (wipe && !lastWipe) hitchVeil();
       lastWipe = wipe;
     }).observe(html, { attributes: true, attributeFilter: ['class'] });
-
-    if (fly) {
-      new MutationObserver(function () {
-        if (html.classList.contains('is-study-wipe')) armFly();
-      }).observe(fly, { childList: true, characterData: true, subtree: true });
-    }
   }
 
   /* ── hero reveal ────────────────────────────────────────────────────── */
@@ -234,11 +203,6 @@
   function hitchProjectsCurtain() {
     if (reduceMotion.matches) return;
     html.classList.add('is-projects-hitching');
-    document.querySelectorAll('.work-card__title.glitch').forEach(function (el) {
-      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
-        window.IrisMotion.burstGlitch(el, reduceMotion);
-      }
-    });
     if (projectsHitchTimer) window.clearTimeout(projectsHitchTimer);
     projectsHitchTimer = window.setTimeout(function () {
       html.classList.remove('is-projects-hitching');
@@ -393,7 +357,7 @@
       mark.setAttribute('data-text', CURTAIN_TEXT);
       mark.classList.add('glitch');
       mark.style.opacity = '1';
-      mark.style.color = '#f3eee4';
+      mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
       whenPageLoaded(function () {
         setTimeout(function () {
           revealHero();
@@ -426,7 +390,7 @@
       mark.style.lineHeight = window.getComputedStyle(logo).lineHeight;
     }
     mark.style.whiteSpace = 'nowrap';
-    mark.style.color = '#f3eee4';
+    mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
     mark.style.margin = '0';
     mark.style.opacity = '1';
     mark.classList.add('glitch');
@@ -656,7 +620,7 @@
       mark.style.letterSpacing = logoStyle.letterSpacing;
       mark.style.lineHeight = logoStyle.lineHeight;
       mark.style.whiteSpace = 'nowrap';
-      mark.style.color = '#f3eee4';
+      mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
       mark.style.margin = '0';
       mark.setAttribute('data-text', CURTAIN_TEXT);
       mark.classList.add('glitch', 'is-glitching');
