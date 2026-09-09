@@ -4875,13 +4875,13 @@ html.is-spiderverse .curtain.curtain--ink {
 }
 html.is-spiderverse .curtain__halftone {
   position: absolute;
-  inset: -8%;
+  inset: -4%;
   pointer-events: none;
-  opacity: 0.7;
-  mix-blend-mode: screen;
-  background: url("../img/spiderverse-benday.svg?v=sv5") center / cover no-repeat;
-  mask-image: radial-gradient(ellipse 72% 64% at 50% 48%, transparent 18%, #000 82%);
-  -webkit-mask-image: radial-gradient(ellipse 72% 64% at 50% 48%, transparent 18%, #000 82%);
+  opacity: 0.88;
+  mix-blend-mode: normal;
+  background: url("../img/spiderverse-benday.svg?v=sv6") center / cover no-repeat;
+  mask-image: radial-gradient(ellipse 42% 36% at 50% 48%, rgba(0,0,0,0.18) 0%, #000 72%);
+  -webkit-mask-image: radial-gradient(ellipse 42% 36% at 50% 48%, rgba(0,0,0,0.18) 0%, #000 72%);
 }
 html.is-spiderverse .curtain__hitch {
   position: absolute;
@@ -4891,21 +4891,20 @@ html.is-spiderverse .curtain__hitch {
   opacity: 0;
   mix-blend-mode: screen;
   background:
-    repeating-linear-gradient(to bottom, transparent 0 13px, rgba(61, 232, 245, 0.14) 13px 14px),
-    linear-gradient(90deg, rgba(61, 232, 245, 0.14), transparent 42%, transparent 58%, rgba(255, 78, 184, 0.12));
+    repeating-linear-gradient(to bottom, transparent 0 15px, rgba(61, 232, 245, 0.08) 15px 16px),
+    linear-gradient(90deg, rgba(61, 232, 245, 0.08), transparent 46%, transparent 54%, rgba(255, 78, 184, 0.07));
 }
 html.is-spiderverse .curtain.is-hitching,
 html.is-spiderverse .curtain.is-lifting {
-  animation: sv-curtain-plate 0.92s ease-out 1;
+  animation: sv-curtain-plate 1.1s ease-out 1;
 }
 html.is-spiderverse .curtain.is-hitching .curtain__hitch,
 html.is-spiderverse .curtain.is-lifting .curtain__hitch {
-  animation: sv-curtain-hitch 0.92s ease-out 1;
+  animation: sv-curtain-hitch 1.1s ease-out 1;
 }
 @keyframes sv-curtain-plate {
   0%, 100% { filter: none; }
-  28% { filter: drop-shadow(-4px 0 0 rgba(61, 232, 245, 0.32)) drop-shadow(4px 0 0 rgba(255, 78, 184, 0.28)); }
-  52% { filter: drop-shadow(3px 0 0 rgba(61, 232, 245, 0.18)); }
+  35% { filter: drop-shadow(-2px 0 0 rgba(61, 232, 245, 0.22)) drop-shadow(2px 0 0 rgba(255, 78, 184, 0.18)); }
 }
 @keyframes sv-curtain-hitch {
   0%, 100% {
@@ -4913,33 +4912,28 @@ html.is-spiderverse .curtain.is-lifting .curtain__hitch {
     clip-path: inset(0 0 0 0);
     transform: translateX(0);
   }
-  22% {
-    opacity: 0.4;
-    clip-path: inset(18% 0 52% 0);
-    transform: translateX(-8px);
-  }
-  48% {
-    opacity: 0.32;
-    clip-path: inset(44% 0 18% 0);
-    transform: translateX(6px);
-  }
-  70% {
-    opacity: 0.16;
-    clip-path: inset(8% 0 68% 0);
+  30% {
+    opacity: 0.22;
+    clip-path: inset(28% 0 48% 0);
     transform: translateX(-4px);
+  }
+  58% {
+    opacity: 0.14;
+    clip-path: inset(46% 0 22% 0);
+    transform: translateX(3px);
   }
 }
 html.is-spiderverse .curtain__mark {
   position: relative;
   overflow: visible;
   text-shadow:
-    -1.5px 0 0 rgba(61, 232, 245, 0.55),
-    1.5px 0 0 rgba(255, 78, 184, 0.48);
+    -1px 0 0 rgba(61, 232, 245, 0.4),
+    1px 0 0 rgba(255, 78, 184, 0.35);
 }
 html.is-spiderverse .curtain__ch {
   text-shadow:
-    -1.5px 0 0 rgba(61, 232, 245, 0.5),
-    1.5px 0 0 rgba(255, 78, 184, 0.45);
+    -1px 0 0 rgba(61, 232, 245, 0.35),
+    1px 0 0 rgba(255, 78, 184, 0.3);
 }
 
 /* ── atmosphere: zonal Ben-Day + constellation web ───────────────────── */
@@ -4963,7 +4957,7 @@ html.is-spiderverse .atmosphere__light {
               rgba(61, 232, 245, 0.07), transparent 62%);
 }
 html.is-spiderverse .atmosphere::after {
-  background: radial-gradient(ellipse 80% 70% at 50% 40%, transparent 40%, rgba(0, 0, 0, 0.22) 100%);
+  background: radial-gradient(ellipse 40% 32% at 46% 40%, rgba(14, 16, 24, 0.38) 0%, transparent 72%);
   z-index: 3;
   pointer-events: none;
 }
@@ -4979,9 +4973,9 @@ html.is-spiderverse .atmosphere__benday {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.78;
-  mix-blend-mode: screen;
-  background: url("../img/spiderverse-benday.svg?v=sv5") center / cover no-repeat;
+  opacity: 0.92;
+  mix-blend-mode: normal;
+  background: url("../img/spiderverse-benday.svg?v=sv6") center / cover no-repeat;
 }
 html.is-spiderverse .atmosphere__scan {
   position: absolute;
@@ -5000,7 +4994,7 @@ html.is-spiderverse .atmosphere__chroma {
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  opacity: 0.22;
+  opacity: 0.08;
   mix-blend-mode: screen;
   background:
     linear-gradient(90deg, rgba(61, 232, 245, 0.035), transparent 18%, transparent 82%, rgba(255, 78, 184, 0.04));
@@ -5028,7 +5022,7 @@ html.is-spiderverse.is-print .atmosphere__particles {
 }
 html.is-spiderverse.is-print .atmosphere__benday {
   mix-blend-mode: multiply;
-  opacity: 0.28;
+  opacity: 0.42;
 }
 html.is-spiderverse.is-print .atmosphere__scan {
   mix-blend-mode: multiply;
@@ -5082,28 +5076,28 @@ html.is-spiderverse .glitch::after {
 }
 html.is-spiderverse .glitch::before {
   color: var(--cyan);
-  transform: translate(-3.5px, 0);
+  transform: translate(-2px, 0);
   mix-blend-mode: screen;
   clip-path: inset(0 0 55% 0);
-  opacity: 0.62;
+  opacity: 0.42;
 }
 html.is-spiderverse .glitch::after {
   color: var(--magenta);
-  transform: translate(3.5px, 0);
+  transform: translate(2px, 0);
   mix-blend-mode: screen;
   clip-path: inset(42% 0 0 0);
-  opacity: 0.55;
+  opacity: 0.36;
 }
 
 html.is-spiderverse .hero__kicker.glitch::before,
 html.is-spiderverse .hero__accent.glitch::before,
 html.is-spiderverse .hero__word.glitch::before {
-  transform: translate(-4px, 0);
+  transform: translate(-2.5px, 0);
 }
 html.is-spiderverse .hero__kicker.glitch::after,
 html.is-spiderverse .hero__accent.glitch::after,
 html.is-spiderverse .hero__word.glitch::after {
-  transform: translate(4px, 0);
+  transform: translate(2.5px, 0);
 }
 
 html.is-spiderverse .hero__kicker.glitch::before,
@@ -5116,7 +5110,7 @@ html.is-spiderverse .curtain__mark.glitch::before,
 html.is-spiderverse .curtain__mark.glitch::after,
 html.is-spiderverse .masthead__name.glitch::before,
 html.is-spiderverse .masthead__name.glitch::after {
-  animation: sv-slice-a 5.4s steps(1, end) infinite;
+  animation: sv-slice-a 8.2s steps(1, end) infinite;
 }
 html.is-spiderverse .hero__accent.glitch::after,
 html.is-spiderverse .hero__word.glitch::after,
@@ -5124,36 +5118,36 @@ html.is-spiderverse .hero__kicker.glitch::after,
 html.is-spiderverse .curtain__mark.glitch::after,
 html.is-spiderverse .masthead__name.glitch::after {
   animation-name: sv-slice-b;
-  animation-duration: 6.1s;
-  animation-delay: 0.55s;
+  animation-duration: 9.1s;
+  animation-delay: 1.1s;
 }
 
 @keyframes sv-slice-a {
-  0%, 84%, 100% {
+  0%, 90%, 100% {
     clip-path: inset(0 0 55% 0);
+    transform: translate(-2px, 0);
+  }
+  93% {
+    clip-path: inset(12% 0 36% 0);
     transform: translate(-3.5px, 0);
   }
-  88% {
-    clip-path: inset(10% 0 32% 0);
-    transform: translate(-7px, 1px);
-  }
-  92% {
-    clip-path: inset(38% 0 8% 0);
-    transform: translate(5px, -1px);
+  96% {
+    clip-path: inset(40% 0 10% 0);
+    transform: translate(2.5px, 0);
   }
 }
 @keyframes sv-slice-b {
-  0%, 86%, 100% {
+  0%, 91%, 100% {
     clip-path: inset(42% 0 0 0);
+    transform: translate(2px, 0);
+  }
+  94% {
+    clip-path: inset(14% 0 32% 0);
     transform: translate(3.5px, 0);
   }
-  89% {
-    clip-path: inset(12% 0 30% 0);
-    transform: translate(7px, 1px);
-  }
-  93% {
-    clip-path: inset(52% 0 0 0);
-    transform: translate(-5px, -1px);
+  97% {
+    clip-path: inset(50% 0 0 0);
+    transform: translate(-2.5px, 0);
   }
 }
 
@@ -5169,83 +5163,83 @@ html.is-spiderverse .hero__word.glitch::after {
 }
 
 @keyframes sv-slice-hero-a {
-  0%, 84%, 100% {
+  0%, 90%, 100% {
     clip-path: inset(0 0 52% 0);
+    transform: translate(-2.5px, 0);
+  }
+  93% {
+    clip-path: inset(10% 0 34% 0);
     transform: translate(-4px, 0);
   }
-  88% {
-    clip-path: inset(8% 0 28% 0);
-    transform: translate(-7px, 1px);
-  }
-  92% {
-    clip-path: inset(34% 0 8% 0);
-    transform: translate(5px, -1px);
+  96% {
+    clip-path: inset(36% 0 10% 0);
+    transform: translate(3px, 0);
   }
 }
 @keyframes sv-slice-hero-b {
-  0%, 86%, 100% {
+  0%, 91%, 100% {
     clip-path: inset(40% 0 0 0);
+    transform: translate(2.5px, 0);
+  }
+  94% {
+    clip-path: inset(12% 0 30% 0);
     transform: translate(4px, 0);
   }
-  89% {
-    clip-path: inset(10% 0 28% 0);
-    transform: translate(7px, 1px);
-  }
-  93% {
-    clip-path: inset(50% 0 0 0);
-    transform: translate(-5px, -1px);
+  97% {
+    clip-path: inset(48% 0 0 0);
+    transform: translate(-3px, 0);
   }
 }
 
 html.is-spiderverse .glitch.is-glitching::before {
-  animation: sv-burst-a 0.52s steps(2, end) 1;
+  animation: sv-burst-a 0.4s steps(2, end) 1;
 }
 html.is-spiderverse .glitch.is-glitching::after {
-  animation: sv-burst-b 0.52s steps(2, end) 1;
+  animation: sv-burst-b 0.4s steps(2, end) 1;
 }
 html.is-spiderverse .hero__kicker.is-glitching::before,
 html.is-spiderverse .hero__accent.is-glitching::before,
 html.is-spiderverse .hero__word.is-glitching::before {
-  animation: sv-burst-hero-a 0.52s steps(2, end) 1;
+  animation: sv-burst-hero-a 0.4s steps(2, end) 1;
 }
 html.is-spiderverse .hero__kicker.is-glitching::after,
 html.is-spiderverse .hero__accent.is-glitching::after,
 html.is-spiderverse .hero__word.is-glitching::after {
-  animation: sv-burst-hero-b 0.52s steps(2, end) 1;
+  animation: sv-burst-hero-b 0.4s steps(2, end) 1;
 }
 @keyframes sv-burst-a {
-  0%, 100% { clip-path: inset(0 0 55% 0); transform: translate(-3.5px, 0); }
-  40% { clip-path: inset(10% 0 28% 0); transform: translate(-8px, 1px); }
+  0%, 100% { clip-path: inset(0 0 55% 0); transform: translate(-2px, 0); }
+  45% { clip-path: inset(12% 0 32% 0); transform: translate(-3.5px, 0); }
 }
 @keyframes sv-burst-b {
-  0%, 100% { clip-path: inset(42% 0 0 0); transform: translate(3.5px, 0); }
-  45% { clip-path: inset(12% 0 26% 0); transform: translate(8px, 1px); }
+  0%, 100% { clip-path: inset(42% 0 0 0); transform: translate(2px, 0); }
+  50% { clip-path: inset(14% 0 30% 0); transform: translate(3.5px, 0); }
 }
 @keyframes sv-burst-hero-a {
-  0%, 100% { clip-path: inset(0 0 52% 0); transform: translate(-4px, 0); }
-  40% { clip-path: inset(8% 0 26% 0); transform: translate(-7px, 1px); }
+  0%, 100% { clip-path: inset(0 0 52% 0); transform: translate(-2.5px, 0); }
+  45% { clip-path: inset(10% 0 30% 0); transform: translate(-4px, 0); }
 }
 @keyframes sv-burst-hero-b {
-  0%, 100% { clip-path: inset(40% 0 0 0); transform: translate(4px, 0); }
-  45% { clip-path: inset(10% 0 24% 0); transform: translate(7px, 1px); }
+  0%, 100% { clip-path: inset(40% 0 0 0); transform: translate(2.5px, 0); }
+  50% { clip-path: inset(12% 0 28% 0); transform: translate(4px, 0); }
 }
 
 html.is-spiderverse .masthead__name.glitch:hover {
   text-shadow:
-    -4px 0 0 var(--cyan),
-    4px 0 0 var(--magenta);
+    -2.5px 0 0 var(--cyan),
+    2.5px 0 0 var(--magenta);
 }
 html.is-spiderverse .hero__kicker.glitch:hover,
 html.is-spiderverse .hero__accent.glitch:hover,
 html.is-spiderverse .hero__word.glitch:hover {
   text-shadow:
-    -5px 0 0 var(--cyan),
-    5px 0 0 var(--magenta);
+    -3px 0 0 var(--cyan),
+    3px 0 0 var(--magenta);
 }
 html.is-spiderverse .masthead__name.glitch:hover::before,
 html.is-spiderverse .masthead__name.glitch:hover::after {
-  animation: sv-burst-a 0.7s steps(2, end) 1;
-  opacity: 0.85;
+  animation: sv-burst-a 0.55s steps(2, end) 1;
+  opacity: 0.7;
 }
 html.is-spiderverse .masthead__name.glitch:hover::after {
   animation-name: sv-burst-b;
@@ -5253,14 +5247,14 @@ html.is-spiderverse .masthead__name.glitch:hover::after {
 html.is-spiderverse .hero__kicker.glitch:hover::before,
 html.is-spiderverse .hero__accent.glitch:hover::before,
 html.is-spiderverse .hero__word.glitch:hover::before {
-  animation: sv-burst-hero-a 0.7s steps(2, end) 1;
-  opacity: 0.85;
+  animation: sv-burst-hero-a 0.55s steps(2, end) 1;
+  opacity: 0.7;
 }
 html.is-spiderverse .hero__kicker.glitch:hover::after,
 html.is-spiderverse .hero__accent.glitch:hover::after,
 html.is-spiderverse .hero__word.glitch:hover::after {
-  animation: sv-burst-hero-b 0.7s steps(2, end) 1;
-  opacity: 0.85;
+  animation: sv-burst-hero-b 0.55s steps(2, end) 1;
+  opacity: 0.7;
 }
 
 html.is-spiderverse.is-print .glitch::before,
@@ -5276,8 +5270,8 @@ html.is-spiderverse .masthead__nav a:hover,
 html.is-spiderverse .masthead__nav a:focus-visible {
   color: var(--fg) !important;
   text-shadow:
-    -2.5px 0 0 var(--cyan),
-    2.5px 0 0 var(--magenta);
+    -1.5px 0 0 var(--cyan),
+    1.5px 0 0 var(--magenta);
   transform: translate(-1px, 0);
 }
 html.is-spiderverse .masthead__nav a::after {
@@ -5427,12 +5421,12 @@ html.is-spiderverse .skip-link {
   }
   html.is-spiderverse .glitch::before {
     clip-path: none;
-    transform: translate(-2px, 0);
-    opacity: 0.45;
+    transform: translate(-1.5px, 0);
+    opacity: 0.4;
   }
   html.is-spiderverse .glitch::after {
     clip-path: none;
-    transform: translate(2px, 0);
+    transform: translate(1.5px, 0);
     opacity: 0.4;
   }
   html.is-spiderverse .masthead__nav a:hover,

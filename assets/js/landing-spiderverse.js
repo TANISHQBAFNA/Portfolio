@@ -436,7 +436,7 @@
     function pulseCurtainGlitch() {
       if (liftStarted || reduceMotion.matches) return;
       armMarkGlitch(readMark() || CURTAIN_TEXT);
-      curtainGlitchId = window.setTimeout(pulseCurtainGlitch, 2000 + Math.random() * 1400);
+      curtainGlitchId = window.setTimeout(pulseCurtainGlitch, 9000 + Math.random() * 3000);
     }
 
     function paintName(text, donePaint) {
