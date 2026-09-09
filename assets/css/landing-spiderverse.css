@@ -4877,7 +4877,7 @@ html.is-spiderverse .curtain__halftone {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.16;
+  opacity: 0.11;
   mix-blend-mode: normal;
   background-color: transparent;
   background-image: url("../img/spiderverse-plate.svg?v=sv8");
@@ -5013,7 +5013,7 @@ html.is-spiderverse .atmosphere__chroma {
   box-shadow: none;
 }
 html.is-spiderverse .atmosphere__grain {
-  opacity: 0.09;
+  opacity: 0.045;
   z-index: 4;
   mix-blend-mode: overlay;
 }
@@ -5478,7 +5478,7 @@ html.is-spiderverse .study__veil-halftone {
   background-image: url("../img/spiderverse-plate.svg?v=sv8");
   background-size: 16px 16px;
   background-repeat: repeat;
-  opacity: 0.14;
+  opacity: 0.11;
   mix-blend-mode: normal;
 }
 html.is-spiderverse .study__veil-hitch {

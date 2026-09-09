@@ -135,7 +135,7 @@
     var LINK = 220;
     var LINK_BREAK = 280;
     var REACH = 170;
-    var MAX_DEG = 3;
+    var MAX_DEG = 2;
     var MIN_ANGLE = 0.78;
     var liveLinks = {};
 
@@ -152,8 +152,8 @@
     function spawn() {
       nodes = [];
       liveLinks = {};
-      var cols = Math.max(finePointer ? 5 : 4, Math.round(w / (finePointer ? 148 : 186)));
-      var rows = Math.max(finePointer ? 4 : 4, Math.round(h / (finePointer ? 136 : 172)));
+      var cols = Math.max(finePointer ? 4 : 3, Math.round(w / (finePointer ? 172 : 210)));
+      var rows = Math.max(finePointer ? 4 : 3, Math.round(h / (finePointer ? 158 : 196)));
       var cellW = w / cols;
       var cellH = h / rows;
       var i;
@@ -166,10 +166,10 @@
           y: py,
           ox: px,
           oy: py,
-          r: 1.4 + Math.random() * 1.6,
-          weight: 2.1 + Math.random() * 2.4,
-          tick: Math.random() > 0.55,
-          fringe: Math.random() < 0.3,
+          r: 1.8 + Math.random() * 1.4,
+          weight: 3.2 + Math.random() * 3.1,
+          tick: true,
+          fringe: Math.random() < 0.38,
           phase: Math.random() * Math.PI * 2,
           ampX: 5 + Math.random() * 6,
           ampY: 4 + Math.random() * 5,
@@ -181,7 +181,7 @@
       }
       for (j = 0; j < rows; j++) {
         for (i = 0; i < cols; i++) {
-          if (Math.random() < 0.38) continue;
+          if (Math.random() < 0.48) continue;
           addNode(
             (i + 0.18 + Math.random() * 0.64) * cellW,
             (j + 0.18 + Math.random() * 0.64) * cellH,
