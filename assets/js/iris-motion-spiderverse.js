@@ -11,9 +11,24 @@
     cjk: { T: "丁", t: "丁", I: "工", i: "工", O: "口", o: "口", X: "乂", x: "乂" }
   };
   var SCRIPT_ORDER = ["devanagari", "cyrillic", "greek", "arabic", "cjk"];
-  var scriptTick = 0;
-  var SCRIPT_FLASH_MS = 180;
   var BURST_MS = 450;
+
+  function rand(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function shuffle(list) {
+    var i;
+    var j;
+    var tmp;
+    for (i = list.length - 1; i > 0; i -= 1) {
+      j = Math.floor(Math.random() * (i + 1));
+      tmp = list[i];
+      list[i] = list[j];
+      list[j] = tmp;
+    }
+    return list;
+  }
 
   function visibleLatin(el) {
     var stored = el.getAttribute("data-latin");
@@ -39,50 +54,62 @@
     if (!chars.length) el.textContent = text;
   }
 
-  function swapFromMap(src, out, used, map, prefer) {
-    var i;
-    var ch;
-    for (i = 0; i < out.length; i += 1) {
-      if (used[i]) continue;
-      ch = src.charAt(i);
-      if (!map[ch]) continue;
-      if (prefer && prefer.indexOf(ch) === -1) continue;
-      out[i] = map[ch];
-      used[i] = true;
-      return true;
+  function glyphsFor(ch) {
+    var options = [];
+    var s;
+    var glyph;
+    var weight;
+    var w;
+    for (s = 0; s < SCRIPT_ORDER.length; s += 1) {
+      glyph = SCRIPT_MAPS[SCRIPT_ORDER[s]][ch];
+      if (!glyph) continue;
+      weight = SCRIPT_ORDER[s] === "arabic" || SCRIPT_ORDER[s] === "cjk" ? 1 : 2;
+      for (w = 0; w < weight; w += 1) options.push(glyph);
     }
-    return false;
+    return options;
   }
 
-  function pickScriptFlash(src) {
-    var out = src.split("");
-    var used = {};
-    var primary = SCRIPT_ORDER[scriptTick % SCRIPT_ORDER.length];
-    scriptTick += 1;
-    var mix = Math.random() < 0.5;
-    var secondary = SCRIPT_ORDER[scriptTick % SCRIPT_ORDER.length];
-    var map1 = SCRIPT_MAPS[primary];
-    var map2 = SCRIPT_MAPS[secondary];
-    if (!swapFromMap(src, out, used, map1, "TtAaNnBbQq")) {
-      swapFromMap(src, out, used, map1);
+  function pickGlyph(ch) {
+    var options = glyphsFor(ch);
+    if (!options.length) return null;
+    return options[Math.floor(Math.random() * options.length)];
+  }
+
+  function mappableIndexes(src) {
+    var out = [];
+    var i;
+    for (i = 0; i < src.length; i += 1) {
+      if (src.charAt(i) === " ") continue;
+      if (glyphsFor(src.charAt(i)).length) out.push(i);
     }
-    if (mix && primary !== "arabic") {
-      swapFromMap(src, out, used, map2);
-    } else if (!mix && Math.random() < 0.45) {
-      swapFromMap(src, out, used, map1);
+    return out;
+  }
+
+  function pickSwapCount(available) {
+    var roll;
+    if (available <= 1) return available;
+    roll = Math.random();
+    if (roll < 0.42) return 1;
+    if (roll < 0.72) return Math.min(2, available);
+    if (roll < 0.9) return Math.min(3, available);
+    return Math.min(available, 5);
+  }
+
+  function trackTimer(el, id) {
+    var pack = scriptTimers.get(el);
+    if (!pack) {
+      pack = { ids: [] };
+      scriptTimers.set(el, pack);
     }
-    if (!Object.keys(used).length) {
-      var f;
-      for (f = 0; f < SCRIPT_ORDER.length; f += 1) {
-        if (swapFromMap(src, out, used, SCRIPT_MAPS[SCRIPT_ORDER[f]])) break;
-      }
-    }
-    return out.join("");
+    pack.ids.push(id);
+    return id;
   }
 
   function clearScriptFlash(el, latin) {
-    var hid = scriptTimers.get(el);
-    if (hid) window.clearTimeout(hid);
+    var pack = scriptTimers.get(el);
+    if (pack && pack.ids) {
+      pack.ids.forEach(function (id) { window.clearTimeout(id); });
+    }
     scriptTimers.delete(el);
     if (latin) {
       el.setAttribute("data-text", latin);
@@ -90,40 +117,74 @@
     }
   }
 
+  function commitLive(el, live) {
+    var text = live.join("");
+    el.setAttribute("data-text", text);
+    paintGlitchText(el, text);
+  }
+
   function burstGlitch(el, reduceMotion) {
     if (!el || (reduceMotion && reduceMotion.matches)) return;
     var latin = visibleLatin(el);
+    var slots = shuffle(mappableIndexes(latin));
+    var count = pickSwapCount(slots.length);
+    var chosen = slots.slice(0, count);
+    var lastEnd = BURST_MS;
+    var live;
+    var starts = [];
+
     el.setAttribute("data-latin", latin);
     if (!el.getAttribute("aria-label")) el.setAttribute("aria-label", latin);
     clearScriptFlash(el, latin);
-
-    var flashed = pickScriptFlash(latin);
-    el.setAttribute("data-text", flashed);
-    paintGlitchText(el, flashed);
+    live = latin.split("");
 
     el.classList.remove("is-glitching");
     void el.offsetWidth;
     el.classList.add("is-glitching");
 
-    scriptTimers.set(el, window.setTimeout(function () {
-      clearScriptFlash(el, latin);
-    }, SCRIPT_FLASH_MS));
+    function scheduleSwap(index, startAt, hold) {
+      var glyph = pickGlyph(latin.charAt(index));
+      if (!glyph) return;
+      trackTimer(el, window.setTimeout(function () {
+        live[index] = glyph;
+        commitLive(el, live);
+      }, startAt));
+      trackTimer(el, window.setTimeout(function () {
+        live[index] = latin.charAt(index);
+        commitLive(el, live);
+      }, startAt + hold));
+      lastEnd = Math.max(lastEnd, startAt + hold);
+    }
 
-    window.setTimeout(function () {
-      el.classList.remove("is-glitching");
-      if (el.getAttribute("data-text") !== latin) {
-        el.setAttribute("data-text", latin);
-        paintGlitchText(el, latin);
+    chosen.forEach(function (index) {
+      var startAt = Math.round(rand(0, 180));
+      var tries = 0;
+      while (tries < 6 && starts.some(function (stamp) { return Math.abs(stamp - startAt) < 14; })) {
+        startAt = Math.round(rand(0, 210));
+        tries += 1;
       }
-    }, BURST_MS);
+      starts.push(startAt);
+      var hold = Math.round(rand(55, 230));
+      scheduleSwap(index, startAt, hold);
+      if (Math.random() < 0.28) {
+        var gap = Math.round(rand(18, 70));
+        var again = Math.round(rand(45, 140));
+        scheduleSwap(index, startAt + hold + gap, again);
+      }
+    });
+
+    trackTimer(el, window.setTimeout(function () {
+      el.classList.remove("is-glitching");
+      clearScriptFlash(el, latin);
+    }, lastEnd + 40));
   }
 
   function burstHero(reduceMotion) {
     var shouts = document.querySelectorAll(".hero__kicker, .hero__accent, .hero__word");
-    shouts.forEach(function (el, i) {
+    shouts.forEach(function (el) {
       window.setTimeout(function () {
         burstGlitch(el, reduceMotion);
-      }, 140 * i);
+      }, Math.round(rand(0, 240)));
     });
   }
 
@@ -136,9 +197,9 @@
       var logo = document.querySelector(".masthead__name.glitch");
       burstHero(reduceMotion);
       if (logo) {
-        window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, 400);
+        window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, Math.round(rand(120, 520)));
       }
-      var wait = 10000 + Math.round(Math.random() * 600 - 300);
+      var wait = Math.round(rand(7000, 14000));
       glitchTimers.push(window.setTimeout(cycle, wait));
     }
 
