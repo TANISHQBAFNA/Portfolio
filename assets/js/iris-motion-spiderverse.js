@@ -10,7 +10,7 @@
     el.classList.add("is-glitching");
     window.setTimeout(function () {
       el.classList.remove("is-glitching");
-    }, 400);
+    }, 450);
   }
 
   function burstHero(reduceMotion) {
@@ -33,11 +33,11 @@
       if (logo) {
         window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, 400);
       }
-      var wait = 8000 + Math.random() * 4000;
+      var wait = 6000 + Math.random() * 2000;
       glitchTimers.push(window.setTimeout(cycle, wait));
     }
 
-    glitchTimers.push(window.setTimeout(cycle, 5000));
+    glitchTimers.push(window.setTimeout(cycle, 3200));
   }
 
   function hitchCurtain(curtain, reduceMotion) {
@@ -45,7 +45,7 @@
     curtain.classList.add("is-hitching");
     window.setTimeout(function () {
       curtain.classList.remove("is-hitching");
-    }, 1100);
+    }, 900);
   }
 
   function revealLanding(html, reduceMotion) {
