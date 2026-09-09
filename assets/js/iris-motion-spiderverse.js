@@ -33,11 +33,11 @@
       if (logo) {
         window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, 400);
       }
-      var wait = 6000 + Math.random() * 2000;
+      var wait = 12000 + Math.random() * 4000;
       glitchTimers.push(window.setTimeout(cycle, wait));
     }
 
-    glitchTimers.push(window.setTimeout(cycle, 3200));
+    glitchTimers.push(window.setTimeout(cycle, 6400));
   }
 
   function hitchCurtain(curtain, reduceMotion) {

@@ -4851,15 +4851,17 @@ html.is-dark .study-phone__island {
 
 /* ==========================================================================
    Spider-Verse / Across the Spider-Verse study
-   Theme: night comic. Deep ink ground, cream type, cyan + magenta as
-   CMYK plate errors only. Premium portfolio, not a fan-site parody.
-   Constellation web restored. Scattered Ben-Day is secondary print texture.
-   Glitch is cinematic, capped, and respects reduced motion.
+   Theme: night comic. Deep ink ground, cream type, RGB chromatic glitch.
+   Constellation web matches production. Ben-Day is curtain-only, bottom-weighted.
+   Glitch is cinematic, rarer, and respects reduced motion.
    ========================================================================== */
 
 html.is-spiderverse {
   --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --glitch-r: #ff003c;
+  --glitch-g: #00ff9c;
+  --glitch-b: #3d7eff;
 }
 
 html.is-spiderverse,
@@ -4878,13 +4880,18 @@ html.is-spiderverse .curtain.curtain--ink {
 html.is-spiderverse .curtain__halftone {
   position: absolute;
   inset: 0;
+  z-index: 1;
   pointer-events: none;
-  opacity: 0.11;
-  mix-blend-mode: normal;
+  opacity: 0.2;
+  mix-blend-mode: screen;
   background-color: transparent;
-  background-image: url("../img/spiderverse-plate.svg?v=sv9");
-  background-size: 16px 16px;
+  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv10");
+  background-size: 18px 18px;
   background-repeat: repeat;
+  -webkit-mask-image: radial-gradient(ellipse 95% 72% at 50% 100%, #000 0%, rgba(0, 0, 0, 0.55) 32%, rgba(0, 0, 0, 0.12) 52%, transparent 68%);
+  mask-image: radial-gradient(ellipse 95% 72% at 50% 100%, #000 0%, rgba(0, 0, 0, 0.55) 32%, rgba(0, 0, 0, 0.12) 52%, transparent 68%);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 html.is-spiderverse .curtain__halftone::after {
   content: none;
@@ -4897,8 +4904,8 @@ html.is-spiderverse .curtain__hitch {
   opacity: 0;
   mix-blend-mode: screen;
   background:
-    repeating-linear-gradient(to bottom, transparent 0 15px, rgba(61, 232, 245, 0.08) 15px 16px),
-    linear-gradient(90deg, rgba(61, 232, 245, 0.08), transparent 46%, transparent 54%, rgba(255, 78, 184, 0.07));
+    repeating-linear-gradient(to bottom, transparent 0 15px, rgba(61, 126, 255, 0.08) 15px 16px),
+    linear-gradient(90deg, rgba(255, 0, 60, 0.08), transparent 46%, transparent 54%, rgba(61, 126, 255, 0.07));
 }
 html.is-spiderverse .curtain.is-hitching,
 html.is-spiderverse .curtain.is-lifting,
@@ -4921,7 +4928,7 @@ html.is-spiderverse.is-study-wipe .study__veil-hitch {
 }
 @keyframes sv-curtain-plate {
   0%, 100% { filter: none; }
-  32% { filter: drop-shadow(-3.5px 0 0 rgba(61, 232, 245, 0.38)) drop-shadow(3.5px 0 0 rgba(255, 78, 184, 0.32)); }
+  32% { filter: drop-shadow(-3.5px 0 0 rgba(255, 0, 60, 0.38)) drop-shadow(3.5px 0 0 rgba(61, 126, 255, 0.32)); }
 }
 @keyframes sv-plate-shift {
   0%, 100% { transform: translate(0, 0); }
@@ -4949,13 +4956,15 @@ html.is-spiderverse .curtain__mark {
   position: relative;
   overflow: visible;
   text-shadow:
-    -2.5px 0 0 rgba(61, 232, 245, 0.62),
-    2.5px 0 0 rgba(255, 78, 184, 0.52);
+    -2.5px 0 0 rgba(255, 0, 60, 0.58),
+    2.5px 0 0 rgba(61, 126, 255, 0.5),
+    0 1.5px 0 rgba(0, 255, 156, 0.32);
 }
 html.is-spiderverse .curtain__ch {
   text-shadow:
-    -2px 0 0 rgba(61, 232, 245, 0.55),
-    2px 0 0 rgba(255, 78, 184, 0.45);
+    -2px 0 0 rgba(255, 0, 60, 0.5),
+    2px 0 0 rgba(61, 126, 255, 0.42),
+    0 1px 0 rgba(0, 255, 156, 0.28);
 }
 
 /* ── atmosphere: production constellation web, night-tinted ──────────── */
@@ -5011,7 +5020,7 @@ html.is-spiderverse .atmosphere__chroma {
   opacity: 0.04;
   mix-blend-mode: screen;
   background:
-    linear-gradient(90deg, rgba(61, 232, 245, 0.02), transparent 22%, transparent 78%, rgba(255, 78, 184, 0.02));
+    linear-gradient(90deg, rgba(255, 0, 60, 0.02), transparent 22%, transparent 78%, rgba(61, 126, 255, 0.02));
   box-shadow: none;
 }
 html.is-spiderverse .atmosphere__grain {
@@ -5044,7 +5053,7 @@ html.is-spiderverse.is-print .atmosphere__chroma {
   mix-blend-mode: multiply;
 }
 
-/* ── type: shout stays cream; cyan lives in glitch plates ────────────── */
+/* ── type: shout stays cream; RGB lives in glitch plates ─────────────── */
 html.is-spiderverse .hero__accent,
 html.is-spiderverse .hero__display em,
 html.is-spiderverse .hero__word,
@@ -5101,7 +5110,7 @@ html.is-spiderverse .hero__word.glitch::after {
   -webkit-text-fill-color: currentColor;
 }
 
-/* ── CMYK / clip-path glitch ─────────────────────────────────────────── */
+/* ── RGB / clip-path glitch ──────────────────────────────────────────── */
 html.is-spiderverse .glitch {
   position: relative;
   isolation: isolate;
@@ -5125,14 +5134,14 @@ html.is-spiderverse .glitch::after {
   white-space: inherit;
 }
 html.is-spiderverse .glitch::before {
-  color: var(--cyan);
+  color: var(--glitch-r);
   transform: translate(-3.25px, 0);
   mix-blend-mode: screen;
   clip-path: inset(0 0 55% 0);
   opacity: 0.52;
 }
 html.is-spiderverse .glitch::after {
-  color: var(--magenta);
+  color: var(--glitch-b);
   transform: translate(3.25px, 0);
   mix-blend-mode: screen;
   clip-path: inset(42% 0 0 0);
@@ -5160,7 +5169,7 @@ html.is-spiderverse .curtain__mark.glitch::before,
 html.is-spiderverse .curtain__mark.glitch::after,
 html.is-spiderverse .masthead__name.glitch::before,
 html.is-spiderverse .masthead__name.glitch::after {
-  animation: sv-slice-a 6.3s steps(1, end) infinite;
+  animation: sv-slice-a 12.6s steps(1, end) infinite;
 }
 html.is-spiderverse .hero__accent.glitch::after,
 html.is-spiderverse .hero__word.glitch::after,
@@ -5168,34 +5177,34 @@ html.is-spiderverse .hero__kicker.glitch::after,
 html.is-spiderverse .curtain__mark.glitch::after,
 html.is-spiderverse .masthead__name.glitch::after {
   animation-name: sv-slice-b;
-  animation-duration: 6.8s;
-  animation-delay: 0.7s;
+  animation-duration: 13.6s;
+  animation-delay: 1.4s;
 }
 
 @keyframes sv-slice-a {
-  0%, 86%, 100% {
+  0%, 93%, 100% {
     clip-path: inset(0 0 55% 0);
     transform: translate(-3.25px, 0);
   }
-  90% {
+  95% {
     clip-path: inset(10% 0 38% 0);
     transform: translate(-6px, 0);
   }
-  94% {
+  97% {
     clip-path: inset(40% 0 8% 0);
     transform: translate(4px, 0);
   }
 }
 @keyframes sv-slice-b {
-  0%, 87%, 100% {
+  0%, 93.5%, 100% {
     clip-path: inset(42% 0 0 0);
     transform: translate(3.25px, 0);
   }
-  91% {
+  95.5% {
     clip-path: inset(12% 0 34% 0);
     transform: translate(6px, 0);
   }
-  95% {
+  97.5% {
     clip-path: inset(50% 0 0 0);
     transform: translate(-4px, 0);
   }
@@ -5213,29 +5222,29 @@ html.is-spiderverse .hero__word.glitch::after {
 }
 
 @keyframes sv-slice-hero-a {
-  0%, 86%, 100% {
+  0%, 93%, 100% {
     clip-path: inset(0 0 52% 0);
     transform: translate(-3.25px, 0);
   }
-  90% {
+  95% {
     clip-path: inset(8% 0 36% 0);
     transform: translate(-6px, 0);
   }
-  94% {
+  97% {
     clip-path: inset(36% 0 8% 0);
     transform: translate(4px, 0);
   }
 }
 @keyframes sv-slice-hero-b {
-  0%, 87%, 100% {
+  0%, 93.5%, 100% {
     clip-path: inset(40% 0 0 0);
     transform: translate(3.25px, 0);
   }
-  91% {
+  95.5% {
     clip-path: inset(10% 0 32% 0);
     transform: translate(6px, 0);
   }
-  95% {
+  97.5% {
     clip-path: inset(48% 0 0 0);
     transform: translate(-4px, 0);
   }
@@ -5280,15 +5289,17 @@ html.is-spiderverse .curtain__brand {
 }
 html.is-spiderverse .masthead__name.glitch:hover {
   text-shadow:
-    -4.5px 0 0 var(--cyan),
-    4.5px 0 0 var(--magenta);
+    -4.5px 0 0 var(--glitch-r),
+    4.5px 0 0 var(--glitch-b),
+    0 2px 0 var(--glitch-g);
 }
 html.is-spiderverse .hero__kicker.glitch:hover,
 html.is-spiderverse .hero__accent.glitch:hover,
 html.is-spiderverse .hero__word.glitch:hover {
   text-shadow:
-    -5px 0 0 var(--cyan),
-    5px 0 0 var(--magenta);
+    -5px 0 0 var(--glitch-r),
+    5px 0 0 var(--glitch-b),
+    0 2px 0 var(--glitch-g);
 }
 html.is-spiderverse .masthead__name.glitch:hover::before,
 html.is-spiderverse .masthead__name.glitch:hover::after {
@@ -5324,8 +5335,9 @@ html.is-spiderverse .masthead__nav a:hover,
 html.is-spiderverse .masthead__nav a:focus-visible {
   color: var(--fg) !important;
   text-shadow:
-    -1.5px 0 0 var(--cyan),
-    1.5px 0 0 var(--magenta);
+    -1.5px 0 0 var(--glitch-r),
+    1.5px 0 0 var(--glitch-b),
+    0 1px 0 var(--glitch-g);
   transform: translate(-1px, 0);
 }
 html.is-spiderverse .masthead__nav a::after {
@@ -5390,7 +5402,7 @@ html.is-spiderverse .work-card__cap::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-panel.svg?v=sv9");
+  background-image: url("../img/spiderverse-panel.svg?v=sv10");
   background-size: 8px 8px;
   background-repeat: repeat;
   opacity: 0.08;
@@ -5405,8 +5417,8 @@ html.is-spiderverse.is-projects-hitching .work-card {
   box-shadow:
     4px 4px 0 var(--cyan),
     8px 8px 0 var(--ink),
-    -3px 0 0 rgba(61, 232, 245, 0.45),
-    3px 0 0 rgba(255, 78, 184, 0.35);
+    -3px 0 0 rgba(255, 0, 60, 0.42),
+    3px 0 0 rgba(61, 126, 255, 0.35);
 }
 html.is-spiderverse .work-card__media {
   border-radius: 0 !important;
@@ -5475,7 +5487,7 @@ html.is-spiderverse .study__veil-halftone {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-plate.svg?v=sv9");
+  background-image: url("../img/spiderverse-plate.svg?v=sv10");
   background-size: 16px 16px;
   background-repeat: repeat;
   opacity: 0.11;
@@ -5489,8 +5501,8 @@ html.is-spiderverse .study__veil-hitch {
   opacity: 0;
   mix-blend-mode: screen;
   background:
-    repeating-linear-gradient(to bottom, transparent 0 15px, rgba(61, 232, 245, 0.1) 15px 16px),
-    linear-gradient(90deg, rgba(61, 232, 245, 0.1), transparent 46%, transparent 54%, rgba(255, 78, 184, 0.08));
+    repeating-linear-gradient(to bottom, transparent 0 15px, rgba(61, 126, 255, 0.1) 15px 16px),
+    linear-gradient(90deg, rgba(255, 0, 60, 0.1), transparent 46%, transparent 54%, rgba(61, 126, 255, 0.08));
 }
 html.is-spiderverse .study__curtain-name {
   position: relative;
@@ -5622,16 +5634,27 @@ html.is-spiderverse.is-print .study__veil {
   background: #f3eee4;
   color: #0e1018;
 }
-html.is-spiderverse.is-print .curtain__halftone,
+html.is-spiderverse.is-print .curtain__halftone {
+  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv10");
+  mix-blend-mode: multiply;
+  opacity: 0.16;
+}
 html.is-spiderverse.is-print .study__veil-halftone {
-  background-image: url("../img/spiderverse-panel.svg?v=sv9");
+  background-image: url("../img/spiderverse-panel.svg?v=sv10");
   mix-blend-mode: multiply;
   opacity: 0.1;
 }
-html.is-spiderverse.is-print .study__veil-hitch {
+html.is-spiderverse.is-print .study__veil-hitch,
+html.is-spiderverse.is-print .curtain__hitch {
   mix-blend-mode: multiply;
 }
-html.is-spiderverse.is-print .curtain__mark,
+html.is-spiderverse.is-print .curtain__mark {
+  color: #0e1018 !important;
+  text-shadow:
+    -2px 0 0 rgba(255, 0, 60, 0.32),
+    2px 0 0 rgba(61, 126, 255, 0.28),
+    0 1px 0 rgba(0, 255, 156, 0.18);
+}
 html.is-spiderverse.is-print .study__curtain-name {
   color: #0e1018 !important;
   text-shadow: none;
