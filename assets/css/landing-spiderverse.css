@@ -4879,7 +4879,7 @@ html.is-spiderverse .curtain__halftone {
   pointer-events: none;
   opacity: 0.7;
   mix-blend-mode: screen;
-  background: url("../img/spiderverse-benday.svg?v=sv4") center / cover no-repeat;
+  background: url("../img/spiderverse-benday.svg?v=sv5") center / cover no-repeat;
   mask-image: radial-gradient(ellipse 72% 64% at 50% 48%, transparent 18%, #000 82%);
   -webkit-mask-image: radial-gradient(ellipse 72% 64% at 50% 48%, transparent 18%, #000 82%);
 }
@@ -4933,13 +4933,13 @@ html.is-spiderverse .curtain__mark {
   position: relative;
   overflow: visible;
   text-shadow:
-    -2.5px 0 0 rgba(61, 232, 245, 0.7),
-    2.5px 0 0 rgba(255, 78, 184, 0.62);
+    -1.5px 0 0 rgba(61, 232, 245, 0.55),
+    1.5px 0 0 rgba(255, 78, 184, 0.48);
 }
 html.is-spiderverse .curtain__ch {
   text-shadow:
-    -2px 0 0 rgba(61, 232, 245, 0.65),
-    2px 0 0 rgba(255, 78, 184, 0.58);
+    -1.5px 0 0 rgba(61, 232, 245, 0.5),
+    1.5px 0 0 rgba(255, 78, 184, 0.45);
 }
 
 /* ── atmosphere: zonal Ben-Day + constellation web ───────────────────── */
@@ -4981,7 +4981,7 @@ html.is-spiderverse .atmosphere__benday {
   pointer-events: none;
   opacity: 0.78;
   mix-blend-mode: screen;
-  background: url("../img/spiderverse-benday.svg?v=sv4") center / cover no-repeat;
+  background: url("../img/spiderverse-benday.svg?v=sv5") center / cover no-repeat;
 }
 html.is-spiderverse .atmosphere__scan {
   position: absolute;
