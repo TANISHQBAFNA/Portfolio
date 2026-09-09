@@ -160,6 +160,7 @@
 
   var CURTAIN_TEXT = 'Tanishq Bafna'; /* full name — never "Tanishq." */
   var NAME_BEATS = ['Tanishk Bafnaa', 'Tanish Bafna', 'Tanishq Bafna'];
+  var MARK_FONT = '"Syne", "Noto Sans Devanagari", sans-serif';
   var HOLD_MS = 400; /* short beat on the real name, then lift */
   var EXIT_MS = 900;
   var MOVE_MS = 900;
@@ -355,6 +356,8 @@
       html.classList.add('is-curtain');
       mark.textContent = CURTAIN_TEXT;
       mark.setAttribute('data-text', CURTAIN_TEXT);
+      mark.setAttribute('data-latin', CURTAIN_TEXT);
+      mark.setAttribute('aria-label', CURTAIN_TEXT);
       mark.classList.add('glitch');
       mark.style.opacity = '1';
       mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
@@ -380,7 +383,7 @@
     }
 
     html.classList.add('is-curtain');
-    mark.style.fontFamily = '"Syne", sans-serif';
+    mark.style.fontFamily = MARK_FONT;
     mark.style.fontWeight = BOLD;
     mark.style.fontSynthesis = 'none';
     /* Match navbar logo size exactly (shared --mark-size) */
@@ -395,6 +398,8 @@
     mark.style.opacity = '1';
     mark.classList.add('glitch');
     mark.setAttribute('data-text', CURTAIN_TEXT);
+    mark.setAttribute('data-latin', CURTAIN_TEXT);
+    mark.setAttribute('aria-label', CURTAIN_TEXT);
     mark.textContent = '';
 
     var typedReady = false;
@@ -455,14 +460,20 @@
     }
 
     function armMarkGlitch(text) {
+      var latin = text || readMark() || CURTAIN_TEXT;
       mark.classList.add('glitch');
-      mark.setAttribute('data-text', text || readMark() || CURTAIN_TEXT);
+      mark.setAttribute('data-text', latin);
+      mark.setAttribute('data-latin', latin);
+      mark.setAttribute('aria-label', CURTAIN_TEXT);
     }
 
     var curtainGlitchId = 0;
     function pulseCurtainGlitch() {
       if (liftStarted || reduceMotion.matches) return;
       armMarkGlitch(readMark() || CURTAIN_TEXT);
+      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+        window.IrisMotion.burstGlitch(mark, reduceMotion);
+      }
     }
 
     function paintName(text, donePaint) {
@@ -470,7 +481,9 @@
       var nodes = text.split('').map(makeChar);
       nodes.forEach(function (el) { mark.appendChild(el); });
       armMarkGlitch(text);
+      window.setTimeout(function () { pulseCurtainGlitch(); }, 180);
       if (typeof gsap === 'undefined') {
+        pulseCurtainGlitch();
         if (donePaint) donePaint();
         return;
       }
@@ -491,6 +504,7 @@
         mark.textContent = '';
         toText.split('').forEach(function (ch) { mark.appendChild(makeChar(ch)); });
         armMarkGlitch(toText);
+        pulseCurtainGlitch();
         if (doneMorph) doneMorph();
         return;
       }
@@ -527,7 +541,7 @@
 
       var tl = gsap.timeline({
         onComplete: function () {
-          armMarkGlitch(toText);
+          pulseCurtainGlitch();
           if (doneMorph) doneMorph();
         }
       });
@@ -573,6 +587,7 @@
 
       function afterBeat() {
         if (NAME_BEATS[step] === CURTAIN_TEXT && loadReady) {
+          pulseCurtainGlitch();
           setTimeout(doneBeats, HOLD_MS);
           return;
         }
@@ -609,7 +624,7 @@
 
       /* Flatten typed spans so the name is one solid word */
       mark.textContent = CURTAIN_TEXT;
-      mark.style.fontFamily = '"Syne", sans-serif';
+      mark.style.fontFamily = MARK_FONT;
       mark.style.fontWeight = BOLD;
       mark.style.fontSynthesis = 'none';
       mark.style.fontSize = logoStyle.fontSize;
@@ -619,6 +634,8 @@
       mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
       mark.style.margin = '0';
       mark.setAttribute('data-text', CURTAIN_TEXT);
+      mark.setAttribute('data-latin', CURTAIN_TEXT);
+      mark.setAttribute('aria-label', CURTAIN_TEXT);
       mark.classList.add('glitch');
       if (window.IrisMotion && window.IrisMotion.burstGlitch) {
         window.IrisMotion.burstGlitch(mark, reduceMotion);

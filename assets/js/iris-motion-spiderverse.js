@@ -2,15 +2,96 @@
   "use strict";
 
   var glitchTimers = [];
+  var hindiTimers = new WeakMap();
+  var HINDI_MAP = {
+    T: "ट", t: "ट",
+    A: "अ", a: "अ",
+    N: "न", n: "न",
+    B: "ब", b: "ब",
+    Q: "क", q: "क"
+  };
+  var HINDI_FLASH_MS = 180;
+  var BURST_MS = 450;
+
+  function visibleLatin(el) {
+    var stored = el.getAttribute("data-latin");
+    if (stored) return stored;
+    var chars = el.querySelectorAll(".curtain__ch");
+    if (chars.length) {
+      return Array.prototype.map.call(chars, function (node) {
+        return node.classList.contains("curtain__ch--space") ? " " : (node.textContent || "");
+      }).join("");
+    }
+    return (el.getAttribute("data-text") || el.textContent || "").replace(/\s+/g, " ").trim() || el.textContent || "";
+  }
+
+  function paintGlitchText(el, text) {
+    var chars = el.querySelectorAll(".curtain__ch");
+    if (chars.length && chars.length === text.length) {
+      for (var i = 0; i < chars.length; i += 1) {
+        if (chars[i].classList.contains("curtain__ch--space")) continue;
+        chars[i].textContent = text.charAt(i);
+      }
+      return;
+    }
+    if (!chars.length) el.textContent = text;
+  }
+
+  function pickHindi(src) {
+    var out = src.split("");
+    var used = {};
+    function swapFrom(letters) {
+      for (var i = 0; i < out.length; i += 1) {
+        if (used[i]) continue;
+        var ch = src.charAt(i);
+        if (letters.indexOf(ch) === -1 || !HINDI_MAP[ch]) continue;
+        out[i] = HINDI_MAP[ch];
+        used[i] = true;
+        return true;
+      }
+      return false;
+    }
+    if (!swapFrom("Tt")) swapFrom("AaNnBbQq");
+    else if (Math.random() < 0.6) swapFrom("AaNnBbQq");
+    return out.join("");
+  }
+
+  function clearHindiFlash(el, latin) {
+    var hid = hindiTimers.get(el);
+    if (hid) window.clearTimeout(hid);
+    hindiTimers.delete(el);
+    if (latin) {
+      el.setAttribute("data-text", latin);
+      paintGlitchText(el, latin);
+    }
+  }
 
   function burstGlitch(el, reduceMotion) {
     if (!el || (reduceMotion && reduceMotion.matches)) return;
+    var latin = visibleLatin(el);
+    el.setAttribute("data-latin", latin);
+    if (!el.getAttribute("aria-label")) el.setAttribute("aria-label", latin);
+    clearHindiFlash(el, latin);
+
+    var flashed = pickHindi(latin);
+    el.setAttribute("data-text", flashed);
+    paintGlitchText(el, flashed);
+
     el.classList.remove("is-glitching");
     void el.offsetWidth;
     el.classList.add("is-glitching");
+
+    hindiTimers.set(el, window.setTimeout(function () {
+      clearHindiFlash(el, latin);
+    }, HINDI_FLASH_MS));
+
     window.setTimeout(function () {
       el.classList.remove("is-glitching");
-    }, 450);
+      if (el.getAttribute("data-text") !== latin) {
+        el.setAttribute("data-text", latin);
+        paintGlitchText(el, latin);
+      }
+    }, BURST_MS);
   }
 
   function burstHero(reduceMotion) {
@@ -33,11 +114,11 @@
       if (logo) {
         window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, 400);
       }
-      var wait = 12000 + Math.random() * 4000;
+      var wait = 5200 + Math.random() * 1800;
       glitchTimers.push(window.setTimeout(cycle, wait));
     }
 
-    glitchTimers.push(window.setTimeout(cycle, 6400));
+    glitchTimers.push(window.setTimeout(cycle, 3200));
   }
 
   function hitchCurtain(curtain, reduceMotion) {
