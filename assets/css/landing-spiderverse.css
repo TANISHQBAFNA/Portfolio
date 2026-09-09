@@ -4913,15 +4913,15 @@ html.is-spiderverse .atmosphere__halftone {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.45;
+  opacity: 0.28;
+  mix-blend-mode: normal;
   background-image:
-    radial-gradient(circle, rgba(243, 238, 228, 0.55) 1.15px, transparent 1.3px),
-    radial-gradient(circle, rgba(243, 238, 228, 0.28) 0.7px, transparent 0.85px);
-  background-size: 11px 11px, 5px 5px;
-  background-position: 0 0, 2px 3px;
-  mask-image: radial-gradient(ellipse 85% 75% at 50% 42%, #000 12%, rgba(0, 0, 0, 0.45) 48%, transparent 82%);
-  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 42%, #000 12%, rgba(0, 0, 0, 0.45) 48%, transparent 82%);
-  mix-blend-mode: overlay;
+    radial-gradient(circle, rgba(243, 238, 228, 0.72) 1.2px, transparent 1.4px),
+    radial-gradient(circle, rgba(243, 238, 228, 0.28) 0.7px, transparent 0.9px);
+  background-size: 10px 10px, 5px 5px;
+  background-position: 0 0, 3px 2px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.35) 55%, transparent 86%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.35) 55%, transparent 86%);
 }
 html.is-spiderverse .atmosphere__scan {
   position: absolute;
@@ -4965,7 +4965,7 @@ html.is-spiderverse.is-print .atmosphere::after {
 }
 html.is-spiderverse.is-print .atmosphere__halftone {
   mix-blend-mode: multiply;
-  opacity: 0.28;
+  opacity: 0.22;
 }
 html.is-spiderverse.is-print .atmosphere__scan {
   mix-blend-mode: multiply;
@@ -5193,13 +5193,24 @@ html.is-spiderverse .work-card__caption {
   color: rgba(14, 16, 24, 0.78) !important;
 }
 
+html.is-spiderverse .folder-slot:nth-child(2) .work-card {
+  box-shadow:
+    7px 7px 0 var(--magenta),
+    10px 10px 0 var(--ink);
+}
+html.is-spiderverse .folder-slot:nth-child(3) .work-card {
+  box-shadow:
+    7px 7px 0 var(--yellow),
+    10px 10px 0 var(--ink);
+}
+
 @media (min-width: 768px) {
   html.is-spiderverse .folder-slot .work-card {
     transform: translateY(calc(var(--rise, 1) * 36px)) rotate(var(--panel-tilt, 0deg));
   }
-  html.is-spiderverse .folder-slot:nth-child(2) { --panel-tilt: -1.2deg; }
-  html.is-spiderverse .folder-slot:nth-child(3) { --panel-tilt: 0.85deg; }
-  html.is-spiderverse .folder-slot:nth-child(4) { --panel-tilt: -0.4deg; }
+  html.is-spiderverse .folder-slot:nth-child(2) { --panel-tilt: -2.1deg; }
+  html.is-spiderverse .folder-slot:nth-child(3) { --panel-tilt: 1.6deg; }
+  html.is-spiderverse .folder-slot:nth-child(4) { --panel-tilt: -0.7deg; }
   html.is-spiderverse .folder-slot:hover .work-card,
   html.is-spiderverse .folder-slot:focus-within .work-card {
     transform: translateY(-6px) rotate(0deg);
