@@ -4883,16 +4883,18 @@ html.is-spiderverse .curtain__halftone {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.3;
+  --dots-opacity: 0.3;
+  opacity: var(--dots-opacity);
   mix-blend-mode: screen;
   background-color: transparent;
-  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv12");
+  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv13");
   background-size: 36px 36px;
   background-repeat: repeat;
   -webkit-mask-image: linear-gradient(to top, #fff 0%, rgba(255, 255, 255, 0.72) 16%, rgba(255, 255, 255, 0.28) 32%, rgba(255, 255, 255, 0.08) 44%, transparent 56%);
   mask-image: linear-gradient(to top, #fff 0%, rgba(255, 255, 255, 0.72) 16%, rgba(255, 255, 255, 0.28) 32%, rgba(255, 255, 255, 0.08) 44%, transparent 56%);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
+  animation: sv-dots-whisper 12.5s ease-in-out infinite;
 }
 html.is-spiderverse .curtain__halftone::after {
   content: none;
@@ -4915,7 +4917,9 @@ html.is-spiderverse.is-projects-hitching .rail {
   animation: sv-curtain-plate 0.9s ease-out 1;
 }
 html.is-spiderverse .curtain.is-hitching .curtain__halftone,
-html.is-spiderverse .curtain.is-lifting .curtain__halftone,
+html.is-spiderverse .curtain.is-lifting .curtain__halftone {
+  animation: sv-dots-hitch 0.9s ease-out 1;
+}
 html.is-spiderverse .study__veil.is-hitching .study__veil-halftone,
 html.is-spiderverse.is-study-wipe .study__veil-halftone,
 html.is-spiderverse.is-projects-hitching .work-card__cap::before {
@@ -4935,6 +4939,45 @@ html.is-spiderverse.is-study-wipe .study__veil-hitch {
   0%, 100% { transform: translate(0, 0); }
   28% { transform: translate(-2px, 0); }
   62% { transform: translate(2px, 0); }
+}
+@keyframes sv-dots-whisper {
+  0%, 82%, 100% {
+    filter: none;
+    transform: translate(0, 0);
+    opacity: var(--dots-opacity, 0.3);
+  }
+  85% {
+    filter: drop-shadow(-1px 0 0 rgba(255, 0, 60, 0.2)) drop-shadow(1px 0 0 rgba(61, 126, 255, 0.14));
+    transform: translate(0.5px, 0);
+    opacity: calc(var(--dots-opacity, 0.3) + 0.04);
+  }
+  88% {
+    filter: drop-shadow(0.8px 0 0 rgba(0, 255, 156, 0.12)) drop-shadow(-0.8px 0 0 rgba(255, 122, 24, 0.1));
+    transform: translate(-0.4px, 0);
+    opacity: calc(var(--dots-opacity, 0.3) - 0.03);
+  }
+  91% {
+    filter: drop-shadow(-0.7px 0 0 rgba(255, 212, 0, 0.14)) drop-shadow(0.7px 0 0 rgba(61, 126, 255, 0.1));
+    transform: translate(0.35px, 0);
+    opacity: calc(var(--dots-opacity, 0.3) + 0.02);
+  }
+}
+@keyframes sv-dots-hitch {
+  0%, 100% {
+    filter: none;
+    transform: translate(0, 0);
+    opacity: var(--dots-opacity, 0.3);
+  }
+  28% {
+    filter: drop-shadow(-2px 0 0 rgba(255, 0, 60, 0.28)) drop-shadow(2px 0 0 rgba(61, 126, 255, 0.2));
+    transform: translate(-2px, 0);
+    opacity: calc(var(--dots-opacity, 0.3) + 0.06);
+  }
+  62% {
+    filter: drop-shadow(1.5px 0 0 rgba(255, 122, 24, 0.16)) drop-shadow(-1.5px 0 0 rgba(0, 255, 156, 0.14));
+    transform: translate(1.5px, 0);
+    opacity: calc(var(--dots-opacity, 0.3) - 0.04);
+  }
 }
 @keyframes sv-curtain-hitch {
   0%, 100% {
@@ -4962,7 +5005,6 @@ html.is-spiderverse .curtain__ch {
   text-shadow: none;
 }
 html.is-spiderverse .curtain.is-hitching .curtain__mark,
-html.is-spiderverse .curtain.is-lifting .curtain__mark,
 html.is-spiderverse .curtain__mark.is-glitching {
   text-shadow:
     -1.5px 0 0 rgba(255, 0, 60, 0.32),
@@ -5135,6 +5177,7 @@ html.is-spiderverse .glitch::after {
   line-height: inherit;
   text-transform: inherit;
   white-space: inherit;
+  text-shadow: none;
   opacity: 0;
   transform: none;
   clip-path: none;
@@ -5149,11 +5192,9 @@ html.is-spiderverse .glitch::after {
 }
 
 html.is-spiderverse .glitch.is-glitching::before {
-  opacity: 0.5;
   animation: sv-burst-a 0.45s steps(2, end) 1;
 }
 html.is-spiderverse .glitch.is-glitching::after {
-  opacity: 0.44;
   animation: sv-burst-b 0.45s steps(2, end) 1;
 }
 html.is-spiderverse .hero__kicker.is-glitching::before,
@@ -5167,37 +5208,41 @@ html.is-spiderverse .hero__word.is-glitching::after {
   animation-name: sv-burst-hero-b;
 }
 html.is-spiderverse .curtain__mark.is-glitching::before {
-  opacity: 0.38;
   animation: sv-burst-curtain-a 0.45s steps(2, end) 1;
 }
 html.is-spiderverse .curtain__mark.is-glitching::after {
-  opacity: 0.32;
   animation: sv-burst-curtain-b 0.45s steps(2, end) 1;
 }
 
 @keyframes sv-burst-a {
-  0%, 100% { clip-path: inset(0 0 55% 0); transform: translate(-2.5px, 0); }
-  45% { clip-path: inset(10% 0 30% 0); transform: translate(-5px, 0); }
+  0% { opacity: 0.5; clip-path: inset(0 0 55% 0); transform: translate(-2.5px, 0); }
+  45% { opacity: 0.5; clip-path: inset(10% 0 30% 0); transform: translate(-5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
 }
 @keyframes sv-burst-b {
-  0%, 100% { clip-path: inset(42% 0 0 0); transform: translate(2.5px, 0); }
-  50% { clip-path: inset(12% 0 28% 0); transform: translate(5px, 0); }
+  0% { opacity: 0.44; clip-path: inset(42% 0 0 0); transform: translate(2.5px, 0); }
+  50% { opacity: 0.44; clip-path: inset(12% 0 28% 0); transform: translate(5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
 }
 @keyframes sv-burst-hero-a {
-  0%, 100% { clip-path: inset(0 0 52% 0); transform: translate(-2.5px, 0); }
-  45% { clip-path: inset(8% 0 28% 0); transform: translate(-5px, 0); }
+  0% { opacity: 0.5; clip-path: inset(0 0 52% 0); transform: translate(-2.5px, 0); }
+  45% { opacity: 0.5; clip-path: inset(8% 0 28% 0); transform: translate(-5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
 }
 @keyframes sv-burst-hero-b {
-  0%, 100% { clip-path: inset(40% 0 0 0); transform: translate(2.5px, 0); }
-  50% { clip-path: inset(10% 0 26% 0); transform: translate(5px, 0); }
+  0% { opacity: 0.44; clip-path: inset(40% 0 0 0); transform: translate(2.5px, 0); }
+  50% { opacity: 0.44; clip-path: inset(10% 0 26% 0); transform: translate(5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
 }
 @keyframes sv-burst-curtain-a {
-  0%, 100% { clip-path: inset(0 0 55% 0); transform: translate(-1.5px, 0); }
-  45% { clip-path: inset(12% 0 32% 0); transform: translate(-2.5px, 0); }
+  0% { opacity: 0.38; clip-path: inset(0 0 55% 0); transform: translate(-1.5px, 0); }
+  45% { opacity: 0.38; clip-path: inset(12% 0 32% 0); transform: translate(-2.5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
 }
 @keyframes sv-burst-curtain-b {
-  0%, 100% { clip-path: inset(42% 0 0 0); transform: translate(1.5px, 0); }
-  50% { clip-path: inset(14% 0 28% 0); transform: translate(2.5px, 0); }
+  0% { opacity: 0.32; clip-path: inset(42% 0 0 0); transform: translate(1.5px, 0); }
+  50% { opacity: 0.32; clip-path: inset(14% 0 28% 0); transform: translate(2.5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
 }
 
 html.is-spiderverse .curtain__brand {
@@ -5285,7 +5330,7 @@ html.is-spiderverse .work-card__cap::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-panel.svg?v=sv12");
+  background-image: url("../img/spiderverse-panel.svg?v=sv13");
   background-size: 8px 8px;
   background-repeat: repeat;
   opacity: 0.08;
@@ -5370,7 +5415,7 @@ html.is-spiderverse .study__veil-halftone {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-plate.svg?v=sv12");
+  background-image: url("../img/spiderverse-plate.svg?v=sv13");
   background-size: 16px 16px;
   background-repeat: repeat;
   opacity: 0.11;
@@ -5426,6 +5471,7 @@ html.is-spiderverse .study__curtain-name {
   html.is-spiderverse .hero__word.is-glitching::after,
   html.is-spiderverse .study__veil.is-hitching,
   html.is-spiderverse.is-projects-hitching .rail,
+  html.is-spiderverse .curtain__halftone,
   html.is-spiderverse .curtain.is-hitching .curtain__halftone,
   html.is-spiderverse .curtain.is-lifting .curtain__halftone,
   html.is-spiderverse .study__veil.is-hitching .study__veil-halftone,
@@ -5528,12 +5574,13 @@ html.is-spiderverse.is-print .study__veil {
   color: #0e1018;
 }
 html.is-spiderverse.is-print .curtain__halftone {
-  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv12");
+  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv13");
   mix-blend-mode: multiply;
-  opacity: 0.26;
+  --dots-opacity: 0.26;
+  opacity: var(--dots-opacity);
 }
 html.is-spiderverse.is-print .study__veil-halftone {
-  background-image: url("../img/spiderverse-panel.svg?v=sv12");
+  background-image: url("../img/spiderverse-panel.svg?v=sv13");
   mix-blend-mode: multiply;
   opacity: 0.1;
 }

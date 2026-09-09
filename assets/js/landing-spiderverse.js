@@ -619,7 +619,10 @@
       mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
       mark.style.margin = '0';
       mark.setAttribute('data-text', CURTAIN_TEXT);
-      mark.classList.add('glitch', 'is-glitching');
+      mark.classList.add('glitch');
+      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+        window.IrisMotion.burstGlitch(mark, reduceMotion);
+      }
       if (typeof gsap !== 'undefined') gsap.set(mark, { y: 0, opacity: 1, clearProps: 'transform' });
       if (window.IrisMotion && window.IrisMotion.hitchCurtain) {
         window.IrisMotion.hitchCurtain(curtain, reduceMotion);
