@@ -4877,9 +4877,9 @@ html.is-spiderverse .curtain__halftone {
   position: absolute;
   inset: -8%;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.7;
   mix-blend-mode: screen;
-  background: url("../img/spiderverse-benday.svg") center / cover no-repeat;
+  background: url("../img/spiderverse-benday.svg?v=sv3") center / cover no-repeat;
   mask-image: radial-gradient(ellipse 72% 64% at 50% 48%, transparent 18%, #000 82%);
   -webkit-mask-image: radial-gradient(ellipse 72% 64% at 50% 48%, transparent 18%, #000 82%);
 }
@@ -4987,9 +4987,9 @@ html.is-spiderverse .atmosphere__benday {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.62;
+  opacity: 0.78;
   mix-blend-mode: screen;
-  background: url("../img/spiderverse-benday.svg") center / cover no-repeat;
+  background: url("../img/spiderverse-benday.svg?v=sv3") center / cover no-repeat;
 }
 html.is-spiderverse .atmosphere__scan {
   position: absolute;
