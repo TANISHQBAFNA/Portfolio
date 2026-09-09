@@ -300,7 +300,7 @@
     var btn = document.querySelector('[data-theme-toggle]');
     if (btn) {
       btn.setAttribute('aria-pressed', printShop ? 'true' : 'false');
-      btn.setAttribute('aria-label', printShop ? 'Switch to night comic' : 'Switch to print-shop light');
+      btn.setAttribute('aria-label', printShop ? 'Switch to night mode' : 'Switch to light mode');
     }
   }
 

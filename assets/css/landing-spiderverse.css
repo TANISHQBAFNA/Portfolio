@@ -3234,6 +3234,7 @@ html.is-spiderverse .theme-tab__icon svg {
   height: 100%;
 }
 html.is-spiderverse .theme-tab__icon--sun { display: none; }
+html.is-spiderverse .theme-tab__icon--moon { display: flex; }
 html.is-spiderverse.is-print .theme-tab__icon--moon { display: none; }
 html.is-spiderverse.is-print .theme-tab__icon--sun { display: flex; }
 html.is-spiderverse.is-print .theme-tab {
@@ -4882,14 +4883,14 @@ html.is-spiderverse .curtain__halftone {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.28;
+  opacity: 0.3;
   mix-blend-mode: screen;
   background-color: transparent;
-  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv10");
-  background-size: 18px 18px;
+  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv11");
+  background-size: 34px 34px;
   background-repeat: repeat;
-  -webkit-mask-image: radial-gradient(ellipse 95% 72% at 50% 100%, #fff 0%, rgba(255, 255, 255, 0.55) 32%, rgba(255, 255, 255, 0.12) 52%, transparent 68%);
-  mask-image: radial-gradient(ellipse 95% 72% at 50% 100%, #fff 0%, rgba(255, 255, 255, 0.55) 32%, rgba(255, 255, 255, 0.12) 52%, transparent 68%);
+  -webkit-mask-image: linear-gradient(to top, #fff 0%, rgba(255, 255, 255, 0.72) 16%, rgba(255, 255, 255, 0.28) 32%, rgba(255, 255, 255, 0.08) 44%, transparent 56%);
+  mask-image: linear-gradient(to top, #fff 0%, rgba(255, 255, 255, 0.72) 16%, rgba(255, 255, 255, 0.28) 32%, rgba(255, 255, 255, 0.08) 44%, transparent 56%);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
@@ -5361,10 +5362,10 @@ html.is-spiderverse .theme-tab:focus-visible {
   border-color: var(--fg);
   color: var(--ink);
 }
-html.is-spiderverse .theme-tab__icon--sun { display: flex; }
-html.is-spiderverse .theme-tab__icon--moon { display: none; }
-html.is-spiderverse.is-print .theme-tab__icon--sun { display: none; }
-html.is-spiderverse.is-print .theme-tab__icon--moon { display: flex; }
+html.is-spiderverse .theme-tab__icon--sun { display: none; }
+html.is-spiderverse .theme-tab__icon--moon { display: flex; }
+html.is-spiderverse.is-print .theme-tab__icon--sun { display: flex; }
+html.is-spiderverse.is-print .theme-tab__icon--moon { display: none; }
 
 /* ── work: comic panels, one cinematic rise (existing --rise) ────────── */
 html.is-spiderverse .rail.bento,
@@ -5402,7 +5403,7 @@ html.is-spiderverse .work-card__cap::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-panel.svg?v=sv10");
+  background-image: url("../img/spiderverse-panel.svg?v=sv11");
   background-size: 8px 8px;
   background-repeat: repeat;
   opacity: 0.08;
@@ -5487,7 +5488,7 @@ html.is-spiderverse .study__veil-halftone {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-plate.svg?v=sv10");
+  background-image: url("../img/spiderverse-plate.svg?v=sv11");
   background-size: 16px 16px;
   background-repeat: repeat;
   opacity: 0.11;
@@ -5598,49 +5599,63 @@ html.is-spiderverse .study__curtain-name {
 }
 
 /* Print / light: cream paper must win over leftover night layers. */
-html.is-spiderverse.is-print,
-html.is-spiderverse.is-print body.landing,
-html.is-spiderverse.is-print .stage {
+html.is-spiderverse.is-print {
+  color-scheme: light !important;
+  --bg: #f3eee4;
+  --fg: #0e1018;
+  --page: #f3eee4;
+  --felt: #f3eee4;
+  --projects-panel: #f3eee4;
+  --curtain-ink: #0e1018;
   background: #f3eee4 !important;
+  background-color: #f3eee4 !important;
+  color: #0e1018;
+}
+html.is-spiderverse.is-print body.landing,
+html.is-spiderverse.is-print .atmosphere {
+  background: #f3eee4 !important;
+  background-color: #f3eee4 !important;
+  color: #0e1018;
+}
+html.is-spiderverse.is-print .stage,
+html.is-spiderverse.is-print .masthead,
+html.is-spiderverse.is-print .hero {
+  background: transparent !important;
   color: #0e1018;
 }
 html.is-spiderverse.is-print .atmosphere__wash {
-  background:
-    radial-gradient(42vw 38vw at 92% 8%, rgba(0, 160, 160, 0.12), transparent 70%),
-    radial-gradient(50vw 44vw at 8% 0%, rgba(255, 255, 255, 0.28), transparent 62%),
-    linear-gradient(180deg, #f3eee4 0%, #f3eee4 100%) !important;
+  background: #f3eee4 !important;
 }
 html.is-spiderverse.is-print .atmosphere::after {
-  background: radial-gradient(ellipse 92% 84% at 48% 40%, transparent 62%, rgba(30, 21, 16, 0.05) 100%);
+  background: none !important;
+  opacity: 0 !important;
 }
 html.is-spiderverse.is-print .atmosphere__desk {
-  background: radial-gradient(120% 58% at 50% 106%, rgba(255, 255, 255, 0.32), transparent 68%);
+  background: radial-gradient(120% 58% at 50% 106%, rgba(255, 255, 255, 0.38), transparent 68%);
 }
 html.is-spiderverse.is-print .atmosphere__particles {
   mix-blend-mode: normal !important;
   opacity: 1 !important;
 }
-html.is-spiderverse.is-print .atmosphere__scan {
-  opacity: 0.035;
-  mix-blend-mode: multiply;
-}
-html.is-spiderverse.is-print .atmosphere__chroma {
-  opacity: 0.03;
+html.is-spiderverse.is-print .atmosphere__scan,
+html.is-spiderverse.is-print .atmosphere__chroma,
+html.is-spiderverse.is-print .atmosphere__grain {
+  opacity: 0.025;
   mix-blend-mode: multiply;
 }
 html.is-spiderverse.is-print .curtain,
 html.is-spiderverse.is-print .curtain.curtain--ink,
 html.is-spiderverse.is-print .study__veil {
-  background: #f3eee4;
+  background: #f3eee4 !important;
   color: #0e1018;
 }
 html.is-spiderverse.is-print .curtain__halftone {
-  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv10");
+  background-image: url("../img/spiderverse-curtain-dots.svg?v=sv11");
   mix-blend-mode: multiply;
-  opacity: 0.22;
+  opacity: 0.26;
 }
 html.is-spiderverse.is-print .study__veil-halftone {
-  background-image: url("../img/spiderverse-panel.svg?v=sv10");
+  background-image: url("../img/spiderverse-panel.svg?v=sv11");
   mix-blend-mode: multiply;
   opacity: 0.1;
 }
@@ -5661,13 +5676,25 @@ html.is-spiderverse.is-print .study__curtain-name {
 }
 html.is-spiderverse.is-print .hero__kicker,
 html.is-spiderverse.is-print .hero__accent,
+html.is-spiderverse.is-print .hero__word,
+html.is-spiderverse.is-print .hero__role,
+html.is-spiderverse.is-print .hero__support,
+html.is-spiderverse.is-print .masthead__name,
+html.is-spiderverse.is-print .masthead__nav a,
+html.is-spiderverse.is-print .masthead__nav-label {
+  -webkit-text-fill-color: #0e1018;
+  color: #0e1018 !important;
+}
+html.is-spiderverse.is-print .hero__kicker,
+html.is-spiderverse.is-print .hero__accent,
 html.is-spiderverse.is-print .hero__word {
   -webkit-text-fill-color: rgba(14, 16, 24, 0.94);
-  color: #0e1018 !important;
 }
 html.is-spiderverse.is-print .rail.bento,
 html.is-spiderverse.is-print .rail {
-  background: #f3eee4;
+  background: #f3eee4 !important;
 }
+html.is-spiderverse.is-print .theme-tab__icon--sun { display: flex !important; }
+html.is-spiderverse.is-print .theme-tab__icon--moon { display: none !important; }
 
 
