@@ -324,6 +324,8 @@
     if (reduceMotion.matches) {
       html.classList.add('is-curtain');
       mark.textContent = CURTAIN_TEXT;
+      mark.setAttribute('data-text', CURTAIN_TEXT);
+      mark.classList.add('glitch');
       mark.style.opacity = '1';
       mark.style.color = '#f3eee4';
       whenPageLoaded(function () {
@@ -358,9 +360,11 @@
       mark.style.lineHeight = window.getComputedStyle(logo).lineHeight;
     }
     mark.style.whiteSpace = 'nowrap';
-      mark.style.color = '#f3eee4';
+    mark.style.color = '#f3eee4';
     mark.style.margin = '0';
     mark.style.opacity = '1';
+    mark.classList.add('glitch');
+    mark.setAttribute('data-text', CURTAIN_TEXT);
     mark.textContent = '';
 
     var typedReady = false;
@@ -420,10 +424,26 @@
       return ops;
     }
 
+    function armMarkGlitch(text) {
+      mark.classList.add('glitch');
+      mark.setAttribute('data-text', text || readMark() || CURTAIN_TEXT);
+      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+        window.IrisMotion.burstGlitch(mark, reduceMotion);
+      }
+    }
+
+    var curtainGlitchId = 0;
+    function pulseCurtainGlitch() {
+      if (liftStarted || reduceMotion.matches) return;
+      armMarkGlitch(readMark() || CURTAIN_TEXT);
+      curtainGlitchId = window.setTimeout(pulseCurtainGlitch, 480 + Math.random() * 380);
+    }
+
     function paintName(text, donePaint) {
       mark.textContent = '';
       var nodes = text.split('').map(makeChar);
       nodes.forEach(function (el) { mark.appendChild(el); });
+      armMarkGlitch(text);
       if (typeof gsap === 'undefined') {
         if (donePaint) donePaint();
         return;
@@ -444,6 +464,7 @@
       if (typeof gsap === 'undefined') {
         mark.textContent = '';
         toText.split('').forEach(function (ch) { mark.appendChild(makeChar(ch)); });
+        armMarkGlitch(toText);
         if (doneMorph) doneMorph();
         return;
       }
@@ -478,7 +499,12 @@
         el.setAttribute('data-w', String(w));
       });
 
-      var tl = gsap.timeline({ onComplete: doneMorph });
+      var tl = gsap.timeline({
+        onComplete: function () {
+          armMarkGlitch(toText);
+          if (doneMorph) doneMorph();
+        }
+      });
       if (deleteEls.length) {
         tl.to(deleteEls, {
           opacity: 0,
@@ -513,7 +539,6 @@
           }
         }, deleteEls.length ? 0.08 : 0);
       }
-      if (!deleteEls.length && !insertEls.length && doneMorph) doneMorph();
     }
 
     function playNameBeats(doneBeats) {
@@ -533,6 +558,7 @@
       }
 
       paintName(NAME_BEATS[0], function () {
+        pulseCurtainGlitch();
         setTimeout(afterBeat, BEAT_HOLD);
       });
     }
@@ -540,6 +566,7 @@
     function beginLift() {
       if (liftStarted || !typedReady || !loadReady) return;
       liftStarted = true;
+      if (curtainGlitchId) window.clearTimeout(curtainGlitchId);
 
       if (!logo || !identity) {
         revealHero();
@@ -565,7 +592,12 @@
       mark.style.whiteSpace = 'nowrap';
       mark.style.color = '#f3eee4';
       mark.style.margin = '0';
+      mark.setAttribute('data-text', CURTAIN_TEXT);
+      mark.classList.add('glitch', 'is-glitching');
       if (typeof gsap !== 'undefined') gsap.set(mark, { y: 0, opacity: 1, clearProps: 'transform' });
+      if (window.IrisMotion && window.IrisMotion.hitchCurtain) {
+        window.IrisMotion.hitchCurtain(curtain, reduceMotion);
+      }
 
       /* Pin the same name node over the page so it can rise with the curtain
          and slide left into the masthead seat. No clone, so nothing flashes. */
@@ -703,7 +735,7 @@
   }
 
   function wireHeroGlitch() {
-    var shouts = document.querySelectorAll('.hero__kicker, .hero__accent, .hero__word');
+    var shouts = document.querySelectorAll('.hero__kicker.glitch, .hero__accent.glitch, .hero__word.glitch, .masthead__name.glitch');
     shouts.forEach(function (el) {
       el.addEventListener('mouseenter', function () {
         if (window.IrisMotion && window.IrisMotion.burstGlitch) {
@@ -720,6 +752,7 @@
   wireHeroFit();
   wireMagneticNav();
   wireHeroGlitch();
+  if (window.IrisMotion && window.IrisMotion.wireParticles) window.IrisMotion.wireParticles(reduceMotion);
   html.style.setProperty('--rise', /[?&]open=/.test(location.search) ? '0' : '1');
   html.style.setProperty('--nav-out', '0');
   updatePanelFlush();
