@@ -288,9 +288,9 @@
 
     function tick(now) {
       var tNow = (now || 0) * 0.001;
-      var tint = document.documentElement.classList.contains('is-print')
-        ? [120, 88, 62]
-        : [244, 239, 230];
+      var tint = document.documentElement.classList.contains('is-dark')
+        ? [244, 239, 230]
+        : [120, 88, 62];
       ctx.clearRect(0, 0, w, h);
 
       var i;

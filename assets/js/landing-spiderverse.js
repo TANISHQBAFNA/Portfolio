@@ -293,26 +293,36 @@
     }
   }
 
-  function applyTheme(printShop) {
-    html.classList.toggle('is-print', !!printShop);
-    html.classList.remove('is-dark');
+  function systemDark() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function applyTheme(dark) {
+    html.classList.toggle('is-dark', !!dark);
+    html.classList.toggle('is-print', !dark);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', printShop ? '#f3eee4' : '#0e1018');
+    if (meta) meta.setAttribute('content', dark ? '#0e1018' : '#f3eee4');
     var btn = document.querySelector('[data-theme-toggle]');
     if (btn) {
-      btn.setAttribute('aria-pressed', printShop ? 'true' : 'false');
-      btn.setAttribute('aria-label', printShop ? 'Switch to night mode' : 'Switch to light mode');
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
     }
   }
 
   function wireTheme() {
-    applyTheme(false);
+    applyTheme(systemDark());
     var btn = document.querySelector('[data-theme-toggle]');
     if (btn) {
       btn.addEventListener('click', function () {
-        applyTheme(!html.classList.contains('is-print'));
+        applyTheme(!html.classList.contains('is-dark'));
       });
     }
+    var media = window.matchMedia('(prefers-color-scheme: dark)');
+    function onSystem(e) {
+      applyTheme(e.matches);
+    }
+    if (media.addEventListener) media.addEventListener('change', onSystem);
+    else if (media.addListener) media.addListener(onSystem);
   }
 
   function playCurtain(done) {

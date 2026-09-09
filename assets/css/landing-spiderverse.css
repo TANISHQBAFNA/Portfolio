@@ -3061,6 +3061,9 @@ html.is-spiderverse.is-print {
   --projects-panel: var(--cream);
   --felt: var(--cream);
 }
+html.is-spiderverse.is-dark {
+  color-scheme: dark;
+}
 
 html.is-spiderverse,
 html.is-spiderverse body.landing {
@@ -3235,9 +3238,9 @@ html.is-spiderverse .theme-tab__icon svg {
 }
 html.is-spiderverse .theme-tab__icon--sun { display: none; }
 html.is-spiderverse .theme-tab__icon--moon { display: flex; }
-html.is-spiderverse.is-print .theme-tab__icon--moon { display: none; }
-html.is-spiderverse.is-print .theme-tab__icon--sun { display: flex; }
-html.is-spiderverse.is-print .theme-tab {
+html.is-spiderverse.is-dark .theme-tab__icon--moon { display: none; }
+html.is-spiderverse.is-dark .theme-tab__icon--sun { display: flex; }
+html.is-spiderverse.is-dark .theme-tab {
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
 }
 html.is-spiderverse.is-projects-in .theme-tab,
@@ -5231,8 +5234,8 @@ html.is-spiderverse .theme-tab:focus-visible {
 }
 html.is-spiderverse .theme-tab__icon--sun { display: none; }
 html.is-spiderverse .theme-tab__icon--moon { display: flex; }
-html.is-spiderverse.is-print .theme-tab__icon--sun { display: flex; }
-html.is-spiderverse.is-print .theme-tab__icon--moon { display: none; }
+html.is-spiderverse.is-dark .theme-tab__icon--moon { display: none; }
+html.is-spiderverse.is-dark .theme-tab__icon--sun { display: flex; }
 
 /* ── work: comic panels, one cinematic rise (existing --rise) ────────── */
 html.is-spiderverse .rail.bento,
@@ -5270,7 +5273,7 @@ html.is-spiderverse .work-card__cap::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-panel.svg?v=sv14");
+  background-image: url("../img/spiderverse-panel.svg?v=sv15");
   background-size: 8px 8px;
   background-repeat: repeat;
   opacity: 0.08;
@@ -5352,14 +5355,7 @@ html.is-spiderverse.is-print .study__veil {
   background: #f3eee4;
 }
 html.is-spiderverse .study__veil-halftone {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: url("../img/spiderverse-plate.svg?v=sv14");
-  background-size: 16px 16px;
-  background-repeat: repeat;
-  opacity: 0.11;
-  mix-blend-mode: normal;
+  display: none !important;
 }
 html.is-spiderverse .study__veil-hitch {
   position: absolute;
@@ -5510,13 +5506,9 @@ html.is-spiderverse.is-print .study__veil {
   background: #f3eee4 !important;
   color: #0e1018;
 }
-html.is-spiderverse.is-print .curtain__halftone {
-  display: none !important;
-}
+html.is-spiderverse.is-print .curtain__halftone,
 html.is-spiderverse.is-print .study__veil-halftone {
-  background-image: url("../img/spiderverse-panel.svg?v=sv14");
-  mix-blend-mode: multiply;
-  opacity: 0.1;
+  display: none !important;
 }
 html.is-spiderverse.is-print .study__veil-hitch,
 html.is-spiderverse.is-print .curtain__hitch {
@@ -5557,7 +5549,9 @@ html.is-spiderverse.is-print .rail.bento,
 html.is-spiderverse.is-print .rail {
   background: #f3eee4 !important;
 }
-html.is-spiderverse.is-print .theme-tab__icon--sun { display: flex !important; }
-html.is-spiderverse.is-print .theme-tab__icon--moon { display: none !important; }
+html.is-spiderverse.is-print .theme-tab__icon--sun { display: none !important; }
+html.is-spiderverse.is-print .theme-tab__icon--moon { display: flex !important; }
+html.is-spiderverse.is-dark .theme-tab__icon--sun { display: flex !important; }
+html.is-spiderverse.is-dark .theme-tab__icon--moon { display: none !important; }
 
 
