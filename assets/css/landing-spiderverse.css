@@ -4960,7 +4960,7 @@ html.is-spiderverse .curtain__ch {
 html.is-spiderverse .atmosphere__particles {
   display: block !important;
   z-index: 2;
-  opacity: 0.78;
+  opacity: 0.88;
   mix-blend-mode: normal;
 }
 html.is-spiderverse .atmosphere__wash {
