@@ -5188,6 +5188,101 @@ html.is-spiderverse .curtain__mark.is-glitching::after {
   100% { opacity: 0; clip-path: none; transform: none; }
 }
 
+html.is-spiderverse .glitch.is-glitching.is-slam {
+  text-shadow:
+    3px 0 0 rgba(255, 0, 60, 0.72),
+    -3px 0 0 rgba(0, 255, 156, 0.66),
+    0 2px 0 rgba(61, 126, 255, 0.28),
+    0 0 18px rgba(255, 0, 60, 0.28);
+}
+html.is-spiderverse .glitch.is-glitching.is-slam::before {
+  animation: sv-slam-a 0.85s steps(2, end) 1;
+}
+html.is-spiderverse .glitch.is-glitching.is-slam::after {
+  animation: sv-slam-b 0.85s steps(2, end) 1;
+}
+html.is-spiderverse .hero__kicker.is-glitching.is-slam::before,
+html.is-spiderverse .hero__accent.is-glitching.is-slam::before,
+html.is-spiderverse .hero__word.is-glitching.is-slam::before {
+  animation-name: sv-slam-hero-a;
+}
+html.is-spiderverse .hero__kicker.is-glitching.is-slam::after,
+html.is-spiderverse .hero__accent.is-glitching.is-slam::after,
+html.is-spiderverse .hero__word.is-glitching.is-slam::after {
+  animation-name: sv-slam-hero-b;
+}
+html.is-spiderverse .curtain__mark.is-glitching.is-slam::before {
+  animation: sv-slam-curtain-a 0.85s steps(2, end) 1;
+}
+html.is-spiderverse .curtain__mark.is-glitching.is-slam::after {
+  animation: sv-slam-curtain-b 0.85s steps(2, end) 1;
+}
+html.is-spiderverse .curtain__mark.is-glitching.is-slam {
+  text-shadow:
+    -6px 0 0 rgba(255, 0, 60, 0.88),
+    6px 0 0 rgba(61, 126, 255, 0.72),
+    0 2px 0 rgba(0, 255, 156, 0.42);
+}
+
+@keyframes sv-slam-a {
+  0% { opacity: 0.82; clip-path: inset(0 0 48% 0); transform: translate(-8px, 0); }
+  18% { opacity: 0.9; clip-path: inset(6% 0 22% 0); transform: translate(-12px, -2px); }
+  38% { opacity: 0.74; clip-path: inset(18% 0 34% 0); transform: translate(6px, 2px); }
+  58% { opacity: 0.86; clip-path: inset(4% 0 40% 0); transform: translate(-10px, 1px); }
+  78% { opacity: 0.5; clip-path: inset(12% 0 20% 0); transform: translate(-5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
+}
+@keyframes sv-slam-b {
+  0% { opacity: 0.76; clip-path: inset(40% 0 0 0); transform: translate(8px, 0); }
+  20% { opacity: 0.84; clip-path: inset(8% 0 24% 0); transform: translate(12px, 2px); }
+  42% { opacity: 0.7; clip-path: inset(22% 0 18% 0); transform: translate(-5px, -2px); }
+  62% { opacity: 0.8; clip-path: inset(10% 0 36% 0); transform: translate(9px, 1px); }
+  82% { opacity: 0.44; clip-path: inset(16% 0 12% 0); transform: translate(4px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
+}
+@keyframes sv-slam-hero-a {
+  0% { opacity: 0.82; clip-path: inset(0 0 50% 0); transform: translate(-8px, 0); }
+  18% { opacity: 0.9; clip-path: inset(6% 0 24% 0); transform: translate(-12px, -2px); }
+  40% { opacity: 0.74; clip-path: inset(16% 0 32% 0); transform: translate(6px, 2px); }
+  62% { opacity: 0.86; clip-path: inset(4% 0 38% 0); transform: translate(-10px, 1px); }
+  82% { opacity: 0.48; clip-path: inset(10% 0 22% 0); transform: translate(-5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
+}
+@keyframes sv-slam-hero-b {
+  0% { opacity: 0.76; clip-path: inset(38% 0 0 0); transform: translate(8px, 0); }
+  22% { opacity: 0.84; clip-path: inset(8% 0 26% 0); transform: translate(12px, 2px); }
+  44% { opacity: 0.7; clip-path: inset(20% 0 16% 0); transform: translate(-5px, -2px); }
+  64% { opacity: 0.8; clip-path: inset(10% 0 34% 0); transform: translate(9px, 1px); }
+  84% { opacity: 0.42; clip-path: inset(14% 0 12% 0); transform: translate(4px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
+}
+@keyframes sv-slam-curtain-a {
+  0% { opacity: 0.88; clip-path: inset(0 0 42% 0); transform: translate(-10px, 0); }
+  16% { opacity: 0.94; clip-path: inset(6% 0 18% 0); transform: translate(-14px, -2px); }
+  36% { opacity: 0.78; clip-path: inset(16% 0 28% 0); transform: translate(7px, 3px); }
+  56% { opacity: 0.9; clip-path: inset(4% 0 36% 0); transform: translate(-12px, 1px); }
+  78% { opacity: 0.52; clip-path: inset(10% 0 16% 0); transform: translate(-6px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
+}
+@keyframes sv-slam-curtain-b {
+  0% { opacity: 0.82; clip-path: inset(36% 0 0 0); transform: translate(10px, 0); }
+  18% { opacity: 0.9; clip-path: inset(8% 0 20% 0); transform: translate(14px, 2px); }
+  38% { opacity: 0.74; clip-path: inset(20% 0 14% 0); transform: translate(-6px, -2px); }
+  58% { opacity: 0.84; clip-path: inset(8% 0 32% 0); transform: translate(11px, 1px); }
+  80% { opacity: 0.46; clip-path: inset(14% 0 10% 0); transform: translate(5px, 0); }
+  100% { opacity: 0; clip-path: none; transform: none; }
+}
+
+html.is-spiderverse.is-slam-hitch .atmosphere__wash {
+  animation: sv-slam-plate 0.8s ease-out 1;
+}
+@keyframes sv-slam-plate {
+  0% { transform: translate(0, 0); }
+  18% { transform: translate(3px, -2px); }
+  42% { transform: translate(-2px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+
 html.is-spiderverse .curtain__brand {
   position: relative;
   z-index: 4;
@@ -5273,7 +5368,7 @@ html.is-spiderverse .work-card__cap::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("../img/spiderverse-panel.svg?v=sv17");
+  background-image: url("../img/spiderverse-panel.svg?v=sv18");
   background-size: 8px 8px;
   background-repeat: repeat;
   opacity: 0.08;
@@ -5415,7 +5510,10 @@ html.is-spiderverse .study__curtain-name {
   html.is-spiderverse .curtain.is-hitching .curtain__hitch,
   html.is-spiderverse .curtain.is-lifting .curtain__hitch,
   html.is-spiderverse .study__veil.is-hitching .study__veil-hitch,
-  html.is-spiderverse.is-study-wipe .study__veil-hitch {
+  html.is-spiderverse.is-study-wipe .study__veil-hitch,
+  html.is-spiderverse .glitch.is-glitching.is-slam::before,
+  html.is-spiderverse .glitch.is-glitching.is-slam::after,
+  html.is-spiderverse.is-slam-hitch .atmosphere__wash {
     animation: none !important;
     filter: none !important;
   }
@@ -5524,6 +5622,13 @@ html.is-spiderverse.is-print .curtain__mark.is-glitching {
     -3px 0 0 rgba(255, 0, 60, 0.55),
     3px 0 0 rgba(61, 126, 255, 0.45),
     0 1.5px 0 rgba(0, 140, 90, 0.28);
+}
+html.is-spiderverse.is-print .curtain__mark.is-glitching.is-slam,
+html.is-spiderverse.is-print .glitch.is-glitching.is-slam {
+  text-shadow:
+    -6px 0 0 rgba(255, 0, 60, 0.72),
+    6px 0 0 rgba(61, 126, 255, 0.6),
+    0 2px 0 rgba(0, 140, 90, 0.36);
 }
 html.is-spiderverse.is-print .study__curtain-name {
   color: #0e1018 !important;

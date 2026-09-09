@@ -85,9 +85,12 @@
     return out;
   }
 
-  function pickSwapCount(available) {
+  function pickSwapCount(available, heavy) {
     var roll;
     if (available <= 1) return available;
+    if (heavy) {
+      return Math.min(available, Math.max(Math.ceil(available * 0.82), Math.min(available, 6)));
+    }
     roll = Math.random();
     if (roll < 0.42) return 1;
     if (roll < 0.72) return Math.min(2, available);
@@ -123,24 +126,31 @@
     paintGlitchText(el, text);
   }
 
-  function burstGlitch(el, reduceMotion) {
+  var slamming = false;
+
+  function burstGlitch(el, reduceMotion, heavy) {
     if (!el || (reduceMotion && reduceMotion.matches)) return;
     var latin = visibleLatin(el);
     var slots = shuffle(mappableIndexes(latin));
-    var count = pickSwapCount(slots.length);
+    var count = pickSwapCount(slots.length, !!heavy);
     var chosen = slots.slice(0, count);
-    var lastEnd = BURST_MS;
+    var lastEnd = heavy ? 850 : BURST_MS;
     var live;
     var starts = [];
+    var startSpan = heavy ? 90 : 180;
+    var holdMin = heavy ? 140 : 55;
+    var holdMax = heavy ? 320 : 230;
+    var doubleChance = heavy ? 0.72 : 0.28;
 
     el.setAttribute("data-latin", latin);
     if (!el.getAttribute("aria-label")) el.setAttribute("aria-label", latin);
     clearScriptFlash(el, latin);
     live = latin.split("");
 
-    el.classList.remove("is-glitching");
+    el.classList.remove("is-glitching", "is-slam");
     void el.offsetWidth;
     el.classList.add("is-glitching");
+    if (heavy) el.classList.add("is-slam");
 
     function scheduleSwap(index, startAt, hold) {
       var glyph = pickGlyph(latin.charAt(index));
@@ -157,35 +167,78 @@
     }
 
     chosen.forEach(function (index) {
-      var startAt = Math.round(rand(0, 180));
+      var startAt = Math.round(rand(0, startSpan));
       var tries = 0;
       while (tries < 6 && starts.some(function (stamp) { return Math.abs(stamp - startAt) < 14; })) {
-        startAt = Math.round(rand(0, 210));
+        startAt = Math.round(rand(0, startSpan + 30));
         tries += 1;
       }
       starts.push(startAt);
-      var hold = Math.round(rand(55, 230));
+      var hold = Math.round(rand(holdMin, holdMax));
       scheduleSwap(index, startAt, hold);
-      if (Math.random() < 0.28) {
+      if (Math.random() < doubleChance) {
         var gap = Math.round(rand(18, 70));
-        var again = Math.round(rand(45, 140));
+        var again = Math.round(rand(heavy ? 80 : 45, heavy ? 180 : 140));
         scheduleSwap(index, startAt + hold + gap, again);
       }
     });
 
+    if (heavy) {
+      chosen.forEach(function (index) {
+        var wave2 = Math.round(rand(240, 420));
+        var hold2 = Math.round(rand(90, 220));
+        scheduleSwap(index, wave2, hold2);
+      });
+    }
+
     trackTimer(el, window.setTimeout(function () {
-      el.classList.remove("is-glitching");
+      el.classList.remove("is-glitching", "is-slam");
       clearScriptFlash(el, latin);
     }, lastEnd + 40));
   }
 
-  function burstHero(reduceMotion) {
+  function burstHero(reduceMotion, heavy) {
     var shouts = document.querySelectorAll(".hero__kicker, .hero__accent, .hero__word");
     shouts.forEach(function (el) {
       window.setTimeout(function () {
-        burstGlitch(el, reduceMotion);
-      }, Math.round(rand(0, 240)));
+        burstGlitch(el, reduceMotion, heavy);
+      }, Math.round(rand(0, heavy ? 90 : 240)));
     });
+  }
+
+  function hitchSlam(reduceMotion) {
+    if (reduceMotion && reduceMotion.matches) return;
+    var htmlEl = document.documentElement;
+    var curtain = document.getElementById("curtain");
+    htmlEl.classList.add("is-slam-hitch");
+    window.setTimeout(function () {
+      htmlEl.classList.remove("is-slam-hitch");
+    }, 850);
+    if (curtain && htmlEl.classList.contains("is-curtain") && !curtain.classList.contains("is-done")) {
+      hitchCurtain(curtain, reduceMotion);
+    }
+  }
+
+  function burstBig(reduceMotion) {
+    if (reduceMotion && reduceMotion.matches) return;
+    var htmlEl = document.documentElement;
+    var curtain = document.getElementById("curtain");
+    var curtainUp = htmlEl.classList.contains("is-curtain") && curtain && !curtain.classList.contains("is-done");
+    var mark;
+    var logo;
+    slamming = true;
+    hitchSlam(reduceMotion);
+    if (curtainUp) {
+      mark = document.querySelector(".curtain__mark.glitch");
+      if (mark) burstGlitch(mark, reduceMotion, true);
+    } else {
+      burstHero(reduceMotion, true);
+      logo = document.querySelector(".masthead__name.glitch");
+      if (logo) {
+        window.setTimeout(function () { burstGlitch(logo, reduceMotion, true); }, Math.round(rand(30, 140)));
+      }
+    }
+    window.setTimeout(function () { slamming = false; }, 1300);
   }
 
   function startGlitchLoop(reduceMotion) {
@@ -194,16 +247,24 @@
     if (reduceMotion && reduceMotion.matches) return;
 
     function cycle() {
-      var logo = document.querySelector(".masthead__name.glitch");
-      burstHero(reduceMotion);
-      if (logo) {
-        window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, Math.round(rand(120, 520)));
+      if (!slamming) {
+        var logo = document.querySelector(".masthead__name.glitch");
+        burstHero(reduceMotion);
+        if (logo) {
+          window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, Math.round(rand(120, 520)));
+        }
       }
       var wait = Math.round(rand(7000, 14000));
       glitchTimers.push(window.setTimeout(cycle, wait));
     }
 
+    function slamCycle() {
+      burstBig(reduceMotion);
+      glitchTimers.push(window.setTimeout(slamCycle, Math.round(rand(28000, 34000))));
+    }
+
     glitchTimers.push(window.setTimeout(cycle, 3200));
+    glitchTimers.push(window.setTimeout(slamCycle, Math.round(rand(28000, 34000))));
   }
 
   function hitchCurtain(curtain, reduceMotion) {
@@ -566,6 +627,7 @@
     revealLanding: revealLanding,
     wireParticles: wireParticles,
     burstGlitch: burstGlitch,
+    burstBig: burstBig,
     hitchCurtain: hitchCurtain,
     startGlitchLoop: startGlitchLoop
   };
