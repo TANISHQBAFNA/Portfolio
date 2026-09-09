@@ -10,7 +10,7 @@
     el.classList.add("is-glitching");
     window.setTimeout(function () {
       el.classList.remove("is-glitching");
-    }, 880);
+    }, 520);
   }
 
   function burstHero(reduceMotion) {
@@ -18,7 +18,7 @@
     shouts.forEach(function (el, i) {
       window.setTimeout(function () {
         burstGlitch(el, reduceMotion);
-      }, 70 * i);
+      }, 140 * i);
     });
   }
 
@@ -31,13 +31,13 @@
       var logo = document.querySelector(".masthead__name.glitch");
       burstHero(reduceMotion);
       if (logo) {
-        window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, 180);
+        window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, 280);
       }
-      var wait = 1800 + Math.random() * 1400;
+      var wait = 4200 + Math.random() * 2400;
       glitchTimers.push(window.setTimeout(cycle, wait));
     }
 
-    glitchTimers.push(window.setTimeout(cycle, 520));
+    glitchTimers.push(window.setTimeout(cycle, 1800));
   }
 
   function hitchCurtain(curtain, reduceMotion) {
@@ -45,7 +45,7 @@
     curtain.classList.add("is-hitching");
     window.setTimeout(function () {
       curtain.classList.remove("is-hitching");
-    }, 640);
+    }, 920);
   }
 
   function revealLanding(html, reduceMotion) {
