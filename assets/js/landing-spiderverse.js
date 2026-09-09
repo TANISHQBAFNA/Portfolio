@@ -457,9 +457,6 @@
     function armMarkGlitch(text) {
       mark.classList.add('glitch');
       mark.setAttribute('data-text', text || readMark() || CURTAIN_TEXT);
-      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
-        window.IrisMotion.burstGlitch(mark, reduceMotion);
-      }
     }
 
     var curtainGlitchId = 0;
