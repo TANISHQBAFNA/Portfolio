@@ -2,15 +2,17 @@
   "use strict";
 
   var glitchTimers = [];
-  var hindiTimers = new WeakMap();
-  var HINDI_MAP = {
-    T: "ट", t: "ट",
-    A: "अ", a: "अ",
-    N: "न", n: "न",
-    B: "ब", b: "ब",
-    Q: "क", q: "क"
+  var scriptTimers = new WeakMap();
+  var SCRIPT_MAPS = {
+    devanagari: { T: "ट", t: "ट", A: "अ", a: "अ", N: "न", n: "न", B: "ब", b: "ब", Q: "क", q: "क" },
+    cyrillic: { A: "А", a: "а", B: "В", b: "в", E: "Е", e: "е", H: "Н", h: "н", P: "Р", p: "р", C: "С", c: "с", T: "Т", t: "т", X: "Х", x: "х" },
+    greek: { A: "Α", a: "α", B: "Β", b: "β", E: "Ε", e: "ε", H: "Η", h: "η", I: "Ι", i: "ι", K: "Κ", k: "κ", M: "Μ", m: "μ", N: "Ν", n: "ν", O: "Ο", o: "ο", P: "Ρ", p: "ρ", T: "Τ", t: "τ", X: "Χ", x: "χ", Y: "Υ", y: "υ" },
+    arabic: { T: "ت", t: "ت", B: "ب", b: "ب", N: "ن", n: "ن", A: "ا", a: "ا" },
+    cjk: { T: "丁", t: "丁", I: "工", i: "工", O: "口", o: "口", X: "乂", x: "乂" }
   };
-  var HINDI_FLASH_MS = 180;
+  var SCRIPT_ORDER = ["devanagari", "cyrillic", "greek", "arabic", "cjk"];
+  var scriptTick = 0;
+  var SCRIPT_FLASH_MS = 180;
   var BURST_MS = 450;
 
   function visibleLatin(el) {
@@ -37,29 +39,51 @@
     if (!chars.length) el.textContent = text;
   }
 
-  function pickHindi(src) {
+  function swapFromMap(src, out, used, map, prefer) {
+    var i;
+    var ch;
+    for (i = 0; i < out.length; i += 1) {
+      if (used[i]) continue;
+      ch = src.charAt(i);
+      if (!map[ch]) continue;
+      if (prefer && prefer.indexOf(ch) === -1) continue;
+      out[i] = map[ch];
+      used[i] = true;
+      return true;
+    }
+    return false;
+  }
+
+  function pickScriptFlash(src) {
     var out = src.split("");
     var used = {};
-    function swapFrom(letters) {
-      for (var i = 0; i < out.length; i += 1) {
-        if (used[i]) continue;
-        var ch = src.charAt(i);
-        if (letters.indexOf(ch) === -1 || !HINDI_MAP[ch]) continue;
-        out[i] = HINDI_MAP[ch];
-        used[i] = true;
-        return true;
-      }
-      return false;
+    var primary = SCRIPT_ORDER[scriptTick % SCRIPT_ORDER.length];
+    scriptTick += 1;
+    var mix = Math.random() < 0.5;
+    var secondary = SCRIPT_ORDER[scriptTick % SCRIPT_ORDER.length];
+    var map1 = SCRIPT_MAPS[primary];
+    var map2 = SCRIPT_MAPS[secondary];
+    if (!swapFromMap(src, out, used, map1, "TtAaNnBbQq")) {
+      swapFromMap(src, out, used, map1);
     }
-    if (!swapFrom("Tt")) swapFrom("AaNnBbQq");
-    else if (Math.random() < 0.6) swapFrom("AaNnBbQq");
+    if (mix && primary !== "arabic") {
+      swapFromMap(src, out, used, map2);
+    } else if (!mix && Math.random() < 0.45) {
+      swapFromMap(src, out, used, map1);
+    }
+    if (!Object.keys(used).length) {
+      var f;
+      for (f = 0; f < SCRIPT_ORDER.length; f += 1) {
+        if (swapFromMap(src, out, used, SCRIPT_MAPS[SCRIPT_ORDER[f]])) break;
+      }
+    }
     return out.join("");
   }
 
-  function clearHindiFlash(el, latin) {
-    var hid = hindiTimers.get(el);
+  function clearScriptFlash(el, latin) {
+    var hid = scriptTimers.get(el);
     if (hid) window.clearTimeout(hid);
-    hindiTimers.delete(el);
+    scriptTimers.delete(el);
     if (latin) {
       el.setAttribute("data-text", latin);
       paintGlitchText(el, latin);
@@ -71,9 +95,9 @@
     var latin = visibleLatin(el);
     el.setAttribute("data-latin", latin);
     if (!el.getAttribute("aria-label")) el.setAttribute("aria-label", latin);
-    clearHindiFlash(el, latin);
+    clearScriptFlash(el, latin);
 
-    var flashed = pickHindi(latin);
+    var flashed = pickScriptFlash(latin);
     el.setAttribute("data-text", flashed);
     paintGlitchText(el, flashed);
 
@@ -81,9 +105,9 @@
     void el.offsetWidth;
     el.classList.add("is-glitching");
 
-    hindiTimers.set(el, window.setTimeout(function () {
-      clearHindiFlash(el, latin);
-    }, HINDI_FLASH_MS));
+    scriptTimers.set(el, window.setTimeout(function () {
+      clearScriptFlash(el, latin);
+    }, SCRIPT_FLASH_MS));
 
     window.setTimeout(function () {
       el.classList.remove("is-glitching");
@@ -114,7 +138,7 @@
       if (logo) {
         window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, 400);
       }
-      var wait = 5200 + Math.random() * 1800;
+      var wait = 10000 + Math.round(Math.random() * 600 - 300);
       glitchTimers.push(window.setTimeout(cycle, wait));
     }
 

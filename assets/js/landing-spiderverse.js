@@ -160,7 +160,7 @@
 
   var CURTAIN_TEXT = 'Tanishq Bafna'; /* full name — never "Tanishq." */
   var NAME_BEATS = ['Tanishk Bafnaa', 'Tanish Bafna', 'Tanishq Bafna'];
-  var MARK_FONT = '"Syne", "Noto Sans Devanagari", sans-serif';
+  var MARK_FONT = '"Syne", "Noto Sans Devanagari", "Noto Sans Arabic", "Noto Sans SC", "Noto Sans", sans-serif';
   var HOLD_MS = 400; /* short beat on the real name, then lift */
   var EXIT_MS = 900;
   var MOVE_MS = 900;
