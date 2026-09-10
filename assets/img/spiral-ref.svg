@@ -1,41 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<meta charset="utf-8">
-<title>Wikimedia Error</title>
-<style>
-* { margin: 0; padding: 0; }
-body { background: #fff; font: 15px/1.6 sans-serif; color: #333; }
-.content { margin: 7% auto 0; padding: 2em 1em 1em; max-width: 640px; display: flex; flex-direction: row; flex-wrap: wrap; }
-.footer { clear: both; margin-top: 14%; border-top: 1px solid #e5e5e5; background: #f9f9f9; padding: 2em 0; font-size: 0.8em; text-align: center; }
-img { margin: 0 2em 2em 0; }
-a img { border: 0; }
-h1 { margin-top: 1em; font-size: 1.2em; }
-.content-text { flex: 1; }
-p { margin: 0.7em 0 1em 0; }
-a { color: #0645ad; text-decoration: none; }
-a:hover { text-decoration: underline; }
-code { font-family: sans-serif; }
-summary { font-weight: bold; cursor: pointer; }
-details[open] { background: #970302; color: #dfdedd; }
-.text-muted { color: #777; }
-@media (prefers-color-scheme: dark) {
-  a { color: #9e9eff; }
-  body { background: transparent; color: #ddd; }
-  .footer { border-top: 1px solid #444; background: #060606; }
-  #logo { filter: invert(1) hue-rotate(180deg); }
-  .text-muted { color: #888; }
-}
-</style>
-<meta name="color-scheme" content="light dark">
-<div class="content" role="main">
-<a href="https://www.wikimedia.org"><img id="logo" src="https://www.wikimedia.org/static/images/wmf-logo.png" srcset="https://www.wikimedia.org/static/images/wmf-logo-2x.png 2x" alt="Wikimedia" width="135" height="101">
-</a>
-<div class="content-text">
-<h1>Error</h1>
-
-<p>Too many requests - please contact noc@wikimedia.org to discuss a less disruptive approach or instead use thumbnail images in sizes listed on https://w.wiki/GHai. (0c640b1)</p>
-</div>
-</div>
-<div class="footer"><p>If you report this error to the Wikimedia System Administrators, please include the details below.</p><p class="text-muted"><code>Request served via cp1115 cp1115, Varnish XID 669544942<br>Upstream caches: cp1115 int<br>Error: 429, Too many requests - please contact noc@wikimedia.org to discuss a less disruptive approach or instead use thumbnail images in sizes listed on https://w.wiki/GHai. (0c640b1) at Thu, 10 Sep 2026 08:08:43 GMT<br><details><summary>Sensitive client information</summary>IP address: 104.30.180.115</details></code></p>
-</div>
-</html>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" fill="none" aria-hidden="true">
+  <!-- Original spiral for Multiverse portal depth — project asset, free to use -->
+  <path d="M400 400
+    m0-20
+    a20 20 0 1 1 0 40
+    a40 40 0 1 1 0-80
+    a60 60 0 1 1 0 120
+    a80 80 0 1 1 0-160
+    a105 105 0 1 1 0 210
+    a135 135 0 1 1 0-270
+    a170 170 0 1 1 0 340
+    a210 210 0 1 1 0-420
+    a255 255 0 1 1 0 510"
+    stroke="#f4efe6" stroke-opacity="0.55" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M400 400
+    m0-12
+    a12 12 0 1 1 0 24
+    a28 28 0 1 1 0-56
+    a48 48 0 1 1 0 96
+    a72 72 0 1 1 0-144
+    a100 100 0 1 1 0 200
+    a132 132 0 1 1 0-264
+    a168 168 0 1 1 0 336"
+    stroke="#00a0a0" stroke-opacity="0.45" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
