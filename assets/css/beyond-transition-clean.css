@@ -1,0 +1,373 @@
+/* Clean Multiverse portal study.
+   Production landing.css / beyond-transition.css are not loaded here.
+   Palette: teal #00a0a0, cream #f4efe6, coffee #1E1510. */
+
+:root {
+  --mv-teal: #00a0a0;
+  --mv-cream: #f4efe6;
+  --mv-coffee: #1e1510;
+  --mv-red: #e21b1b;
+  --mv-cyan: #14c8d4;
+  --mv-blue: #2a4bff;
+  --mv-font: "Syne", ui-sans-serif, system-ui, sans-serif;
+  --mv-body: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --portal-hole: 0px;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--mv-coffee);
+  color: var(--mv-cream);
+  font-family: var(--mv-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+html { color-scheme: dark; }
+
+body.mv-clean {
+  overflow-x: hidden;
+  background: var(--mv-coffee);
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  z-index: 200;
+  padding: 8px 12px;
+  background: var(--mv-cream);
+  color: var(--mv-coffee);
+  font-family: var(--mv-font);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.skip-link:focus { top: 12px; }
+
+/* —— Multiverse world: never scaled by the portal —— */
+.mv-world {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  padding:
+    max(28px, env(safe-area-inset-top))
+    clamp(20px, 4vw, 56px)
+    max(32px, env(safe-area-inset-bottom));
+  background: var(--mv-coffee);
+  transform: none;
+}
+
+.mv-world::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+.mv-chrome {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  max-height: 80px;
+}
+
+.mv-name {
+  font-family: var(--mv-font);
+  font-size: clamp(1.15rem, 2.4vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--mv-cream);
+  text-decoration: none;
+  line-height: 1;
+}
+
+.mv-name:hover { color: var(--mv-teal); }
+
+.mv-hooks {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 40px);
+}
+
+.mv-hook {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--mv-font);
+  font-size: clamp(0.72rem, 1.1vw, 0.92rem);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mv-cream);
+  line-height: 1;
+}
+
+.mv-hook:hover,
+.mv-hook:focus-visible {
+  color: var(--mv-teal);
+  outline: none;
+}
+
+.mv-hook:focus-visible {
+  box-shadow: 0 0 0 2px var(--mv-coffee), 0 0 0 4px var(--mv-teal);
+}
+
+.mv-hook:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.mv-hero {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: calc(100dvh - 140px);
+  padding-top: clamp(24px, 6vh, 72px);
+  padding-bottom: clamp(28px, 6vh, 64px);
+}
+
+.mv-role {
+  margin: 0 0 0.85rem;
+  font-size: clamp(0.92rem, 1.4vw, 1.05rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: rgba(244, 239, 230, 0.72);
+}
+
+.mv-kicker,
+.mv-shout,
+.mv-shout-ink {
+  display: block;
+  font-family: var(--mv-font);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: -0.055em;
+}
+
+.mv-kicker {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.35rem, 3vw, 2.4rem);
+  letter-spacing: -0.02em;
+  color: var(--mv-cream);
+}
+
+.mv-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+}
+
+.mv-shout,
+.mv-shout-ink {
+  font-size: clamp(2.6rem, 8vw, 8rem);
+  white-space: nowrap;
+}
+
+.mv-shout {
+  color: var(--mv-teal);
+  text-shadow:
+    1.5px 0 0 rgba(226, 27, 27, 0.42),
+    -1.5px 0 0 rgba(20, 200, 212, 0.38);
+}
+
+.mv-shout-ink { color: var(--mv-cream); }
+
+.mv-support {
+  max-width: 36rem;
+  margin: 1.4rem 0 0;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.45;
+  color: rgba(244, 239, 230, 0.78);
+}
+
+.mv-work {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0 0 48px;
+  list-style: none;
+  border-top: 1px solid rgba(244, 239, 230, 0.14);
+}
+
+.mv-work li {
+  display: grid;
+  grid-template-columns: 3.2rem 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid rgba(244, 239, 230, 0.14);
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+}
+
+.mv-work span:first-child {
+  font-family: var(--mv-font);
+  font-weight: 800;
+  color: var(--mv-teal);
+}
+
+.mv-note {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(244, 239, 230, 0.48);
+}
+
+/* —— Portal overlay. Only this stack moves. —— */
+.portal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.portal.is-on {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.portal__void {
+  position: absolute;
+  inset: 0;
+  background: var(--mv-coffee);
+  opacity: 0;
+}
+
+.portal__veil {
+  position: absolute;
+  inset: 0;
+  background: var(--mv-cream);
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent var(--portal-hole),
+    #000 calc(var(--portal-hole) + 1.2px)
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent var(--portal-hole),
+    #000 calc(var(--portal-hole) + 1.2px)
+  );
+  opacity: 0;
+}
+
+.portal.is-cover .portal__veil { opacity: 1; }
+
+html.is-beyond-skip .portal {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.portal__stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(124vmin, 124vw);
+  height: min(124vmin, 124vw);
+  margin: 0;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
+.portal__rings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.portal__rings--red,
+.portal__rings--cyan,
+.portal__rings--blue {
+  mix-blend-mode: normal;
+  opacity: 0;
+}
+
+.portal__core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11vmin;
+  height: 11vmin;
+  margin: -5.5vmin 0 0 -5.5vmin;
+  border-radius: 50%;
+  background: var(--mv-coffee);
+  box-shadow:
+    0 0 0 2px var(--mv-teal),
+    0 0 0 5px var(--mv-cream);
+  will-change: transform, opacity;
+}
+
+.portal__whisper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  font-family: var(--mv-font);
+  font-weight: 800;
+  font-size: clamp(2.8rem, 11vw, 8.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  color: var(--mv-coffee);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  text-shadow:
+    2px 0 0 rgba(226, 27, 27, 0.55),
+    -2px 0 0 rgba(20, 200, 212, 0.48),
+    0 2px 0 rgba(42, 75, 255, 0.28);
+}
+
+.portal__whisper.is-leave { color: var(--mv-cream); }
+
+html.is-portal-busy .mv-hook { pointer-events: none; }
+
+@media (max-width: 720px) {
+  .mv-shout,
+  .mv-shout-ink { white-space: normal; }
+  .mv-hooks { gap: 14px; }
+  .portal__whisper { white-space: normal; max-width: 92vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal__stage,
+  .portal__core,
+  .portal__whisper,
+  .portal__void,
+  .portal__veil {
+    transition: none !important;
+  }
+
+  .mv-shout {
+    text-shadow: none;
+  }
+}
