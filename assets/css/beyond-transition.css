@@ -1,0 +1,345 @@
+/* Experiment: cream ↔ multiverse dimensional seam.
+   Removable with this branch — keep landing.css / landing-multiverse.css clean. */
+
+.beyond-seam {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.beyond-seam.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.beyond-seam__plate,
+.beyond-seam__chroma,
+.beyond-seam__slit,
+.beyond-seam__hitch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.beyond-seam__plate--cream {
+  background: #f4efe6;
+  opacity: 0;
+}
+
+.beyond-seam__plate--ink {
+  background: #0c0b0a;
+  opacity: 0;
+}
+
+.beyond-seam__chroma--r,
+.beyond-seam__chroma--c {
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.beyond-seam__chroma--r {
+  background:
+    linear-gradient(90deg, rgba(255, 0, 60, 0.18), transparent 42%, transparent 58%, rgba(255, 0, 60, 0.08));
+}
+
+.beyond-seam__chroma--c {
+  background:
+    linear-gradient(90deg, rgba(61, 126, 255, 0.08), transparent 42%, transparent 58%, rgba(61, 126, 255, 0.2));
+}
+
+.beyond-seam__slit {
+  opacity: 0;
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0 46%,
+      rgba(244, 239, 230, 0.92) 48%,
+      rgba(12, 11, 10, 0.95) 52%,
+      transparent 54% 100%
+    );
+  clip-path: inset(0 48% 0 48%);
+  filter: drop-shadow(-2px 0 0 rgba(255, 0, 60, 0.35)) drop-shadow(2px 0 0 rgba(61, 126, 255, 0.28));
+}
+
+.beyond-seam__hitch {
+  opacity: 0;
+  mix-blend-mode: screen;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 15px, rgba(61, 126, 255, 0.05) 15px 16px),
+    linear-gradient(90deg, rgba(255, 0, 60, 0.06), transparent 46%, transparent 54%, rgba(0, 255, 156, 0.04));
+}
+
+.beyond-seam__whisper {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.72rem, 1.4vw, 0.9rem);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(244, 239, 230, 0.55);
+  opacity: 0;
+  white-space: nowrap;
+  text-shadow:
+    -1px 0 rgba(255, 0, 60, 0.45),
+    1px 0 rgba(61, 126, 255, 0.4);
+}
+
+html.is-beyond-crossing,
+html.is-beyond-crossing body {
+  cursor: progress;
+}
+
+/* Cream → Multiverse tear */
+.beyond-seam.is-leave-cream .beyond-seam__plate--cream {
+  opacity: 1;
+  animation: beyond-cream-tear-plate 0.82s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.beyond-seam.is-leave-cream .beyond-seam__plate--ink {
+  opacity: 1;
+  animation: beyond-ink-rise 0.82s cubic-bezier(0.55, 0, 0.2, 1) both;
+}
+.beyond-seam.is-leave-cream .beyond-seam__chroma--r {
+  opacity: 1;
+  animation: beyond-chroma-r 0.82s steps(2, end) both;
+}
+.beyond-seam.is-leave-cream .beyond-seam__chroma--c {
+  opacity: 1;
+  animation: beyond-chroma-c 0.82s steps(2, end) both;
+}
+.beyond-seam.is-leave-cream .beyond-seam__slit {
+  opacity: 1;
+  animation: beyond-slit-open 0.82s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.beyond-seam.is-leave-cream .beyond-seam__hitch {
+  opacity: 1;
+  animation: beyond-hitch-flash 0.82s ease-out both;
+}
+.beyond-seam.is-leave-cream .beyond-seam__whisper {
+  animation: beyond-whisper-in 0.82s ease-out both;
+}
+
+/* Multiverse → cream settle */
+.beyond-seam.is-leave-multiverse .beyond-seam__plate--ink {
+  opacity: 1;
+  animation: beyond-ink-settle 0.78s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.beyond-seam.is-leave-multiverse .beyond-seam__plate--cream {
+  opacity: 1;
+  animation: beyond-cream-wash 0.78s cubic-bezier(0.55, 0, 0.2, 1) both;
+}
+.beyond-seam.is-leave-multiverse .beyond-seam__chroma--r,
+.beyond-seam.is-leave-multiverse .beyond-seam__chroma--c {
+  opacity: 1;
+  animation: beyond-chroma-fade 0.78s ease-out both;
+}
+.beyond-seam.is-leave-multiverse .beyond-seam__slit {
+  opacity: 1;
+  animation: beyond-slit-close 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.beyond-seam.is-leave-multiverse .beyond-seam__hitch {
+  opacity: 1;
+  animation: beyond-hitch-flash 0.78s ease-out both;
+}
+.beyond-seam.is-leave-multiverse .beyond-seam__whisper {
+  color: rgba(30, 21, 16, 0.45);
+  text-shadow:
+    -1px 0 rgba(255, 0, 60, 0.25),
+    1px 0 rgba(0, 160, 160, 0.3);
+  animation: beyond-whisper-in 0.78s ease-out both;
+}
+
+/* Multiverse arrival threshold (continues hitch language) */
+.beyond-seam.is-enter-threshold .beyond-seam__chroma--r,
+.beyond-seam.is-enter-threshold .beyond-seam__chroma--c {
+  opacity: 1;
+  animation: beyond-threshold-chroma 0.52s ease-out both;
+}
+.beyond-seam.is-enter-threshold .beyond-seam__hitch {
+  opacity: 1;
+  animation: beyond-hitch-flash 0.52s ease-out both;
+}
+.beyond-seam.is-enter-threshold {
+  z-index: 210;
+  pointer-events: none;
+}
+
+/* Cream soft land from multiverse */
+.beyond-seam.is-land-home .beyond-seam__plate--cream {
+  opacity: 1;
+  animation: beyond-home-land 0.42s ease-out both;
+}
+.beyond-seam.is-land-home {
+  pointer-events: none;
+  z-index: 210;
+}
+
+.beyond-seam.is-fade-out .beyond-seam__plate--ink,
+.beyond-seam.is-fade-out .beyond-seam__plate--cream {
+  opacity: 1;
+  animation: beyond-simple-fade 0.28s ease both;
+}
+html.is-light-home .beyond-seam.is-fade-out .beyond-seam__plate--cream { opacity: 1; }
+html.is-light-home .beyond-seam.is-fade-out .beyond-seam__plate--ink { opacity: 0; }
+html.is-multiverse .beyond-seam.is-fade-out .beyond-seam__plate--ink { opacity: 1; }
+html.is-multiverse .beyond-seam.is-fade-out .beyond-seam__plate--cream { opacity: 0; }
+
+/* Optional masthead hitch on cream (no Iris multilingual API there) */
+html.is-light-home .masthead__name.is-beyond-hitch {
+  text-shadow:
+    -1px 0 rgba(255, 0, 60, 0.5),
+    1px 0 rgba(0, 160, 160, 0.45);
+  animation: beyond-name-hitch 0.42s steps(2, end) 1;
+}
+
+html.is-beyond-enter .curtain,
+html.is-beyond-enter .curtain.curtain--ink {
+  animation: beyond-enter-plate 0.7s ease-out 1;
+}
+
+@keyframes beyond-cream-tear-plate {
+  0% { opacity: 0.95; clip-path: inset(0 0 0 0); filter: none; }
+  38% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    filter: drop-shadow(-3px 0 0 rgba(255, 0, 60, 0.28)) drop-shadow(3px 0 0 rgba(61, 126, 255, 0.22));
+  }
+  100% {
+    opacity: 0;
+    clip-path: inset(0 42% 0 42%);
+    filter: none;
+  }
+}
+
+@keyframes beyond-ink-rise {
+  0% { opacity: 0; transform: scale(1.02); }
+  45% { opacity: 0.35; }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes beyond-ink-settle {
+  0% { opacity: 1; filter: drop-shadow(-2px 0 0 rgba(255, 0, 60, 0.22)) drop-shadow(2px 0 0 rgba(61, 126, 255, 0.18)); }
+  55% { opacity: 0.55; }
+  100% { opacity: 0; filter: none; }
+}
+
+@keyframes beyond-cream-wash {
+  0% { opacity: 0; }
+  40% { opacity: 0.45; }
+  100% { opacity: 1; }
+}
+
+@keyframes beyond-slit-open {
+  0% { opacity: 0; clip-path: inset(42% 49% 42% 49%); transform: translateX(0); }
+  28% { opacity: 0.95; clip-path: inset(8% 47% 8% 47%); transform: translateX(-3px); }
+  62% { opacity: 1; clip-path: inset(0 18% 0 18%); transform: translateX(2px); }
+  100% { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+
+@keyframes beyond-slit-close {
+  0% { opacity: 0.9; clip-path: inset(0 0 0 0); }
+  40% { opacity: 1; clip-path: inset(6% 22% 6% 22%); }
+  100% { opacity: 0; clip-path: inset(40% 48% 40% 48%); }
+}
+
+@keyframes beyond-chroma-r {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  20% { opacity: 0.55; transform: translate(-3px, 0); }
+  55% { opacity: 0.35; transform: translate(-5px, 1px); }
+}
+
+@keyframes beyond-chroma-c {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  24% { opacity: 0.5; transform: translate(3px, 0); }
+  58% { opacity: 0.32; transform: translate(5px, -1px); }
+}
+
+@keyframes beyond-chroma-fade {
+  0% { opacity: 0.45; }
+  100% { opacity: 0; }
+}
+
+@keyframes beyond-hitch-flash {
+  0%, 100% { opacity: 0; clip-path: inset(0 0 0 0); transform: translateX(0); }
+  30% { opacity: 0.28; clip-path: inset(26% 0 52% 0); transform: translateX(-4px); }
+  58% { opacity: 0.16; clip-path: inset(48% 0 18% 0); transform: translateX(3px); }
+}
+
+@keyframes beyond-whisper-in {
+  0%, 18% { opacity: 0; letter-spacing: 0.42em; }
+  40% { opacity: 0.7; }
+  100% { opacity: 0; letter-spacing: 0.28em; }
+}
+
+@keyframes beyond-threshold-chroma {
+  0% { opacity: 0.4; }
+  100% { opacity: 0; }
+}
+
+@keyframes beyond-home-land {
+  0% { opacity: 0.55; }
+  100% { opacity: 0; }
+}
+
+@keyframes beyond-simple-fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes beyond-name-hitch {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-1px, 0.5px); }
+  50% { transform: translate(1px, -0.5px); }
+  75% { transform: translate(-0.5px, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes beyond-enter-plate {
+  0%, 100% { filter: none; }
+  35% { filter: drop-shadow(-2px 0 0 rgba(255, 0, 60, 0.2)) drop-shadow(2px 0 0 rgba(61, 126, 255, 0.16)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beyond-seam.is-leave-cream .beyond-seam__plate--cream,
+  .beyond-seam.is-leave-cream .beyond-seam__plate--ink,
+  .beyond-seam.is-leave-multiverse .beyond-seam__plate--cream,
+  .beyond-seam.is-leave-multiverse .beyond-seam__plate--ink,
+  .beyond-seam.is-land-home .beyond-seam__plate--cream,
+  .beyond-seam.is-fade-out .beyond-seam__plate--cream,
+  .beyond-seam.is-fade-out .beyond-seam__plate--ink {
+    animation: beyond-simple-fade 0.28s ease both;
+  }
+  .beyond-seam.is-leave-cream .beyond-seam__chroma--r,
+  .beyond-seam.is-leave-cream .beyond-seam__chroma--c,
+  .beyond-seam.is-leave-cream .beyond-seam__slit,
+  .beyond-seam.is-leave-cream .beyond-seam__hitch,
+  .beyond-seam.is-leave-cream .beyond-seam__whisper,
+  .beyond-seam.is-leave-multiverse .beyond-seam__chroma--r,
+  .beyond-seam.is-leave-multiverse .beyond-seam__chroma--c,
+  .beyond-seam.is-leave-multiverse .beyond-seam__slit,
+  .beyond-seam.is-leave-multiverse .beyond-seam__hitch,
+  .beyond-seam.is-leave-multiverse .beyond-seam__whisper,
+  .beyond-seam.is-enter-threshold .beyond-seam__chroma--r,
+  .beyond-seam.is-enter-threshold .beyond-seam__chroma--c,
+  .beyond-seam.is-enter-threshold .beyond-seam__hitch {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  html.is-light-home .masthead__name.is-beyond-hitch {
+    animation: none !important;
+    text-shadow: none !important;
+  }
+  html.is-beyond-enter .curtain,
+  html.is-beyond-enter .curtain.curtain--ink {
+    animation: none !important;
+  }
+}

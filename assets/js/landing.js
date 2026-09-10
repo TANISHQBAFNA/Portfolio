@@ -348,7 +348,7 @@
     var mark = document.getElementById('curtain-mark');
     var identity = document.querySelector('.masthead__identity');
     var logo = document.querySelector('.masthead__name');
-    var skip = /[?&]open=/.test(location.search);
+    var skip = /[?&](?:open|home)=/.test(location.search) || html.classList.contains('is-beyond-home');
     var BOLD = '800'; /* curtain + logo stay this weight — no mid-flight jump */
 
     function revealMasthead() {

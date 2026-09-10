@@ -359,6 +359,7 @@
     var mark = document.getElementById('curtain-mark');
     var identity = document.querySelector('.masthead__identity');
     var logo = document.querySelector('.masthead__name');
+    var beyondEnter = /[?&]beyond=1/.test(location.search) || html.classList.contains('is-beyond-enter');
     var skip = /[?&]open=/.test(location.search);
     var BOLD = '800'; /* curtain + logo stay this weight — no mid-flight jump */
 
@@ -764,10 +765,27 @@
       }
     }
 
-    playNameBeats(function () {
+    if (beyondEnter) {
+      /* Dimensional handoff: keep hitch language, skip long name morphs. */
+      mark.textContent = CURTAIN_TEXT;
+      mark.style.opacity = '1';
+      armMarkGlitch(CURTAIN_TEXT);
+      if (window.IrisMotion && window.IrisMotion.hitchCurtain) {
+        window.IrisMotion.hitchCurtain(curtain, reduceMotion);
+      }
+      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+        window.IrisMotion.burstGlitch(mark, reduceMotion);
+      }
       typedReady = true;
-      beginLift();
-    });
+      setTimeout(function () {
+        beginLift();
+      }, reduceMotion.matches ? 120 : 280);
+    } else {
+      playNameBeats(function () {
+        typedReady = true;
+        beginLift();
+      });
+    }
 
     if (!loadReady) {
       window.addEventListener('load', function () {
