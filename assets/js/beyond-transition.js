@@ -6,9 +6,42 @@
   var isMultiverse = html.classList.contains('is-multiverse');
   var busy = false;
 
-  var ARRIVE_MS = 1400;
-  var SETTLE_MS = 1600;
+  /* Leave / return on Multiverse only. Arrive gates the Multiverse curtain. */
+  var PORTAL_MS = 2100;
+  var SETTLE_MS = 1900;
+  var ARRIVE_MS = 1600;
   var FADE_MS = 320;
+
+  var STORM = [
+    'ट', 'Т', 'Τ', 'ت', '丁', 'अ', 'А', 'Α', 'ا',
+    'न', 'Ν', 'ن', 'ब', 'В', 'Β', 'ب', 'क', 'Κ',
+    '‡', '◇', '☰', '※', '✦'
+  ];
+  var HITCH_GLYPHS = {
+    T: ['ट', 'Т', 'Τ', 'ت'],
+    a: ['а', 'α', 'ا', 'अ'],
+    n: ['न', 'Ν', 'ن'],
+    i: ['і', 'ι', '工'],
+    s: ['ѕ', 'ς'],
+    h: ['н', 'η'],
+    q: ['ק', 'қ', 'क'],
+    B: ['Б', 'Β', 'ب', 'ब'],
+    f: ['ф', 'ƒ'],
+    A: ['А', 'Α', 'अ'],
+    e: ['е', 'ε'],
+    G: ['Г', 'Γ'],
+    O: ['О', 'Ο', '0'],
+    E: ['Е', 'Ε'],
+    Y: ['Υ', 'Ү'],
+    N: ['Ν', 'ن', 'Н'],
+    D: ['Д', 'Δ'],
+    R: ['Я', 'Ρ'],
+    U: ['Ц', '∪'],
+    M: ['М', 'Μ'],
+    L: ['Л', 'Λ'],
+    V: ['Ѵ', 'ν'],
+    H: ['Н', 'Η']
+  };
 
   window.__beyondPortal = {
     needed: false,
@@ -68,18 +101,25 @@
     el.id = 'beyond-seam';
     el.className = 'beyond-seam';
     el.setAttribute('aria-hidden', 'true');
-    /* One story beat: cream paper tears → iris opens → Multiverse shows through */
     el.innerHTML =
-      '<div class="beyond-seam__stage">' +
-        '<div class="beyond-seam__void"></div>' +
-        '<img class="beyond-seam__tear" src="assets/img/beyond-tear.svg?v=bx5" alt="" />' +
-        '<div class="beyond-seam__well">' +
-          '<img class="beyond-seam__spiral" src="assets/img/spiral-ref.svg?v=bx5" alt="" />' +
-          '<img class="beyond-seam__iris" src="assets/img/beyond-iris.svg?v=bx5" alt="" />' +
-        '</div>' +
-        '<div class="beyond-seam__fringe" aria-hidden="true"></div>' +
-        '<p class="beyond-seam__whisper" data-beyond-whisper></p>' +
-      '</div>';
+      '<div class="beyond-seam__void"></div>' +
+      '<div class="beyond-seam__vignette"></div>' +
+      '<div class="beyond-seam__warp"></div>' +
+      '<div class="beyond-seam__portal beyond-seam__portal--core"></div>' +
+      '<div class="beyond-seam__portal beyond-seam__portal--mid"></div>' +
+      '<div class="beyond-seam__portal beyond-seam__portal--rim"></div>' +
+      '<div class="beyond-seam__ring beyond-seam__ring--a"></div>' +
+      '<div class="beyond-seam__ring beyond-seam__ring--b"></div>' +
+      '<div class="beyond-seam__ring beyond-seam__ring--c"></div>' +
+      '<div class="beyond-seam__ring beyond-seam__ring--d"></div>' +
+      '<div class="beyond-seam__shards" data-beyond-shards></div>' +
+      '<div class="beyond-seam__scan"></div>' +
+      '<div class="beyond-seam__rgb beyond-seam__rgb--r"></div>' +
+      '<div class="beyond-seam__rgb beyond-seam__rgb--g"></div>' +
+      '<div class="beyond-seam__rgb beyond-seam__rgb--b"></div>' +
+      '<div class="beyond-seam__noise"></div>' +
+      '<div class="beyond-seam__storm" data-beyond-storm></div>' +
+      '<p class="beyond-seam__whisper" data-beyond-whisper></p>';
     document.body.appendChild(el);
     return el;
   }
@@ -89,19 +129,54 @@
     if (node) node.textContent = text || '';
   }
 
-  function hitchWhisper(rounds) {
+  function fillStorm() {
+    var storm = document.querySelector('[data-beyond-storm]');
+    if (!storm) return;
+    storm.innerHTML = '';
+    var count = 48;
+    var i;
+    for (i = 0; i < count; i += 1) {
+      var span = document.createElement('span');
+      span.className = 'beyond-seam__glyph';
+      span.textContent = STORM[Math.floor(Math.random() * STORM.length)];
+      var angle = (i / count) * Math.PI * 2;
+      var radius = 18 + Math.random() * 38;
+      span.style.left = (50 + Math.cos(angle) * radius).toFixed(2) + '%';
+      span.style.top = (50 + Math.sin(angle) * radius * 0.72).toFixed(2) + '%';
+      span.style.animationDelay = (Math.random() * 0.55).toFixed(2) + 's';
+      span.style.fontSize = (0.65 + Math.random() * 2.1).toFixed(2) + 'rem';
+      span.style.setProperty('--gx', ((Math.random() - 0.5) * 80).toFixed(1) + 'px');
+      span.style.setProperty('--gy', ((Math.random() - 0.5) * 60).toFixed(1) + 'px');
+      storm.appendChild(span);
+    }
+  }
+
+  function fillShards() {
+    var host = document.querySelector('[data-beyond-shards]');
+    if (!host) return;
+    host.innerHTML = '';
+    var i;
+    for (i = 0; i < 14; i += 1) {
+      var shard = document.createElement('span');
+      shard.className = 'beyond-seam__shard';
+      shard.style.left = (8 + Math.random() * 84).toFixed(2) + '%';
+      shard.style.top = (10 + Math.random() * 80).toFixed(2) + '%';
+      shard.style.width = (18 + Math.random() * 70).toFixed(1) + 'px';
+      shard.style.height = (2 + Math.random() * 4).toFixed(1) + 'px';
+      shard.style.transform = 'rotate(' + (Math.random() * 180).toFixed(1) + 'deg)';
+      shard.style.animationDelay = (Math.random() * 0.4).toFixed(2) + 's';
+      host.appendChild(shard);
+    }
+  }
+
+  function hardWhisperGlitch(rounds) {
     if (reduceMotion.matches) return;
     var node = document.querySelector('[data-beyond-whisper]');
     if (!node) return;
     var original = (node.textContent || '').trim();
     if (!original) return;
-    var glyphs = {
-      G: ['Г', 'Γ'], O: ['О', 'Ο'], B: ['Б', 'Β', 'ब'], E: ['Е', 'Ε'],
-      Y: ['Υ'], N: ['Ν', 'Н'], D: ['Д', 'Δ'], R: ['Я', 'Ρ'],
-      T: ['ट', 'Т'], U: ['Ц'], A: ['А', 'Α'], M: ['М', 'Μ'],
-      L: ['Л', 'Λ'], V: ['Ѵ'], H: ['Н', 'Η']
-    };
-    var left = rounds || 5;
+    var left = rounds || 6;
+
     function tick() {
       if (left <= 0) {
         node.textContent = original;
@@ -112,22 +187,31 @@
       var i;
       for (i = 0; i < chars.length; i += 1) {
         if (chars[i] === ' ') continue;
-        if (Math.random() > 0.55) continue;
-        var opts = glyphs[chars[i]] || glyphs[chars[i].toUpperCase()];
-        if (!opts) continue;
-        chars[i] = opts[Math.floor(Math.random() * opts.length)];
+        if (Math.random() > 0.5) continue;
+        var key = chars[i];
+        var options = HITCH_GLYPHS[key] || HITCH_GLYPHS[key.toUpperCase()] || HITCH_GLYPHS[key.toLowerCase()] || STORM;
+        chars[i] = options[Math.floor(Math.random() * options.length)];
       }
       node.textContent = chars.join('');
-      window.setTimeout(tick, 85 + Math.floor(Math.random() * 50));
+      window.setTimeout(tick, 70 + Math.floor(Math.random() * 55));
     }
     tick();
   }
 
   function runPhase(phaseClass, duration, done) {
     var seam = ensureOverlay();
-    seam.className = 'beyond-seam is-active ' + phaseClass;
+    fillStorm();
+    fillShards();
+    seam.className = 'beyond-seam is-active is-alive ' + phaseClass;
     html.classList.add('is-beyond-crossing');
     document.body.classList.add('is-beyond-crossing');
+    /* Second storm refresh mid-beat so glyphs keep moving, not one frozen spray */
+    window.setTimeout(function () {
+      if (!seam.classList.contains('is-active')) return;
+      fillStorm();
+      fillShards();
+      seam.classList.add('is-pulse');
+    }, Math.floor(duration * 0.42));
     window.setTimeout(function () {
       seam.className = 'beyond-seam';
       html.classList.remove('is-beyond-crossing');
@@ -145,7 +229,7 @@
       return;
     }
     setWhisper('RETURN');
-    hitchWhisper(6);
+    hardWhisperGlitch(9);
     runPhase('is-portal-return', SETTLE_MS, function () { location.href = target; });
   }
 
@@ -178,7 +262,7 @@
       return;
     }
 
-    hitchWhisper(7);
+    hardWhisperGlitch(10);
     runPhase('is-portal-arrive', ARRIVE_MS, function () {
       html.classList.remove('is-beyond-enter');
       markPortalDone();
