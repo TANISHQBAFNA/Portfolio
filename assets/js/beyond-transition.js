@@ -193,7 +193,7 @@
         chars[i] = options[Math.floor(Math.random() * options.length)];
       }
       node.textContent = chars.join('');
-      window.setTimeout(tick, 110 + Math.floor(Math.random() * 70));
+      window.setTimeout(tick, 70 + Math.floor(Math.random() * 55));
     }
     tick();
   }
@@ -205,16 +205,23 @@
     seam.className = 'beyond-seam is-active is-alive ' + phaseClass;
     html.classList.add('is-beyond-crossing');
     document.body.classList.add('is-beyond-crossing');
-    /* Second storm refresh mid-beat so glyphs keep moving, not one frozen spray */
+    /* Enter = chaos rises. Home = chaos settles. */
+    if (phaseClass.indexOf('arrive') !== -1) {
+      html.classList.add('is-beyond-to-glitch');
+      html.classList.remove('is-beyond-to-stable');
+    } else if (phaseClass.indexOf('return') !== -1) {
+      html.classList.add('is-beyond-to-stable');
+      html.classList.remove('is-beyond-to-glitch');
+    }
     window.setTimeout(function () {
       if (!seam.classList.contains('is-active')) return;
       fillStorm();
       fillShards();
-      seam.classList.add('is-soft-pulse');
+      seam.classList.add('is-pulse');
     }, Math.floor(duration * 0.42));
     window.setTimeout(function () {
       seam.className = 'beyond-seam';
-      html.classList.remove('is-beyond-crossing');
+      html.classList.remove('is-beyond-crossing', 'is-beyond-to-glitch', 'is-beyond-to-stable');
       document.body.classList.remove('is-beyond-crossing');
       if (done) done();
     }, duration);
@@ -229,7 +236,7 @@
       return;
     }
     setWhisper('GO HOME');
-    hardWhisperGlitch(5);
+    hardWhisperGlitch(9);
     runPhase('is-portal-return', SETTLE_MS, function () { location.href = target; });
   }
 
@@ -262,7 +269,7 @@
       return;
     }
 
-    hardWhisperGlitch(5);
+    hardWhisperGlitch(10);
     runPhase('is-portal-arrive', ARRIVE_MS, function () {
       html.classList.remove('is-beyond-enter');
       markPortalDone();
