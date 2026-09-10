@@ -55,7 +55,7 @@
 
   function hidePortal() {
     if (!root) return;
-    root.classList.remove('is-on', 'is-cover');
+    root.classList.remove('is-on', 'is-cover', 'is-hold');
     root.setAttribute('aria-hidden', 'true');
   }
 
@@ -105,7 +105,10 @@
     setWhisper('GO BEYOND');
     if (whisper) whisper.classList.remove('is-leave');
     showPortal();
-    if (root) root.classList.add('is-cover');
+    if (root) {
+      root.classList.add('is-cover');
+      root.classList.remove('is-hold');
+    }
     document.documentElement.classList.remove('is-beyond');
 
     var holeAmt = { r: 0 };
@@ -222,6 +225,7 @@
     if (params.get('hold') === '1') {
       if (!gsapReady()) {
         showPortal();
+        if (root) root.classList.add('is-hold');
         if (veil) veil.style.opacity = '1';
         return;
       }
@@ -230,6 +234,7 @@
       window.gsap.set(stage, { autoAlpha: 0, xPercent: -50, yPercent: -50, scale: 0.07 });
       hole('0px');
       showPortal();
+      if (root) root.classList.add('is-hold');
       setBusy(false);
       return;
     }

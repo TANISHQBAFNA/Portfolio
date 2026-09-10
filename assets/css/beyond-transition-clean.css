@@ -248,6 +248,10 @@ body.mv-clean {
 
 .portal.is-on {
   visibility: visible;
+  pointer-events: none;
+}
+
+html.is-portal-busy .portal.is-on {
   pointer-events: auto;
 }
 
@@ -348,6 +352,36 @@ html.is-beyond-skip .portal {
 }
 
 .portal__whisper.is-leave { color: var(--mv-cream); }
+
+.portal__cta {
+  position: absolute;
+  right: clamp(20px, 4vw, 56px);
+  top: max(28px, env(safe-area-inset-top));
+  z-index: 5;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 8px 0;
+  cursor: pointer;
+  font-family: var(--mv-font);
+  font-size: clamp(0.72rem, 1.1vw, 0.92rem);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mv-coffee);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.portal.is-hold .portal__cta {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+html.is-portal-busy .portal__cta {
+  opacity: 0;
+  pointer-events: none;
+}
 
 html.is-portal-busy .mv-hook { pointer-events: none; }
 
