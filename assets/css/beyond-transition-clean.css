@@ -12,6 +12,9 @@
   --mv-font: "Syne", ui-sans-serif, system-ui, sans-serif;
   --mv-body: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --portal-hole: 0px;
+  --portal-collapse: 0.9s;
+  --portal-black-gap: 0.16s;
+  --portal-void-hold: 0.8s;
 }
 
 *,
@@ -259,12 +262,29 @@ html.is-portal-busy .portal.is-on {
   pointer-events: auto;
 }
 
+.portal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+
+.portal.is-gap::before { opacity: 1; }
+
 .portal__void {
   position: absolute;
   inset: 0;
-  background: var(--mv-coffee);
+  z-index: 2;
+  background: #1e1510;
   opacity: 0;
+  transition: none;
 }
+
+.portal.is-void .portal__void { opacity: 1; }
 
 .portal__veil {
   position: absolute;
@@ -294,6 +314,7 @@ html.is-beyond-skip .portal {
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 3;
   width: min(124vmin, 124vw);
   height: min(124vmin, 124vw);
   margin: 0;
@@ -302,6 +323,10 @@ html.is-beyond-skip .portal {
   opacity: 0;
   isolation: isolate;
   contain: layout style;
+}
+
+.portal.is-portal-return .portal__stage {
+  animation-duration: var(--portal-collapse);
 }
 
 .portal__rings {
@@ -328,7 +353,7 @@ html.is-beyond-skip .portal {
   height: 11vmin;
   margin: -5.5vmin 0 0 -5.5vmin;
   border-radius: 50%;
-  background: var(--mv-coffee);
+  background: transparent;
   box-shadow:
     0 0 0 2px var(--mv-teal),
     0 0 0 5px var(--mv-cream);
@@ -339,6 +364,7 @@ html.is-beyond-skip .portal {
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 4;
   margin: 0;
   font-family: var(--mv-font);
   font-weight: 800;

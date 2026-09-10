@@ -8,7 +8,6 @@
   'use strict';
 
   var HOME = 'index.html';
-  var VOID_HOLD = 0.85;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var params = new URLSearchParams(location.search);
   var busy = false;
@@ -55,8 +54,16 @@
 
   function hidePortal() {
     if (!root) return;
-    root.classList.remove('is-on', 'is-cover', 'is-hold');
+    root.classList.remove('is-on', 'is-cover', 'is-hold', 'is-portal-return', 'is-void', 'is-gap');
     root.setAttribute('aria-hidden', 'true');
+  }
+
+  function cssSeconds(name, fallback) {
+    var raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    if (!raw) return fallback;
+    if (raw.indexOf('ms') !== -1) return parseFloat(raw) / 1000;
+    var n = parseFloat(raw);
+    return isNaN(n) ? fallback : n;
   }
 
   function killActive() {
@@ -173,34 +180,57 @@
     document.documentElement.classList.remove('is-beyond-skip');
     showPortal();
     if (root) {
-      root.classList.remove('is-cover', 'is-hold');
+      root.classList.remove('is-cover', 'is-hold', 'is-void', 'is-gap');
     }
+
+    var collapse = cssSeconds('--portal-collapse', 0.9);
+    var gap = cssSeconds('--portal-black-gap', 0.16);
+    var hold = cssSeconds('--portal-void-hold', 0.8);
+    var collapseWait = collapse + 0.03;
 
     gsap.set(veil, { autoAlpha: 0 });
     hole('160vmax');
-    gsap.set(voidEl, { autoAlpha: 1 });
+    gsap.set(voidEl, { autoAlpha: 0 });
     gsap.set(stage, { autoAlpha: 1, xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 1.55 });
     gsap.set(core, { scale: 1.05, autoAlpha: 1 });
     gsap.set(whisper, { autoAlpha: 0, xPercent: -50, yPercent: -50, scale: 1.04, color: '#f4efe6' });
     gsap.set(ringsRed, { x: 5, y: -2, autoAlpha: 0.4 });
     gsap.set(ringsCyan, { x: -5, y: 2, autoAlpha: 0.36 });
     gsap.set(ringsBlue, { x: 0, y: 3, autoAlpha: 0.2 });
+    if (root) root.classList.add('is-portal-return');
+
+    var tCollapse = 0.08;
+    var tGone = tCollapse + collapseWait;
+    var tCoffee = tGone + gap;
 
     active = gsap.timeline({
       defaults: { overwrite: 'auto' },
+      onUpdate: lockWorld,
       onComplete: function () {
         window.location.href = HOME;
       }
     });
 
     active
-      .to(whisper, { autoAlpha: 1, scale: 1, duration: 0.18, ease: 'power2.out' }, 0)
-      .to(stage, { scale: 0.001, duration: 0.92, ease: 'power3.in' }, 0.1)
-      .to(core, { scale: 0.001, duration: 0.92, ease: 'power3.in' }, 0.1)
-      .to([ringsRed, ringsCyan, ringsBlue], { x: 0, y: 0, duration: 0.5, ease: 'power2.in' }, 0.16)
-      .to(whisper, { autoAlpha: 0, scale: 0.92, duration: 0.2, ease: 'power2.in' }, 0.55)
-      .to(stage, { autoAlpha: 0, duration: 0.08, ease: 'none' }, 1.02)
-      .to(voidEl, { autoAlpha: 1, duration: VOID_HOLD }, 1.04);
+      .to(whisper, { autoAlpha: 1, scale: 1, duration: 0.16, ease: 'power2.out' }, 0)
+      .to(stage, { scale: 0, duration: collapse, ease: 'power3.in' }, tCollapse)
+      .to(core, { scale: 0, duration: collapse, ease: 'power3.in' }, tCollapse)
+      .to([ringsRed, ringsCyan, ringsBlue], { x: 0, y: 0, duration: collapse * 0.7, ease: 'power2.in' }, tCollapse + 0.04)
+      .to(whisper, { autoAlpha: 0, duration: 0.16, ease: 'power2.in' }, tCollapse + collapse * 0.58)
+      .set([stage, core, whisper, ringsRed, ringsCyan, ringsBlue], { autoAlpha: 0, scale: 0 }, tGone)
+      .call(function () {
+        if (!root) return;
+        root.classList.remove('is-portal-return');
+        root.classList.add('is-gap');
+      }, null, tGone)
+      .call(function () {
+        if (!root) return;
+        root.classList.remove('is-gap');
+        root.classList.add('is-void');
+        gsap.set(voidEl, { autoAlpha: 1 });
+      }, null, tCoffee)
+      .set(voidEl, { autoAlpha: 1 }, tCoffee)
+      .to(voidEl, { autoAlpha: 1, duration: hold, ease: 'none' }, tCoffee);
   }
 
   function boot() {
