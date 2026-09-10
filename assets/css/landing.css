@@ -5340,3 +5340,27 @@ html.is-study .study-rail .work-card.is-current {
   }
 }
 
+
+
+/* Lock: My Work = production teal, cream label (readable) */
+html.is-light-home .work-cta,
+html.is-light-home .work-cta.is-pulling,
+html.is-light-home.is-dark .work-cta,
+html.is-light-home.is-dark .work-cta:hover,
+html.is-light-home.is-dark .work-cta:focus-visible {
+  background: #00a0a0 !important;
+  border-color: #00a0a0 !important;
+  color: #f4efe6 !important;
+  -webkit-text-fill-color: #f4efe6;
+}
+html.is-light-home .work-cta__label {
+  color: #f4efe6 !important;
+  -webkit-text-fill-color: #f4efe6;
+}
+html.is-light-home .work-cta:hover,
+html.is-light-home .work-cta:focus-visible {
+  background: #1E1510 !important;
+  border-color: #1E1510 !important;
+  color: #f4efe6 !important;
+  -webkit-text-fill-color: #f4efe6;
+}

@@ -5819,3 +5819,26 @@ html.is-multiverse.is-dark .theme-tab__icon--sun { display: flex !important; }
 html.is-multiverse.is-dark .theme-tab__icon--moon { display: none !important; }
 
 
+
+
+/* Lock: My Work = production teal #00a0a0, cream label — not comic cyan */
+html.is-multiverse .work-cta,
+html.is-multiverse .work-cta.is-pulling,
+html.is-multiverse.is-dark .work-cta {
+  background: #00a0a0 !important;
+  border-color: #00a0a0 !important;
+  color: #f4efe6 !important;
+  -webkit-text-fill-color: #f4efe6;
+  box-shadow: 0 -12px 32px rgba(0, 160, 160, 0.32) !important;
+}
+html.is-multiverse .work-cta__label {
+  color: #f4efe6 !important;
+  -webkit-text-fill-color: #f4efe6;
+}
+html.is-multiverse .work-cta:hover,
+html.is-multiverse .work-cta:focus-visible {
+  background: #1E1510 !important;
+  border-color: #1E1510 !important;
+  color: #f4efe6 !important;
+  -webkit-text-fill-color: #f4efe6;
+}
