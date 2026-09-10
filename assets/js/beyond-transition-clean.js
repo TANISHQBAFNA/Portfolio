@@ -8,7 +8,7 @@
   'use strict';
 
   var HOME = 'index.html';
-  var VOID_HOLD = 0.78;
+  var VOID_HOLD = 0.85;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var params = new URLSearchParams(location.search);
   var busy = false;
@@ -88,6 +88,16 @@
   function lockWorld() {
     if (!world) return;
     world.style.transform = 'none';
+    world.style.scale = 'none';
+    if (gsapReady()) {
+      window.gsap.set(world, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        rotation: 0,
+        overwrite: true
+      });
+    }
   }
 
   function playEnter() {
@@ -124,6 +134,7 @@
 
     active = gsap.timeline({
       defaults: { overwrite: 'auto' },
+      onUpdate: lockWorld,
       onComplete: function () {
         gsap.set([veil, stage, whisper, ringsRed, ringsCyan, ringsBlue], { autoAlpha: 0 });
         hidePortal();
@@ -182,6 +193,7 @@
 
     active = gsap.timeline({
       defaults: { overwrite: 'auto' },
+      onUpdate: lockWorld,
       onComplete: function () {
         window.location.href = HOME;
       }
@@ -189,13 +201,13 @@
 
     active
       .to(whisper, { autoAlpha: 1, scale: 1, duration: 0.18, ease: 'power2.out' }, 0)
-      .to(stage, { scale: 0, duration: 0.92, ease: 'power3.in' }, 0.12)
-      .to(core, { scale: 0, duration: 0.92, ease: 'power3.in' }, 0.12)
+      .to(stage, { scale: 0.001, duration: 0.92, ease: 'power3.in' }, 0.12)
+      .to(core, { scale: 0.001, duration: 0.92, ease: 'power3.in' }, 0.12)
       .to([ringsRed, ringsCyan, ringsBlue], { x: 0, y: 0, duration: 0.55, ease: 'power2.in' }, 0.18)
       .to(whisper, { autoAlpha: 0, scale: 0.84, duration: 0.22, ease: 'power2.in' }, 0.58)
-      .to(stage, { autoAlpha: 0, duration: 0.12, ease: 'none' }, 1.02)
-      .set(voidEl, { autoAlpha: 1 }, 1.04)
-      .to({}, { duration: VOID_HOLD });
+      .to(stage, { autoAlpha: 0, duration: 0.01, ease: 'none' }, 1.04)
+      .set(voidEl, { autoAlpha: 1 }, 1.05)
+      .to(voidEl, { autoAlpha: 1, duration: VOID_HOLD }, 1.05);
   }
 
   function boot() {
