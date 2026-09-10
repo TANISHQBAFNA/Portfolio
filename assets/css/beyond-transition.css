@@ -340,12 +340,12 @@ html.is-beyond-enter .curtain {
       rgba(244, 239, 230, 0.95) 24%,
       rgba(30, 21, 16, 0.45) 52%,
       #f4efe6 100%);
-  animation: beyond-portal-suck 1.9s cubic-bezier(0.45, 0.05, 0.2, 1) both;
+  animation: beyond-portal-open 1.9s cubic-bezier(0.18, 0.85, 0.22, 1) both;
 }
 .beyond-seam.is-portal-return .beyond-seam__portal--mid,
 .beyond-seam.is-portal-return .beyond-seam__portal--rim {
   opacity: 1;
-  animation: beyond-portal-suck 1.9s 0.06s cubic-bezier(0.45, 0.05, 0.2, 1) both;
+  animation: beyond-portal-open 1.9s 0.06s cubic-bezier(0.18, 0.85, 0.22, 1) both;
 }
 .beyond-seam.is-portal-return .beyond-seam__ring--a,
 .beyond-seam.is-portal-return .beyond-seam__ring--b,
@@ -354,15 +354,9 @@ html.is-beyond-enter .curtain {
   opacity: 1;
   animation: beyond-ring-collapse 1.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
-.beyond-seam.is-portal-return .beyond-seam__ring--b {
-  animation-delay: 0.05s;
-}
-.beyond-seam.is-portal-return .beyond-seam__ring--c {
-  animation-delay: 0.1s;
-}
-.beyond-seam.is-portal-return .beyond-seam__ring--d {
-  animation-delay: 0.15s;
-}
+.beyond-seam.is-portal-return .beyond-seam__ring--b { animation-delay: 0.05s; }
+.beyond-seam.is-portal-return .beyond-seam__ring--c { animation-delay: 0.1s; }
+.beyond-seam.is-portal-return .beyond-seam__ring--d { animation-delay: 0.15s; }
 .beyond-seam.is-portal-return .beyond-seam__rgb--r { opacity: 1; animation: beyond-rgb-settle 1.9s steps(4, end) both; }
 .beyond-seam.is-portal-return .beyond-seam__rgb--g { opacity: 1; animation: beyond-rgb-settle 1.9s 0.04s steps(4, end) both; }
 .beyond-seam.is-portal-return .beyond-seam__rgb--b { opacity: 1; animation: beyond-rgb-settle 1.9s 0.08s steps(4, end) both; }
@@ -393,11 +387,7 @@ html.is-beyond-enter .curtain {
   100% { opacity: 0; }
 }
 @keyframes beyond-portal-open {
-  0% { transform: translate3d(-50%, -50%, 0) scale(0.12) rotateX(14deg); opacity: 0; filter: blur(8px); }
-  28% { transform: translate3d(-50%, -50%, 0) scale(0.95) rotateX(4deg); opacity: 1; filter: blur(0); }
-  62% { transform: translate3d(-50%, -50%, 0) scale(1.85) rotateX(0deg); }
-  100% { transform: translate3d(-50%, -50%, 0) scale(5.4) rotateX(-4deg); opacity: 1; }
-}
+  0% { transform: translate3d(-50%, -50%, 0) scale(0.06) rotateX(18deg); opacity: 0; filter: blur(10px); }
   18% { transform: translate3d(-50%, -50%, 0) scale(0.55) rotateX(10deg); opacity: 1; filter: blur(0); }
   38% { transform: translate3d(-50%, -50%, 0) scale(1.05) rotateX(2deg); }
   55% { transform: translate3d(-50%, -50%, 0) scale(0.92) rotateX(-2deg); }
@@ -405,11 +395,7 @@ html.is-beyond-enter .curtain {
   100% { transform: translate3d(-50%, -50%, 0) scale(4.8) rotateX(-6deg); opacity: 1; }
 }
 @keyframes beyond-portal-suck {
-  0% { transform: translate3d(-50%, -50%, 0) scale(5.2) rotateX(-4deg); opacity: 1; filter: blur(0); }
-  40% { transform: translate3d(-50%, -50%, 0) scale(2.1) rotateX(2deg); opacity: 1; }
-  75% { transform: translate3d(-50%, -50%, 0) scale(0.7) rotateX(8deg); opacity: 0.85; }
-  100% { transform: translate3d(-50%, -50%, 0) scale(0.08) rotateX(12deg); opacity: 0; filter: blur(5px); }
-}
+  0% { transform: translate3d(-50%, -50%, 0) scale(4.4) rotateX(-6deg); opacity: 1; filter: blur(0); }
   22% { transform: translate3d(-50%, -50%, 0) scale(2.6) rotateX(-2deg); }
   48% { transform: translate3d(-50%, -50%, 0) scale(1.35) rotateX(3deg); opacity: 1; }
   70% { transform: translate3d(-50%, -50%, 0) scale(0.7) rotateX(8deg); }
@@ -417,10 +403,6 @@ html.is-beyond-enter .curtain {
 }
 @keyframes beyond-ring-burst {
   0% { transform: translate(-50%, -50%) scale(0.1) rotate(0deg); opacity: 0; }
-  18% { opacity: 1; }
-  45% { transform: translate(-50%, -50%) scale(2.2) rotate(28deg); opacity: 0.95; }
-  100% { transform: translate(-50%, -50%) scale(6.8) rotate(90deg); opacity: 0; }
-}
   15% { opacity: 1; }
   40% { transform: translate(-50%, -50%) scale(1.8) rotate(24deg); opacity: 0.95; }
   70% { transform: translate(-50%, -50%) scale(3.6) rotate(56deg); opacity: 0.55; }
@@ -428,9 +410,8 @@ html.is-beyond-enter .curtain {
 }
 @keyframes beyond-ring-collapse {
   0% { transform: translate(-50%, -50%) scale(5.8) rotate(20deg); opacity: 0.95; }
-  35% { transform: translate(-50%, -50%) scale(2.4) rotate(-10deg); opacity: 1; }
-  70% { transform: translate(-50%, -50%) scale(0.85) rotate(-28deg); opacity: 0.75; }
-  100% { transform: translate(-50%, -50%) scale(0.12) rotate(-48deg); opacity: 0; }
+  40% { transform: translate(-50%, -50%) scale(2.2) rotate(-12deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.12) rotate(-40deg); opacity: 0; }
 }
   100% { transform: translate(-50%, -50%) scale(0.18) rotate(30deg); opacity: 0; }
 }
@@ -542,7 +523,7 @@ html.is-beyond-enter .curtain {
   animation-name: beyond-ring-collapse, beyond-ring-spin;
 }
 .beyond-seam.is-portal-return.is-alive .beyond-seam__portal--core {
-  animation-name: beyond-portal-suck, beyond-portal-breathe;
+  animation-name: beyond-portal-open, beyond-portal-breathe;
 }
 
 .beyond-seam.is-alive .beyond-seam__warp {
