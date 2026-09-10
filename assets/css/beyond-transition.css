@@ -586,3 +586,115 @@ html.is-beyond-enter .curtain {
     animation: none !important;
   }
 }
+
+
+/* ===== Go Home: page vacuum into portal, then coffee silence ===== */
+html.is-beyond-vacuum,
+html.is-beyond-vacuum body {
+  cursor: progress;
+}
+
+html.is-beyond-vacuum .atmosphere,
+html.is-beyond-vacuum .stage,
+html.is-beyond-vacuum .edge-dock,
+html.is-beyond-vacuum .work-cta,
+html.is-beyond-vacuum .home-tab,
+html.is-beyond-vacuum .theme-tab,
+html.is-beyond-vacuum .skip-link,
+html.is-beyond-vacuum .rail,
+html.is-beyond-vacuum .detail,
+html.is-beyond-vacuum .study {
+  transform-origin: 50% 48vh;
+  animation: beyond-vacuum-in 0.9s cubic-bezier(0.55, 0.05, 0.35, 1) both;
+  pointer-events: none !important;
+}
+
+html.is-beyond-vacuum .atmosphere {
+  animation-duration: 0.85s;
+}
+html.is-beyond-vacuum .masthead {
+  animation-delay: 0.02s;
+}
+html.is-beyond-vacuum .work-cta,
+html.is-beyond-vacuum .edge-dock {
+  animation-delay: 0.04s;
+}
+
+@keyframes beyond-vacuum-in {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+  55% {
+    transform: translate3d(0, 2vh, 0) scale(0.42);
+    opacity: 0.55;
+    filter: blur(1px);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.04);
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+/* After portal: empty coffee brown, quiet */
+.beyond-seam.is-coffee-void {
+  background: #1E1510;
+  opacity: 1;
+  visibility: visible;
+}
+.beyond-seam.is-coffee-void .beyond-seam__void {
+  opacity: 1;
+  background: #1E1510;
+  animation: none;
+}
+.beyond-seam.is-coffee-void .beyond-seam__portal,
+.beyond-seam.is-coffee-void .beyond-seam__portal--core,
+.beyond-seam.is-coffee-void .beyond-seam__portal--mid,
+.beyond-seam.is-coffee-void .beyond-seam__portal--rim,
+.beyond-seam.is-coffee-void .beyond-seam__ring,
+.beyond-seam.is-coffee-void .beyond-seam__warp,
+.beyond-seam.is-coffee-void .beyond-seam__vignette,
+.beyond-seam.is-coffee-void .beyond-seam__shards,
+.beyond-seam.is-coffee-void .beyond-seam__scan,
+.beyond-seam.is-coffee-void .beyond-seam__rgb,
+.beyond-seam.is-coffee-void .beyond-seam__noise,
+.beyond-seam.is-coffee-void .beyond-seam__storm,
+.beyond-seam.is-coffee-void .beyond-seam__whisper {
+  opacity: 0 !important;
+  animation: none !important;
+  visibility: hidden;
+}
+
+html.is-beyond-coffee-void,
+html.is-beyond-coffee-void body {
+  background: #1E1510 !important;
+  animation: none !important;
+  filter: none !important;
+}
+html.is-beyond-coffee-void .atmosphere,
+html.is-beyond-coffee-void .stage,
+html.is-beyond-coffee-void .edge-dock,
+html.is-beyond-coffee-void .work-cta,
+html.is-beyond-coffee-void .home-tab,
+html.is-beyond-coffee-void .theme-tab,
+html.is-beyond-coffee-void .rail,
+html.is-beyond-coffee-void .detail,
+html.is-beyond-coffee-void .study,
+html.is-beyond-coffee-void .curtain {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-beyond-vacuum .atmosphere,
+  html.is-beyond-vacuum .stage,
+  html.is-beyond-vacuum .edge-dock,
+  html.is-beyond-vacuum .work-cta,
+  html.is-beyond-vacuum .home-tab,
+  html.is-beyond-vacuum .theme-tab {
+    animation: beyond-fade 0.28s ease both;
+  }
+}
