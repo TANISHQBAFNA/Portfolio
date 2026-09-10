@@ -5,18 +5,17 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   var isMultiverse = html.classList.contains('is-multiverse');
   var busy = false;
-  var PORTAL_MS = 1400;
-  var SETTLE_MS = 1200;
-  var THRESHOLD_MS = 900;
-  var LAND_MS = 700;
-  var FADE_MS = 280;
+
+  /* Leave / return on Multiverse only. Arrive gates the Multiverse curtain. */
+  var PORTAL_MS = 1750;
+  var SETTLE_MS = 1550;
+  var ARRIVE_MS = 1200;
+  var FADE_MS = 320;
+
   var STORM = [
-    'ट', 'Т', 'Τ', 'ت', '丁',
-    'अ', 'А', 'Α', 'ا',
-    'न', 'Ν', 'ن',
-    'ब', 'В', 'Β', 'ب',
-    'क', 'Κ',
-    'BEYOND', 'HOME', '‡', '☰', '◇'
+    'ट', 'Т', 'Τ', 'ت', '丁', 'अ', 'А', 'Α', 'ا',
+    'न', 'Ν', 'ن', 'ब', 'В', 'Β', 'ب', 'क', 'Κ',
+    '‡', '◇', '☰', '※', '✦'
   ];
   var HITCH_GLYPHS = {
     T: ['ट', 'Т', 'Τ', 'ت'],
@@ -29,7 +28,25 @@
     B: ['Б', 'Β', 'ب', 'ब'],
     f: ['ф', 'ƒ'],
     A: ['А', 'Α', 'अ'],
-    e: ['е', 'ε']
+    e: ['е', 'ε'],
+    G: ['Г', 'Γ'],
+    O: ['О', 'Ο', '0'],
+    E: ['Е', 'Ε'],
+    Y: ['Υ', 'Ү'],
+    N: ['Ν', 'ن', 'Н'],
+    D: ['Д', 'Δ'],
+    R: ['Я', 'Ρ'],
+    U: ['Ц', '∪'],
+    M: ['М', 'Μ'],
+    L: ['Л', 'Λ'],
+    V: ['Ѵ', 'ν'],
+    H: ['Н', 'Η']
+  };
+
+  window.__beyondPortal = {
+    needed: false,
+    done: false,
+    waiters: []
   };
 
   function hasParam(name) {
@@ -61,8 +78,21 @@
     return base + (base.indexOf('?') === -1 ? '?' : '&') + key + '=1';
   }
 
-  if (isMultiverse && hasParam('beyond')) html.classList.add('is-beyond-enter');
-  if (!isMultiverse && hasParam('home')) html.classList.add('is-beyond-home');
+  function markPortalDone() {
+    var gate = window.__beyondPortal;
+    gate.done = true;
+    gate.waiters.splice(0).forEach(function (fn) {
+      try { fn(); } catch (err) { /* ignore */ }
+    });
+    try {
+      window.dispatchEvent(new CustomEvent('beyond:portal-done'));
+    } catch (err) { /* ignore */ }
+  }
+
+  if (isMultiverse && hasParam('beyond')) {
+    html.classList.add('is-beyond-enter');
+    window.__beyondPortal.needed = true;
+  }
 
   function ensureOverlay() {
     var el = document.getElementById('beyond-seam');
@@ -73,10 +103,16 @@
     el.setAttribute('aria-hidden', 'true');
     el.innerHTML =
       '<div class="beyond-seam__void"></div>' +
-      '<div class="beyond-seam__portal" data-beyond-portal></div>' +
+      '<div class="beyond-seam__vignette"></div>' +
+      '<div class="beyond-seam__warp"></div>' +
+      '<div class="beyond-seam__portal beyond-seam__portal--core"></div>' +
+      '<div class="beyond-seam__portal beyond-seam__portal--mid"></div>' +
+      '<div class="beyond-seam__portal beyond-seam__portal--rim"></div>' +
       '<div class="beyond-seam__ring beyond-seam__ring--a"></div>' +
       '<div class="beyond-seam__ring beyond-seam__ring--b"></div>' +
       '<div class="beyond-seam__ring beyond-seam__ring--c"></div>' +
+      '<div class="beyond-seam__ring beyond-seam__ring--d"></div>' +
+      '<div class="beyond-seam__shards" data-beyond-shards></div>' +
       '<div class="beyond-seam__scan"></div>' +
       '<div class="beyond-seam__rgb beyond-seam__rgb--r"></div>' +
       '<div class="beyond-seam__rgb beyond-seam__rgb--g"></div>' +
@@ -97,34 +133,53 @@
     var storm = document.querySelector('[data-beyond-storm]');
     if (!storm) return;
     storm.innerHTML = '';
-    var count = 28;
+    var count = 36;
     var i;
     for (i = 0; i < count; i += 1) {
       var span = document.createElement('span');
       span.className = 'beyond-seam__glyph';
       span.textContent = STORM[Math.floor(Math.random() * STORM.length)];
-      span.style.left = (4 + Math.random() * 92).toFixed(2) + '%';
-      span.style.top = (6 + Math.random() * 88).toFixed(2) + '%';
-      span.style.animationDelay = (Math.random() * 0.45).toFixed(2) + 's';
-      span.style.fontSize = (0.7 + Math.random() * 1.8).toFixed(2) + 'rem';
+      var angle = (i / count) * Math.PI * 2;
+      var radius = 18 + Math.random() * 38;
+      span.style.left = (50 + Math.cos(angle) * radius).toFixed(2) + '%';
+      span.style.top = (50 + Math.sin(angle) * radius * 0.72).toFixed(2) + '%';
+      span.style.animationDelay = (Math.random() * 0.55).toFixed(2) + 's';
+      span.style.fontSize = (0.65 + Math.random() * 2.1).toFixed(2) + 'rem';
+      span.style.setProperty('--gx', ((Math.random() - 0.5) * 80).toFixed(1) + 'px');
+      span.style.setProperty('--gy', ((Math.random() - 0.5) * 60).toFixed(1) + 'px');
       storm.appendChild(span);
     }
   }
 
-  function hardNameGlitch(rounds) {
+  function fillShards() {
+    var host = document.querySelector('[data-beyond-shards]');
+    if (!host) return;
+    host.innerHTML = '';
+    var i;
+    for (i = 0; i < 14; i += 1) {
+      var shard = document.createElement('span');
+      shard.className = 'beyond-seam__shard';
+      shard.style.left = (8 + Math.random() * 84).toFixed(2) + '%';
+      shard.style.top = (10 + Math.random() * 80).toFixed(2) + '%';
+      shard.style.width = (18 + Math.random() * 70).toFixed(1) + 'px';
+      shard.style.height = (2 + Math.random() * 4).toFixed(1) + 'px';
+      shard.style.transform = 'rotate(' + (Math.random() * 180).toFixed(1) + 'deg)';
+      shard.style.animationDelay = (Math.random() * 0.4).toFixed(2) + 's';
+      host.appendChild(shard);
+    }
+  }
+
+  function hardWhisperGlitch(rounds) {
     if (reduceMotion.matches) return;
-    var logo = document.querySelector('.masthead__name, .curtain__mark');
-    if (!logo) return;
-    var original = (logo.getAttribute('data-latin') || logo.textContent || 'Tanishq Bafna').trim();
-    var left = rounds || 5;
+    var node = document.querySelector('[data-beyond-whisper]');
+    if (!node) return;
+    var original = (node.textContent || '').trim();
+    if (!original) return;
+    var left = rounds || 6;
 
     function tick() {
       if (left <= 0) {
-        logo.textContent = original;
-        logo.classList.remove('is-beyond-hitch');
-        if (window.IrisMotion && window.IrisMotion.burstGlitch) {
-          window.IrisMotion.burstGlitch(logo, reduceMotion);
-        }
+        node.textContent = original;
         return;
       }
       left -= 1;
@@ -132,19 +187,13 @@
       var i;
       for (i = 0; i < chars.length; i += 1) {
         if (chars[i] === ' ') continue;
-        if (Math.random() > 0.45) continue;
-        var options = HITCH_GLYPHS[chars[i]] || HITCH_GLYPHS[chars[i].toUpperCase()] || HITCH_GLYPHS[chars[i].toLowerCase()];
-        if (!options) {
-          options = STORM;
-        }
+        if (Math.random() > 0.5) continue;
+        var key = chars[i];
+        var options = HITCH_GLYPHS[key] || HITCH_GLYPHS[key.toUpperCase()] || HITCH_GLYPHS[key.toLowerCase()] || STORM;
         chars[i] = options[Math.floor(Math.random() * options.length)];
       }
-      logo.classList.add('is-beyond-hitch');
-      logo.textContent = chars.join('');
-      if (window.IrisMotion && window.IrisMotion.burstGlitch && left % 2 === 0) {
-        window.IrisMotion.burstGlitch(logo, reduceMotion);
-      }
-      window.setTimeout(tick, 90 + Math.floor(Math.random() * 70));
+      node.textContent = chars.join('');
+      window.setTimeout(tick, 70 + Math.floor(Math.random() * 55));
     }
     tick();
   }
@@ -152,6 +201,7 @@
   function runPhase(phaseClass, duration, done) {
     var seam = ensureOverlay();
     fillStorm();
+    fillShards();
     seam.className = 'beyond-seam is-active ' + phaseClass;
     html.classList.add('is-beyond-crossing');
     document.body.classList.add('is-beyond-crossing');
@@ -163,19 +213,6 @@
     }, duration);
   }
 
-  function goBeyond(href) {
-    if (busy) return;
-    busy = true;
-    var target = withBeyondQuery(href, 'beyond');
-    if (reduceMotion.matches) {
-      runPhase('is-fade-out', FADE_MS, function () { location.href = target; });
-      return;
-    }
-    setWhisper('GO BEYOND');
-    hardNameGlitch(7);
-    runPhase('is-portal-leave', PORTAL_MS, function () { location.href = target; });
-  }
-
   function goHome(href) {
     if (busy) return;
     busy = true;
@@ -185,20 +222,8 @@
       return;
     }
     setWhisper('RETURN');
-    hardNameGlitch(5);
+    hardWhisperGlitch(7);
     runPhase('is-portal-return', SETTLE_MS, function () { location.href = target; });
-  }
-
-  function wireBeyondTab() {
-    var tab = document.querySelector('[data-beyond-tab]');
-    if (!tab) return;
-    tab.addEventListener('click', function (event) {
-      if (event.defaultPrevented) return;
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      if (typeof event.button === 'number' && event.button !== 0) return;
-      event.preventDefault();
-      goBeyond(tab.getAttribute('href') || 'index-multiverse.html');
-    });
   }
 
   function wireHomeTab() {
@@ -214,37 +239,32 @@
   }
 
   function handleArrival() {
-    if (isMultiverse && html.classList.contains('is-beyond-enter')) {
-      window.setTimeout(function () { stripParams(['beyond']); }, 0);
-      setWhisper('MULTIVERSE');
-      if (reduceMotion.matches) {
-        window.setTimeout(function () { html.classList.remove('is-beyond-enter'); }, FADE_MS);
-        return;
-      }
-      hardNameGlitch(4);
-      runPhase('is-portal-arrive', THRESHOLD_MS, function () {
+    if (!(isMultiverse && html.classList.contains('is-beyond-enter'))) {
+      markPortalDone();
+      return;
+    }
+
+    window.setTimeout(function () { stripParams(['beyond']); }, 0);
+    setWhisper('GO BEYOND');
+
+    if (reduceMotion.matches) {
+      runPhase('is-fade-out', FADE_MS, function () {
         html.classList.remove('is-beyond-enter');
+        markPortalDone();
       });
       return;
     }
 
-    if (!isMultiverse && html.classList.contains('is-beyond-home')) {
-      window.setTimeout(function () { stripParams(['home']); }, 0);
-      setWhisper('ORDINARY');
-      if (reduceMotion.matches) {
-        window.setTimeout(function () { html.classList.remove('is-beyond-home'); }, FADE_MS);
-        return;
-      }
-      runPhase('is-portal-land', LAND_MS, function () {
-        html.classList.remove('is-beyond-home');
-      });
-    }
+    hardWhisperGlitch(8);
+    runPhase('is-portal-arrive', ARRIVE_MS, function () {
+      html.classList.remove('is-beyond-enter');
+      markPortalDone();
+    });
   }
 
   function boot() {
     handleArrival();
     if (isMultiverse) wireHomeTab();
-    else wireBeyondTab();
   }
 
   boot();
