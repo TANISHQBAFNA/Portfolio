@@ -193,7 +193,7 @@
         chars[i] = options[Math.floor(Math.random() * options.length)];
       }
       node.textContent = chars.join('');
-      window.setTimeout(tick, 70 + Math.floor(Math.random() * 55));
+      window.setTimeout(tick, 110 + Math.floor(Math.random() * 70));
     }
     tick();
   }
@@ -210,7 +210,7 @@
       if (!seam.classList.contains('is-active')) return;
       fillStorm();
       fillShards();
-      seam.classList.add('is-pulse');
+      seam.classList.add('is-soft-pulse');
     }, Math.floor(duration * 0.42));
     window.setTimeout(function () {
       seam.className = 'beyond-seam';
@@ -228,8 +228,8 @@
       runPhase('is-fade-out', FADE_MS, function () { location.href = target; });
       return;
     }
-    setWhisper('RETURN');
-    hardWhisperGlitch(9);
+    setWhisper('GO HOME');
+    hardWhisperGlitch(5);
     runPhase('is-portal-return', SETTLE_MS, function () { location.href = target; });
   }
 
@@ -262,7 +262,7 @@
       return;
     }
 
-    hardWhisperGlitch(10);
+    hardWhisperGlitch(5);
     runPhase('is-portal-arrive', ARRIVE_MS, function () {
       html.classList.remove('is-beyond-enter');
       markPortalDone();
