@@ -1,15 +1,15 @@
-/* Experiment: cream ↔ multiverse dimensional seam.
-   Removable with this branch — keep landing.css / landing-multiverse.css clean. */
+/* Experiment: portal + glitch crossing. Branch-only. */
 
 .beyond-seam {
   position: fixed;
   inset: 0;
-  z-index: 240;
+  z-index: 260;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
   overflow: hidden;
   isolation: isolate;
+  background: transparent;
 }
 
 .beyond-seam.is-active {
@@ -18,80 +18,145 @@
   pointer-events: auto;
 }
 
-.beyond-seam__plate,
-.beyond-seam__chroma,
-.beyond-seam__slit,
-.beyond-seam__hitch {
+.beyond-seam__void,
+.beyond-seam__portal,
+.beyond-seam__ring,
+.beyond-seam__scan,
+.beyond-seam__rgb,
+.beyond-seam__noise,
+.beyond-seam__storm {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.beyond-seam__plate--cream {
-  background: #f4efe6;
+.beyond-seam__void {
+  background: #050508;
   opacity: 0;
 }
 
-.beyond-seam__plate--ink {
-  background: #0c0b0a;
+.beyond-seam__portal {
+  left: 50%;
+  top: 50%;
+  width: 12vmax;
+  height: 12vmax;
+  inset: auto;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.15);
   opacity: 0;
+  background:
+    radial-gradient(circle at 50% 45%,
+      rgba(244, 239, 230, 0.95) 0%,
+      rgba(0, 160, 160, 0.55) 18%,
+      rgba(255, 0, 60, 0.35) 34%,
+      rgba(61, 126, 255, 0.45) 52%,
+      rgba(5, 5, 8, 0.98) 72%,
+      #050508 100%);
+  box-shadow:
+    0 0 40px rgba(0, 160, 160, 0.45),
+    0 0 90px rgba(255, 0, 60, 0.28),
+    inset 0 0 40px rgba(61, 126, 255, 0.35);
+  filter: contrast(1.15) saturate(1.25);
 }
 
-.beyond-seam__chroma--r,
-.beyond-seam__chroma--c {
+.beyond-seam__ring {
+  left: 50%;
+  top: 50%;
+  width: 10vmax;
+  height: 10vmax;
+  inset: auto;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 0;
+  border: 2px solid rgba(244, 239, 230, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 60, 0.4),
+    0 0 24px rgba(0, 255, 156, 0.25);
+}
+
+.beyond-seam__ring--b {
+  border-color: rgba(0, 160, 160, 0.55);
+  width: 14vmax;
+  height: 14vmax;
+}
+
+.beyond-seam__ring--c {
+  border-color: rgba(61, 126, 255, 0.5);
+  width: 18vmax;
+  height: 18vmax;
+}
+
+.beyond-seam__scan {
+  opacity: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 2px,
+    rgba(255, 255, 255, 0.035) 2px 3px
+  );
+  mix-blend-mode: soft-light;
+}
+
+.beyond-seam__rgb {
   opacity: 0;
   mix-blend-mode: screen;
 }
 
-.beyond-seam__chroma--r {
-  background:
-    linear-gradient(90deg, rgba(255, 0, 60, 0.18), transparent 42%, transparent 58%, rgba(255, 0, 60, 0.08));
+.beyond-seam__rgb--r {
+  background: linear-gradient(90deg, rgba(255, 0, 60, 0.28), transparent 40%, transparent 60%, rgba(255, 0, 60, 0.12));
 }
 
-.beyond-seam__chroma--c {
-  background:
-    linear-gradient(90deg, rgba(61, 126, 255, 0.08), transparent 42%, transparent 58%, rgba(61, 126, 255, 0.2));
+.beyond-seam__rgb--g {
+  background: linear-gradient(90deg, rgba(0, 255, 156, 0.1), transparent 45%, transparent 55%, rgba(0, 255, 156, 0.22));
 }
 
-.beyond-seam__slit {
+.beyond-seam__rgb--b {
+  background: linear-gradient(0deg, rgba(61, 126, 255, 0.18), transparent 50%, rgba(61, 126, 255, 0.12));
+}
+
+.beyond-seam__noise {
   opacity: 0;
-  background:
-    linear-gradient(
-      105deg,
-      transparent 0 46%,
-      rgba(244, 239, 230, 0.92) 48%,
-      rgba(12, 11, 10, 0.95) 52%,
-      transparent 54% 100%
-    );
-  clip-path: inset(0 48% 0 48%);
-  filter: drop-shadow(-2px 0 0 rgba(255, 0, 60, 0.35)) drop-shadow(2px 0 0 rgba(61, 126, 255, 0.28));
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 6px);
+  mix-blend-mode: overlay;
 }
 
-.beyond-seam__hitch {
+.beyond-seam__storm {
   opacity: 0;
-  mix-blend-mode: screen;
-  background:
-    repeating-linear-gradient(to bottom, transparent 0 15px, rgba(61, 126, 255, 0.05) 15px 16px),
-    linear-gradient(90deg, rgba(255, 0, 60, 0.06), transparent 46%, transparent 54%, rgba(0, 255, 156, 0.04));
+}
+
+.beyond-seam__glyph {
+  position: absolute;
+  color: rgba(244, 239, 230, 0.82);
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  text-shadow:
+    -2px 0 rgba(255, 0, 60, 0.85),
+    2px 0 rgba(61, 126, 255, 0.75),
+    0 0 12px rgba(0, 255, 156, 0.35);
+  opacity: 0;
+  animation: beyond-glyph-flicker 0.55s steps(2, end) infinite;
 }
 
 .beyond-seam__whisper {
   position: absolute;
   left: 50%;
-  top: 52%;
+  top: 50%;
+  z-index: 3;
   margin: 0;
   transform: translate(-50%, -50%);
   font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
-  font-size: clamp(0.72rem, 1.4vw, 0.9rem);
-  letter-spacing: 0.28em;
+  font-weight: 800;
+  font-size: clamp(1rem, 3.2vw, 1.75rem);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(244, 239, 230, 0.55);
+  color: #f4efe6;
   opacity: 0;
   white-space: nowrap;
   text-shadow:
-    -1px 0 rgba(255, 0, 60, 0.45),
-    1px 0 rgba(61, 126, 255, 0.4);
+    -3px 0 rgba(255, 0, 60, 0.9),
+    3px 0 rgba(61, 126, 255, 0.85),
+    0 0 24px rgba(0, 160, 160, 0.55);
 }
 
 html.is-beyond-crossing,
@@ -99,247 +164,213 @@ html.is-beyond-crossing body {
   cursor: progress;
 }
 
-/* Cream → Multiverse tear */
-.beyond-seam.is-leave-cream .beyond-seam__plate--cream {
-  opacity: 1;
-  animation: beyond-cream-tear-plate 0.82s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-.beyond-seam.is-leave-cream .beyond-seam__plate--ink {
-  opacity: 1;
-  animation: beyond-ink-rise 0.82s cubic-bezier(0.55, 0, 0.2, 1) both;
-}
-.beyond-seam.is-leave-cream .beyond-seam__chroma--r {
-  opacity: 1;
-  animation: beyond-chroma-r 0.82s steps(2, end) both;
-}
-.beyond-seam.is-leave-cream .beyond-seam__chroma--c {
-  opacity: 1;
-  animation: beyond-chroma-c 0.82s steps(2, end) both;
-}
-.beyond-seam.is-leave-cream .beyond-seam__slit {
-  opacity: 1;
-  animation: beyond-slit-open 0.82s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.beyond-seam.is-leave-cream .beyond-seam__hitch {
-  opacity: 1;
-  animation: beyond-hitch-flash 0.82s ease-out both;
-}
-.beyond-seam.is-leave-cream .beyond-seam__whisper {
-  animation: beyond-whisper-in 0.82s ease-out both;
+html.is-beyond-crossing body {
+  animation: beyond-shake 0.14s linear infinite;
 }
 
-/* Multiverse → cream settle */
-.beyond-seam.is-leave-multiverse .beyond-seam__plate--ink {
-  opacity: 1;
-  animation: beyond-ink-settle 0.78s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-.beyond-seam.is-leave-multiverse .beyond-seam__plate--cream {
-  opacity: 1;
-  animation: beyond-cream-wash 0.78s cubic-bezier(0.55, 0, 0.2, 1) both;
-}
-.beyond-seam.is-leave-multiverse .beyond-seam__chroma--r,
-.beyond-seam.is-leave-multiverse .beyond-seam__chroma--c {
-  opacity: 1;
-  animation: beyond-chroma-fade 0.78s ease-out both;
-}
-.beyond-seam.is-leave-multiverse .beyond-seam__slit {
-  opacity: 1;
-  animation: beyond-slit-close 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.beyond-seam.is-leave-multiverse .beyond-seam__hitch {
-  opacity: 1;
-  animation: beyond-hitch-flash 0.78s ease-out both;
-}
-.beyond-seam.is-leave-multiverse .beyond-seam__whisper {
-  color: rgba(30, 21, 16, 0.45);
+.masthead__name.is-beyond-hitch,
+.curtain__mark.is-beyond-hitch {
   text-shadow:
-    -1px 0 rgba(255, 0, 60, 0.25),
-    1px 0 rgba(0, 160, 160, 0.3);
-  animation: beyond-whisper-in 0.78s ease-out both;
+    -2px 0 rgba(255, 0, 60, 0.85),
+    2px 0 rgba(61, 126, 255, 0.8) !important;
+  filter: contrast(1.2);
 }
 
-/* Multiverse arrival threshold (continues hitch language) */
-.beyond-seam.is-enter-threshold .beyond-seam__chroma--r,
-.beyond-seam.is-enter-threshold .beyond-seam__chroma--c {
+/* ===== Leave cream: open portal + glitch storm ===== */
+.beyond-seam.is-portal-leave .beyond-seam__void {
   opacity: 1;
-  animation: beyond-threshold-chroma 0.52s ease-out both;
+  animation: beyond-void-in 1.4s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
-.beyond-seam.is-enter-threshold .beyond-seam__hitch {
+.beyond-seam.is-portal-leave .beyond-seam__portal {
   opacity: 1;
-  animation: beyond-hitch-flash 0.52s ease-out both;
+  animation: beyond-portal-open 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
-.beyond-seam.is-enter-threshold {
-  z-index: 210;
-  pointer-events: none;
-}
-
-/* Cream soft land from multiverse */
-.beyond-seam.is-land-home .beyond-seam__plate--cream {
+.beyond-seam.is-portal-leave .beyond-seam__ring--a {
   opacity: 1;
-  animation: beyond-home-land 0.42s ease-out both;
+  animation: beyond-ring-burst 1.4s cubic-bezier(0.15, 0.85, 0.25, 1) both;
 }
-.beyond-seam.is-land-home {
-  pointer-events: none;
-  z-index: 210;
-}
-
-.beyond-seam.is-fade-out .beyond-seam__plate--ink,
-.beyond-seam.is-fade-out .beyond-seam__plate--cream {
+.beyond-seam.is-portal-leave .beyond-seam__ring--b {
   opacity: 1;
-  animation: beyond-simple-fade 0.28s ease both;
+  animation: beyond-ring-burst 1.4s 0.06s cubic-bezier(0.15, 0.85, 0.25, 1) both;
 }
-html.is-light-home .beyond-seam.is-fade-out .beyond-seam__plate--cream { opacity: 1; }
-html.is-light-home .beyond-seam.is-fade-out .beyond-seam__plate--ink { opacity: 0; }
-html.is-multiverse .beyond-seam.is-fade-out .beyond-seam__plate--ink { opacity: 1; }
-html.is-multiverse .beyond-seam.is-fade-out .beyond-seam__plate--cream { opacity: 0; }
-
-/* Optional masthead hitch on cream (no Iris multilingual API there) */
-html.is-light-home .masthead__name.is-beyond-hitch {
-  text-shadow:
-    -1px 0 rgba(255, 0, 60, 0.5),
-    1px 0 rgba(0, 160, 160, 0.45);
-  animation: beyond-name-hitch 0.42s steps(2, end) 1;
+.beyond-seam.is-portal-leave .beyond-seam__ring--c {
+  opacity: 1;
+  animation: beyond-ring-burst 1.4s 0.12s cubic-bezier(0.15, 0.85, 0.25, 1) both;
 }
-
-html.is-beyond-enter .curtain,
-html.is-beyond-enter .curtain.curtain--ink {
-  animation: beyond-enter-plate 0.7s ease-out 1;
+.beyond-seam.is-portal-leave .beyond-seam__scan,
+.beyond-seam.is-portal-leave .beyond-seam__noise,
+.beyond-seam.is-portal-leave .beyond-seam__storm {
+  opacity: 1;
 }
-
-@keyframes beyond-cream-tear-plate {
-  0% { opacity: 0.95; clip-path: inset(0 0 0 0); filter: none; }
-  38% {
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
-    filter: drop-shadow(-3px 0 0 rgba(255, 0, 60, 0.28)) drop-shadow(3px 0 0 rgba(61, 126, 255, 0.22));
-  }
-  100% {
-    opacity: 0;
-    clip-path: inset(0 42% 0 42%);
-    filter: none;
-  }
+.beyond-seam.is-portal-leave .beyond-seam__rgb--r {
+  opacity: 1;
+  animation: beyond-rgb-r 1.4s steps(3, end) both;
+}
+.beyond-seam.is-portal-leave .beyond-seam__rgb--g {
+  opacity: 1;
+  animation: beyond-rgb-g 1.4s steps(3, end) both;
+}
+.beyond-seam.is-portal-leave .beyond-seam__rgb--b {
+  opacity: 1;
+  animation: beyond-rgb-b 1.4s steps(3, end) both;
+}
+.beyond-seam.is-portal-leave .beyond-seam__whisper {
+  opacity: 1;
+  animation: beyond-whisper-glitch 1.4s steps(2, end) both;
 }
 
-@keyframes beyond-ink-rise {
-  0% { opacity: 0; transform: scale(1.02); }
-  45% { opacity: 0.35; }
-  100% { opacity: 1; transform: scale(1); }
+/* ===== Return from multiverse ===== */
+.beyond-seam.is-portal-return .beyond-seam__void {
+  opacity: 1;
+  background: #0c0b0a;
+  animation: beyond-void-in 1.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.beyond-seam.is-portal-return .beyond-seam__portal {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 50% 45%,
+      rgba(0, 160, 160, 0.7) 0%,
+      rgba(244, 239, 230, 0.9) 28%,
+      rgba(30, 21, 16, 0.5) 55%,
+      #f4efe6 100%);
+  animation: beyond-portal-open 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.beyond-seam.is-portal-return .beyond-seam__ring--a,
+.beyond-seam.is-portal-return .beyond-seam__ring--b,
+.beyond-seam.is-portal-return .beyond-seam__ring--c {
+  opacity: 1;
+  animation: beyond-ring-burst 1.2s cubic-bezier(0.15, 0.85, 0.25, 1) both;
+}
+.beyond-seam.is-portal-return .beyond-seam__rgb--r,
+.beyond-seam.is-portal-return .beyond-seam__rgb--g,
+.beyond-seam.is-portal-return .beyond-seam__rgb--b,
+.beyond-seam.is-portal-return .beyond-seam__scan,
+.beyond-seam.is-portal-return .beyond-seam__storm {
+  opacity: 1;
+}
+.beyond-seam.is-portal-return .beyond-seam__rgb--r { animation: beyond-rgb-r 1.2s steps(3, end) both; }
+.beyond-seam.is-portal-return .beyond-seam__rgb--g { animation: beyond-rgb-g 1.2s steps(3, end) both; }
+.beyond-seam.is-portal-return .beyond-seam__rgb--b { animation: beyond-rgb-b 1.2s steps(3, end) both; }
+.beyond-seam.is-portal-return .beyond-seam__whisper {
+  opacity: 1;
+  animation: beyond-whisper-glitch 1.2s steps(2, end) both;
 }
 
-@keyframes beyond-ink-settle {
-  0% { opacity: 1; filter: drop-shadow(-2px 0 0 rgba(255, 0, 60, 0.22)) drop-shadow(2px 0 0 rgba(61, 126, 255, 0.18)); }
-  55% { opacity: 0.55; }
-  100% { opacity: 0; filter: none; }
+/* ===== Arrive / land ===== */
+.beyond-seam.is-portal-arrive .beyond-seam__void {
+  opacity: 1;
+  animation: beyond-void-out 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.beyond-seam.is-portal-arrive .beyond-seam__portal {
+  opacity: 1;
+  animation: beyond-portal-suck 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.beyond-seam.is-portal-arrive .beyond-seam__rgb--r,
+.beyond-seam.is-portal-arrive .beyond-seam__rgb--g,
+.beyond-seam.is-portal-arrive .beyond-seam__storm,
+.beyond-seam.is-portal-arrive .beyond-seam__whisper {
+  opacity: 1;
+}
+.beyond-seam.is-portal-arrive .beyond-seam__whisper {
+  animation: beyond-whisper-glitch 0.9s steps(2, end) both;
 }
 
-@keyframes beyond-cream-wash {
+.beyond-seam.is-portal-land .beyond-seam__void {
+  background: #f4efe6;
+  opacity: 1;
+  animation: beyond-void-out 0.7s ease both;
+}
+.beyond-seam.is-portal-land .beyond-seam__portal {
+  opacity: 1;
+  animation: beyond-portal-suck 0.7s ease both;
+}
+.beyond-seam.is-portal-land .beyond-seam__whisper {
+  opacity: 1;
+  color: #1E1510;
+  text-shadow: -2px 0 rgba(255, 0, 60, 0.45), 2px 0 rgba(0, 160, 160, 0.4);
+  animation: beyond-whisper-glitch 0.7s steps(2, end) both;
+}
+
+.beyond-seam.is-fade-out {
+  background: #0c0b0a;
+  animation: beyond-fade 0.28s ease both;
+}
+
+@keyframes beyond-void-in {
   0% { opacity: 0; }
-  40% { opacity: 0.45; }
+  25% { opacity: 0.55; }
   100% { opacity: 1; }
 }
-
-@keyframes beyond-slit-open {
-  0% { opacity: 0; clip-path: inset(42% 49% 42% 49%); transform: translateX(0); }
-  28% { opacity: 0.95; clip-path: inset(8% 47% 8% 47%); transform: translateX(-3px); }
-  62% { opacity: 1; clip-path: inset(0 18% 0 18%); transform: translateX(2px); }
-  100% { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
-}
-
-@keyframes beyond-slit-close {
-  0% { opacity: 0.9; clip-path: inset(0 0 0 0); }
-  40% { opacity: 1; clip-path: inset(6% 22% 6% 22%); }
-  100% { opacity: 0; clip-path: inset(40% 48% 40% 48%); }
-}
-
-@keyframes beyond-chroma-r {
-  0%, 100% { opacity: 0; transform: translate(0, 0); }
-  20% { opacity: 0.55; transform: translate(-3px, 0); }
-  55% { opacity: 0.35; transform: translate(-5px, 1px); }
-}
-
-@keyframes beyond-chroma-c {
-  0%, 100% { opacity: 0; transform: translate(0, 0); }
-  24% { opacity: 0.5; transform: translate(3px, 0); }
-  58% { opacity: 0.32; transform: translate(5px, -1px); }
-}
-
-@keyframes beyond-chroma-fade {
-  0% { opacity: 0.45; }
+@keyframes beyond-void-out {
+  0% { opacity: 1; }
   100% { opacity: 0; }
 }
-
-@keyframes beyond-hitch-flash {
-  0%, 100% { opacity: 0; clip-path: inset(0 0 0 0); transform: translateX(0); }
-  30% { opacity: 0.28; clip-path: inset(26% 0 52% 0); transform: translateX(-4px); }
-  58% { opacity: 0.16; clip-path: inset(48% 0 18% 0); transform: translateX(3px); }
+@keyframes beyond-portal-open {
+  0% { transform: translate(-50%, -50%) scale(0.08); opacity: 0; filter: blur(8px); }
+  35% { transform: translate(-50%, -50%) scale(0.85); opacity: 1; filter: blur(0); }
+  70% { transform: translate(-50%, -50%) scale(1.55); }
+  100% { transform: translate(-50%, -50%) scale(4.2); opacity: 1; }
 }
-
-@keyframes beyond-whisper-in {
-  0%, 18% { opacity: 0; letter-spacing: 0.42em; }
-  40% { opacity: 0.7; }
-  100% { opacity: 0; letter-spacing: 0.28em; }
+@keyframes beyond-portal-suck {
+  0% { transform: translate(-50%, -50%) scale(3.6); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
 }
-
-@keyframes beyond-threshold-chroma {
-  0% { opacity: 0.4; }
-  100% { opacity: 0; }
+@keyframes beyond-ring-burst {
+  0% { transform: translate(-50%, -50%) scale(0.15); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(5.5); opacity: 0; }
 }
-
-@keyframes beyond-home-land {
-  0% { opacity: 0.55; }
-  100% { opacity: 0; }
+@keyframes beyond-rgb-r {
+  0%, 100% { transform: translate(0, 0); opacity: 0.15; }
+  20% { transform: translate(-10px, 2px); opacity: 0.85; }
+  45% { transform: translate(8px, -3px); opacity: 0.55; }
+  70% { transform: translate(-14px, 1px); opacity: 0.9; }
 }
-
-@keyframes beyond-simple-fade {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes beyond-rgb-g {
+  0%, 100% { transform: translate(0, 0); opacity: 0.1; }
+  25% { transform: translate(9px, -2px); opacity: 0.7; }
+  55% { transform: translate(-7px, 3px); opacity: 0.45; }
+  80% { transform: translate(12px, 0); opacity: 0.8; }
 }
-
-@keyframes beyond-name-hitch {
+@keyframes beyond-rgb-b {
+  0%, 100% { transform: translate(0, 0); opacity: 0.12; }
+  30% { transform: translate(0, 6px); opacity: 0.65; }
+  60% { transform: translate(0, -5px); opacity: 0.5; }
+  85% { transform: translate(0, 8px); opacity: 0.75; }
+}
+@keyframes beyond-whisper-glitch {
+  0% { opacity: 0; letter-spacing: 0.5em; transform: translate(-50%, -50%) scale(0.9); }
+  18% { opacity: 1; transform: translate(calc(-50% - 4px), -50%); }
+  32% { transform: translate(calc(-50% + 5px), calc(-50% + 2px)); }
+  48% { transform: translate(calc(-50% - 2px), -50%); letter-spacing: 0.28em; }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); letter-spacing: 0.4em; }
+}
+@keyframes beyond-glyph-flicker {
+  0% { opacity: 0; transform: translate(0, 0) skewX(0deg); }
+  30% { opacity: 1; transform: translate(-2px, 1px) skewX(-6deg); }
+  55% { opacity: 0.35; transform: translate(3px, -1px) skewX(4deg); }
+  100% { opacity: 0.85; transform: translate(0, 0); }
+}
+@keyframes beyond-shake {
   0% { transform: translate(0, 0); }
-  25% { transform: translate(-1px, 0.5px); }
-  50% { transform: translate(1px, -0.5px); }
-  75% { transform: translate(-0.5px, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, 0); }
   100% { transform: translate(0, 0); }
 }
-
-@keyframes beyond-enter-plate {
-  0%, 100% { filter: none; }
-  35% { filter: drop-shadow(-2px 0 0 rgba(255, 0, 60, 0.2)) drop-shadow(2px 0 0 rgba(61, 126, 255, 0.16)); }
+@keyframes beyond-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .beyond-seam.is-leave-cream .beyond-seam__plate--cream,
-  .beyond-seam.is-leave-cream .beyond-seam__plate--ink,
-  .beyond-seam.is-leave-multiverse .beyond-seam__plate--cream,
-  .beyond-seam.is-leave-multiverse .beyond-seam__plate--ink,
-  .beyond-seam.is-land-home .beyond-seam__plate--cream,
-  .beyond-seam.is-fade-out .beyond-seam__plate--cream,
-  .beyond-seam.is-fade-out .beyond-seam__plate--ink {
-    animation: beyond-simple-fade 0.28s ease both;
-  }
-  .beyond-seam.is-leave-cream .beyond-seam__chroma--r,
-  .beyond-seam.is-leave-cream .beyond-seam__chroma--c,
-  .beyond-seam.is-leave-cream .beyond-seam__slit,
-  .beyond-seam.is-leave-cream .beyond-seam__hitch,
-  .beyond-seam.is-leave-cream .beyond-seam__whisper,
-  .beyond-seam.is-leave-multiverse .beyond-seam__chroma--r,
-  .beyond-seam.is-leave-multiverse .beyond-seam__chroma--c,
-  .beyond-seam.is-leave-multiverse .beyond-seam__slit,
-  .beyond-seam.is-leave-multiverse .beyond-seam__hitch,
-  .beyond-seam.is-leave-multiverse .beyond-seam__whisper,
-  .beyond-seam.is-enter-threshold .beyond-seam__chroma--r,
-  .beyond-seam.is-enter-threshold .beyond-seam__chroma--c,
-  .beyond-seam.is-enter-threshold .beyond-seam__hitch {
-    animation: none !important;
-    opacity: 0 !important;
-  }
-  html.is-light-home .masthead__name.is-beyond-hitch {
-    animation: none !important;
-    text-shadow: none !important;
-  }
-  html.is-beyond-enter .curtain,
-  html.is-beyond-enter .curtain.curtain--ink {
-    animation: none !important;
+  html.is-beyond-crossing body { animation: none; }
+  .beyond-seam__glyph { animation: none; opacity: 0.5; }
+  .beyond-seam.is-portal-leave .beyond-seam__portal,
+  .beyond-seam.is-portal-return .beyond-seam__portal,
+  .beyond-seam.is-portal-arrive .beyond-seam__portal,
+  .beyond-seam.is-portal-land .beyond-seam__portal {
+    animation: beyond-fade 0.28s ease both;
   }
 }

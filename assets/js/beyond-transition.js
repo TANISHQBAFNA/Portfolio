@@ -5,21 +5,31 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   var isMultiverse = html.classList.contains('is-multiverse');
   var busy = false;
-  var TEAR_MS = 820;
-  var SETTLE_MS = 780;
-  var THRESHOLD_MS = 520;
-  var LAND_MS = 420;
+  var PORTAL_MS = 1400;
+  var SETTLE_MS = 1200;
+  var THRESHOLD_MS = 900;
+  var LAND_MS = 700;
   var FADE_MS = 280;
+  var STORM = [
+    'ट', 'Т', 'Τ', 'ت', '丁',
+    'अ', 'А', 'Α', 'ا',
+    'न', 'Ν', 'ن',
+    'ब', 'В', 'Β', 'ب',
+    'क', 'Κ',
+    'BEYOND', 'HOME', '‡', '☰', '◇'
+  ];
   var HITCH_GLYPHS = {
-    T: ['ट', 'Т', 'Τ'],
-    a: ['а', 'α', 'ا'],
-    n: ['न', 'п', 'ن'],
+    T: ['ट', 'Т', 'Τ', 'ت'],
+    a: ['а', 'α', 'ا', 'अ'],
+    n: ['न', 'Ν', 'ن'],
     i: ['і', 'ι', '工'],
     s: ['ѕ', 'ς'],
     h: ['н', 'η'],
-    q: ['ק', 'қ'],
-    B: ['Б', 'Β', 'ب'],
-    f: ['ф', 'ƒ']
+    q: ['ק', 'қ', 'क'],
+    B: ['Б', 'Β', 'ب', 'ब'],
+    f: ['ф', 'ƒ'],
+    A: ['А', 'Α', 'अ'],
+    e: ['е', 'ε']
   };
 
   function hasParam(name) {
@@ -41,8 +51,7 @@
         }
       });
       if (!changed) return;
-      var next = url.pathname + (url.search ? url.search : '') + url.hash;
-      history.replaceState({}, '', next);
+      history.replaceState({}, '', url.pathname + (url.search ? url.search : '') + url.hash);
     } catch (err) { /* ignore */ }
   }
 
@@ -52,7 +61,6 @@
     return base + (base.indexOf('?') === -1 ? '?' : '&') + key + '=1';
   }
 
-  /* Sync flags before later defer scripts (landing*) boot. */
   if (isMultiverse && hasParam('beyond')) html.classList.add('is-beyond-enter');
   if (!isMultiverse && hasParam('home')) html.classList.add('is-beyond-home');
 
@@ -64,12 +72,17 @@
     el.className = 'beyond-seam';
     el.setAttribute('aria-hidden', 'true');
     el.innerHTML =
-      '<div class="beyond-seam__plate beyond-seam__plate--cream"></div>' +
-      '<div class="beyond-seam__plate beyond-seam__plate--ink"></div>' +
-      '<div class="beyond-seam__chroma beyond-seam__chroma--r"></div>' +
-      '<div class="beyond-seam__chroma beyond-seam__chroma--c"></div>' +
-      '<div class="beyond-seam__slit"></div>' +
-      '<div class="beyond-seam__hitch"></div>' +
+      '<div class="beyond-seam__void"></div>' +
+      '<div class="beyond-seam__portal" data-beyond-portal></div>' +
+      '<div class="beyond-seam__ring beyond-seam__ring--a"></div>' +
+      '<div class="beyond-seam__ring beyond-seam__ring--b"></div>' +
+      '<div class="beyond-seam__ring beyond-seam__ring--c"></div>' +
+      '<div class="beyond-seam__scan"></div>' +
+      '<div class="beyond-seam__rgb beyond-seam__rgb--r"></div>' +
+      '<div class="beyond-seam__rgb beyond-seam__rgb--g"></div>' +
+      '<div class="beyond-seam__rgb beyond-seam__rgb--b"></div>' +
+      '<div class="beyond-seam__noise"></div>' +
+      '<div class="beyond-seam__storm" data-beyond-storm></div>' +
       '<p class="beyond-seam__whisper" data-beyond-whisper></p>';
     document.body.appendChild(el);
     return el;
@@ -80,37 +93,65 @@
     if (node) node.textContent = text || '';
   }
 
-  function softNameHitch() {
-    if (reduceMotion.matches) return;
-    var logo = document.querySelector('.masthead__name');
-    if (!logo) return;
-
-    if (window.IrisMotion && typeof window.IrisMotion.burstGlitch === 'function') {
-      window.IrisMotion.burstGlitch(logo, reduceMotion);
-      return;
-    }
-
-    var original = (logo.getAttribute('data-latin') || logo.textContent || 'Tanishq Bafna').trim();
-    var chars = original.split('');
+  function fillStorm() {
+    var storm = document.querySelector('[data-beyond-storm]');
+    if (!storm) return;
+    storm.innerHTML = '';
+    var count = 28;
     var i;
-    var swaps = 0;
-    for (i = 0; i < chars.length && swaps < 3; i += 1) {
-      var options = HITCH_GLYPHS[chars[i]];
-      if (!options || !options.length) continue;
-      if (Math.random() > 0.55) continue;
-      chars[i] = options[Math.floor(Math.random() * options.length)];
-      swaps += 1;
+    for (i = 0; i < count; i += 1) {
+      var span = document.createElement('span');
+      span.className = 'beyond-seam__glyph';
+      span.textContent = STORM[Math.floor(Math.random() * STORM.length)];
+      span.style.left = (4 + Math.random() * 92).toFixed(2) + '%';
+      span.style.top = (6 + Math.random() * 88).toFixed(2) + '%';
+      span.style.animationDelay = (Math.random() * 0.45).toFixed(2) + 's';
+      span.style.fontSize = (0.7 + Math.random() * 1.8).toFixed(2) + 'rem';
+      storm.appendChild(span);
     }
-    logo.classList.add('is-beyond-hitch');
-    if (swaps) logo.textContent = chars.join('');
-    window.setTimeout(function () {
-      logo.textContent = original;
-      logo.classList.remove('is-beyond-hitch');
-    }, 420);
+  }
+
+  function hardNameGlitch(rounds) {
+    if (reduceMotion.matches) return;
+    var logo = document.querySelector('.masthead__name, .curtain__mark');
+    if (!logo) return;
+    var original = (logo.getAttribute('data-latin') || logo.textContent || 'Tanishq Bafna').trim();
+    var left = rounds || 5;
+
+    function tick() {
+      if (left <= 0) {
+        logo.textContent = original;
+        logo.classList.remove('is-beyond-hitch');
+        if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+          window.IrisMotion.burstGlitch(logo, reduceMotion);
+        }
+        return;
+      }
+      left -= 1;
+      var chars = original.split('');
+      var i;
+      for (i = 0; i < chars.length; i += 1) {
+        if (chars[i] === ' ') continue;
+        if (Math.random() > 0.45) continue;
+        var options = HITCH_GLYPHS[chars[i]] || HITCH_GLYPHS[chars[i].toUpperCase()] || HITCH_GLYPHS[chars[i].toLowerCase()];
+        if (!options) {
+          options = STORM;
+        }
+        chars[i] = options[Math.floor(Math.random() * options.length)];
+      }
+      logo.classList.add('is-beyond-hitch');
+      logo.textContent = chars.join('');
+      if (window.IrisMotion && window.IrisMotion.burstGlitch && left % 2 === 0) {
+        window.IrisMotion.burstGlitch(logo, reduceMotion);
+      }
+      window.setTimeout(tick, 90 + Math.floor(Math.random() * 70));
+    }
+    tick();
   }
 
   function runPhase(phaseClass, duration, done) {
     var seam = ensureOverlay();
+    fillStorm();
     seam.className = 'beyond-seam is-active ' + phaseClass;
     html.classList.add('is-beyond-crossing');
     document.body.classList.add('is-beyond-crossing');
@@ -130,9 +171,9 @@
       runPhase('is-fade-out', FADE_MS, function () { location.href = target; });
       return;
     }
-    softNameHitch();
-    setWhisper('beyond');
-    runPhase('is-leave-cream', TEAR_MS, function () { location.href = target; });
+    setWhisper('GO BEYOND');
+    hardNameGlitch(7);
+    runPhase('is-portal-leave', PORTAL_MS, function () { location.href = target; });
   }
 
   function goHome(href) {
@@ -143,8 +184,9 @@
       runPhase('is-fade-out', FADE_MS, function () { location.href = target; });
       return;
     }
-    setWhisper('home');
-    runPhase('is-leave-multiverse', SETTLE_MS, function () { location.href = target; });
+    setWhisper('RETURN');
+    hardNameGlitch(5);
+    runPhase('is-portal-return', SETTLE_MS, function () { location.href = target; });
   }
 
   function wireBeyondTab() {
@@ -174,11 +216,13 @@
   function handleArrival() {
     if (isMultiverse && html.classList.contains('is-beyond-enter')) {
       window.setTimeout(function () { stripParams(['beyond']); }, 0);
+      setWhisper('MULTIVERSE');
       if (reduceMotion.matches) {
         window.setTimeout(function () { html.classList.remove('is-beyond-enter'); }, FADE_MS);
         return;
       }
-      runPhase('is-enter-threshold', THRESHOLD_MS, function () {
+      hardNameGlitch(4);
+      runPhase('is-portal-arrive', THRESHOLD_MS, function () {
         html.classList.remove('is-beyond-enter');
       });
       return;
@@ -186,11 +230,12 @@
 
     if (!isMultiverse && html.classList.contains('is-beyond-home')) {
       window.setTimeout(function () { stripParams(['home']); }, 0);
+      setWhisper('ORDINARY');
       if (reduceMotion.matches) {
         window.setTimeout(function () { html.classList.remove('is-beyond-home'); }, FADE_MS);
         return;
       }
-      runPhase('is-land-home', LAND_MS, function () {
+      runPhase('is-portal-land', LAND_MS, function () {
         html.classList.remove('is-beyond-home');
       });
     }
@@ -202,6 +247,5 @@
     else wireBeyondTab();
   }
 
-  /* defer scripts run after parse — body is ready */
   boot();
 })();
