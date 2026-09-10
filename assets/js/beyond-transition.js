@@ -232,37 +232,29 @@
   function goHome(href) {
     if (busy) return;
     busy = true;
-    /* Land on cream with full Tanishq Bafna curtain (no skip). */
+    /* Cream + Tanishq Bafna curtain after portal dies to coffee void. */
     var target = (href || 'index.html').split('?')[0].split('#')[0] || 'index.html';
     if (reduceMotion.matches) {
       runPhase('is-fade-out', FADE_MS, function () { location.href = target; });
       return;
     }
 
-    /* 1) Multiverse UI collapses into the portal */
-    html.classList.add('is-beyond-vacuum');
-    document.body.classList.add('is-beyond-vacuum');
+    setWhisper('GO HOME');
+    hardWhisperGlitch(5);
+    /* Portal + rings collapse into nothing (page stays). */
+    runPhase('is-portal-return', SETTLE_MS, function () {
+      var seam = ensureOverlay();
+      seam.className = 'beyond-seam is-active is-coffee-void';
+      html.classList.remove('is-beyond-crossing', 'is-beyond-to-glitch', 'is-beyond-to-stable', 'is-beyond-vacuum');
+      document.body.classList.remove('is-beyond-crossing', 'is-beyond-vacuum');
+      html.classList.add('is-beyond-coffee-void');
+      document.body.classList.add('is-beyond-coffee-void');
+      setWhisper('');
 
-    window.setTimeout(function () {
-      /* 2) Portal rings pull inward while the page is already gone */
-      setWhisper('GO HOME');
-      hardWhisperGlitch(5);
-      runPhase('is-portal-return', SETTLE_MS, function () {
-        /* 3) Empty coffee void — silent / stable */
-        var seam = ensureOverlay();
-        seam.className = 'beyond-seam is-active is-coffee-void';
-        html.classList.remove('is-beyond-vacuum', 'is-beyond-crossing', 'is-beyond-to-glitch', 'is-beyond-to-stable');
-        document.body.classList.remove('is-beyond-vacuum', 'is-beyond-crossing');
-        html.classList.add('is-beyond-coffee-void');
-        document.body.classList.add('is-beyond-coffee-void');
-        setWhisper('');
-
-        window.setTimeout(function () {
-          /* 4) Cream home + Tanishq Bafna curtain */
-          location.href = target;
-        }, VOID_HOLD_MS);
-      });
-    }, VACUUM_MS);
+      window.setTimeout(function () {
+        location.href = target;
+      }, VOID_HOLD_MS);
+    });
   }
 
   function wireHomeTab() {

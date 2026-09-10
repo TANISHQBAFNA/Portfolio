@@ -340,12 +340,12 @@ html.is-beyond-enter .curtain {
       rgba(244, 239, 230, 0.95) 24%,
       rgba(30, 21, 16, 0.45) 52%,
       #f4efe6 100%);
-  animation: beyond-portal-open 1.9s cubic-bezier(0.18, 0.85, 0.22, 1) both;
+  animation: beyond-portal-collapse 1.9s cubic-bezier(0.45, 0.05, 0.2, 1) both;
 }
 .beyond-seam.is-portal-return .beyond-seam__portal--mid,
 .beyond-seam.is-portal-return .beyond-seam__portal--rim {
   opacity: 1;
-  animation: beyond-portal-open 1.9s 0.06s cubic-bezier(0.18, 0.85, 0.22, 1) both;
+  animation: beyond-portal-collapse 1.9s 0.05s cubic-bezier(0.45, 0.05, 0.2, 1) both;
 }
 .beyond-seam.is-portal-return .beyond-seam__ring--a,
 .beyond-seam.is-portal-return .beyond-seam__ring--b,
@@ -410,6 +410,10 @@ html.is-beyond-enter .curtain {
 }
 @keyframes beyond-ring-collapse {
   0% { transform: translate(-50%, -50%) scale(5.8) rotate(20deg); opacity: 0.95; }
+  40% { transform: translate(-50%, -50%) scale(2.2) rotate(-12deg); opacity: 1; }
+  75% { transform: translate(-50%, -50%) scale(0.45) rotate(-28deg); opacity: 0.55; }
+  100% { transform: translate(-50%, -50%) scale(0) rotate(-48deg); opacity: 0; }
+}
   40% { transform: translate(-50%, -50%) scale(2.2) rotate(-12deg); opacity: 1; }
   100% { transform: translate(-50%, -50%) scale(0.12) rotate(-40deg); opacity: 0; }
 }
@@ -523,7 +527,7 @@ html.is-beyond-enter .curtain {
   animation-name: beyond-ring-collapse, beyond-ring-spin;
 }
 .beyond-seam.is-portal-return.is-alive .beyond-seam__portal--core {
-  animation-name: beyond-portal-open, beyond-portal-breathe;
+  animation-name: beyond-portal-collapse, beyond-portal-breathe;
 }
 
 .beyond-seam.is-alive .beyond-seam__warp {
@@ -588,61 +592,13 @@ html.is-beyond-enter .curtain {
 }
 
 
-/* ===== Go Home: page vacuum into portal, then coffee silence ===== */
-html.is-beyond-vacuum,
-html.is-beyond-vacuum body {
-  cursor: progress;
-}
-
-html.is-beyond-vacuum .atmosphere,
-html.is-beyond-vacuum .stage,
-html.is-beyond-vacuum .edge-dock,
-html.is-beyond-vacuum .work-cta,
-html.is-beyond-vacuum .home-tab,
-html.is-beyond-vacuum .theme-tab,
-html.is-beyond-vacuum .skip-link,
-html.is-beyond-vacuum .rail,
-html.is-beyond-vacuum .detail,
-html.is-beyond-vacuum .study {
-  transform-origin: 50% 48vh;
-  animation: beyond-vacuum-in 0.9s cubic-bezier(0.55, 0.05, 0.35, 1) both;
-  pointer-events: none !important;
-}
-
-html.is-beyond-vacuum .atmosphere {
-  animation-duration: 0.85s;
-}
-html.is-beyond-vacuum .masthead {
-  animation-delay: 0.02s;
-}
-html.is-beyond-vacuum .work-cta,
-html.is-beyond-vacuum .edge-dock {
-  animation-delay: 0.04s;
-}
-
-@keyframes beyond-vacuum-in {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 1;
-    filter: blur(0);
-  }
-  55% {
-    transform: translate3d(0, 2vh, 0) scale(0.42);
-    opacity: 0.55;
-    filter: blur(1px);
-  }
-  100% {
-    transform: translate3d(0, 0, 0) scale(0.04);
-    opacity: 0;
-    filter: blur(6px);
-  }
-}
 
 /* After portal: empty coffee brown, quiet */
 .beyond-seam.is-coffee-void {
   background: #1E1510;
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 .beyond-seam.is-coffee-void .beyond-seam__void {
   opacity: 1;
@@ -688,13 +644,4 @@ html.is-beyond-coffee-void .curtain {
   pointer-events: none !important;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html.is-beyond-vacuum .atmosphere,
-  html.is-beyond-vacuum .stage,
-  html.is-beyond-vacuum .edge-dock,
-  html.is-beyond-vacuum .work-cta,
-  html.is-beyond-vacuum .home-tab,
-  html.is-beyond-vacuum .theme-tab {
-    animation: beyond-fade 0.28s ease both;
-  }
-}
+
