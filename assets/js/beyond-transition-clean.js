@@ -89,15 +89,6 @@
     if (!world) return;
     world.style.transform = 'none';
     world.style.scale = 'none';
-    if (gsapReady()) {
-      window.gsap.set(world, {
-        x: 0,
-        y: 0,
-        scale: 1,
-        rotation: 0,
-        overwrite: true
-      });
-    }
   }
 
   function playEnter() {
@@ -120,6 +111,7 @@
       root.classList.remove('is-hold');
     }
     document.documentElement.classList.remove('is-beyond');
+    document.documentElement.classList.remove('is-beyond-skip');
 
     var holeAmt = { r: 0 };
     gsap.set(voidEl, { autoAlpha: 0 });
@@ -178,12 +170,15 @@
     setBusy(true);
     setWhisper('GO HOME');
     if (whisper) whisper.classList.add('is-leave');
+    document.documentElement.classList.remove('is-beyond-skip');
     showPortal();
-    if (root) root.classList.remove('is-cover');
+    if (root) {
+      root.classList.remove('is-cover', 'is-hold');
+    }
 
-    gsap.set(voidEl, { autoAlpha: 0 });
     gsap.set(veil, { autoAlpha: 0 });
     hole('160vmax');
+    gsap.set(voidEl, { autoAlpha: 1 });
     gsap.set(stage, { autoAlpha: 1, xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 1.55 });
     gsap.set(core, { scale: 1.05, autoAlpha: 1 });
     gsap.set(whisper, { autoAlpha: 0, xPercent: -50, yPercent: -50, scale: 1.04, color: '#f4efe6' });
@@ -193,7 +188,6 @@
 
     active = gsap.timeline({
       defaults: { overwrite: 'auto' },
-      onUpdate: lockWorld,
       onComplete: function () {
         window.location.href = HOME;
       }
@@ -201,13 +195,12 @@
 
     active
       .to(whisper, { autoAlpha: 1, scale: 1, duration: 0.18, ease: 'power2.out' }, 0)
-      .to(stage, { scale: 0.001, duration: 0.92, ease: 'power3.in' }, 0.12)
-      .to(core, { scale: 0.001, duration: 0.92, ease: 'power3.in' }, 0.12)
-      .to([ringsRed, ringsCyan, ringsBlue], { x: 0, y: 0, duration: 0.55, ease: 'power2.in' }, 0.18)
-      .to(whisper, { autoAlpha: 0, scale: 0.84, duration: 0.22, ease: 'power2.in' }, 0.58)
-      .to(stage, { autoAlpha: 0, duration: 0.01, ease: 'none' }, 1.04)
-      .set(voidEl, { autoAlpha: 1 }, 1.05)
-      .to(voidEl, { autoAlpha: 1, duration: VOID_HOLD }, 1.05);
+      .to(stage, { scale: 0.001, duration: 0.92, ease: 'power3.in' }, 0.1)
+      .to(core, { scale: 0.001, duration: 0.92, ease: 'power3.in' }, 0.1)
+      .to([ringsRed, ringsCyan, ringsBlue], { x: 0, y: 0, duration: 0.5, ease: 'power2.in' }, 0.16)
+      .to(whisper, { autoAlpha: 0, scale: 0.92, duration: 0.2, ease: 'power2.in' }, 0.55)
+      .to(stage, { autoAlpha: 0, duration: 0.08, ease: 'none' }, 1.02)
+      .to(voidEl, { autoAlpha: 1, duration: VOID_HOLD }, 1.04);
   }
 
   function boot() {
