@@ -219,6 +219,37 @@
     });
   }
 
+  function workCtaHandle() {
+    return document.querySelector("[data-work-cta]");
+  }
+
+  function workCtaLabel() {
+    var handle = workCtaHandle();
+    return handle ? handle.querySelector(".work-cta__label") : null;
+  }
+
+  function burstWorkCta(reduceMotion, heavy) {
+    var htmlEl = document.documentElement;
+    var handle = workCtaHandle();
+    var label = workCtaLabel();
+    if (!handle || !label) return;
+    if (
+      htmlEl.classList.contains("is-curtain") ||
+      htmlEl.classList.contains("is-projects-in") ||
+      htmlEl.classList.contains("is-study")
+    ) {
+      return;
+    }
+    armGlitchTarget(label, visibleLatin(label) || "My Work");
+    handle.classList.add("is-glitching");
+    window.setTimeout(function () {
+      burstGlitch(label, reduceMotion, heavy);
+    }, Math.round(rand(heavy ? 40 : 80, heavy ? 180 : 360)));
+    window.setTimeout(function () {
+      handle.classList.remove("is-glitching");
+    }, heavy ? 780 : 420);
+  }
+
   function hitchSlam(reduceMotion) {
     if (reduceMotion && reduceMotion.matches) return;
     var htmlEl = document.documentElement;
@@ -247,6 +278,7 @@
     } else {
       burstHero(reduceMotion, true);
       burstNav(reduceMotion, true);
+      burstWorkCta(reduceMotion, true);
       logo = document.querySelector(".masthead__name.glitch");
       if (logo) {
         window.setTimeout(function () { burstGlitch(logo, reduceMotion, true); }, Math.round(rand(30, 140)));
@@ -265,6 +297,7 @@
         var logo = document.querySelector(".masthead__name.glitch");
         burstHero(reduceMotion);
         burstNav(reduceMotion);
+        window.setTimeout(function () { burstWorkCta(reduceMotion); }, Math.round(rand(180, 640)));
         if (logo) {
           window.setTimeout(function () { burstGlitch(logo, reduceMotion); }, Math.round(rand(120, 520)));
         }
@@ -1077,6 +1110,7 @@
     revealLanding: revealLanding,
     wireParticles: wireParticles,
     burstGlitch: burstGlitch,
+    burstWorkCta: burstWorkCta,
     burstBig: burstBig,
     hitchCurtain: hitchCurtain,
     startGlitchLoop: startGlitchLoop,

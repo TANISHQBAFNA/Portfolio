@@ -54,6 +54,7 @@ Same portfolio information architecture as cream home, with a comic **dimensiona
 - Small organic bursts elsewhere may still jitter; do not use ~10s for the landing header cadence.
 - **Bigger slam ~every 30s** (light jitter ~28–34s) on logo / shout / nav targets.
 - **Logo (“Tanishq Bafna”)** glitches on that ~30s pulse on **landing and portfolio/case pages** that share multiverse chrome.
+- **My Work** uses the same comic dock language as Go Home / theme tabs / project cards: square ink edge, cyan offset, episodic RGB plates + letter hitch. Idle fill stays teal with a cream label. Do **not** set `position` / `transform` / `--rise` on `.work-cta` here.
 
 ### Intensity
 - Keep the study readable; prefer slightly soft over seizure slam.
