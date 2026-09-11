@@ -1,6 +1,10 @@
 (function (global) {
   "use strict";
 
+  if (!global.document || !global.document.documentElement.classList.contains("is-multiverse")) {
+    return;
+  }
+
   var glitchTimers = [];
   var scriptTimers = new WeakMap();
   var SCRIPT_MAPS = {

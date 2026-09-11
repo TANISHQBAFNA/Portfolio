@@ -426,14 +426,22 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script src="assets/js/iris-motion.js?v=hz98" defer></script>
-  <script src="assets/js/iris-motion-multiverse.js?v=mv6" defer></script>
+  <script>
+    if (document.documentElement.classList.contains('is-multiverse')) {
+      document.write('<script src="assets/js/iris-motion-multiverse.js?v=mv7" defer><\/script>');
+    }
+  </script>
   <script src="assets/js/project-data.js?v=hz97" defer></script>
   <script src="assets/js/folder-card.js?v=hz104" defer></script>
   <script src="assets/js/project-rail.js?v=hz97" defer></script>
   <script src="assets/js/project-study.js?v=hz127" defer></script>
   <script src="assets/js/beyond-transition.js?v=bx18" defer></script>
   <script src="assets/js/landing.js?v=aeo30" defer></script>
-  <script src="assets/js/landing-multiverse.js?v=mv5" defer></script>
+  <script>
+    if (document.documentElement.classList.contains('is-multiverse')) {
+      document.write('<script src="assets/js/landing-multiverse.js?v=mv6" defer><\/script>');
+    }
+  </script>
   <script>window.__GTM_ID__ = 'GTM-XXXXXXX';</script>
   <script src="assets/js/tracking.js"></script>
 </body>
