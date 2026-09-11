@@ -144,7 +144,15 @@ check('multiverse: IrisMotion exports glitch API', function () {
   assert.equal(typeof result.iris.startGlitchLoop, 'function');
   assert.equal(typeof result.iris.burstGlitch, 'function');
   assert.equal(typeof result.iris.armGlitchTarget, 'function');
+  assert.equal(typeof result.iris.pulseStudyCurtain, 'function');
+  assert.equal(typeof result.iris.hitchCurtain, 'function');
   assert.ok(Array.isArray(result.iris.NAME_SEQUENCE));
+});
+
+check('cream: pulseStudyCurtain does not leak onto cream IrisMotion', function () {
+  var result = runScripts('is-light-home', [CREAM_MOTION, MV_MOTION]);
+  assert.equal(typeof result.iris.pulseStudyCurtain, 'undefined', 'pulseStudyCurtain leaked onto cream');
+  assert.equal(typeof result.iris.hitchCurtain, 'undefined', 'hitchCurtain leaked onto cream');
 });
 
 check('cream: landing-multiverse.js does not boot', function () {

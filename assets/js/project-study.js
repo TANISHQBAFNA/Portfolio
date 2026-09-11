@@ -1017,6 +1017,9 @@ window.ProjectStudy = (function () {
         window.scrollTo(0, 0);
         onScroll();
         if (fly) fly.style.visibility = 'visible';
+        if (window.IrisMotion && window.IrisMotion.pulseStudyCurtain) {
+          window.IrisMotion.pulseStudyCurtain(veil, fly, reduceMotion, 'plate');
+        }
 
         if (!fly || !dest) {
           liftVeil(finishIntro);
@@ -1024,6 +1027,9 @@ window.ProjectStudy = (function () {
         }
 
         paintFlyName(function () {
+          if (window.IrisMotion && window.IrisMotion.pulseStudyCurtain) {
+            window.IrisMotion.pulseStudyCurtain(veil, fly, reduceMotion, 'name');
+          }
           introHold = window.setTimeout(liftOpen, HOLD_MS);
         });
       }
