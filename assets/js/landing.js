@@ -330,16 +330,16 @@
 
     function pulse() {
       if (html.classList.contains('is-curtain') || html.classList.contains('is-projects-in') || html.classList.contains('is-study')) {
-        window.setTimeout(pulse, 48000);
+        window.setTimeout(pulse, 10000);
         return;
       }
       playHitch();
-      window.setTimeout(pulse, 48000 + Math.floor(Math.random() * 12000));
+      window.setTimeout(pulse, 10000);
     }
 
     tab.addEventListener('mouseenter', playHitch);
     tab.addEventListener('focus', playHitch);
-    window.setTimeout(pulse, 22000 + Math.floor(Math.random() * 8000));
+    window.setTimeout(pulse, 10000);
   }
 
   function wireWorkCtaGlitch() {
