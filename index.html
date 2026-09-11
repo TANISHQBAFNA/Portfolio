@@ -179,21 +179,33 @@
             root.classList.remove('is-home-arrive-pending');
             if (paint.parentNode) paint.parentNode.removeChild(paint);
           }
-          function homeHasRules() {
+          function homeSkinReady() {
             try {
-              return !!(skin.sheet && skin.sheet.cssRules && skin.sheet.cssRules.length > 10);
+              if (!root.classList.contains('is-light-home')) return false;
+              if (!skin.sheet || !skin.sheet.cssRules || !skin.sheet.cssRules.length) return false;
+              var token = window.getComputedStyle(root).getPropertyValue('--mark-size').trim();
+              if (!token) return false;
+              var i;
+              var text;
+              for (i = 0; i < skin.sheet.cssRules.length; i++) {
+                text = skin.sheet.cssRules[i].cssText || '';
+                if (/is-light-home/.test(text) && /masthead__name/.test(text) && /font-size/.test(text)) {
+                  return true;
+                }
+              }
+              return false;
             } catch (err) {
               return false;
             }
           }
           skin.addEventListener('load', function () {
-            if (homeHasRules()) {
+            if (homeSkinReady()) {
               homeSkinDone();
               return;
             }
             var homeWaits = 0;
             (function waitHomeRules() {
-              if (homeHasRules() || homeWaits > 50) {
+              if (homeSkinReady() || homeWaits > 50) {
                 homeSkinDone();
                 return;
               }
@@ -204,7 +216,7 @@
           skin.addEventListener('error', homeSkinDone);
           (function pollHomeSheet() {
             if (homeSettled) return;
-            if (homeHasRules()) {
+            if (homeSkinReady()) {
               homeSkinDone();
               return;
             }
@@ -547,7 +559,7 @@
   <script src="assets/js/project-rail.js?v=hz97" defer></script>
   <script src="assets/js/project-study.js?v=hz128" defer></script>
   <script src="assets/js/beyond-transition.js?v=bx20" defer></script>
-  <script src="assets/js/landing.js?v=aeo30" defer></script>
+  <script src="assets/js/landing.js?v=aeo31" defer></script>
   <script>
     if (document.documentElement.classList.contains('is-multiverse')) {
       document.write('<script src="assets/js/landing-multiverse.js?v=mv8" defer><\/script>');

@@ -7,7 +7,10 @@
  * 2. Portal must not whisper GO HOME / GO BEYOND.
  * 3. ?beyond=1 first paint is a coffee void until Multiverse CSS has rules.
  * 4. ?home=1 (Go Home return) holds the same coffee cover until cream CSS
- *    has rules. Plain cream without home=1 must not pick up either cover.
+ *    has light-home --mark-size / masthead rules — not merely cssRules.length > 10.
+ *    Plain cream without home=1 must not pick up either cover.
+ * 5. Cream curtain must not copy a premature tiny logo font-size into an
+ *    inline lock; Go Home and cold cream share the --mark-size beat size.
  */
 var fs = require('fs');
 var path = require('path');
@@ -22,6 +25,7 @@ var beyondJs = fs.readFileSync(path.join(ROOT, 'assets/js/beyond-transition.js')
 var mvLanding = fs.readFileSync(path.join(ROOT, 'assets/js/landing-multiverse.js'), 'utf8');
 var mvMotion = fs.readFileSync(path.join(ROOT, 'assets/js/iris-motion-multiverse.js'), 'utf8');
 var studyJs = fs.readFileSync(path.join(ROOT, 'assets/js/project-study.js'), 'utf8');
+var creamLanding = fs.readFileSync(path.join(ROOT, 'assets/js/landing.js'), 'utf8');
 
 function mediaBlocks(css, query) {
   var needle = '@media (' + query + ')';
@@ -162,15 +166,16 @@ check('beyond path only: coffee void until cssRules, then drop pending', functio
   );
 });
 
-check('home=1 path: coffee void until cream cssRules, then drop pending', function () {
+check('home=1 path: coffee void until cream light-home mark rules, then drop pending', function () {
   var boot = headBootScript(index);
   var homeArriveIdx = boot.indexOf('if (homeArrive)');
   assert.ok(homeArriveIdx !== -1, 'boot script missing homeArrive branch');
   var skinAppend = boot.indexOf('document.head.appendChild(skin)');
   assert.ok(skinAppend !== -1 && skinAppend > homeArriveIdx, 'boot script missing skin append');
   var waitHomeIdx = boot.indexOf('else if (homeArrive)');
-  assert.ok(waitHomeIdx !== -1, 'boot script missing homeArrive cssRules wait');
+  assert.ok(waitHomeIdx !== -1, 'boot script missing homeArrive cream-skin wait');
   var homeBlock = boot.slice(homeArriveIdx, skinAppend) + boot.slice(waitHomeIdx);
+  var homeWait = boot.slice(waitHomeIdx);
   assert.ok(
     !/is-mv-skin-pending/.test(homeBlock),
     'homeArrive must not reuse is-mv-skin-pending'
@@ -188,16 +193,50 @@ check('home=1 path: coffee void until cream cssRules, then drop pending', functi
     'homeArrive must inject a full-viewport coffee cover'
   );
   assert.ok(
-    /cssRules/.test(homeBlock),
-    'homeArrive must wait for cream stylesheet cssRules'
+    /--mark-size/.test(homeWait) && /is-light-home/.test(homeWait),
+    'homeArrive must wait for light-home --mark-size, not a raw cssRules count'
+  );
+  assert.ok(
+    !/cssRules\.length\s*>\s*10/.test(homeWait),
+    'homeArrive must not drop the cover on cssRules.length > 10 (fires before --mark-size)'
   );
   assert.ok(
     /classList\.remove\(\s*['"]is-home-arrive-pending['"]\s*\)/.test(homeBlock),
-    'homeArrive must drop is-home-arrive-pending after cream CSS has rules'
+    'homeArrive must drop is-home-arrive-pending after cream mark rules apply'
   );
   assert.ok(
     /\.multiverse-tab/.test(homeBlock) && /\.home-tab/.test(homeBlock),
     'homeArrive pending CSS must hide .multiverse-tab and .home-tab during FOUC'
+  );
+});
+
+check('base masthead name size sits before cream --mark-size (the premature copy)', function () {
+  var baseName = creamCss.indexOf('.masthead__name {');
+  var markVar = creamCss.indexOf('--mark-size:');
+  var lightName = creamCss.indexOf('html.is-light-home .masthead__name');
+  assert.ok(baseName !== -1 && markVar !== -1 && lightName !== -1, 'landing.css missing mark size rules');
+  assert.ok(
+    baseName < markVar && baseName < lightName,
+    'base .masthead__name (tiny clamp) must precede --mark-size so a >10 cssRules poll copies the speck'
+  );
+});
+
+check('cream playCurtain does not lock mark font-size from a premature logo compute', function () {
+  var start = creamLanding.indexOf('function playCurtain');
+  var end = creamLanding.indexOf('function fitHeroType');
+  assert.ok(start !== -1 && end !== -1 && end > start, 'landing.js missing playCurtain');
+  var play = creamLanding.slice(start, end);
+  assert.ok(
+    /getPropertyValue\(\s*['"]--mark-size['"]\s*\)/.test(play),
+    'playCurtain must read computed --mark-size before locking curtain type'
+  );
+  assert.ok(
+    !/mark\.style\.fontSize\s*=\s*window\.getComputedStyle\(logo\)\.fontSize/.test(play),
+    'playCurtain must not copy logo fontSize before layout is known'
+  );
+  assert.ok(
+    /1\.15/.test(play),
+    'playCurtain must keep a --mark-size floor so base masthead clamp cannot lock a speck'
   );
 });
 
@@ -262,6 +301,10 @@ check('cache queries bumped for My Work glitch skin', function () {
   assert.ok(
     /beyond-transition\.js\?v=bx20/.test(index),
     'index.html must keep beyond-transition.js cache at bx20 (Go Home FOUC cover)'
+  );
+  assert.ok(
+    /landing\.js\?v=aeo31/.test(index),
+    'index.html must bump landing.js cache for cream curtain mark-size lock'
   );
 });
 

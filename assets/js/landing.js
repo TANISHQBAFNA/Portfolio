@@ -508,17 +508,49 @@
     mark.style.fontFamily = '"Syne", sans-serif';
     mark.style.fontWeight = BOLD;
     mark.style.fontSynthesis = 'none';
-    /* Match navbar logo size exactly (shared --mark-size) */
-    if (logo) {
-      mark.style.fontSize = window.getComputedStyle(logo).fontSize;
-      mark.style.letterSpacing = window.getComputedStyle(logo).letterSpacing;
-      mark.style.lineHeight = window.getComputedStyle(logo).lineHeight;
-    }
     mark.style.whiteSpace = 'nowrap';
     mark.style.color = '#f4efe6';
     mark.style.margin = '0';
     mark.style.opacity = '1';
     mark.textContent = '';
+
+    /* CSS already sizes .curtain__mark with var(--mark-size). Do not copy
+       logo fontSize until that token (and the light-home masthead rule) apply —
+       a premature compute is the tiny base .masthead__name clamp. */
+    function markLayoutReady() {
+      var token = window.getComputedStyle(html).getPropertyValue('--mark-size').trim();
+      if (!token) return false;
+      if (!logo) return true;
+      var px = parseFloat(window.getComputedStyle(logo).fontSize) || 0;
+      var rootPx = parseFloat(window.getComputedStyle(html).fontSize) || 16;
+      return px + 0.25 >= 1.15 * rootPx;
+    }
+
+    function lockMarkToLogo() {
+      if (!logo || !markLayoutReady()) return;
+      var cs = window.getComputedStyle(logo);
+      mark.style.fontSize = cs.fontSize;
+      mark.style.letterSpacing = cs.letterSpacing;
+      mark.style.lineHeight = cs.lineHeight;
+    }
+
+    function whenMarkLayoutReady(then) {
+      var tries = 0;
+      function go() {
+        if (markLayoutReady() || tries > 90) {
+          lockMarkToLogo();
+          then();
+          return;
+        }
+        tries += 1;
+        window.setTimeout(go, 16);
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(go).catch(go);
+      } else {
+        go();
+      }
+    }
 
     var typedReady = false;
     var loadReady = document.readyState === 'complete';
@@ -709,16 +741,13 @@
       }
 
       var ink = getComputedStyle(html).getPropertyValue('--curtain-ink').trim() || '#1E1510';
-      var logoStyle = window.getComputedStyle(logo);
 
       /* Flatten typed spans so the name is one solid word */
       mark.textContent = CURTAIN_TEXT;
       mark.style.fontFamily = '"Syne", sans-serif';
       mark.style.fontWeight = BOLD;
       mark.style.fontSynthesis = 'none';
-      mark.style.fontSize = logoStyle.fontSize;
-      mark.style.letterSpacing = logoStyle.letterSpacing;
-      mark.style.lineHeight = logoStyle.lineHeight;
+      lockMarkToLogo();
       mark.style.whiteSpace = 'nowrap';
       mark.style.color = '#f4efe6';
       mark.style.margin = '0';
@@ -789,9 +818,11 @@
       }
     }
 
-    playNameBeats(function () {
-      typedReady = true;
-      beginLift();
+    whenMarkLayoutReady(function () {
+      playNameBeats(function () {
+        typedReady = true;
+        beginLift();
+      });
     });
 
     if (!loadReady) {
