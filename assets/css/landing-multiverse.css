@@ -3148,7 +3148,8 @@ html.is-multiverse.is-curtain .masthead__nav li,
 html.is-multiverse.is-curtain .theme-tab,
 html.is-multiverse.is-curtain .edge-dock,
 html.is-multiverse.is-curtain .home-tab,
-html.is-multiverse.is-curtain .work-cta {
+html.is-multiverse.is-curtain .work-cta,
+html.is-multiverse.is-curtain .landing-chrome {
   opacity: 0;
   transform: translate3d(0, 36px, 0);
   pointer-events: none;
@@ -3210,6 +3211,15 @@ html.is-multiverse .edge-dock {
 }
 html.is-multiverse .edge-dock > * {
   pointer-events: auto;
+}
+html.is-multiverse .landing-chrome {
+  display: contents;
+}
+html.is-multiverse .landing-screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 html.is-multiverse .home-tab {
   position: relative;
@@ -3722,6 +3732,7 @@ html.is-multiverse .work-card__caption {
   html.is-multiverse {
     --mark-size: clamp(1.28rem, 6.2vw, 1.7rem);
     --head-h: auto;
+    --dock-h: calc(48px + env(safe-area-inset-bottom, 0px));
   }
   html.is-multiverse,
   html.is-multiverse body.landing {
@@ -3771,14 +3782,20 @@ html.is-multiverse .work-card__caption {
     font-size: 0.7rem;
     letter-spacing: 0.06em;
   }
+  html.is-multiverse .landing-screen {
+    position: relative;
+    flex: 0 0 auto;
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
   html.is-multiverse .hero {
     position: relative !important;
     display: flex !important;
     flex: 1 1 auto;
-    min-height: calc(100svh - 5.5rem);
+    min-height: 0;
     height: auto !important;
     align-items: flex-end;
-    padding: 16px var(--gutter) 92px !important;
+    padding: 16px var(--gutter) calc(var(--dock-h) + 32px) !important;
     transform: none !important;
   }
   html.is-multiverse .hero__role {
@@ -3791,27 +3808,58 @@ html.is-multiverse .work-card__caption {
   }
   html.is-multiverse .hero__support {
     font-size: clamp(0.95rem, 4.2vw, 1.15rem) !important;
+    margin-top: 0.7em;
+  }
+  html.is-multiverse .landing-chrome {
+    display: flex;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 6;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
+    pointer-events: none;
+  }
+  html.is-multiverse .landing-chrome > * {
+    pointer-events: auto;
   }
   html.is-multiverse .edge-dock {
-    right: 16px;
+    position: relative !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 1;
+    flex: 0 0 auto;
     gap: 8px;
+    height: var(--dock-h);
+    align-items: stretch;
   }
   html.is-multiverse .theme-tab {
     width: 46px;
-    height: calc(40px + env(safe-area-inset-bottom, 0px));
+    height: var(--dock-h);
     right: auto;
   }
   html.is-multiverse .home-tab {
     width: 46px;
-    height: calc(40px + env(safe-area-inset-bottom, 0px));
+    height: var(--dock-h);
   }
   html.is-multiverse .work-cta {
-    top: auto;
-    bottom: 0;
-    height: calc(40px + env(safe-area-inset-bottom, 0px));
-    padding: 0 0.9rem env(safe-area-inset-bottom, 0px);
-    font-size: 0.7rem;
-    transform: translateX(-50%);
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    z-index: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    height: var(--dock-h);
+    padding: 0 1.25rem env(safe-area-inset-bottom, 0px);
+    font-size: 0.95rem;
+    transform: none !important;
     will-change: auto;
   }
   html.is-multiverse .rail.bento,
@@ -5841,4 +5889,17 @@ html.is-multiverse .work-cta:focus-visible {
   border-color: #1E1510 !important;
   color: #f4efe6 !important;
   -webkit-text-fill-color: #f4efe6;
+}
+
+@media (max-width: 767px) {
+  html.is-multiverse .work-cta,
+  html.is-multiverse .work-cta.is-pulling,
+  html.is-multiverse .edge-dock {
+    position: relative !important;
+    transform: none !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+  }
 }

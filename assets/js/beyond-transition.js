@@ -75,7 +75,7 @@
   }
 
   function withBeyondQuery(href, key) {
-    var base = href || (key === 'beyond' ? 'index-multiverse.html' : 'index.html');
+    var base = href || (key === 'beyond' ? 'index.html' : 'index.html');
     if (new RegExp('[?&]' + key + '=').test(base)) return base;
     return base + (base.indexOf('?') === -1 ? '?' : '&') + key + '=1';
   }
@@ -92,8 +92,21 @@
   }
 
   if (isMultiverse && hasParam('beyond')) {
-    html.classList.add('is-beyond-enter');
     window.__beyondPortal.needed = true;
+  }
+
+  function whenSkinReady(fn) {
+    var ready = window.__tbSkinReady;
+    if (ready && typeof ready.then === 'function') {
+      ready.then(fn);
+      return;
+    }
+    if (!html.classList.contains('is-skin-pending')) {
+      fn();
+      return;
+    }
+    window.addEventListener('tb-skin-ready', fn, { once: true });
+    window.setTimeout(fn, 4000);
   }
 
   function ensureOverlay() {
@@ -205,6 +218,7 @@
     fillStorm();
     fillShards();
     seam.className = 'beyond-seam is-active is-alive ' + phaseClass;
+    html.classList.remove('is-skin-pending');
     html.classList.add('is-beyond-crossing');
     document.body.classList.add('is-beyond-crossing');
     /* Enter = chaos rises. Home = chaos settles. */
@@ -222,6 +236,10 @@
       seam.classList.add('is-pulse');
     }, Math.floor(duration * 0.42));
     window.setTimeout(function () {
+      /* Restore curtain under the portal before the overlay clears. */
+      if (phaseClass.indexOf('arrive') !== -1) {
+        html.classList.remove('is-beyond-enter');
+      }
       seam.className = 'beyond-seam';
       html.classList.remove('is-beyond-crossing', 'is-beyond-to-glitch', 'is-beyond-to-stable');
       document.body.classList.remove('is-beyond-crossing');
@@ -270,11 +288,13 @@
   }
 
   function handleArrival() {
-    if (!(isMultiverse && html.classList.contains('is-beyond-enter'))) {
+    if (!(isMultiverse && window.__beyondPortal.needed)) {
+      html.classList.remove('is-skin-pending');
       markPortalDone();
       return;
     }
 
+    html.classList.add('is-beyond-enter');
     window.setTimeout(function () { stripParams(['beyond']); }, 0);
     setWhisper('GO BEYOND');
 
@@ -294,8 +314,10 @@
   }
 
   function boot() {
-    handleArrival();
-    if (isMultiverse) wireHomeTab();
+    whenSkinReady(function () {
+      handleArrival();
+      if (isMultiverse) wireHomeTab();
+    });
   }
 
   boot();

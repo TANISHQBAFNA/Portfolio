@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" class="is-curtain">
+<html lang="en" class="is-curtain is-skin-pending">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Tanishq Bafna / Product Designer</title>
+  <style id="skin-boot">
+    html.is-skin-pending,
+    html.is-skin-pending body {
+      background: #1E1510 !important;
+    }
+    html.is-skin-pending::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      background: #1E1510;
+      pointer-events: auto;
+    }
+    .home-tab { display: none; }
+  </style>
   <meta name="description"
     content="Tanishq Bafna is a product and UX designer based in Mumbai, open across domains. Proof includes complex products where trust matters — banking, AI tools, and consumer apps among them." />
   <meta name="theme-color" content="#f4efe6" />
@@ -77,6 +92,7 @@
         }
         var skin = document.createElement('link');
         skin.rel = 'stylesheet';
+        try { skin.setAttribute('blocking', 'render'); } catch (e) { }
         if (beyond) {
           root.classList.add('is-multiverse');
           if (dark) {
@@ -87,13 +103,13 @@
             root.classList.add('is-print');
           }
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#0e1018' : '#f3eee4');
-          skin.href = 'assets/css/landing-multiverse.css?v=mv8';
+          skin.href = 'assets/css/landing-multiverse.css?v=mv9';
         } else {
           root.classList.add('is-light-home');
           if (dark) root.classList.add('is-dark');
           else root.classList.remove('is-dark');
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#1E1510' : '#f4efe6');
-          skin.href = 'assets/css/landing.css?v=aeo30';
+          skin.href = 'assets/css/landing.css?v=aeo31';
           if (homeArrive) {
             root.classList.add('is-home-arrive');
             root.style.background = '#1E1510';
@@ -104,7 +120,24 @@
             document.head.appendChild(paint);
           }
         }
+        var skinSettled = false;
+        function skinDone() {
+          if (skinSettled) return;
+          skinSettled = true;
+          /* Cream can drop the void once skin CSS owns the curtain.
+             Multiverse ?beyond=1 keeps the void until the portal overlay covers. */
+          if (!beyond) root.classList.remove('is-skin-pending');
+          if (window.__tbSkinResolve) window.__tbSkinResolve();
+          try { window.dispatchEvent(new Event('tb-skin-ready')); } catch (err) { }
+        }
+        window.__tbSkinReady = new Promise(function (resolve) {
+          window.__tbSkinResolve = resolve;
+        });
+        skin.addEventListener('load', skinDone);
+        skin.addEventListener('error', skinDone);
         document.head.appendChild(skin);
+        try { if (skin.sheet) skinDone(); } catch (e) { }
+        window.setTimeout(skinDone, 4000);
       } catch (e) { }
     })();
   </script>
@@ -116,7 +149,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans:wght@700;800&family=Noto+Sans+Devanagari:wght@700;800&family=Noto+Sans+Arabic:wght@700;800&family=Noto+Sans+SC:wght@700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/beyond-transition.css?v=bx17" />
+  <link rel="stylesheet" href="assets/css/beyond-transition.css?v=bx19" />
 </head>
 
 <body class="landing">
@@ -146,6 +179,7 @@
   </div>
 
   <div class="stage is-home" data-stage>
+    <div class="landing-screen">
 
     <!-- ── PortfolioHeader ───────────────────────────────────────── -->
     <header class="masthead">
@@ -197,6 +231,7 @@
       </figure>
     </section>
 
+    <div class="landing-chrome">
     <a class="work-cta" href="#work" data-nav-work data-work-cta><span class="work-cta__label">My Work</span></a>
 
     <div class="edge-dock" data-edge-dock>
@@ -225,6 +260,8 @@
           </svg>
         </span>
       </button>
+    </div>
+    </div>
     </div>
 
     <!-- ── HorizontalNavigation ──────────────────────────────────── -->
@@ -431,9 +468,9 @@
   <script src="assets/js/folder-card.js?v=hz104" defer></script>
   <script src="assets/js/project-rail.js?v=hz97" defer></script>
   <script src="assets/js/project-study.js?v=hz127" defer></script>
-  <script src="assets/js/beyond-transition.js?v=bx18" defer></script>
-  <script src="assets/js/landing.js?v=aeo30" defer></script>
-  <script src="assets/js/landing-multiverse.js?v=mv5" defer></script>
+  <script src="assets/js/beyond-transition.js?v=bx19" defer></script>
+  <script src="assets/js/landing.js?v=aeo31" defer></script>
+  <script src="assets/js/landing-multiverse.js?v=mv6" defer></script>
   <script>window.__GTM_ID__ = 'GTM-XXXXXXX';</script>
   <script src="assets/js/tracking.js"></script>
 </body>
