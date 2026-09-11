@@ -143,7 +143,7 @@ assert(
 
 assert(
   'cache query bumped for landing-multiverse.css skin',
-  /landing-multiverse\.css\?v=mv9/.test(index)
+  /landing-multiverse\.css\?v=mv10/.test(index)
 );
 
 assert(

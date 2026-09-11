@@ -3221,6 +3221,9 @@ html.is-multiverse .landing-screen {
   flex: 1 1 auto;
   min-height: 0;
 }
+html.is-multiverse .multiverse-tab {
+  display: none;
+}
 html.is-multiverse .home-tab {
   position: relative;
   right: auto;
