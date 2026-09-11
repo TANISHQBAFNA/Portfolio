@@ -5411,6 +5411,85 @@ html.is-multiverse .theme-tab__icon--moon { display: flex; }
 html.is-multiverse.is-dark .theme-tab__icon--moon { display: none; }
 html.is-multiverse.is-dark .theme-tab__icon--sun { display: flex; }
 
+/* ── My Work: comic ink + RGB fringe on shared dock geometry ───────────
+   Layout (position / transform / --rise) stays in landing.css.
+   This block is skin only: square ink edge, cyan comic offset, episodic
+   RGB plates + letter hitch. Teal fill / cream label stay readable. */
+html.is-multiverse .work-cta {
+  isolation: isolate;
+  overflow: visible;
+  border-radius: 0;
+  border-width: 2px;
+  box-shadow:
+    5px -5px 0 var(--cyan),
+    8px -8px 0 var(--ink);
+}
+html.is-multiverse .work-cta:hover,
+html.is-multiverse .work-cta:focus-visible,
+html.is-multiverse .work-cta.is-pulling,
+html.is-multiverse .work-cta.is-glitching,
+html.is-multiverse.is-dark .work-cta,
+html.is-multiverse.is-dark .work-cta:hover,
+html.is-multiverse.is-dark .work-cta:focus-visible {
+  background: #00a0a0 !important;
+  border-color: #00a0a0 !important;
+  color: #f4efe6 !important;
+  -webkit-text-fill-color: #f4efe6;
+}
+html.is-multiverse .work-cta:hover,
+html.is-multiverse .work-cta:focus-visible,
+html.is-multiverse .work-cta.is-glitching,
+html.is-multiverse .work-cta.is-pulling,
+html.is-multiverse.is-projects-hitching .work-cta,
+html.is-multiverse.is-slam-hitch .work-cta {
+  box-shadow:
+    4px -4px 0 var(--cyan),
+    7px -7px 0 var(--ink),
+    -3px 0 0 rgba(255, 0, 60, 0.42),
+    3px 0 0 rgba(61, 126, 255, 0.35);
+}
+html.is-multiverse .work-cta.is-glitching,
+html.is-multiverse.is-slam-hitch .work-cta,
+html.is-multiverse.is-projects-hitching .work-cta {
+  animation: sv-curtain-plate 0.9s ease-out 1;
+}
+html.is-multiverse .work-cta::before,
+html.is-multiverse .work-cta::after {
+  content: "";
+  position: absolute;
+  inset: -2px -2px 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  background: transparent;
+}
+html.is-multiverse .work-cta:hover::before,
+html.is-multiverse .work-cta:focus-visible::before,
+html.is-multiverse .work-cta.is-glitching::before,
+html.is-multiverse.is-projects-hitching .work-cta::before,
+html.is-multiverse.is-slam-hitch .work-cta::before {
+  background: rgba(255, 0, 60, 0.28);
+  opacity: 1;
+  transform: translate(-5px, 1px);
+}
+html.is-multiverse .work-cta:hover::after,
+html.is-multiverse .work-cta:focus-visible::after,
+html.is-multiverse .work-cta.is-glitching::after,
+html.is-multiverse.is-projects-hitching .work-cta::after,
+html.is-multiverse.is-slam-hitch .work-cta::after {
+  background: rgba(61, 126, 255, 0.26);
+  opacity: 1;
+  transform: translate(5px, -1px);
+}
+html.is-multiverse .work-cta.is-glitching .work-cta__label,
+html.is-multiverse .work-cta:hover .work-cta__label,
+html.is-multiverse .work-cta:focus-visible .work-cta__label {
+  text-shadow:
+    -2px 0 0 rgba(255, 0, 60, 0.58),
+    2px 0 0 rgba(61, 126, 255, 0.46),
+    0 1px 0 rgba(0, 255, 156, 0.26);
+}
+
 /* ── work: comic panels, one cinematic rise (existing --rise) ────────── */
 html.is-multiverse .rail.bento,
 html.is-multiverse .rail {
@@ -5608,7 +5687,10 @@ html.is-multiverse .study__curtain-name.is-flying {
   html.is-multiverse.is-study-wipe .study__veil-hitch,
   html.is-multiverse .glitch.is-glitching.is-slam::before,
   html.is-multiverse .glitch.is-glitching.is-slam::after,
-  html.is-multiverse.is-slam-hitch .atmosphere__wash {
+  html.is-multiverse.is-slam-hitch .atmosphere__wash,
+  html.is-multiverse .work-cta.is-glitching,
+  html.is-multiverse.is-slam-hitch .work-cta,
+  html.is-multiverse.is-projects-hitching .work-cta {
     animation: none !important;
     filter: none !important;
   }
@@ -5621,6 +5703,11 @@ html.is-multiverse .study__curtain-name.is-flying {
     opacity: 0 !important;
     transform: none !important;
     clip-path: none !important;
+  }
+  html.is-multiverse .work-cta::before,
+  html.is-multiverse .work-cta::after {
+    opacity: 0 !important;
+    transform: none !important;
   }
   html.is-multiverse .masthead__nav a:hover,
   html.is-multiverse .masthead__nav a:focus-visible {

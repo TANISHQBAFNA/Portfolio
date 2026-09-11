@@ -88,4 +88,4 @@ Cream Syne light-home baseline (hz63→hz66 lineage): shout `I DESIGN / THOUGHTF
 
 Cream and Multiverse share **content and major CSS**: hero words, type scale, My Work, dock geometry, projects `--rise`. Multiverse **adds** a glitch layer (RGB fringe, letter hitch, comic plates, Ben-Day, particles). It must not fork positioning.
 
-`landing.css` is the layout source of truth for chrome. `landing-multiverse.css` may restyle ink/comic on tabs and type, not `position` / `transform` / `--rise` on `.work-cta` or `.landing-chrome`.
+`landing.css` is the layout source of truth for chrome. `landing-multiverse.css` may restyle ink/comic on tabs and type, not `position` / `transform` / `--rise` on `.work-cta` or `.landing-chrome`. Cream My Work stays the rounded teal pull-tab; Multiverse My Work adds comic ink / RGB / hitch on top of that same geometry.

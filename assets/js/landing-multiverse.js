@@ -839,6 +839,22 @@
     });
   }
 
+  function wireWorkCtaGlitch() {
+    var handle = document.querySelector('[data-work-cta]');
+    var label = handle && handle.querySelector('.work-cta__label');
+    if (!handle || !label) return;
+    if (window.IrisMotion && window.IrisMotion.armGlitchTarget) {
+      window.IrisMotion.armGlitchTarget(label, (label.textContent || 'My Work').trim());
+    }
+    function hitch() {
+      if (window.IrisMotion && window.IrisMotion.burstWorkCta) {
+        window.IrisMotion.burstWorkCta(reduceMotion);
+      }
+    }
+    handle.addEventListener('mouseenter', hitch);
+    handle.addEventListener('focus', hitch);
+  }
+
   renderProjects();
   wireTheme();
   wirePortrait();
@@ -846,6 +862,7 @@
   wireHeroFit();
   wireMagneticNav();
   wireHeroGlitch();
+  wireWorkCtaGlitch();
   wireStudyCurtainGlitch();
   if (window.IrisMotion && window.IrisMotion.wireParticles) window.IrisMotion.wireParticles(reduceMotion);
   html.style.setProperty('--rise', /[?&]open=/.test(location.search) ? '0' : '1');

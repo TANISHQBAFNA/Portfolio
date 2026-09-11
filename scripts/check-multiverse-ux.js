@@ -222,22 +222,30 @@ check('cream CSS file does not gain skin-pending / FOUC cover', function () {
   );
 });
 
-check('cache queries bumped for shared chrome layout', function () {
+check('cache queries bumped for My Work glitch skin', function () {
   assert.ok(
-    /landing-multiverse\.css\?v=mv11/.test(index),
-    'index.html must bump landing-multiverse.css cache to mv11'
+    /landing-multiverse\.css\?v=mv12/.test(index),
+    'index.html must bump landing-multiverse.css cache to mv12'
   );
   assert.ok(
-    /landing-multiverse\.css\?v=mv11/.test(mvIndex),
-    'index-multiverse.html must bump landing-multiverse.css cache to mv11'
+    /landing-multiverse\.css\?v=mv12/.test(mvIndex),
+    'index-multiverse.html must bump landing-multiverse.css cache to mv12'
   );
   assert.ok(
-    /iris-motion-multiverse\.js\?v=mv8/.test(index),
-    'index.html must bump iris-motion-multiverse.js cache to mv8'
+    /iris-motion-multiverse\.js\?v=mv9/.test(index),
+    'index.html must bump iris-motion-multiverse.js cache to mv9'
   );
   assert.ok(
-    /landing-multiverse\.js\?v=mv7/.test(index),
-    'index.html must bump landing-multiverse.js cache to mv7'
+    /iris-motion-multiverse\.js\?v=mv9/.test(mvIndex),
+    'index-multiverse.html must bump iris-motion-multiverse.js cache to mv9'
+  );
+  assert.ok(
+    /landing-multiverse\.js\?v=mv8/.test(index),
+    'index.html must bump landing-multiverse.js cache to mv8'
+  );
+  assert.ok(
+    /landing-multiverse\.js\?v=mv8/.test(mvIndex),
+    'index-multiverse.html must bump landing-multiverse.js cache to mv8'
   );
   assert.ok(
     /project-study\.js\?v=hz128/.test(index),
@@ -308,15 +316,24 @@ check('My Work + landing-chrome + rise live in one shared landing.css rule set',
 });
 
 check('Multiverse CSS does not re-specify My Work / chrome layout', function () {
-  var workRules = mvCss.match(/html\.is-multiverse[^{}]*\.work-cta(?!__)[^{]*\{[^}]*\}/g) || [];
+  function isHandleRule(rule) {
+    var sel = rule.split('{')[0];
+    return sel.split(',').some(function (part) {
+      var s = part.replace(/\/\*[\s\S]*?\*\//g, '').trim();
+      if (/::/.test(s) || /\.work-cta__/.test(s)) return false;
+      return /\.work-cta(?:\.[a-zA-Z0-9_-]+)*\s*$/.test(s);
+    });
+  }
+  var workRules = mvCss.match(/html\.is-multiverse[^{}]*\.work-cta[^{]*\{[^}]*\}/g) || [];
   workRules.forEach(function (rule) {
+    if (!isHandleRule(rule)) return;
     assert.ok(
       !/\bposition\s*:/.test(rule),
       'landing-multiverse.css .work-cta must not set position: ' + rule.slice(0, 120)
     );
     assert.ok(
       !/\btransform\s*:/.test(rule),
-      'landing-multiverse.css .work-cta must not set transform: ' + rule.slice(0, 120)
+      'landing-multiverse.css .work-cta handle must not set transform: ' + rule.slice(0, 120)
     );
     assert.ok(
       !/--rise/.test(rule),
@@ -333,6 +350,33 @@ check('Multiverse CSS does not re-specify My Work / chrome layout', function () 
   );
 });
 
+check('Multiverse My Work has comic / RGB skin; cream does not', function () {
+  var mvBlock = mvCss.match(/html\.is-multiverse \.work-cta\s*\{[^}]+\}/);
+  assert.ok(mvBlock, 'landing-multiverse.css must skin html.is-multiverse .work-cta');
+  assert.ok(/border-radius:\s*0/.test(mvBlock[0]), 'Multiverse My Work must be square comic');
+  assert.ok(
+    /box-shadow:[\s\S]*cyan/.test(mvBlock[0]) && /box-shadow:[\s\S]*ink/.test(mvBlock[0]),
+    'Multiverse My Work must use cyan + ink comic offset'
+  );
+  assert.ok(
+    /html\.is-multiverse \.work-cta::before/.test(mvCss) &&
+      /html\.is-multiverse \.work-cta::after/.test(mvCss),
+    'Multiverse My Work must have RGB fringe plates'
+  );
+  assert.ok(
+    /function burstWorkCta\(/.test(mvMotion) && /burstWorkCta\(reduceMotion/.test(mvLanding),
+    'Multiverse hitch loop + hover must pulse My Work'
+  );
+  assert.ok(
+    !/html\.is-light-home \.work-cta\s*\{[^}]*border-radius:\s*0/.test(creamCss),
+    'cream landing.css must not square My Work'
+  );
+  assert.ok(
+    /border-radius:\s*18px 18px 0 0/.test(creamCss),
+    'shared landing.css must keep cream My Work as a rounded pull-tab'
+  );
+});
+
 check('both worlds load shared landing.css; Multiverse adds glitch sheet after', function () {
   assert.ok(
     /landing\.css\?v=aeo32/.test(index),
@@ -342,7 +386,7 @@ check('both worlds load shared landing.css; Multiverse adds glitch sheet after',
     /landing\.css\?v=aeo32/.test(mvIndex),
     'index-multiverse.html must load shared landing.css'
   );
-  var mvLink = mvIndex.indexOf('landing-multiverse.css?v=mv11');
+  var mvLink = mvIndex.indexOf('landing-multiverse.css?v=mv12');
   var layoutLink = mvIndex.indexOf('landing.css?v=aeo32');
   assert.ok(layoutLink !== -1 && mvLink !== -1 && layoutLink < mvLink,
     'index-multiverse.html must load landing.css before landing-multiverse.css');
