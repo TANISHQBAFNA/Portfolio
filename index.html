@@ -109,12 +109,21 @@
           skin.href = 'assets/css/landing.css?v=aeo30';
           if (homeArrive) {
             root.classList.add('is-home-arrive');
+            root.classList.add('is-home-arrive-pending');
             root.style.background = '#1E1510';
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1E1510');
             var paint = document.createElement('style');
             paint.id = 'home-arrive-paint';
-            paint.textContent = 'html,body{background:#1E1510!important}';
+            paint.textContent =
+              'html.is-home-arrive-pending,html.is-home-arrive-pending body{background:#1E1510!important}' +
+              'html.is-home-arrive-pending::before{content:"";position:fixed;inset:0;z-index:2147483647;background:#1E1510;pointer-events:auto}' +
+              'html.is-home-arrive-pending .multiverse-tab,html.is-home-arrive-pending .home-tab{display:none!important}';
             document.head.appendChild(paint);
+            var homePreload = document.createElement('link');
+            homePreload.rel = 'preload';
+            homePreload.as = 'style';
+            homePreload.href = skin.href;
+            document.head.appendChild(homePreload);
           }
         }
         document.head.appendChild(skin);
@@ -158,6 +167,46 @@
             window.setTimeout(pollSheet, 16);
           })();
           window.setTimeout(skinDone, 4000);
+        } else if (homeArrive) {
+          var homeSettled = false;
+          function homeSkinDone() {
+            if (homeSettled) return;
+            homeSettled = true;
+            root.classList.remove('is-home-arrive-pending');
+            if (paint.parentNode) paint.parentNode.removeChild(paint);
+          }
+          function homeHasRules() {
+            try {
+              return !!(skin.sheet && skin.sheet.cssRules && skin.sheet.cssRules.length > 10);
+            } catch (err) {
+              return false;
+            }
+          }
+          skin.addEventListener('load', function () {
+            if (homeHasRules()) {
+              homeSkinDone();
+              return;
+            }
+            var homeWaits = 0;
+            (function waitHomeRules() {
+              if (homeHasRules() || homeWaits > 50) {
+                homeSkinDone();
+                return;
+              }
+              homeWaits += 1;
+              window.setTimeout(waitHomeRules, 16);
+            })();
+          });
+          skin.addEventListener('error', homeSkinDone);
+          (function pollHomeSheet() {
+            if (homeSettled) return;
+            if (homeHasRules()) {
+              homeSkinDone();
+              return;
+            }
+            window.setTimeout(pollHomeSheet, 16);
+          })();
+          window.setTimeout(homeSkinDone, 4000);
         }
       } catch (e) { }
     })();
@@ -489,7 +538,7 @@
   <script src="assets/js/folder-card.js?v=hz104" defer></script>
   <script src="assets/js/project-rail.js?v=hz97" defer></script>
   <script src="assets/js/project-study.js?v=hz127" defer></script>
-  <script src="assets/js/beyond-transition.js?v=bx19" defer></script>
+  <script src="assets/js/beyond-transition.js?v=bx20" defer></script>
   <script src="assets/js/landing.js?v=aeo30" defer></script>
   <script>
     if (document.documentElement.classList.contains('is-multiverse')) {

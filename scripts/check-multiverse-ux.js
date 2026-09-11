@@ -6,7 +6,8 @@
  * 1. Go Beyond must not remain in the Multiverse dock.
  * 2. Portal must not whisper GO HOME / GO BEYOND.
  * 3. ?beyond=1 first paint is a coffee void until Multiverse CSS has rules.
- *    Cream path must not pick up that cover.
+ * 4. ?home=1 (Go Home return) holds the same coffee cover until cream CSS
+ *    has rules. Plain cream without home=1 must not pick up either cover.
  */
 var fs = require('fs');
 var path = require('path');
@@ -113,23 +114,80 @@ check('beyond path only: coffee void until cssRules, then drop pending', functio
   );
   var creamIdx = boot.indexOf("root.classList.add('is-light-home')");
   assert.ok(creamIdx !== -1, 'boot script missing cream else branch');
-  var creamEnd = boot.indexOf('document.head.appendChild(skin)');
-  assert.ok(creamEnd !== -1 && creamEnd > creamIdx, 'boot script missing skin append after cream branch');
-  var creamBlock = boot.slice(creamIdx, creamEnd);
+  var homeArriveIdx = boot.indexOf('if (homeArrive)');
+  assert.ok(homeArriveIdx !== -1 && homeArriveIdx > creamIdx, 'boot script missing homeArrive branch');
+  var creamPlain = boot.slice(creamIdx, homeArriveIdx);
   assert.ok(
-    !/is-mv-skin-pending/.test(creamBlock),
-    'cream else branch must not add is-mv-skin-pending'
+    !/is-mv-skin-pending/.test(creamPlain),
+    'plain cream must not add is-mv-skin-pending'
   );
   assert.ok(
-    !/#1E1510.*::before|is-mv-skin-pending/.test(creamBlock),
-    'cream else branch must not inject the Multiverse FOUC cover'
+    !/is-home-arrive-pending/.test(creamPlain),
+    'plain cream must not add is-home-arrive-pending'
+  );
+  assert.ok(
+    !/::before/.test(creamPlain),
+    'plain cream must not inject a FOUC cover'
+  );
+});
+
+check('home=1 path: coffee void until cream cssRules, then drop pending', function () {
+  var boot = headBootScript(index);
+  var homeArriveIdx = boot.indexOf('if (homeArrive)');
+  assert.ok(homeArriveIdx !== -1, 'boot script missing homeArrive branch');
+  var skinAppend = boot.indexOf('document.head.appendChild(skin)');
+  assert.ok(skinAppend !== -1 && skinAppend > homeArriveIdx, 'boot script missing skin append');
+  var waitHomeIdx = boot.indexOf('else if (homeArrive)');
+  assert.ok(waitHomeIdx !== -1, 'boot script missing homeArrive cssRules wait');
+  var homeBlock = boot.slice(homeArriveIdx, skinAppend) + boot.slice(waitHomeIdx);
+  assert.ok(
+    !/is-mv-skin-pending/.test(homeBlock),
+    'homeArrive must not reuse is-mv-skin-pending'
+  );
+  assert.ok(
+    /is-home-arrive-pending/.test(homeBlock),
+    'homeArrive must gate the void on is-home-arrive-pending'
+  );
+  assert.ok(
+    /#1E1510/.test(homeBlock),
+    'homeArrive must paint coffee void #1E1510'
+  );
+  assert.ok(
+    /::before/.test(homeBlock),
+    'homeArrive must inject a full-viewport coffee cover'
+  );
+  assert.ok(
+    /cssRules/.test(homeBlock),
+    'homeArrive must wait for cream stylesheet cssRules'
+  );
+  assert.ok(
+    /classList\.remove\(\s*['"]is-home-arrive-pending['"]\s*\)/.test(homeBlock),
+    'homeArrive must drop is-home-arrive-pending after cream CSS has rules'
+  );
+  assert.ok(
+    /\.multiverse-tab/.test(homeBlock) && /\.home-tab/.test(homeBlock),
+    'homeArrive pending CSS must hide .multiverse-tab and .home-tab during FOUC'
+  );
+});
+
+check('Go Home keeps ?home=1 so cream return can cover FOUC', function () {
+  var match = beyondJs.match(/function goHome\([\s\S]*?\n  function /);
+  assert.ok(match, 'beyond-transition.js missing goHome');
+  var goHomeFn = match[0];
+  assert.ok(
+    /withBeyondQuery\(/.test(goHomeFn) && /['"]home['"]/.test(goHomeFn),
+    'goHome must keep ?home=1 via withBeyondQuery(..., \'home\')'
+  );
+  assert.ok(
+    !/\.split\(\s*['"]\?['"]/.test(goHomeFn),
+    'goHome must not strip the query string (that drops ?home=1)'
   );
 });
 
 check('cream CSS file does not gain skin-pending / FOUC cover', function () {
   assert.ok(
-    !/is-skin-pending|is-mv-skin-pending/.test(creamCss),
-    'landing.css must stay free of Multiverse FOUC pending classes'
+    !/is-skin-pending|is-mv-skin-pending|is-home-arrive-pending/.test(creamCss),
+    'landing.css must stay free of FOUC pending classes'
   );
 });
 
@@ -141,6 +199,10 @@ check('cache queries bumped for touched Multiverse CSS/JS', function () {
   assert.ok(
     /landing\.css\?v=aeo30/.test(index),
     'cream landing.css cache must stay aeo30 (do not revive FOUC PR cream bump)'
+  );
+  assert.ok(
+    /beyond-transition\.js\?v=bx20/.test(index),
+    'index.html must bump beyond-transition.js cache past bx19'
   );
 });
 

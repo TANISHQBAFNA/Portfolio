@@ -171,8 +171,9 @@
   function goHome(href) {
     if (busy) return;
     busy = true;
-    /* Cream + Tanishq Bafna curtain after portal dies to coffee void. */
-    var target = (href || 'index.html').split('?')[0].split('#')[0] || 'index.html';
+    /* Cream + Tanishq Bafna curtain after portal dies to coffee void.
+       Keep ?home=1 so the cream head script can hold the coffee cover. */
+    var target = withBeyondQuery(href || 'index.html', 'home');
     if (reduceMotion.matches) {
       runPhase('is-fade-out', FADE_MS, function () { location.href = target; });
       return;
