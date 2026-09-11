@@ -86,37 +86,28 @@
   function wireStudyCurtainGlitch() {
     var veil = document.querySelector('[data-study-veil]');
     var fly = document.querySelector('[data-study-fly]');
-    var lastWipe = html.classList.contains('is-study-wipe');
+    var lastStudy = html.classList.contains('is-study');
 
-    function hitchVeil() {
-      if (!veil) return;
-      if (window.IrisMotion && window.IrisMotion.hitchCurtain) {
-        window.IrisMotion.hitchCurtain(veil, reduceMotion);
-      }
-      /* Same glitch system as main loader when the project veil brand mark is shown */
-      if (fly && window.IrisMotion) {
-        var latin = (fly.getAttribute('data-latin') || fly.getAttribute('data-text') || fly.textContent || '').replace(/\s+/g, ' ').trim();
-        if (window.IrisMotion.armGlitchTarget) {
-          window.IrisMotion.armGlitchTarget(fly, latin || undefined);
-        } else {
-          fly.classList.add('glitch');
-          if (latin) {
-            fly.setAttribute('data-text', latin);
-            fly.setAttribute('data-latin', latin);
-          }
-        }
-        if (window.IrisMotion.burstGlitch) {
-          window.setTimeout(function () {
-            window.IrisMotion.burstGlitch(fly, reduceMotion, true);
-          }, 60);
-        }
-      }
+    if (window.IrisMotion && window.IrisMotion.ensureStudyHitch) {
+      window.IrisMotion.ensureStudyHitch(veil);
     }
 
+    /* Fallback if a stale project-study.js never calls pulseStudyCurtain.
+       Skip when the hook already fired (veil is down / name painted). */
     new MutationObserver(function () {
-      var wipe = html.classList.contains('is-study-wipe');
-      if (wipe && !lastWipe) hitchVeil();
-      lastWipe = wipe;
+      var study = html.classList.contains('is-study');
+      if (study && !lastStudy) {
+        window.setTimeout(function () {
+          var pulsed = window.IrisMotion && window.IrisMotion.studyPulseAt
+            ? window.IrisMotion.studyPulseAt()
+            : 0;
+          if (Date.now() - pulsed < 500) return;
+          if (window.IrisMotion && window.IrisMotion.pulseStudyCurtain) {
+            window.IrisMotion.pulseStudyCurtain(veil, fly, reduceMotion, 'both');
+          }
+        }, 180);
+      }
+      lastStudy = study;
     }).observe(html, { attributes: true, attributeFilter: ['class'] });
   }
 

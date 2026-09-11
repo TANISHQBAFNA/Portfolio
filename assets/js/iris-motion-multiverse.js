@@ -1046,6 +1046,33 @@
     if (!el.getAttribute("aria-label")) el.setAttribute("aria-label", text);
   }
 
+  function ensureStudyHitch(veil) {
+    if (!veil) return null;
+    var hitch = veil.querySelector(".study__veil-hitch");
+    if (hitch) return hitch;
+    hitch = document.createElement("div");
+    hitch.className = "study__veil-hitch";
+    hitch.setAttribute("aria-hidden", "true");
+    veil.insertBefore(hitch, veil.firstChild);
+    return hitch;
+  }
+
+  var studyPulseAt = 0;
+  function pulseStudyCurtain(veil, fly, reduceMotion, phase) {
+    var kind = phase || "both";
+    studyPulseAt = Date.now();
+    if (reduceMotion && reduceMotion.matches) return;
+    if (veil && (kind === "plate" || kind === "both")) {
+      ensureStudyHitch(veil);
+      hitchCurtain(veil, reduceMotion);
+    }
+    if (fly && (kind === "name" || kind === "both")) {
+      var latin = visibleLatin(fly) || (fly.textContent || "").replace(/\s+/g, " ").trim();
+      if (latin) armGlitchTarget(fly, latin);
+      burstGlitch(fly, reduceMotion, true);
+    }
+  }
+
   global.IrisMotion = {
     revealLanding: revealLanding,
     wireParticles: wireParticles,
@@ -1054,6 +1081,9 @@
     hitchCurtain: hitchCurtain,
     startGlitchLoop: startGlitchLoop,
     armGlitchTarget: armGlitchTarget,
+    ensureStudyHitch: ensureStudyHitch,
+    pulseStudyCurtain: pulseStudyCurtain,
+    studyPulseAt: function () { return studyPulseAt; },
     NAME_SEQUENCE: NAME_SEQUENCE,
     FINAL_NAME: FINAL_NAME,
     NAME_BEAT_MS: NAME_BEAT_MS

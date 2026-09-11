@@ -87,7 +87,7 @@
             root.classList.add('is-print');
           }
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#0e1018' : '#f3eee4');
-          skin.href = 'assets/css/landing-multiverse.css?v=mv9';
+          skin.href = 'assets/css/landing-multiverse.css?v=mv10';
           root.classList.add('is-mv-skin-pending');
           var cover = document.createElement('style');
           cover.id = 'mv-fouc-cover';
@@ -106,7 +106,7 @@
           if (dark) root.classList.add('is-dark');
           else root.classList.remove('is-dark');
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#1E1510' : '#f4efe6');
-          skin.href = 'assets/css/landing.css?v=aeo30';
+          skin.href = 'assets/css/landing.css?v=aeo31';
           if (homeArrive) {
             root.classList.add('is-home-arrive');
             root.classList.add('is-home-arrive-pending');
@@ -249,6 +249,7 @@
   </div>
 
   <div class="stage is-home" data-stage>
+    <div class="landing-screen">
 
     <!-- ── PortfolioHeader ───────────────────────────────────────── -->
     <header class="masthead">
@@ -300,6 +301,7 @@
       </figure>
     </section>
 
+    <div class="landing-chrome">
     <a class="work-cta" href="#work" data-nav-work data-work-cta><span class="work-cta__label">My Work</span></a>
 
     <div class="edge-dock" data-edge-dock>
@@ -328,6 +330,8 @@
           </svg>
         </span>
       </button>
+    </div>
+    </div>
     </div>
 
     <!-- ── HorizontalNavigation ──────────────────────────────────── -->
@@ -531,18 +535,18 @@
   <script src="assets/js/iris-motion.js?v=hz98" defer></script>
   <script>
     if (document.documentElement.classList.contains('is-multiverse')) {
-      document.write('<script src="assets/js/iris-motion-multiverse.js?v=mv7" defer><\/script>');
+      document.write('<script src="assets/js/iris-motion-multiverse.js?v=mv8" defer><\/script>');
     }
   </script>
   <script src="assets/js/project-data.js?v=hz97" defer></script>
   <script src="assets/js/folder-card.js?v=hz104" defer></script>
   <script src="assets/js/project-rail.js?v=hz97" defer></script>
-  <script src="assets/js/project-study.js?v=hz127" defer></script>
+  <script src="assets/js/project-study.js?v=hz128" defer></script>
   <script src="assets/js/beyond-transition.js?v=bx20" defer></script>
   <script src="assets/js/landing.js?v=aeo30" defer></script>
   <script>
     if (document.documentElement.classList.contains('is-multiverse')) {
-      document.write('<script src="assets/js/landing-multiverse.js?v=mv6" defer><\/script>');
+      document.write('<script src="assets/js/landing-multiverse.js?v=mv7" defer><\/script>');
     }
   </script>
   <script>window.__GTM_ID__ = 'GTM-XXXXXXX';</script>
