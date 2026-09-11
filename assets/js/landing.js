@@ -248,20 +248,16 @@
     var tab = document.querySelector('[data-beyond-tab]');
     if (!tab || reduceMotion.matches) return;
     var label = tab.querySelector('.multiverse-tab__label');
-    var tear = tab.querySelector('.multiverse-tab__tear');
     var ring = tab.querySelector('.multiverse-tab__ring');
-    if (!tear) {
-      tear = document.createElement('span');
-      tear.className = 'multiverse-tab__tear';
-      tear.setAttribute('aria-hidden', 'true');
-      tab.insertBefore(tear, tab.firstChild);
-    }
     if (!ring) {
       ring = document.createElement('span');
       ring.className = 'multiverse-tab__ring';
       ring.setAttribute('aria-hidden', 'true');
-      tab.insertBefore(ring, tear.nextSibling);
+      tab.insertBefore(ring, tab.firstChild);
     }
+    var oldTear = tab.querySelector('.multiverse-tab__tear');
+    if (oldTear) oldTear.remove();
+
     var LATIN = (label && (label.getAttribute('data-latin') || label.textContent) || 'Go Beyond').trim();
     if (label) {
       label.setAttribute('data-latin', LATIN);
@@ -269,10 +265,10 @@
     }
     var SPARK = {
       G: ['Г', 'Γ', 'ग'], o: ['ο', 'о', 'օ'], B: ['Б', 'Β', 'ब'], e: ['е', 'ε', 'є'],
-      y: ['у', 'γ', 'ү'], n: ['н', 'ν', 'न'], d: ['д', 'δ', 'ḍ'],
-      a: ['а', 'α', 'ا'], O: ['О', 'Ο', '〇'],
-      ' ': [' ']
+      y: ['у', 'γ', 'ү'], n: ['н', 'ν', 'न'], d: ['д', 'δ'],
+      a: ['а', 'α', 'ا'], O: ['О', 'Ο', '〇']
     };
+    var busy = false;
 
     function letterSpark() {
       if (!label) return;
@@ -286,7 +282,6 @@
         }
       }
       if (!idxs.length) return;
-      /* Stronger: usually 2–3 letters, sometimes a second flash */
       var pickCount = 2 + (Math.random() > 0.45 ? 1 : 0);
       var picks = [];
       while (picks.length < pickCount && idxs.length) {
@@ -315,13 +310,6 @@
       flash(2);
     }
 
-    function edgeTear() {
-      tab.classList.remove('is-tearing');
-      void tab.offsetWidth;
-      tab.classList.add('is-tearing');
-      window.setTimeout(function () { tab.classList.remove('is-tearing'); }, 980);
-    }
-
     function pulseRing() {
       tab.classList.remove('is-pulsing');
       void tab.offsetWidth;
@@ -329,17 +317,28 @@
       window.setTimeout(function () { tab.classList.remove('is-pulsing'); }, 980);
     }
 
+    function playHitch() {
+      if (busy) return;
+      if (html.classList.contains('is-curtain') || html.classList.contains('is-projects-in') || html.classList.contains('is-study')) {
+        return;
+      }
+      busy = true;
+      pulseRing();
+      window.setTimeout(letterSpark, 80);
+      window.setTimeout(function () { busy = false; }, 1100);
+    }
+
     function pulse() {
       if (html.classList.contains('is-curtain') || html.classList.contains('is-projects-in') || html.classList.contains('is-study')) {
         window.setTimeout(pulse, 48000);
         return;
       }
-      pulseRing();
-      edgeTear();
-      window.setTimeout(letterSpark, 120);
-      /* Wider gap between hitches */
+      playHitch();
       window.setTimeout(pulse, 48000 + Math.floor(Math.random() * 12000));
     }
+
+    tab.addEventListener('mouseenter', playHitch);
+    tab.addEventListener('focus', playHitch);
     window.setTimeout(pulse, 22000 + Math.floor(Math.random() * 8000));
   }
 
