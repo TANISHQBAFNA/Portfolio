@@ -19,32 +19,6 @@
     'न', 'Ν', 'ن', 'ब', 'В', 'Β', 'ب', 'क', 'Κ',
     '‡', '◇', '☰', '※', '✦'
   ];
-  var HITCH_GLYPHS = {
-    T: ['ट', 'Т', 'Τ', 'ت'],
-    a: ['а', 'α', 'ا', 'अ'],
-    n: ['न', 'Ν', 'ن'],
-    i: ['і', 'ι', '工'],
-    s: ['ѕ', 'ς'],
-    h: ['н', 'η'],
-    q: ['ק', 'қ', 'क'],
-    B: ['Б', 'Β', 'ب', 'ब'],
-    f: ['ф', 'ƒ'],
-    A: ['А', 'Α', 'अ'],
-    e: ['е', 'ε'],
-    G: ['Г', 'Γ'],
-    O: ['О', 'Ο', '0'],
-    E: ['Е', 'Ε'],
-    Y: ['Υ', 'Ү'],
-    N: ['Ν', 'ن', 'Н'],
-    D: ['Д', 'Δ'],
-    R: ['Я', 'Ρ'],
-    U: ['Ц', '∪'],
-    M: ['М', 'Μ'],
-    L: ['Л', 'Λ'],
-    V: ['Ѵ', 'ν'],
-    H: ['Н', 'Η']
-  };
-
   window.__beyondPortal = {
     needed: false,
     done: false,
@@ -120,15 +94,9 @@
       '<div class="beyond-seam__rgb beyond-seam__rgb--g"></div>' +
       '<div class="beyond-seam__rgb beyond-seam__rgb--b"></div>' +
       '<div class="beyond-seam__noise"></div>' +
-      '<div class="beyond-seam__storm" data-beyond-storm></div>' +
-      '<p class="beyond-seam__whisper" data-beyond-whisper></p>';
+      '<div class="beyond-seam__storm" data-beyond-storm></div>';
     document.body.appendChild(el);
     return el;
-  }
-
-  function setWhisper(text) {
-    var node = document.querySelector('[data-beyond-whisper]');
-    if (node) node.textContent = text || '';
   }
 
   function fillStorm() {
@@ -171,35 +139,6 @@
     }
   }
 
-  function hardWhisperGlitch(rounds) {
-    if (reduceMotion.matches) return;
-    var node = document.querySelector('[data-beyond-whisper]');
-    if (!node) return;
-    var original = (node.textContent || '').trim();
-    if (!original) return;
-    var left = rounds || 6;
-
-    function tick() {
-      if (left <= 0) {
-        node.textContent = original;
-        return;
-      }
-      left -= 1;
-      var chars = original.split('');
-      var i;
-      for (i = 0; i < chars.length; i += 1) {
-        if (chars[i] === ' ') continue;
-        if (Math.random() > 0.5) continue;
-        var key = chars[i];
-        var options = HITCH_GLYPHS[key] || HITCH_GLYPHS[key.toUpperCase()] || HITCH_GLYPHS[key.toLowerCase()] || STORM;
-        chars[i] = options[Math.floor(Math.random() * options.length)];
-      }
-      node.textContent = chars.join('');
-      window.setTimeout(tick, 70 + Math.floor(Math.random() * 55));
-    }
-    tick();
-  }
-
   function runPhase(phaseClass, duration, done) {
     var seam = ensureOverlay();
     fillStorm();
@@ -239,9 +178,7 @@
       return;
     }
 
-    setWhisper('GO HOME');
-    hardWhisperGlitch(5);
-    /* Portal + rings collapse into nothing (page stays). */
+    /* Portal + rings collapse into nothing (page stays). No label copy. */
     runPhase('is-portal-return', SETTLE_MS, function () {
       var seam = ensureOverlay();
       seam.className = 'beyond-seam is-active is-coffee-void';
@@ -249,7 +186,6 @@
       document.body.classList.remove('is-beyond-crossing', 'is-beyond-vacuum');
       html.classList.add('is-beyond-coffee-void');
       document.body.classList.add('is-beyond-coffee-void');
-      setWhisper('');
 
       window.setTimeout(function () {
         location.href = target;
@@ -276,7 +212,6 @@
     }
 
     window.setTimeout(function () { stripParams(['beyond']); }, 0);
-    setWhisper('GO BEYOND');
 
     if (reduceMotion.matches) {
       runPhase('is-fade-out', FADE_MS, function () {
@@ -286,7 +221,6 @@
       return;
     }
 
-    hardWhisperGlitch(10);
     runPhase('is-portal-arrive', ARRIVE_MS, function () {
       html.classList.remove('is-beyond-enter');
       markPortalDone();

@@ -3211,6 +3211,9 @@ html.is-multiverse .edge-dock {
 html.is-multiverse .edge-dock > * {
   pointer-events: auto;
 }
+html.is-multiverse .multiverse-tab {
+  display: none;
+}
 html.is-multiverse .home-tab {
   position: relative;
   right: auto;
