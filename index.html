@@ -87,7 +87,20 @@
             root.classList.add('is-print');
           }
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#0e1018' : '#f3eee4');
-          skin.href = 'assets/css/landing-multiverse.css?v=mv8';
+          skin.href = 'assets/css/landing-multiverse.css?v=mv9';
+          root.classList.add('is-mv-skin-pending');
+          var cover = document.createElement('style');
+          cover.id = 'mv-fouc-cover';
+          cover.textContent =
+            'html.is-mv-skin-pending,html.is-mv-skin-pending body{background:#1E1510!important}' +
+            'html.is-mv-skin-pending::before{content:"";position:fixed;inset:0;z-index:2147483647;background:#1E1510;pointer-events:auto}' +
+            'html.is-mv-skin-pending .multiverse-tab,html.is-mv-skin-pending .home-tab{display:none!important}';
+          document.head.appendChild(cover);
+          var preload = document.createElement('link');
+          preload.rel = 'preload';
+          preload.as = 'style';
+          preload.href = skin.href;
+          document.head.appendChild(preload);
         } else {
           root.classList.add('is-light-home');
           if (dark) root.classList.add('is-dark');
@@ -105,6 +118,47 @@
           }
         }
         document.head.appendChild(skin);
+        if (beyond) {
+          var skinSettled = false;
+          function skinDone() {
+            if (skinSettled) return;
+            skinSettled = true;
+            root.classList.remove('is-mv-skin-pending');
+            if (cover.parentNode) cover.parentNode.removeChild(cover);
+          }
+          function skinHasRules() {
+            try {
+              return !!(skin.sheet && skin.sheet.cssRules && skin.sheet.cssRules.length > 10);
+            } catch (err) {
+              return false;
+            }
+          }
+          skin.addEventListener('load', function () {
+            if (skinHasRules()) {
+              skinDone();
+              return;
+            }
+            var waits = 0;
+            (function waitRules() {
+              if (skinHasRules() || waits > 50) {
+                skinDone();
+                return;
+              }
+              waits += 1;
+              window.setTimeout(waitRules, 16);
+            })();
+          });
+          skin.addEventListener('error', skinDone);
+          (function pollSheet() {
+            if (skinSettled) return;
+            if (skinHasRules()) {
+              skinDone();
+              return;
+            }
+            window.setTimeout(pollSheet, 16);
+          })();
+          window.setTimeout(skinDone, 4000);
+        }
       } catch (e) { }
     })();
   </script>
@@ -435,7 +489,7 @@
   <script src="assets/js/folder-card.js?v=hz104" defer></script>
   <script src="assets/js/project-rail.js?v=hz97" defer></script>
   <script src="assets/js/project-study.js?v=hz127" defer></script>
-  <script src="assets/js/beyond-transition.js?v=bx18" defer></script>
+  <script src="assets/js/beyond-transition.js?v=bx19" defer></script>
   <script src="assets/js/landing.js?v=aeo30" defer></script>
   <script>
     if (document.documentElement.classList.contains('is-multiverse')) {
