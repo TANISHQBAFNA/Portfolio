@@ -249,11 +249,18 @@
     if (!tab || reduceMotion.matches) return;
     var label = tab.querySelector('.multiverse-tab__label');
     var tear = tab.querySelector('.multiverse-tab__tear');
+    var ring = tab.querySelector('.multiverse-tab__ring');
     if (!tear) {
       tear = document.createElement('span');
       tear.className = 'multiverse-tab__tear';
       tear.setAttribute('aria-hidden', 'true');
       tab.insertBefore(tear, tab.firstChild);
+    }
+    if (!ring) {
+      ring = document.createElement('span');
+      ring.className = 'multiverse-tab__ring';
+      ring.setAttribute('aria-hidden', 'true');
+      tab.insertBefore(ring, tear.nextSibling);
     }
     var LATIN = (label && (label.getAttribute('data-latin') || label.textContent) || 'Go Beyond').trim();
     if (label) {
@@ -261,9 +268,10 @@
       label.setAttribute('aria-label', LATIN);
     }
     var SPARK = {
-      G: ['Г', 'Γ'], o: ['ο', 'о'], B: ['Б', 'Β', 'ब'], e: ['е', 'ε'],
-      y: ['у', 'γ'], n: ['н', 'ν', 'न'], d: ['д', 'δ'],
-      a: ['а', 'α'], O: ['О', 'Ο']
+      G: ['Г', 'Γ', 'ग'], o: ['ο', 'о', 'օ'], B: ['Б', 'Β', 'ब'], e: ['е', 'ε', 'є'],
+      y: ['у', 'γ', 'ү'], n: ['н', 'ν', 'न'], d: ['д', 'δ', 'ḍ'],
+      a: ['а', 'α', 'ا'], O: ['О', 'Ο', '〇'],
+      ' ': [' ']
     };
 
     function letterSpark() {
@@ -272,48 +280,67 @@
       var idxs = [];
       var i;
       for (i = 0; i < chars.length; i += 1) {
-        if (chars[i] !== ' ' && (SPARK[chars[i]] || SPARK[chars[i].toUpperCase()] || SPARK[chars[i].toLowerCase()])) {
+        if (chars[i] === ' ') continue;
+        if (SPARK[chars[i]] || SPARK[chars[i].toUpperCase()] || SPARK[chars[i].toLowerCase()]) {
           idxs.push(i);
         }
       }
       if (!idxs.length) return;
-      var pickCount = Math.random() > 0.55 ? 2 : 1;
+      /* Stronger: usually 2–3 letters, sometimes a second flash */
+      var pickCount = 2 + (Math.random() > 0.45 ? 1 : 0);
       var picks = [];
       while (picks.length < pickCount && idxs.length) {
         var at = Math.floor(Math.random() * idxs.length);
         picks.push(idxs.splice(at, 1)[0]);
       }
-      picks.forEach(function (idx) {
-        var ch = chars[idx];
-        var opts = SPARK[ch] || SPARK[ch.toUpperCase()] || SPARK[ch.toLowerCase()];
-        chars[idx] = opts[Math.floor(Math.random() * opts.length)];
-      });
-      tab.classList.add('is-sparking');
-      label.textContent = chars.join('');
-      window.setTimeout(function () {
-        label.textContent = LATIN;
-        tab.classList.remove('is-sparking');
-      }, 280 + Math.floor(Math.random() * 160));
+      function flash(roundsLeft) {
+        var next = LATIN.split('');
+        picks.forEach(function (idx) {
+          var ch = LATIN.charAt(idx);
+          var opts = SPARK[ch] || SPARK[ch.toUpperCase()] || SPARK[ch.toLowerCase()];
+          if (!opts) return;
+          next[idx] = opts[Math.floor(Math.random() * opts.length)];
+        });
+        tab.classList.add('is-sparking');
+        label.textContent = next.join('');
+        if (roundsLeft <= 1) {
+          window.setTimeout(function () {
+            label.textContent = LATIN;
+            tab.classList.remove('is-sparking');
+          }, 320);
+          return;
+        }
+        window.setTimeout(function () { flash(roundsLeft - 1); }, 140);
+      }
+      flash(2);
     }
 
     function edgeTear() {
       tab.classList.remove('is-tearing');
-      /* restart CSS animation */
       void tab.offsetWidth;
       tab.classList.add('is-tearing');
-      window.setTimeout(function () { tab.classList.remove('is-tearing'); }, 720);
+      window.setTimeout(function () { tab.classList.remove('is-tearing'); }, 980);
+    }
+
+    function pulseRing() {
+      tab.classList.remove('is-pulsing');
+      void tab.offsetWidth;
+      tab.classList.add('is-pulsing');
+      window.setTimeout(function () { tab.classList.remove('is-pulsing'); }, 980);
     }
 
     function pulse() {
       if (html.classList.contains('is-curtain') || html.classList.contains('is-projects-in') || html.classList.contains('is-study')) {
-        window.setTimeout(pulse, 30000);
+        window.setTimeout(pulse, 48000);
         return;
       }
+      pulseRing();
       edgeTear();
-      window.setTimeout(letterSpark, 90);
-      window.setTimeout(pulse, 28000 + Math.floor(Math.random() * 6000));
+      window.setTimeout(letterSpark, 120);
+      /* Wider gap between hitches */
+      window.setTimeout(pulse, 48000 + Math.floor(Math.random() * 12000));
     }
-    window.setTimeout(pulse, 16000 + Math.floor(Math.random() * 6000));
+    window.setTimeout(pulse, 22000 + Math.floor(Math.random() * 8000));
   }
 
   function wireWorkCtaGlitch() {
