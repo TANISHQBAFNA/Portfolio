@@ -3139,7 +3139,8 @@ html.is-light-home.is-curtain .masthead__nav li,
 html.is-light-home.is-curtain .theme-tab,
 html.is-light-home.is-curtain .edge-dock,
 html.is-light-home.is-curtain .work-cta,
-html.is-light-home.is-curtain .multiverse-tab {
+html.is-light-home.is-curtain .multiverse-tab,
+html.is-light-home.is-curtain .landing-chrome {
   opacity: 0;
   transform: translate3d(0, 36px, 0);
   pointer-events: none;
@@ -3199,6 +3200,18 @@ html.is-light-home .edge-dock {
 }
 html.is-light-home .edge-dock > * {
   pointer-events: auto;
+}
+html.is-light-home .home-tab {
+  display: none;
+}
+html.is-light-home .landing-chrome {
+  display: contents;
+}
+html.is-light-home .landing-screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 html.is-light-home .multiverse-tab {
   display: inline-flex;
@@ -3859,6 +3872,7 @@ html.is-light-home .work-card__caption {
   html.is-light-home {
     --mark-size: clamp(1.28rem, 6.2vw, 1.7rem);
     --head-h: auto;
+    --dock-h: calc(48px + env(safe-area-inset-bottom, 0px));
   }
   html.is-light-home,
   html.is-light-home body.landing {
@@ -3908,14 +3922,20 @@ html.is-light-home .work-card__caption {
     font-size: 0.7rem;
     letter-spacing: 0.06em;
   }
+  html.is-light-home .landing-screen {
+    position: relative;
+    flex: 0 0 auto;
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
   html.is-light-home .hero {
     position: relative !important;
     display: flex !important;
     flex: 1 1 auto;
-    min-height: calc(100svh - 5.5rem);
+    min-height: 0;
     height: auto !important;
     align-items: flex-end;
-    padding: 16px var(--gutter) 92px !important;
+    padding: 16px var(--gutter) calc(var(--dock-h) + 32px) !important;
     transform: none !important;
   }
   html.is-light-home .hero__role {
@@ -3928,31 +3948,63 @@ html.is-light-home .work-card__caption {
   }
   html.is-light-home .hero__support {
     font-size: clamp(0.95rem, 4.2vw, 1.15rem) !important;
+    margin-top: 0.7em;
+  }
+  html.is-light-home .landing-chrome {
+    display: flex;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 6;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
+    pointer-events: none;
+  }
+  html.is-light-home .landing-chrome > * {
+    pointer-events: auto;
   }
   html.is-light-home .edge-dock {
-    right: 16px;
+    position: relative !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 1;
+    flex: 0 0 auto;
     gap: 8px;
+    height: var(--dock-h);
+    align-items: stretch;
   }
   html.is-light-home .theme-tab {
     width: 46px;
-    height: calc(40px + env(safe-area-inset-bottom, 0px));
+    height: var(--dock-h);
     right: auto;
   }
   html.is-light-home .multiverse-tab {
-    height: calc(40px + env(safe-area-inset-bottom, 0px));
-    padding: 0 0.75rem env(safe-area-inset-bottom, 0px);
-    font-size: 0.7rem;
-    max-width: 42vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    height: var(--dock-h);
+    padding: 0 0.85rem env(safe-area-inset-bottom, 0px);
+    font-size: 0.78rem;
+    max-width: none;
+    overflow: visible;
+    text-overflow: unset;
   }
   html.is-light-home .work-cta {
-    top: auto;
-    bottom: 0;
-    min-width: 9.5rem;
-    height: calc(50px + env(safe-area-inset-bottom, 0px));
-    padding: 0 1.5rem env(safe-area-inset-bottom, 0px);
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    z-index: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    height: var(--dock-h);
+    padding: 0 1.25rem env(safe-area-inset-bottom, 0px);
     font-size: 0.95rem;
+    transform: none !important;
+    will-change: auto;
     background: var(--teal);
     border-color: var(--teal);
     color: var(--cream);
@@ -5455,4 +5507,17 @@ html.is-light-home .work-cta:focus-visible {
   border-color: #1E1510 !important;
   color: #f4efe6 !important;
   -webkit-text-fill-color: #f4efe6;
+}
+
+@media (max-width: 767px) {
+  html.is-light-home .work-cta,
+  html.is-light-home .work-cta.is-pulling,
+  html.is-light-home .edge-dock {
+    position: relative !important;
+    transform: none !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+  }
 }

@@ -6,6 +6,8 @@
 (function () {
   'use strict';
 
+  if (!document.documentElement.classList.contains('is-multiverse')) return;
+
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   var stage = document.querySelector('[data-stage]');
