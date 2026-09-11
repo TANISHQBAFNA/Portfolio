@@ -3138,10 +3138,17 @@ html.is-light-home.is-curtain .hero__support,
 html.is-light-home.is-curtain .masthead__nav li,
 html.is-light-home.is-curtain .theme-tab,
 html.is-light-home.is-curtain .edge-dock,
-html.is-light-home.is-curtain .work-cta,
 html.is-light-home.is-curtain .multiverse-tab {
   opacity: 0;
   transform: translate3d(0, 36px, 0);
+  pointer-events: none;
+}
+/* Shared chrome: keep My Work centered while the curtain holds it down.
+   translate(0, 36px) drops the -50% and the button jumps on lift. */
+html.is-light-home.is-curtain .work-cta,
+html.is-multiverse.is-curtain .work-cta {
+  opacity: 0;
+  transform: translate3d(-50%, 36px, 0);
   pointer-events: none;
 }
 html.is-light-home .masthead__name:hover { color: var(--fg) !important; }
@@ -3186,7 +3193,8 @@ html.is-light-home .masthead__nav-label {
 }
 html.is-light-home .masthead__nav a:hover .masthead__nav-num { color: var(--accent); }
 
-html.is-light-home .edge-dock {
+html.is-light-home .edge-dock,
+html.is-multiverse .edge-dock {
   position: fixed;
   right: clamp(18px, 2.4vw, 32px);
   bottom: 0;
@@ -3197,16 +3205,19 @@ html.is-light-home .edge-dock {
   gap: 10px;
   pointer-events: none;
 }
-html.is-light-home .edge-dock > * {
+html.is-light-home .edge-dock > *,
+html.is-multiverse .edge-dock > * {
   pointer-events: auto;
 }
 html.is-light-home .home-tab {
   display: none;
 }
-html.is-light-home .landing-chrome {
+html.is-light-home .landing-chrome,
+html.is-multiverse .landing-chrome {
   display: contents;
 }
-html.is-light-home .landing-screen {
+html.is-light-home .landing-screen,
+html.is-multiverse .landing-screen {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
@@ -3373,7 +3384,10 @@ html.is-light-home .theme-tab {
   box-shadow: 0 -8px 24px rgba(30, 21, 16, 0.12);
   transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.45s ease, transform 0.45s ease;
 }
-html.is-light-home .work-cta {
+/* Shared chrome layout (cream + Multiverse). Glitch/skin stays in landing-multiverse.css.
+   Do not re-specify position / transform / --rise on .work-cta in the Multiverse sheet. */
+html.is-light-home .work-cta,
+html.is-multiverse .work-cta {
   position: fixed;
   left: 50%;
   bottom: 0;
@@ -3402,12 +3416,14 @@ html.is-light-home .work-cta {
   transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.45s ease, box-shadow 0.35s ease;
   will-change: transform;
 }
-html.is-light-home .work-cta__label {
+html.is-light-home .work-cta__label,
+html.is-multiverse .work-cta__label {
   position: relative;
   display: inline-block;
 }
 /* subtle catch-eye glitch every ~30s */
-html.is-light-home .work-cta.is-glitching .work-cta__label {
+html.is-light-home .work-cta.is-glitching .work-cta__label,
+html.is-multiverse .work-cta.is-glitching .work-cta__label {
   text-shadow:
     -1px 0 rgba(255, 0, 60, 0.55),
     1px 0 rgba(0, 160, 160, 0.55);
@@ -3422,14 +3438,17 @@ html.is-light-home .work-cta.is-glitching .work-cta__label {
   100% { transform: translate(0, 0); }
 }
 html.is-light-home .work-cta:hover,
-html.is-light-home .work-cta:focus-visible {
+html.is-multiverse .work-cta:hover,
+html.is-light-home .work-cta:focus-visible,
+html.is-multiverse .work-cta:focus-visible {
   background: var(--fg);
   border-color: var(--fg);
   color: var(--bg);
   outline: none;
   box-shadow: 0 -14px 36px rgba(30, 21, 16, 0.2);
 }
-html.is-light-home .work-cta.is-pulling {
+html.is-light-home .work-cta.is-pulling,
+html.is-multiverse .work-cta.is-pulling {
   background: var(--teal);
   border-color: var(--teal);
   color: var(--cream);
@@ -3443,14 +3462,17 @@ html.is-light-home.is-projects-pulling .rail.bento,
 html.is-light-home.is-projects-pulling .rail {
   box-shadow: 0 -24px 48px rgba(30, 21, 16, 0.18);
 }
-html.is-light-home.is-dark .work-cta {
+html.is-light-home.is-dark .work-cta,
+html.is-multiverse.is-dark .work-cta {
   background: var(--teal);
   border-color: var(--teal);
   color: var(--cream);
   box-shadow: 0 -12px 32px rgba(0, 160, 160, 0.28);
 }
 html.is-light-home.is-dark .work-cta:hover,
-html.is-light-home.is-dark .work-cta:focus-visible {
+html.is-multiverse.is-dark .work-cta:hover,
+html.is-light-home.is-dark .work-cta:focus-visible,
+html.is-multiverse.is-dark .work-cta:focus-visible {
   background: var(--teal);
   border-color: var(--teal);
   color: var(--cream);
@@ -3491,11 +3513,13 @@ html.is-light-home.is-projects-in .multiverse-tab,
 html.is-light-home .stage.is-detail .theme-tab,
 html.is-light-home .stage.is-detail .edge-dock,
 html.is-light-home .stage.is-detail .work-cta,
+html.is-multiverse .stage.is-detail .work-cta,
 html.is-light-home .stage.is-detail .multiverse-tab {
   opacity: 0;
   pointer-events: none;
 }
-html.is-light-home.is-projects-in .work-cta {
+html.is-light-home.is-projects-in .work-cta,
+html.is-multiverse.is-projects-in .work-cta {
   pointer-events: none;
 }
 
@@ -3561,7 +3585,9 @@ html.is-light-home .hero__role {
   }
   /* Landing stays put. Only the project panel moves. */
   html.is-light-home.is-home-scroll .stage,
-  html.is-light-home .stage {
+  html.is-multiverse.is-home-scroll .stage,
+  html.is-light-home .stage,
+  html.is-multiverse .stage {
     position: fixed !important;
     inset: 0 !important;
     display: flex !important;
@@ -3700,14 +3726,17 @@ html.is-light-home .portrait { display: none !important; }
 
 @media (min-width: 768px) {
   html.is-light-home.is-home-scroll,
-  html.is-light-home.is-home-scroll body {
+  html.is-multiverse.is-home-scroll,
+  html.is-light-home.is-home-scroll body,
+  html.is-multiverse.is-home-scroll body {
     height: auto;
     min-height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: none;
   }
-  html.is-light-home.is-home-scroll .scroll-run {
+  html.is-light-home.is-home-scroll .scroll-run,
+  html.is-multiverse.is-home-scroll .scroll-run {
     display: block !important;
     height: 200vh;
     pointer-events: none;
@@ -3722,7 +3751,9 @@ html.is-light-home .portrait { display: none !important; }
 
 @media (min-width: 768px) {
   html.is-light-home .rail.bento,
-  html.is-light-home .rail {
+  html.is-multiverse .rail.bento,
+  html.is-light-home .rail,
+  html.is-multiverse .rail {
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -3740,12 +3771,16 @@ html.is-light-home .portrait { display: none !important; }
     will-change: transform;
   }
   html.is-light-home .work-cta,
-  html.is-light-home .work-cta.is-pulling {
+  html.is-multiverse .work-cta,
+  html.is-light-home .work-cta.is-pulling,
+  html.is-multiverse .work-cta.is-pulling {
     z-index: 45;
     transform: translate3d(-50%, calc((var(--rise, 1) - 1) * 100svh), 0);
   }
   html.is-light-home.is-projects-in .rail.bento,
-  html.is-light-home.is-projects-in .rail {
+  html.is-multiverse.is-projects-in .rail.bento,
+  html.is-light-home.is-projects-in .rail,
+  html.is-multiverse.is-projects-in .rail {
     pointer-events: auto;
   }
   html.is-light-home .rail__track {
@@ -3777,7 +3812,8 @@ html.is-light-home .portrait { display: none !important; }
   html.is-light-home .folder-slot:nth-child(1) { grid-area: sme; }
   html.is-light-home .folder-slot:nth-child(2) { grid-area: helix; }
   html.is-light-home .folder-slot:nth-child(3) { grid-area: plootus; }
-  html.is-light-home .stage.is-detail .rail {
+  html.is-light-home .stage.is-detail .rail,
+  html.is-multiverse .stage.is-detail .rail {
     opacity: 0;
     pointer-events: none;
     transform: translate3d(0, 100%, 0) !important;
@@ -3868,6 +3904,10 @@ html.is-light-home .work-card__caption {
 }
 
 @media (max-width: 767px) {
+  html.is-light-home,
+  html.is-multiverse {
+    --dock-h: calc(48px + env(safe-area-inset-bottom, 0px));
+  }
   html.is-light-home {
     --mark-size: clamp(1.28rem, 6.2vw, 1.7rem);
     --head-h: auto;
@@ -3921,7 +3961,8 @@ html.is-light-home .work-card__caption {
     font-size: 0.7rem;
     letter-spacing: 0.06em;
   }
-  html.is-light-home .landing-screen {
+  html.is-light-home .landing-screen,
+  html.is-multiverse .landing-screen {
     position: relative;
     flex: 0 0 auto;
     min-height: 100svh;
@@ -3949,7 +3990,8 @@ html.is-light-home .work-card__caption {
     font-size: clamp(0.95rem, 4.2vw, 1.15rem) !important;
     margin-top: 0.7em;
   }
-  html.is-light-home .landing-chrome {
+  html.is-light-home .landing-chrome,
+  html.is-multiverse .landing-chrome {
     display: flex;
     position: absolute;
     left: 0;
@@ -3961,10 +4003,12 @@ html.is-light-home .work-card__caption {
     padding: 0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
     pointer-events: none;
   }
-  html.is-light-home .landing-chrome > * {
+  html.is-light-home .landing-chrome > *,
+  html.is-multiverse .landing-chrome > * {
     pointer-events: auto;
   }
-  html.is-light-home .edge-dock {
+  html.is-light-home .edge-dock,
+  html.is-multiverse .edge-dock {
     position: relative;
     right: auto;
     bottom: auto;
@@ -3987,7 +4031,8 @@ html.is-light-home .work-card__caption {
     overflow: visible;
     text-overflow: unset;
   }
-  html.is-light-home .work-cta {
+  html.is-light-home .work-cta,
+  html.is-multiverse .work-cta {
     position: relative;
     top: auto;
     bottom: auto;
@@ -4006,7 +4051,9 @@ html.is-light-home .work-card__caption {
     color: var(--cream);
   }
   html.is-light-home .rail.bento,
-  html.is-light-home .rail {
+  html.is-multiverse .rail.bento,
+  html.is-light-home .rail,
+  html.is-multiverse .rail {
     position: relative !important;
     inset: auto !important;
     top: auto !important;
@@ -5484,21 +5531,29 @@ html.is-study .study-rail .work-card.is-current {
 
 /* Lock: My Work = production teal, cream label (readable) */
 html.is-light-home .work-cta,
+html.is-multiverse .work-cta,
 html.is-light-home .work-cta.is-pulling,
+html.is-multiverse .work-cta.is-pulling,
 html.is-light-home.is-dark .work-cta,
+html.is-multiverse.is-dark .work-cta,
 html.is-light-home.is-dark .work-cta:hover,
-html.is-light-home.is-dark .work-cta:focus-visible {
+html.is-multiverse.is-dark .work-cta:hover,
+html.is-light-home.is-dark .work-cta:focus-visible,
+html.is-multiverse.is-dark .work-cta:focus-visible {
   background: #00a0a0 !important;
   border-color: #00a0a0 !important;
   color: #f4efe6 !important;
   -webkit-text-fill-color: #f4efe6;
 }
-html.is-light-home .work-cta__label {
+html.is-light-home .work-cta__label,
+html.is-multiverse .work-cta__label {
   color: #f4efe6 !important;
   -webkit-text-fill-color: #f4efe6;
 }
 html.is-light-home .work-cta:hover,
-html.is-light-home .work-cta:focus-visible {
+html.is-multiverse .work-cta:hover,
+html.is-light-home .work-cta:focus-visible,
+html.is-multiverse .work-cta:focus-visible {
   background: #1E1510 !important;
   border-color: #1E1510 !important;
   color: #f4efe6 !important;

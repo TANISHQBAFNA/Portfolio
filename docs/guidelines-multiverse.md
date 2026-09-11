@@ -2,9 +2,10 @@
 
 **Status:** Experimental **duplicate** study only — not production.  
 **Scope:** `index-multiverse.html`, `assets/css/landing-multiverse.css`, `assets/js/landing-multiverse.js`, `assets/js/iris-motion-multiverse.js`, multiverse img assets (`assets/img/multiverse-*.svg`).  
-**Forbidden:** Editing `index.html`, `landing.css`, `landing.js`, `iris-motion.js` for multiverse work.
+**Layout exception:** My Work, `landing-chrome`, edge-dock geometry, and `--rise` live in `landing.css` (dual `html.is-light-home` / `html.is-multiverse` selectors). Edit those there. Do **not** re-specify `position` / `transform` / `--rise` on `.work-cta` in this sheet.  
+**Forbidden:** Copying Multiverse glitch into cream `iris-motion.js` / cream home classes. Do not load Multiverse IrisMotion on cream.
 
-Also read [`guidelines-index.md`](./guidelines-index.md) so shared layout (hero words, teal accent, theme meaning) does not drift.
+Also read [`guidelines-index.md`](./guidelines-index.md) so shared layout (hero words, teal accent, theme meaning, My Work) does not drift.
 
 ---
 
@@ -80,7 +81,7 @@ Same portfolio information architecture as cream home, with a comic **dimensiona
 ## Cursor rules for this surface
 
 1. **Read this file + `guidelines-index.md` before editing** multiverse files.
-2. Touch **only** Scope files above.
+2. Touch Scope files for glitch/skin. Chrome layout (My Work / `landing-chrome` / `--rise`) is edited in `landing.css`.
 3. After any glitch change, verify:
    - Home loader and project loader look like the same system
    - `THOUGHTFUL` still `#00a0a0`
@@ -93,4 +94,8 @@ Same portfolio information architecture as cream home, with a comic **dimensiona
 
 ## Relationship to cream home
 
-Multiverse is a **skin + motion study** on the same IA. Shared copy, teal accent, theme meaning, and web behavior come from cream home. Glitch, multilingual flashes, and comic print on type/cards are multiverse-only.
+Multiverse is a **glitch skin** on the same IA and the same chrome layout. Shared copy, teal accent, theme meaning, web behavior, **My Work**, **dock**, and **`--rise`** come from cream home (`landing.css`). Glitch, multilingual flashes, comic print on type/cards, and Multiverse particles are this sheet + IrisMotion only.
+
+Same control = same code. If My Work floats over `THOUGHTFUL`, a Multiverse layout fork is the bug — delete it, do not patch a second transform.
+
+Both worlds load `landing.css`. This file stacks after it as skin. Phase B (later): collapse remaining duplicated layout in this file toward glitch-only overrides.

@@ -2,7 +2,7 @@
 
 **Status:** Production direction. Cursor must not deviate without an explicit Tanishk / Iris lock update.  
 **Scope:** `index.html`, `assets/css/landing.css`, `assets/js/landing.js`, `assets/js/iris-motion.js` (and shared assets those files already use).  
-**Not in scope:** `index-multiverse.html` and `*-multiverse.*` — those follow [`guidelines-multiverse.md`](./guidelines-multiverse.md).
+**Shared with Multiverse:** chrome **layout** for My Work, `landing-chrome`, edge dock geometry, and `--rise`. Those rules live in `landing.css` under `html.is-light-home` + `html.is-multiverse`. Glitch / comic skin stays in [`guidelines-multiverse.md`](./guidelines-multiverse.md).
 
 ---
 
@@ -67,6 +67,7 @@ Dark (`html.is-light-home.is-dark`): swap bg/fg to coffee/cream; keep teal accen
 
 - Edit **only** production files listed in Scope when the task is cream home.
 - Never copy Multiverse glitch CSS/JS into these files “for consistency.”
+- **Same control = same code.** My Work / `landing-chrome` / `--rise` layout is shared. Do not add an `html.is-light-home .work-cta` position/transform that Multiverse then re-specifies. Dual-prefix instead.
 - Before shipping a cream-home change, re-check: teal `THOUGHTFUL`, cream/coffee ground, no glitch, web still constellation.
 - If a request conflicts with this file, **stop and ask** Iris / Tanishk rather than inventing a third aesthetic.
 
@@ -81,3 +82,10 @@ Cream Syne light-home baseline (hz63→hz66 lineage): shout `I DESIGN / THOUGHTF
 - Bottom-right **edge dock**: quiet `Go Beyond` text tab (links to `index-multiverse.html`) beside the theme switch — fun mode, not primary nav.
 - Bottom-center primary CTA: **My Work** (`#work`) — teal pill, Syne, main action on the home stage.
 - Both hide during curtain / project rail / study like the theme tab.
+- Desktop My Work is `position: fixed` at the bottom and rides `--rise` with the projects panel (`translate3d(-50%, calc((var(--rise, 1) - 1) * 100svh), 0)`). No `transition: transform` on the button — JS updates `--rise` every frame. Curtain hide must keep the `-50%` X so the tab does not jump on lift.
+
+## Shared layout vs glitch skin
+
+Cream and Multiverse share **content and major CSS**: hero words, type scale, My Work, dock geometry, projects `--rise`. Multiverse **adds** a glitch layer (RGB fringe, letter hitch, comic plates, Ben-Day, particles). It must not fork positioning.
+
+`landing.css` is the layout source of truth for chrome. `landing-multiverse.css` may restyle ink/comic on tabs and type, not `position` / `transform` / `--rise` on `.work-cta` or `.landing-chrome`.
