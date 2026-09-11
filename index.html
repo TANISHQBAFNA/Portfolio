@@ -87,7 +87,11 @@
             root.classList.add('is-print');
           }
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#0e1018' : '#f3eee4');
-          skin.href = 'assets/css/landing-multiverse.css?v=mv10';
+          var layout = document.createElement('link');
+          layout.rel = 'stylesheet';
+          layout.href = 'assets/css/landing.css?v=aeo32';
+          document.head.appendChild(layout);
+          skin.href = 'assets/css/landing-multiverse.css?v=mv11';
           root.classList.add('is-mv-skin-pending');
           var cover = document.createElement('style');
           cover.id = 'mv-fouc-cover';
@@ -106,7 +110,7 @@
           if (dark) root.classList.add('is-dark');
           else root.classList.remove('is-dark');
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#1E1510' : '#f4efe6');
-          skin.href = 'assets/css/landing.css?v=aeo31';
+          skin.href = 'assets/css/landing.css?v=aeo32';
           if (homeArrive) {
             root.classList.add('is-home-arrive');
             root.classList.add('is-home-arrive-pending');
