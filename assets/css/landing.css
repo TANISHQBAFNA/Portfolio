@@ -3204,6 +3204,9 @@ html.is-light-home .multiverse-tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
   height: calc(44px + env(safe-area-inset-bottom, 0px));
   padding: 0 1rem env(safe-area-inset-bottom, 0px);
   margin: 0;
@@ -3220,36 +3223,94 @@ html.is-light-home .multiverse-tab {
   text-decoration: none;
   white-space: nowrap;
   box-shadow: 0 -8px 24px rgba(30, 21, 16, 0.08);
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.45s ease, transform 0.45s ease;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.45s ease;
 }
 html.is-light-home .multiverse-tab:hover,
 html.is-light-home .multiverse-tab:focus-visible {
   background: var(--fg);
   color: var(--bg);
   outline: none;
+  box-shadow: 0 -8px 24px rgba(30, 21, 16, 0.12);
 }
-
+/* Edge tear seam — top lip crack (button hitch only) */
+html.is-light-home .multiverse-tab__tear {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: transparent;
+  pointer-events: none;
+  opacity: 0;
+  transform: scaleX(0.15);
+  transform-origin: 30% 50%;
+  z-index: 2;
+}
+html.is-light-home .multiverse-tab.is-tearing .multiverse-tab__tear,
+html.is-light-home .multiverse-tab:hover .multiverse-tab__tear,
+html.is-light-home .multiverse-tab:focus-visible .multiverse-tab__tear {
+  opacity: 1;
+  animation: beyond-edge-tear 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+html.is-light-home .multiverse-tab.is-tearing .multiverse-tab__tear::before,
+html.is-light-home .multiverse-tab:hover .multiverse-tab__tear::before,
+html.is-light-home .multiverse-tab:focus-visible .multiverse-tab__tear::before,
+html.is-light-home .multiverse-tab.is-tearing .multiverse-tab__tear::after,
+html.is-light-home .multiverse-tab:hover .multiverse-tab__tear::after,
+html.is-light-home .multiverse-tab:focus-visible .multiverse-tab__tear::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+html.is-light-home .multiverse-tab.is-tearing .multiverse-tab__tear::before,
+html.is-light-home .multiverse-tab:hover .multiverse-tab__tear::before,
+html.is-light-home .multiverse-tab:focus-visible .multiverse-tab__tear::before {
+  background: #ff003c;
+  transform: translate(-2px, 0);
+  opacity: 0.85;
+}
+html.is-light-home .multiverse-tab.is-tearing .multiverse-tab__tear::after,
+html.is-light-home .multiverse-tab:hover .multiverse-tab__tear::after,
+html.is-light-home .multiverse-tab:focus-visible .multiverse-tab__tear::after {
+  background: #00a0a0;
+  transform: translate(2px, 0);
+  opacity: 0.9;
+}
+html.is-light-home .multiverse-tab.is-tearing .multiverse-tab__tear {
+  background: #f4efe6;
+  box-shadow: 0 0 8px rgba(0, 160, 160, 0.45);
+}
+/* Letter spark — brief script swap on 1–2 letters */
 html.is-light-home .multiverse-tab__label {
   position: relative;
   display: inline-block;
 }
-html.is-light-home .multiverse-tab.is-glitching .multiverse-tab__label {
+html.is-light-home .multiverse-tab.is-sparking .multiverse-tab__label {
   text-shadow:
     -1px 0 rgba(255, 0, 60, 0.55),
     1px 0 rgba(0, 160, 160, 0.55);
-  animation: beyond-tab-glitch 0.38s steps(2, end) 1;
 }
-@keyframes beyond-tab-glitch {
-  0% { transform: translate(0, 0); }
-  20% { transform: translate(-1px, 0.5px); }
-  40% { transform: translate(1px, -0.5px); }
-  60% { transform: translate(-0.5px, 0); }
-  80% { transform: translate(0.5px, 0.5px); }
-  100% { transform: translate(0, 0); }
+@keyframes beyond-edge-tear {
+  0% { opacity: 0; transform: scaleX(0.12); }
+  22% { opacity: 1; transform: scaleX(0.55); }
+  55% { opacity: 1; transform: scaleX(1); }
+  78% { opacity: 0.85; transform: scaleX(0.72); }
+  100% { opacity: 0; transform: scaleX(0.2); }
 }
 
 html.is-light-home.is-dark .multiverse-tab {
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.22);
+}
+html.is-light-home.is-dark .multiverse-tab:hover,
+html.is-light-home.is-dark .multiverse-tab:focus-visible {
+  background: var(--fg);
+  color: var(--bg);
+  box-shadow:
+    -4px 0 0 rgba(255, 0, 60, 0.75),
+    4px 0 0 rgba(0, 160, 160, 0.7),
+    0 -8px 24px rgba(0, 0, 0, 0.22);
 }
 html.is-light-home .theme-tab {
   position: relative;
@@ -3279,7 +3340,7 @@ html.is-light-home .work-cta {
   position: fixed;
   left: 50%;
   bottom: 0;
-  z-index: 31;
+  z-index: 45;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3301,7 +3362,7 @@ html.is-light-home .work-cta {
   white-space: nowrap;
   transform: translate3d(-50%, 0, 0);
   box-shadow: 0 -12px 32px rgba(0, 160, 160, 0.32);
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.45s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.45s ease, box-shadow 0.35s ease;
   will-change: transform;
 }
 html.is-light-home .work-cta__label {
@@ -3332,7 +3393,6 @@ html.is-light-home .work-cta:focus-visible {
   box-shadow: 0 -14px 36px rgba(30, 21, 16, 0.2);
 }
 html.is-light-home .work-cta.is-pulling {
-  transform: translate3d(-50%, -20px, 0);
   background: var(--teal);
   border-color: var(--teal);
   color: var(--cream);
@@ -3390,13 +3450,15 @@ html.is-light-home.is-dark .theme-tab {
 }
 html.is-light-home.is-projects-in .theme-tab,
 html.is-light-home.is-projects-in .edge-dock,
-html.is-light-home.is-projects-in .work-cta,
 html.is-light-home.is-projects-in .multiverse-tab,
 html.is-light-home .stage.is-detail .theme-tab,
 html.is-light-home .stage.is-detail .edge-dock,
 html.is-light-home .stage.is-detail .work-cta,
 html.is-light-home .stage.is-detail .multiverse-tab {
   opacity: 0;
+  pointer-events: none;
+}
+html.is-light-home.is-projects-in .work-cta {
   pointer-events: none;
 }
 
@@ -3639,6 +3701,11 @@ html.is-light-home .portrait { display: none !important; }
     opacity: 1;
     transform: translate3d(0, calc(var(--rise, 1) * 100%), 0);
     will-change: transform;
+  }
+  html.is-light-home .work-cta,
+  html.is-light-home .work-cta.is-pulling {
+    z-index: 45;
+    transform: translate3d(-50%, calc((var(--rise, 1) - 1) * 100svh), 0);
   }
   html.is-light-home.is-projects-in .rail.bento,
   html.is-light-home.is-projects-in .rail {
