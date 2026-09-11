@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="is-light-home is-curtain">
+<html lang="en" class="is-curtain">
 
 <head>
   <meta charset="utf-8" />
@@ -63,11 +63,167 @@
   <script>
     (function () {
       try {
-        try { localStorage.removeItem('tb-theme'); } catch (e) { }
-        var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (dark) document.documentElement.classList.add('is-dark');
-        else document.documentElement.classList.remove('is-dark');
-        document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#1E1510' : '#f4efe6');
+        var root = document.documentElement;
+        var beyond = /[?&]beyond=1(?:&|$)/.test(location.search);
+        var homeArrive = /[?&]home=1(?:&|$)/.test(location.search);
+        var themeMatch = location.search.match(/[?&]theme=(dark|light)(?:&|$)/);
+        var saved = themeMatch ? themeMatch[1] : null;
+        if (!saved) {
+          try { saved = sessionStorage.getItem('tb-world-theme'); } catch (e) { }
+        }
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || saved === 'light') {
+          try { sessionStorage.setItem('tb-world-theme', saved); } catch (e) { }
+        }
+        var skin = document.createElement('link');
+        skin.rel = 'stylesheet';
+        if (beyond) {
+          root.classList.add('is-multiverse');
+          if (dark) {
+            root.classList.add('is-dark');
+            root.classList.remove('is-print');
+          } else {
+            root.classList.remove('is-dark');
+            root.classList.add('is-print');
+          }
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#0e1018' : '#f3eee4');
+          var layout = document.createElement('link');
+          layout.rel = 'stylesheet';
+          layout.href = 'assets/css/landing.css?v=aeo32';
+          document.head.appendChild(layout);
+          skin.href = 'assets/css/landing-multiverse.css?v=mv12';
+          root.classList.add('is-mv-skin-pending');
+          var cover = document.createElement('style');
+          cover.id = 'mv-fouc-cover';
+          cover.textContent =
+            'html.is-mv-skin-pending,html.is-mv-skin-pending body{background:#1E1510!important}' +
+            'html.is-mv-skin-pending::before{content:"";position:fixed;inset:0;z-index:2147483647;background:#1E1510;pointer-events:auto}' +
+            'html.is-mv-skin-pending .multiverse-tab,html.is-mv-skin-pending .home-tab{display:none!important}';
+          document.head.appendChild(cover);
+          var preload = document.createElement('link');
+          preload.rel = 'preload';
+          preload.as = 'style';
+          preload.href = skin.href;
+          document.head.appendChild(preload);
+        } else {
+          root.classList.add('is-light-home');
+          if (dark) root.classList.add('is-dark');
+          else root.classList.remove('is-dark');
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#1E1510' : '#f4efe6');
+          skin.href = 'assets/css/landing.css?v=aeo32';
+          if (homeArrive) {
+            root.classList.add('is-home-arrive');
+            root.classList.add('is-home-arrive-pending');
+            root.style.background = '#1E1510';
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1E1510');
+            var paint = document.createElement('style');
+            paint.id = 'home-arrive-paint';
+            paint.textContent =
+              'html.is-home-arrive-pending,html.is-home-arrive-pending body{background:#1E1510!important}' +
+              'html.is-home-arrive-pending::before{content:"";position:fixed;inset:0;z-index:2147483647;background:#1E1510;pointer-events:auto}' +
+              'html.is-home-arrive-pending .multiverse-tab,html.is-home-arrive-pending .home-tab{display:none!important}';
+            document.head.appendChild(paint);
+            var homePreload = document.createElement('link');
+            homePreload.rel = 'preload';
+            homePreload.as = 'style';
+            homePreload.href = skin.href;
+            document.head.appendChild(homePreload);
+          }
+        }
+        document.head.appendChild(skin);
+        if (beyond) {
+          var skinSettled = false;
+          function skinDone() {
+            if (skinSettled) return;
+            skinSettled = true;
+            root.classList.remove('is-mv-skin-pending');
+            if (cover.parentNode) cover.parentNode.removeChild(cover);
+          }
+          function skinHasRules() {
+            try {
+              return !!(skin.sheet && skin.sheet.cssRules && skin.sheet.cssRules.length > 10);
+            } catch (err) {
+              return false;
+            }
+          }
+          skin.addEventListener('load', function () {
+            if (skinHasRules()) {
+              skinDone();
+              return;
+            }
+            var waits = 0;
+            (function waitRules() {
+              if (skinHasRules() || waits > 50) {
+                skinDone();
+                return;
+              }
+              waits += 1;
+              window.setTimeout(waitRules, 16);
+            })();
+          });
+          skin.addEventListener('error', skinDone);
+          (function pollSheet() {
+            if (skinSettled) return;
+            if (skinHasRules()) {
+              skinDone();
+              return;
+            }
+            window.setTimeout(pollSheet, 16);
+          })();
+          window.setTimeout(skinDone, 4000);
+        } else if (homeArrive) {
+          var homeSettled = false;
+          function homeSkinDone() {
+            if (homeSettled) return;
+            homeSettled = true;
+            root.classList.remove('is-home-arrive-pending');
+            if (paint.parentNode) paint.parentNode.removeChild(paint);
+          }
+          function homeSkinReady() {
+            try {
+              if (!root.classList.contains('is-light-home')) return false;
+              if (!skin.sheet || !skin.sheet.cssRules || !skin.sheet.cssRules.length) return false;
+              var token = window.getComputedStyle(root).getPropertyValue('--mark-size').trim();
+              if (!token) return false;
+              var i;
+              var text;
+              for (i = 0; i < skin.sheet.cssRules.length; i++) {
+                text = skin.sheet.cssRules[i].cssText || '';
+                if (/is-light-home/.test(text) && /masthead__name/.test(text) && /font-size/.test(text)) {
+                  return true;
+                }
+              }
+              return false;
+            } catch (err) {
+              return false;
+            }
+          }
+          skin.addEventListener('load', function () {
+            if (homeSkinReady()) {
+              homeSkinDone();
+              return;
+            }
+            var homeWaits = 0;
+            (function waitHomeRules() {
+              if (homeSkinReady() || homeWaits > 50) {
+                homeSkinDone();
+                return;
+              }
+              homeWaits += 1;
+              window.setTimeout(waitHomeRules, 16);
+            })();
+          });
+          skin.addEventListener('error', homeSkinDone);
+          (function pollHomeSheet() {
+            if (homeSettled) return;
+            if (homeSkinReady()) {
+              homeSkinDone();
+              return;
+            }
+            window.setTimeout(pollHomeSheet, 16);
+          })();
+          window.setTimeout(homeSkinDone, 4000);
+        }
       } catch (e) { }
     })();
   </script>
@@ -77,46 +233,55 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=block" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=block" rel="stylesheet" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans:wght@700;800&family=Noto+Sans+Devanagari:wght@700;800&family=Noto+Sans+Arabic:wght@700;800&family=Noto+Sans+SC:wght@700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/landing.css?v=aeo1" />
+  <link rel="stylesheet" href="assets/css/beyond-transition.css?v=bx17" />
 </head>
 
 <body class="landing">
   <a class="skip-link" href="#work">Skip to work</a>
 
-  <div class="curtain" id="curtain" aria-hidden="true">
+  <div class="curtain curtain--ink" id="curtain" aria-hidden="true">
+    <div class="curtain__hitch" aria-hidden="true"></div>
     <div class="curtain__brand">
-      <p class="curtain__mark" id="curtain-mark"></p>
+      <p class="curtain__mark glitch" id="curtain-mark" data-text="Tanishq Bafna" data-latin="Tanishq Bafna" aria-label="Tanishq Bafna"></p>
     </div>
   </div>
 
   <!-- ambient material layers: grain, vignette, cursor light -->
   <div class="atmosphere" aria-hidden="true">
     <div class="atmosphere__wash"></div>
+    <div class="atmosphere__halftone atmosphere__halftone--magenta"></div>
+    <div class="atmosphere__halftone atmosphere__halftone--cyan"></div>
+    <div class="atmosphere__halftone atmosphere__halftone--yellow"></div>
+    <div class="atmosphere__halftone atmosphere__halftone--sparse"></div>
+    <div class="atmosphere__benday"></div>
     <div class="atmosphere__desk"></div>
     <div class="atmosphere__light" data-cursor-light></div>
     <canvas class="atmosphere__particles" data-particles aria-hidden="true"></canvas>
+    <div class="atmosphere__scan"></div>
+    <div class="atmosphere__chroma"></div>
     <div class="atmosphere__grain"></div>
   </div>
 
   <div class="stage is-home" data-stage>
+    <div class="landing-screen">
 
     <!-- ── PortfolioHeader ───────────────────────────────────────── -->
     <header class="masthead">
       <div class="masthead__identity">
-        <a class="masthead__name" href="index.html">Tanishq Bafna</a>
+        <a class="masthead__name glitch" href="index.html" data-text="Tanishq Bafna" data-latin="Tanishq Bafna" aria-label="Tanishq Bafna">Tanishq Bafna</a>
       </div>
 
 
       <nav class="masthead__nav" aria-label="Primary">
         <ul>
-          <li><a href="#work" data-nav-work><span class="masthead__nav-num" aria-hidden="true">01</span><span
-                class="masthead__nav-label">Work</span></a></li>
-          <li><a href="about.html"><span class="masthead__nav-num" aria-hidden="true">02</span><span
-                class="masthead__nav-label">About</span></a></li>
-          <li><a href="resume.pdf"><span class="masthead__nav-num" aria-hidden="true">03</span><span
-                class="masthead__nav-label">Resume</span></a></li>
+          <li><a href="#work" data-nav-work data-magnetic><span class="masthead__nav-num" aria-hidden="true">01</span><span
+                class="masthead__nav-label glitch" data-text="Work" data-latin="Work">Work</span></a></li>
+          <li><a href="about.html" data-magnetic><span class="masthead__nav-num" aria-hidden="true">02</span><span
+                class="masthead__nav-label glitch" data-text="About" data-latin="About">About</span></a></li>
+          <li><a href="resume.pdf" data-magnetic><span class="masthead__nav-num" aria-hidden="true">03</span><span
+                class="masthead__nav-label glitch" data-text="Resume" data-latin="Resume">Resume</span></a></li>
         </ul>
       </nav>
 
@@ -132,10 +297,10 @@
       <div class="hero__type">
         <p class="hero__role reveal">Product Designer <span aria-hidden="true">/</span> UX Designer</p>
         <h1 class="hero__heading reveal" id="hero-heading">
-          <span class="hero__kicker">I DESIGN</span>
+          <span class="hero__kicker glitch" data-text="I DESIGN" data-latin="I DESIGN">I DESIGN</span>
           <span class="hero__display">
-            <span class="hero__accent">THOUGHTFUL</span>
-            <span class="hero__word">EXPERIENCES</span>
+            <span class="hero__accent glitch" data-text="THOUGHTFUL" data-latin="THOUGHTFUL">THOUGHTFUL</span>
+            <span class="hero__word glitch" data-text="EXPERIENCES" data-latin="EXPERIENCES">EXPERIENCES</span>
           </span>
         </h1>
         <p class="hero__support reveal">
@@ -152,22 +317,38 @@
       </figure>
     </section>
 
-    <button type="button" class="theme-tab" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode">
-      <span class="theme-tab__icon theme-tab__icon--moon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M20.4 14.6A8.4 8.4 0 0 1 9.4 3.6 8.6 8.6 0 1 0 20.4 14.6z" />
-        </svg>
-      </span>
-      <span class="theme-tab__icon theme-tab__icon--sun" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
-          stroke-linejoin="round">
-          <circle cx="12" cy="12" r="4.1" />
-          <path
-            d="M12 3.2v1.7M12 19.1v1.7M4.9 4.9l1.2 1.2M17.9 17.9l1.2 1.2M3.2 12h1.7M19.1 12h1.7M4.9 19.1l1.2-1.2M17.9 6.1l1.2-1.2" />
-        </svg>
-      </span>
-    </button>
+    <div class="landing-chrome">
+    <a class="work-cta" href="#work" data-nav-work data-work-cta><span class="work-cta__label">My Work</span></a>
+
+    <div class="edge-dock" data-edge-dock>
+      <a class="multiverse-tab" href="index.html?beyond=1" data-beyond-tab><span class="multiverse-tab__ring" aria-hidden="true"></span><span class="multiverse-tab__label" data-latin="Go Beyond">Go Beyond</span></a>
+      <a class="home-tab" href="index.html?home=1" aria-label="Go Home">
+        <span class="home-tab__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M4 11.5 12 4l8 7.5M6.5 10v9h11v-9" />
+          </svg>
+        </span>
+      </a>
+      <button type="button" class="theme-tab" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode">
+        <span class="theme-tab__icon theme-tab__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M20.4 14.6A8.4 8.4 0 0 1 9.4 3.6 8.6 8.6 0 1 0 20.4 14.6z" />
+          </svg>
+        </span>
+        <span class="theme-tab__icon theme-tab__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4.1" />
+            <path
+              d="M12 3.2v1.7M12 19.1v1.7M4.9 4.9l1.2 1.2M17.9 17.9l1.2 1.2M3.2 12h1.7M19.1 12h1.7M4.9 19.1l1.2-1.2M17.9 6.1l1.2-1.2" />
+          </svg>
+        </span>
+      </button>
+    </div>
+    </div>
+    </div>
 
     <!-- ── HorizontalNavigation ──────────────────────────────────── -->
     <div class="rail-controls" data-rail-controls>
@@ -209,7 +390,6 @@
         <li>01 - SME Banking</li>
         <li>02 - AI workflow</li>
         <li>03 - Plootus</li>
-        <li>04 - Daughters</li>
       </ul>
     </noscript>
 
@@ -230,403 +410,123 @@
         <div class="study__mark" data-study-mark>
           <p class="study__word" data-study-project></p>
         </div>
-        <p class="study__count"><span data-study-step>01</span> / <span data-study-total>08</span></p>
+        <p class="study__count"><span data-study-step>01</span> / <span data-study-total>04</span></p>
       </div>
-      <nav class="study__temps" aria-label="Motion template">
-        <button type="button" data-template="original" class="is-on">Original</button>
-        <button type="button" data-template="cut">Cut</button>
-        <button type="button" data-template="tunnel">Tunnel</button>
-        <button type="button" data-template="helix">Helix</button>
-        <button type="button" data-template="deck">Deck</button>
-        <button type="button" data-template="type">Type</button>
-      </nav>
     </header>
 
-    <div class="study-world" data-world="original">
-      <section class="study-scene study-scene--well is-hold is-hold--short" data-scene="well" data-well-pin>
-        <div class="study-hold">
-          <p class="study-label">Desktop</p>
-          <div class="study-frame study-frame--hero" data-well>
-            <span class="study-frame__core" data-well-core></span>
-          </div>
-          <div class="study-copy study-copy--under">
-            <span class="study-bar study-bar--lg" data-rise></span>
-            <span class="study-bar study-bar--md" data-rise></span>
-            <span class="study-bar study-bar--sm" data-rise></span>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--split" data-scene="split" data-split>
-        <div class="study-split">
-          <div>
-            <p class="study-label">Desktop</p>
-            <div class="study-frame study-frame--split" data-split-frame>
-              <span class="study-frame__core"></span>
+    <div class="study-world is-on" data-world="original">
+      <section class="study-scene study-scene--story" data-scene="film">
+        <div class="study-story">
+          <div class="study-story__visual">
+            <div class="study-mockups" data-mocks>
+              <article class="study-mock" data-mock>
+                <div class="study-mock__card">
+                  <div class="study-mock__chrome" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                  </div>
+                  <div class="study-mock__media">
+                    <img data-mock-img alt="" />
+                  </div>
+                  <p class="study-mock__label">Screen 01</p>
+                </div>
+              </article>
+              <article class="study-mock" data-mock>
+                <div class="study-mock__card study-mock__card--phone">
+                  <div class="study-mock__notch" aria-hidden="true"></div>
+                  <div class="study-mock__media">
+                    <img data-mock-img alt="" />
+                  </div>
+                  <p class="study-mock__label">Screen 02</p>
+                </div>
+              </article>
+              <article class="study-mock" data-mock>
+                <div class="study-mock__card">
+                  <div class="study-mock__chrome" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                  </div>
+                  <div class="study-mock__media">
+                    <img data-mock-img alt="" />
+                  </div>
+                  <p class="study-mock__label">Screen 03</p>
+                </div>
+              </article>
+              <article class="study-mock" data-mock>
+                <div class="study-mock__card study-mock__card--phone">
+                  <div class="study-mock__notch" aria-hidden="true"></div>
+                  <div class="study-mock__media">
+                    <img data-mock-img alt="" />
+                  </div>
+                  <p class="study-mock__label">Screen 04</p>
+                </div>
+              </article>
             </div>
           </div>
-          <div class="study-copy study-copy--side" data-split-copy>
-            <p class="study-label">Note</p>
-            <span class="study-bar study-bar--lg"></span>
-            <span class="study-bar study-bar--md"></span>
-            <span class="study-bar study-bar--sm"></span>
-            <span class="study-bar study-bar--xs"></span>
+          <div class="study-story__steps">
+            <article class="study-step is-on" data-beat="0">
+              <p class="study-kicker">The whole</p>
+              <span class="study-bar study-bar--xl"></span>
+              <span class="study-bar study-bar--xl"></span>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--md"></span>
+              <p class="study-kicker">Notes</p>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--md"></span>
+              <span class="study-bar study-bar--md"></span>
+              <span class="study-bar study-bar--sm"></span>
+              <span class="study-bar study-bar--xs"></span>
+            </article>
+            <article class="study-step" data-beat="1">
+              <p class="study-kicker">The start</p>
+              <span class="study-bar study-bar--xl"></span>
+              <span class="study-bar study-bar--xl"></span>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--md"></span>
+              <p class="study-kicker">Notes</p>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--md"></span>
+              <span class="study-bar study-bar--md"></span>
+              <span class="study-bar study-bar--sm"></span>
+              <span class="study-bar study-bar--xs"></span>
+            </article>
+            <article class="study-step" data-beat="2">
+              <p class="study-kicker">The turn</p>
+              <span class="study-bar study-bar--xl"></span>
+              <span class="study-bar study-bar--xl"></span>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--md"></span>
+              <p class="study-kicker">Notes</p>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--md"></span>
+              <span class="study-bar study-bar--md"></span>
+              <span class="study-bar study-bar--sm"></span>
+              <span class="study-bar study-bar--xs"></span>
+            </article>
+            <article class="study-step" data-beat="3">
+              <p class="study-kicker">The close</p>
+              <span class="study-bar study-bar--xl"></span>
+              <span class="study-bar study-bar--xl"></span>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--md"></span>
+              <p class="study-kicker">Notes</p>
+              <span class="study-bar study-bar--lg"></span>
+              <span class="study-bar study-bar--md"></span>
+              <span class="study-bar study-bar--md"></span>
+              <span class="study-bar study-bar--sm"></span>
+              <span class="study-bar study-bar--xs"></span>
+            </article>
           </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--handset is-hold is-hold--short" data-scene="handset" data-handset-pin>
-        <div class="study-hold">
-          <p class="study-label">Mobile</p>
-          <div class="study-handset" data-handset>
-            <figure class="study-phone study-phone--main">
-              <span class="study-phone__screen"></span>
-              <span class="study-phone__island" aria-hidden="true"></span>
-            </figure>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--devices" data-scene="devices">
-        <p class="study-label">Handsets</p>
-        <div class="study-devices">
-          <figure class="study-phone" data-phone>
-            <span class="study-phone__screen"></span>
-            <span class="study-phone__island" aria-hidden="true"></span>
-          </figure>
-          <figure class="study-phone study-phone--main" data-phone>
-            <span class="study-phone__screen"></span>
-            <span class="study-phone__island" aria-hidden="true"></span>
-          </figure>
-          <figure class="study-phone" data-phone>
-            <span class="study-phone__screen"></span>
-            <span class="study-phone__island" aria-hidden="true"></span>
-          </figure>
-        </div>
-      </section>
-      <section class="study-scene study-scene--pair" data-scene="pair">
-        <div class="study-pair">
-          <div data-pair-desk>
-            <p class="study-label">Desktop</p>
-            <div class="study-frame study-frame--split" data-rise>
-              <span class="study-frame__core"></span>
-            </div>
-          </div>
-          <div>
-            <p class="study-label">Mobile</p>
-            <figure class="study-phone study-phone--main" data-phone>
-              <span class="study-phone__screen"></span>
-              <span class="study-phone__island" aria-hidden="true"></span>
-            </figure>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--strip is-hold is-hold--short" data-scene="strip" data-strip-pin>
-        <div class="study-hold">
-          <p class="study-label">Sequence</p>
-          <div class="study-strip" data-strip>
-            <div class="study-frame study-frame--strip"><span class="study-frame__core"></span></div>
-            <figure class="study-phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-            <div class="study-frame study-frame--strip"><span class="study-frame__core"></span></div>
-            <figure class="study-phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--bleed is-hold is-hold--short" data-scene="bleed" data-bleed-pin>
-        <div class="study-hold">
-          <div class="study-frame study-frame--bleed" data-bleed>
-            <span class="study-frame__core"></span>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--grid" data-scene="grid">
-        <p class="study-label">Stills</p>
-        <div class="study-grid">
-          <div class="study-frame study-frame--grid" data-grid-item><span class="study-frame__core"></span></div>
-          <figure class="study-phone" data-grid-item>
-            <span class="study-phone__screen"></span>
-            <span class="study-phone__island" aria-hidden="true"></span>
-          </figure>
-          <figure class="study-phone" data-grid-item>
-            <span class="study-phone__screen"></span>
-            <span class="study-phone__island" aria-hidden="true"></span>
-          </figure>
-          <div class="study-frame study-frame--grid" data-grid-item><span class="study-frame__core"></span></div>
         </div>
       </section>
       <section class="study-scene study-scene--end" data-scene="end">
-        <p class="study-label">End</p>
+        <p class="study-kicker">Work</p>
         <button type="button" class="study__end-btn" data-study-close>Back to work</button>
       </section>
     </div>
 
-    <div class="study-world" data-world="cut" hidden>
-    <section class="study-scene study-scene--hero" data-scene="hero">
-      <p class="study-kicker" data-hero-kicker><span data-study-kicker>01</span></p>
-      <h2 class="study-title" data-study-title></h2>
-      <p class="study-sub" aria-hidden="true">
-        <span class="study-bar study-bar--lg" data-rise></span>
-        <span class="study-bar study-bar--md" data-rise></span>
-      </p>
-    </section>
-
-    <section class="study-scene study-scene--well is-hold" data-scene="well" data-well-pin>
-      <div class="study-hold">
-        <p class="study-label">Desktop</p>
-        <div class="study-frame study-frame--hero" data-well>
-          <span class="study-frame__core" data-well-core></span>
-        </div>
-        <div class="study-copy study-copy--under">
-          <span class="study-bar study-bar--lg" data-rise></span>
-          <span class="study-bar study-bar--lg" data-rise></span>
-          <span class="study-bar study-bar--md" data-rise></span>
-          <span class="study-bar study-bar--sm" data-rise></span>
-        </div>
-      </div>
-    </section>
-
-    <section class="study-scene study-scene--split" data-scene="split" data-split>
-      <div class="study-split">
-        <div>
-          <p class="study-label">Desktop</p>
-          <div class="study-frame study-frame--split" data-split-frame>
-            <span class="study-frame__core"></span>
-          </div>
-        </div>
-        <div class="study-copy study-copy--side" data-split-copy>
-          <p class="study-label">Note</p>
-          <span class="study-bar study-bar--lg"></span>
-          <span class="study-bar study-bar--md"></span>
-          <span class="study-bar study-bar--sm"></span>
-          <span class="study-bar study-bar--xs"></span>
-        </div>
-      </div>
-    </section>
-
-    <section class="study-scene study-scene--handset is-hold" data-scene="handset" data-handset-pin>
-      <div class="study-hold">
-        <p class="study-label">Mobile</p>
-        <div class="study-handset" data-handset>
-          <figure class="study-phone study-phone--main">
-            <span class="study-phone__screen"></span>
-            <span class="study-phone__island" aria-hidden="true"></span>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="study-scene study-scene--devices is-hold is-hold--mid" data-scene="devices" data-devices-pin>
-      <div class="study-hold">
-        <p class="study-label">Handsets</p>
-        <div class="study-orbit" data-orbit>
-          <div class="study-devices">
-            <figure class="study-phone" data-phone>
-              <span class="study-phone__screen"></span>
-              <span class="study-phone__island" aria-hidden="true"></span>
-            </figure>
-            <figure class="study-phone study-phone--main" data-phone>
-              <span class="study-phone__screen"></span>
-              <span class="study-phone__island" aria-hidden="true"></span>
-            </figure>
-            <figure class="study-phone" data-phone>
-              <span class="study-phone__screen"></span>
-              <span class="study-phone__island" aria-hidden="true"></span>
-            </figure>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="study-scene study-scene--pair is-hold" data-scene="pair" data-pair-pin>
-      <div class="study-hold">
-        <div class="study-pair">
-          <div data-pair-desk>
-            <p class="study-label">Desktop</p>
-            <div class="study-frame study-frame--split">
-              <span class="study-frame__core"></span>
-            </div>
-          </div>
-          <div data-pair-phone>
-            <p class="study-label">Mobile</p>
-            <figure class="study-phone study-phone--main">
-              <span class="study-phone__screen"></span>
-              <span class="study-phone__island" aria-hidden="true"></span>
-            </figure>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="study-scene study-scene--strip is-hold is-hold--mid" data-scene="strip" data-strip-pin>
-      <div class="study-hold">
-        <p class="study-label">Sequence</p>
-        <div class="study-cover" data-strip>
-          <div class="study-frame study-frame--strip" data-for="desktop"><span class="study-frame__core"></span></div>
-          <figure class="study-phone" data-for="phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-          <div class="study-frame study-frame--strip" data-for="desktop"><span class="study-frame__core"></span></div>
-          <figure class="study-phone" data-for="phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-          <div class="study-frame study-frame--strip" data-for="desktop"><span class="study-frame__core"></span></div>
-          <figure class="study-phone" data-for="phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="study-scene study-scene--bleed is-hold" data-scene="bleed" data-bleed-pin>
-      <div class="study-hold">
-        <div class="study-frame study-frame--bleed" data-bleed>
-          <span class="study-frame__core"></span>
-        </div>
-      </div>
-    </section>
-
-    <section class="study-scene study-scene--grid" data-scene="grid">
-      <p class="study-label">Stills</p>
-      <div class="study-grid">
-        <div class="study-frame study-frame--grid" data-grid-item data-for="desktop"><span class="study-frame__core"></span></div>
-        <figure class="study-phone" data-grid-item data-for="phone">
-          <span class="study-phone__screen"></span>
-          <span class="study-phone__island" aria-hidden="true"></span>
-        </figure>
-        <figure class="study-phone" data-grid-item data-for="phone">
-          <span class="study-phone__screen"></span>
-          <span class="study-phone__island" aria-hidden="true"></span>
-        </figure>
-        <div class="study-frame study-frame--grid" data-grid-item data-for="desktop"><span class="study-frame__core"></span></div>
-      </div>
-    </section>
-
-    <section class="study-scene study-scene--end" data-scene="end">
-      <p class="study-label">End</p>
-      <button type="button" class="study__end-btn" data-study-close>Back to work</button>
-    </section>
-    </div>
-
-    <div class="study-world" data-world="tunnel" hidden>
-      <section class="study-scene study-scene--hero" data-scene="tunnel-open">
-        <p class="study-kicker"><span data-study-kicker>01</span></p>
-        <h2 class="study-title" data-study-title></h2>
-        <p class="study-hint">Walk through the product</p>
-      </section>
-      <section class="study-scene study-scene--film is-hold is-hold--long" data-scene="tunnel-ride" data-tunnel-pin>
-        <div class="study-hold">
-          <p class="study-chapter" data-tunnel-chapter>Open</p>
-          <div class="study-tunnel">
-            <div class="study-tunnel-world" data-tunnel-world>
-              <div class="study-station" data-cap="Open">
-                <div class="study-frame study-frame--hero"><span class="study-frame__core"></span></div>
-              </div>
-              <div class="study-station is-phone" data-cap="Handset">
-                <figure class="study-phone study-phone--main"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-              </div>
-              <div class="study-station" data-cap="Desktop">
-                <div class="study-frame study-frame--hero"><span class="study-frame__core"></span></div>
-              </div>
-              <div class="study-station is-pair" data-cap="Pair">
-                <figure class="study-phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-                <figure class="study-phone study-phone--main"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-              </div>
-              <div class="study-station" data-cap="Wide">
-                <div class="study-frame study-frame--bleed"><span class="study-frame__core"></span></div>
-              </div>
-              <div class="study-station is-phone" data-cap="Still">
-                <figure class="study-phone study-phone--main"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-              </div>
-              <div class="study-station" data-cap="Hold">
-                <div class="study-frame study-frame--hero"><span class="study-frame__core"></span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--end" data-scene="tunnel-end">
-        <p class="study-label">End</p>
-        <button type="button" class="study__end-btn" data-study-close>Back to work</button>
-      </section>
-    </div>
-
-    <div class="study-world" data-world="helix" hidden>
-      <section class="study-scene study-scene--hero" data-scene="helix-open">
-        <p class="study-kicker"><span data-study-kicker>01</span></p>
-        <h2 class="study-title" data-study-title></h2>
-        <p class="study-hint">The system around it</p>
-      </section>
-      <section class="study-scene study-scene--film is-hold is-hold--long" data-scene="helix-ride" data-helix-pin>
-        <div class="study-hold">
-          <p class="study-chapter" data-helix-chapter>Orbit</p>
-          <div class="study-helix" data-helix>
-            <div class="study-helix-item"><div class="study-frame study-frame--strip"><span class="study-frame__core"></span></div></div>
-            <div class="study-helix-item is-phone"><figure class="study-phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure></div>
-            <div class="study-helix-item"><div class="study-frame study-frame--strip"><span class="study-frame__core"></span></div></div>
-            <div class="study-helix-item is-phone"><figure class="study-phone study-phone--main"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure></div>
-            <div class="study-helix-item"><div class="study-frame study-frame--strip"><span class="study-frame__core"></span></div></div>
-            <div class="study-helix-item is-phone"><figure class="study-phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure></div>
-            <div class="study-helix-item"><div class="study-frame study-frame--strip"><span class="study-frame__core"></span></div></div>
-            <div class="study-helix-item is-phone"><figure class="study-phone study-phone--main"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure></div>
-            <div class="study-helix-item"><div class="study-frame study-frame--strip"><span class="study-frame__core"></span></div></div>
-            <div class="study-helix-item is-phone"><figure class="study-phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure></div>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--end" data-scene="helix-end">
-        <p class="study-label">End</p>
-        <button type="button" class="study__end-btn" data-study-close>Back to work</button>
-      </section>
-    </div>
-
-    <div class="study-world" data-world="deck" hidden>
-      <section class="study-scene study-scene--hero" data-scene="deck-open">
-        <p class="study-kicker"><span data-study-kicker>01</span></p>
-        <h2 class="study-title" data-study-title></h2>
-        <p class="study-hint">One board at a time</p>
-      </section>
-      <section class="study-scene study-scene--film is-hold is-hold--long" data-scene="deck-ride" data-deck-pin>
-        <div class="study-hold">
-          <p class="study-chapter" data-deck-chapter>Open</p>
-          <div class="study-deck" data-deck>
-            <article class="study-card" data-cap="Open">
-              <div class="study-frame study-frame--hero"><span class="study-frame__core"></span></div>
-            </article>
-            <article class="study-card" data-cap="Desktop">
-              <div class="study-frame study-frame--hero"><span class="study-frame__core"></span></div>
-            </article>
-            <article class="study-card is-phone" data-cap="Handset">
-              <figure class="study-phone study-phone--main"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-            </article>
-            <article class="study-card is-pair" data-cap="Pair">
-              <figure class="study-phone"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-              <figure class="study-phone study-phone--main"><span class="study-phone__screen"></span><span class="study-phone__island" aria-hidden="true"></span></figure>
-            </article>
-            <article class="study-card" data-cap="Wide">
-              <div class="study-frame study-frame--bleed"><span class="study-frame__core"></span></div>
-            </article>
-            <article class="study-card" data-cap="Hold">
-              <div class="study-frame study-frame--hero"><span class="study-frame__core"></span></div>
-            </article>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--end" data-scene="deck-end">
-        <p class="study-label">End</p>
-        <button type="button" class="study__end-btn" data-study-close>Back to work</button>
-      </section>
-    </div>
-
-    <div class="study-world" data-world="type" hidden>
-      <section class="study-scene study-scene--film is-hold is-hold--long" data-scene="type-ride" data-type-pin>
-        <div class="study-hold">
-          <p class="study-kicker" data-type-kicker>Name</p>
-          <h2 class="study-type-title" data-study-title data-type-title></h2>
-          <div class="study-type-set">
-            <div class="study-frame study-frame--split" data-type-desk><span class="study-frame__core"></span></div>
-            <figure class="study-phone study-phone--main" data-type-phone>
-              <span class="study-phone__screen"></span>
-              <span class="study-phone__island" aria-hidden="true"></span>
-            </figure>
-          </div>
-        </div>
-      </section>
-      <section class="study-scene study-scene--end" data-scene="type-end">
-        <p class="study-label">End</p>
-        <button type="button" class="study__end-btn" data-study-close>Back to work</button>
-      </section>
-    </div>
   </article>
 
   <div class="scroll-run" aria-hidden="true"></div>
@@ -648,12 +548,23 @@
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script src="assets/js/iris-motion.js?v=hz97" defer></script>
+  <script src="assets/js/iris-motion.js?v=hz98" defer></script>
+  <script>
+    if (document.documentElement.classList.contains('is-multiverse')) {
+      document.write('<script src="assets/js/iris-motion-multiverse.js?v=mv9" defer><\/script>');
+    }
+  </script>
   <script src="assets/js/project-data.js?v=hz97" defer></script>
   <script src="assets/js/folder-card.js?v=hz104" defer></script>
   <script src="assets/js/project-rail.js?v=hz97" defer></script>
-  <script src="assets/js/project-study.js?v=hz118" defer></script>
-  <script src="assets/js/landing.js?v=hz104" defer></script>
+  <script src="assets/js/project-study.js?v=hz128" defer></script>
+  <script src="assets/js/beyond-transition.js?v=bx20" defer></script>
+  <script src="assets/js/landing.js?v=aeo31" defer></script>
+  <script>
+    if (document.documentElement.classList.contains('is-multiverse')) {
+      document.write('<script src="assets/js/landing-multiverse.js?v=mv8" defer><\/script>');
+    }
+  </script>
   <script>window.__GTM_ID__ = 'GTM-XXXXXXX';</script>
   <script src="assets/js/tracking.js"></script>
 </body>
