@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" fill="none" aria-hidden="true">
+  <defs>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.2"/>
+    </filter>
+  </defs>
+  <!-- cream paper plane with irregular tear revealing dark beyond -->
+  <path fill="#f4efe6" d="M0 0h1000v1000H0z"/>
+  <!-- tear hole (organic, not perfect circle) -->
+  <path fill="#050508" filter="url(#soft)" d="M520 120
+    C610 150 700 220 740 320
+    C790 440 780 560 720 660
+    C660 760 560 820 440 800
+    C320 780 240 700 200 580
+    C160 460 190 340 270 250
+    C350 160 440 120 520 120Z"/>
+  <!-- misregistered print lips -->
+  <path fill="none" stroke="#ff003c" stroke-opacity="0.55" stroke-width="6"
+    d="M525 125 C615 155 705 225 745 325 C795 445 785 565 725 665 C665 765 565 825 445 805"/>
+  <path fill="none" stroke="#3d7eff" stroke-opacity="0.5" stroke-width="6"
+    d="M515 118 C605 148 695 218 735 318 C785 438 775 558 715 658 C655 758 555 818 435 798"/>
+  <path fill="none" stroke="#00a0a0" stroke-opacity="0.65" stroke-width="4"
+    d="M520 120 C610 150 700 220 740 320 C790 440 780 560 720 660 C660 760 560 820 440 800 C320 780 240 700 200 580 C160 460 190 340 270 250 C350 160 440 120 520 120Z"/>
+  <!-- torn fiber shards along lip -->
+  <path stroke="#1E1510" stroke-opacity="0.35" stroke-width="2" d="M300 240l28-18M680 300l22 16M720 520l-24 14M360 700l18 22M250 480l-20 8"/>
+  <path stroke="#f4efe6" stroke-opacity="0.4" stroke-width="2" d="M310 250l20-10M670 310l16 12"/>
+</svg>
