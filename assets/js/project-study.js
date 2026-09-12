@@ -2,11 +2,8 @@
  * ProjectStudy — five cinematic 3D stories, one camera grammar each.
  * Window is the scroller. Pins stay sparse.
  *
- * Cut    editorial dollies, coverflow, turntable
- * Tunnel fly-through corridor of frames (GSAP tube)
- * Helix  devices on a spiral
- * Deck   boards smash toward camera
- * Type   letters as architecture, work emerges
+ * Cut / Tunnel / Helix / Deck / Type — motion skins.
+ * cbx300 — cream Infoviz scroll film (bank-calm, no glitch theatre).
  */
 window.ProjectStudy = (function () {
   'use strict';
@@ -32,6 +29,9 @@ window.ProjectStudy = (function () {
     var titleChars = [];
     var currentTitle = '';
     var savedScroll = 0;
+    var caseKit = null;
+    var caseMount = null;
+    var pendingPage = '';
 
     var nodes = {
       progress: root.querySelector('[data-study-progress]'),
@@ -92,7 +92,17 @@ window.ProjectStudy = (function () {
       });
     }
 
+    function pageFromUrl() {
+      var q = /[?&]page=([^&]+)/.exec(location.search);
+      if (q) return decodeURIComponent(q[1]).toLowerCase();
+      var h = /^#(?:page=)?([a-z0-9-]+)$/i.exec(location.hash);
+      if (h) return h[1].toLowerCase();
+      return '';
+    }
+
     function killMotion() {
+      if (caseKit && caseKit.kill) caseKit.kill();
+      caseKit = null;
       triggers.forEach(function (t) {
         if (t && t.kill) t.kill();
       });
@@ -152,8 +162,9 @@ window.ProjectStudy = (function () {
 
     function onScroll() {
       if (mode !== 'study') return;
-      var max = document.documentElement.scrollHeight - window.innerHeight;
-      var p = max > 0 ? window.scrollY / max : 0;
+      var max = Math.max(0, root.scrollHeight - root.clientHeight);
+      var y = root.scrollTop || window.scrollY || 0;
+      var p = max > 0 ? y / max : 0;
       if (nodes.progress) {
         nodes.progress.style.transform = 'scaleX(' + Math.max(0.02, Math.min(1, p)).toFixed(4) + ')';
       }
@@ -714,9 +725,34 @@ window.ProjectStudy = (function () {
       });
     }
 
+    function bindCbx300() {
+      var world = root.querySelector('[data-world="cbx300"]');
+      if (!world || !window.CaseScrollKit) return;
+      var beats = world.querySelectorAll('[data-film-beat]');
+      setTotal(beats.length);
+      setStep(0);
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.config({ ignoreMobileResize: true });
+      }
+      caseKit = window.CaseScrollKit.bind({
+        scroller: root,
+        world: world,
+        headerOffset: headPx,
+        onStep: setStep,
+        startPage: pendingPage || '',
+        forceStatic: reduceMotion.matches || typeof gsap === 'undefined'
+      });
+    }
+
     function bindMotion() {
       killMotion();
       syncHead();
+      if (template === 'cbx300') {
+        bindCbx300();
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+        return;
+      }
       if (reduceMotion.matches || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
         var scenes = visibleScenes();
         setTotal(scenes.length);
@@ -1143,15 +1179,25 @@ window.ProjectStudy = (function () {
       gsap.to(fly, { color: curtainInk(), duration: dur, ease: ease });
     }
 
-    function open(index) {
+    function open(index, trigger, pageId) {
       var project = projects[index];
       if (!project || !root || mode !== 'off') return;
       openIndex = index;
       mode = 'study';
       savedScroll = window.scrollY;
+      pendingPage = (typeof pageId === 'string' && pageId) ? pageId : pageFromUrl();
       applyTemplate((project && project.studyTemplate) || template || 'original');
       syncHead();
       paintTitle(project.cardTitle || project.title || 'Project');
+      caseMount = null;
+      if (template === 'cbx300' && window.Cbx300Case) {
+        caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
+        var caseWorld = root.querySelector('[data-world="cbx300"]');
+        var caseBeats = caseWorld ? caseWorld.querySelectorAll('[data-film-beat]') : [];
+        setTotal(caseBeats.length);
+        setStep(0);
+      }
+      root.scrollTop = 0;
       Array.prototype.forEach.call(root.querySelectorAll('[data-study-kicker]'), function (el) {
         el.textContent = pad(index + 1);
       });
@@ -1173,6 +1219,8 @@ window.ProjectStudy = (function () {
       html.classList.remove('is-study-wipe');
       mode = 'off';
       openIndex = -1;
+      caseMount = null;
+      pendingPage = '';
       if (nodes.project) nodes.project.classList.remove('is-in');
       seatFly();
       if (nodes.veil && typeof gsap !== 'undefined') {
@@ -1187,11 +1235,11 @@ window.ProjectStudy = (function () {
       playOutro(finishClose);
     }
 
-    Array.prototype.forEach.call(nodes.close, function (btn) {
-      btn.addEventListener('click', function (event) {
-        event.preventDefault();
-        close();
-      });
+    root.addEventListener('click', function (event) {
+      var btn = event.target.closest('[data-study-close]');
+      if (!btn || !root.contains(btn)) return;
+      event.preventDefault();
+      close();
     });
 
     Array.prototype.forEach.call(nodes.temps, function (btn) {
@@ -1208,6 +1256,7 @@ window.ProjectStudy = (function () {
     if (mark) mark.addEventListener('click', function () { close(); });
 
     window.addEventListener('scroll', onScroll, { passive: true });
+    root.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && mode === 'study') close();
     });
@@ -1221,9 +1270,17 @@ window.ProjectStudy = (function () {
       open: open,
       close: close,
       isOpen: isOpen,
-      goToSlide: function () {},
-      stepSlide: function () {},
-      slideCount: function () { return visibleScenes().length; }
+      goToSlide: function (index) {
+        if (caseKit && caseKit.goTo) caseKit.goTo(index);
+      },
+      stepSlide: function (direction) {
+        var i = (lastStep < 0 ? 0 : lastStep) + direction;
+        if (caseKit && caseKit.goTo) caseKit.goTo(i);
+      },
+      slideCount: function () {
+        if (caseKit && caseKit.pageCount) return caseKit.pageCount();
+        return visibleScenes().length;
+      }
     };
   }
 
