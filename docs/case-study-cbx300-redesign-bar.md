@@ -7,6 +7,13 @@
 
 ---
 
+
+## Priority lock (2026-09-12)
+
+**Placeholders OK. Animation + storytelling first.**
+
+Do not block the redesign walk on Figma exports or MCP access. Designed “Exports pending” slots stay until motion and Echo chapter grammar feel right on cream. Real art is a later pass after Tanishk OK’s the film.
+
 ## Why the first ship failed (product language)
 
 1. It felt like a **document with tabs**, not a scroll film.
@@ -42,9 +49,9 @@ Opening SME Banking should feel like the cream portfolio continued: warm paper, 
 - Layout: **editorial stage** — full-bleed or asymmetric proof; copy as claim/caption overlay or sparse left, not permanent 40/60 wireframe + empty boxes.
 - Chrome: sparse study chrome that matches ProjectStudy / cream, not a Notion-style page list.
 
-### 4. Real proof art
-- Primary slots need **Figma exports** before calling UX done. Placeholders only as brief exceptions, never the whole case.
-- Export into `assets/img/cbx300/` per node IDs in the build brief.
+### 4. Real proof art (later pass)
+- **Phase 1 (now):** designed placeholders are fine — ship motion + story first.
+- **Phase 2 (after film OK):** export primary nodes into `assets/img/cbx300/` from file `NbivlhwDZPgPRxv7Kg4Bi8`.
 
 ### 5. Echo simpler copy (locked)
 **Hook:** Banking for a company, not for one person.  
