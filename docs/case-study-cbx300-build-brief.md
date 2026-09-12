@@ -10,7 +10,7 @@
 ### Meta (fill before publish)
 | Field | Value |
 |---|---|
-| Role | ___ |
+| Role | Lead product designer — design system, end-to-end screens (web + mobile), through developer handoff |
 | Duration | ___ |
 | Team | ___ |
 | Status | ___ |
