@@ -156,6 +156,8 @@ check('cropSwap hard-hides outgoing shot; focus stays inside frame', function ()
   assert.ok(kit.indexOf('autoAlpha: 0') !== -1, 'cropSwap must fully hide the outgoing shot');
   assert.ok(kit.indexOf('at + 0.32') !== -1, 'cropSwap must wait for outgoing to hide before incoming');
   assert.ok(kit.indexOf('onLeave:') !== -1, 'chapter leave must fade so proofs do not stack');
+  assert.ok(kit.indexOf('outgoing caption hidden first') !== -1, 'captions must sequential-swap like cropSwap');
+  assert.ok(!/function captionAt[\s\S]{0,320}autoAlpha: on \? 1 : 0/.test(kit), 'captionAt still dual-fades at the same time');
 });
 
 check('redesign bar is the experience lock', function () {

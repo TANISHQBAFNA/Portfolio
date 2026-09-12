@@ -105,16 +105,26 @@ window.CaseScrollKit = (function () {
     });
   }
 
+  /* Captions sequential like cropSwap: outgoing caption hidden first, then incoming. */
   function captionAt(tl, caps, index, at) {
     if (!caps.length) return;
+    var target = Math.max(0, Math.min(index, caps.length - 1));
+    var innAt = typeof at === 'number' ? at + 0.28 : '>';
     caps.forEach(function (cap, i) {
-      var on = i === index;
+      if (i === target) return;
       tl.to(cap, {
-        autoAlpha: on ? 1 : 0,
-        y: on ? 0 : 8,
-        duration: 0.28
+        autoAlpha: 0,
+        y: 6,
+        duration: 0.24,
+        overwrite: 'auto'
       }, at);
     });
+    tl.to(caps[target], {
+      autoAlpha: 1,
+      y: 0,
+      duration: 0.28,
+      overwrite: 'auto'
+    }, innAt);
   }
 
   function askAt(tl, page, at) {

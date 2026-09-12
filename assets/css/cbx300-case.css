@@ -259,11 +259,13 @@ html.is-dark .study[data-template="cbx300"] {
   color: var(--film-ink);
 }
 
+/* Overlay stack for pin-scrub. Exclusive visibility is JS (sequential autoAlpha). */
 .film-caption-stack [data-caption] + [data-caption] {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
+  pointer-events: none;
 }
 
 .film-beat.is-static .film-caption-stack [data-caption] + [data-caption] {
