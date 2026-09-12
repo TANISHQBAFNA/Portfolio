@@ -27,6 +27,27 @@
 - Empty image slots: designed “export pending” placeholder — not broken chrome.
 - Loading: quiet hold on page chrome; don’t flash raw HTML.
 - Error: “Couldn’t load this frame” + retry — bank-calm, not glitch theatre (unless case is opened inside Multiverse skin).
+- **Motion (locked 2026-09-12):** GSAP + ScrollTrigger cinematic scroll storytelling. The case reads as a film you scroll through — chapters pin, frames reveal, captions land with the beat — not a flat stack of screenshots. Prefer scrubbed timelines tied to scroll; keep reduced-motion as a calm fade/stack fallback.
+- **Images (locked 2026-09-12):** Place Figma exports into the image slots (node IDs in this brief). Placeholders until each export lands are OK; do not block page chrome on missing art.
+- **Brief status:** Tanishk OK’d this brief (2026-09-12). Camila may implement on a new branch; merge to main only after verified working.
+
+---
+
+## Motion — cinematic scroll (GSAP)
+
+**Job:** Make hiring managers *feel* the story while they scroll — ladder → roles → approvals → money → permissions → grammar → scale.
+
+**Stack:** GSAP + ScrollTrigger (Camila confirms cost/bundle). Prefer one shared timeline kit reused per page, not one-off hacks.
+
+**Beats (product language):**
+1. **Cover** — quiet hold; hook readable before motion starts.
+2. **Enter chapter** — pin or sticky chapter title; claim lands first, then proof image.
+3. **Reveal** — screens / diagrams scrub in with scroll (parallax light, not carnival).
+4. **Caption sync** — caption appears when the frame is the argument, not before.
+5. **Chapter exit** — soft release into next page; no Multiverse glitch theatre on cream case pages.
+6. **Reduced motion** — OS prefers-reduced-motion: no pins/scrub; static stack with same order and captions.
+
+**Do not:** Autoplay video loops as the primary story; infinite bounce; motion that hides the claim.
 
 ---
 
