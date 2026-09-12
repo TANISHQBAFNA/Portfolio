@@ -69,7 +69,7 @@ window.CaseScrollKit = (function () {
   function resetPage(page) {
     pinStage(page, false);
     page.classList.remove('is-static');
-    qq(page, '.film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-track], .film-sheet, .film-action').forEach(function (el) {
+    qq(page, '[data-film-stage], .film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-track], .film-sheet, .film-action').forEach(function (el) {
       window.gsap.set(el, { clearProps: 'transform,opacity,visibility,x,y,scale,xPercent,transformOrigin' });
     });
   }
@@ -143,18 +143,18 @@ window.CaseScrollKit = (function () {
   }
 
   function cropSwap(tl, outgoing, incoming, at) {
+    var innAt = typeof at === 'number' ? at + 0.32 : '>';
     if (outgoing) {
       tl.to(outgoing, {
-        scale: 1,
-        y: -16,
+        y: -10,
         autoAlpha: 0,
-        duration: 0.5
+        duration: 0.32
       }, at);
     }
     if (incoming) {
       tl.fromTo(incoming, {
         scale: 1.04,
-        y: 18,
+        y: 14,
         autoAlpha: 0,
         visibility: 'visible',
         transformOrigin: '50% 42%'
@@ -162,8 +162,8 @@ window.CaseScrollKit = (function () {
         scale: 1,
         y: 0,
         autoAlpha: 1,
-        duration: 0.6
-      }, at);
+        duration: 0.42
+      }, innAt);
     }
   }
 
@@ -279,17 +279,16 @@ window.CaseScrollKit = (function () {
 
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, y: 0, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 20, scale: 1.04 });
-      tl.to(shotEls[0], { y: -14, autoAlpha: 0, duration: 0.5 }, 0.7);
-      tl.to(shotEls[1], { autoAlpha: 1, y: 0, scale: 1, duration: 0.6 }, 0.7);
-      captionAt(tl, caps, Math.min(2, caps.length - 1), 0.7);
+      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 16, scale: 1.04 });
+      cropSwap(tl, shotEls[0], shotEls[1], 0.7);
+      captionAt(tl, caps, Math.min(2, caps.length - 1), 1.02);
       if (balances.length) {
         balances.forEach(function (el, i) {
-          tl.to(el, { y: -6, duration: 0.24 }, i === 0 ? 1.15 : '>');
+          tl.to(el, { y: -6, duration: 0.24 }, i === 0 ? 1.35 : '>');
           tl.to(el, { y: 0, duration: 0.2 }, '>');
         });
       }
-      askAt(tl, page, 1.6);
+      askAt(tl, page, 1.7);
     } else {
       askAt(tl, page, 0.8);
     }
@@ -342,10 +341,9 @@ window.CaseScrollKit = (function () {
     }
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[1], { autoAlpha: 0, y: 16, scale: 1.04 });
-      tl.to(shotEls[0], { autoAlpha: 0, y: -10, duration: 0.5 }, 2.3);
-      tl.to(shotEls[1], { autoAlpha: 1, y: 0, scale: 1, duration: 0.55 }, 2.3);
-      captionAt(tl, caps, Math.min(3, caps.length - 1), 2.3);
-      askAt(tl, page, 2.5);
+      cropSwap(tl, shotEls[0], shotEls[1], 2.3);
+      captionAt(tl, caps, Math.min(3, caps.length - 1), 2.62);
+      askAt(tl, page, 2.7);
     } else {
       askAt(tl, page, 2.1);
     }
@@ -396,6 +394,7 @@ window.CaseScrollKit = (function () {
       var recipe = page.getAttribute('data-recipe') || 'ends';
       var fn = recipeFor(recipe);
       var hold = q(page, '[data-film-hold]') || page;
+      var stage = q(page, '[data-film-stage]') || page;
       var caps = captions(page);
       var shotEls = shots(page);
       var ask = askEl(page);
@@ -420,8 +419,10 @@ window.CaseScrollKit = (function () {
       var tl = gsap.timeline({ defaults: { ease: 'none' } });
       fn(page, tl, scroller);
 
+      var isLast = page.getAttribute('data-finding') === 'true';
       /* Chrome counted once: sticky stage sits at --study-head.
-         Scrub maps hold travel. pin: false — hold already is the spacer. */
+         Scrub maps hold travel. pin: false — hold already is the spacer.
+         Fade the stage off as the hold leaves so the next chapter does not stack. */
       triggers.push(window.ScrollTrigger.create({
         trigger: hold,
         scroller: scroller,
@@ -430,7 +431,14 @@ window.CaseScrollKit = (function () {
         pin: false,
         scrub: 0.45,
         animation: tl,
-        invalidateOnRefresh: true
+        invalidateOnRefresh: true,
+        onEnter: function () { gsap.to(stage, { autoAlpha: 1, duration: 0.2, overwrite: 'auto' }); },
+        onEnterBack: function () { gsap.to(stage, { autoAlpha: 1, duration: 0.2, overwrite: 'auto' }); },
+        onLeave: function () {
+          if (isLast) return;
+          gsap.to(stage, { autoAlpha: 0, duration: 0.28, overwrite: 'auto' });
+        },
+        onLeaveBack: function () { gsap.to(stage, { autoAlpha: 0, duration: 0.28, overwrite: 'auto' }); }
       }));
     });
   }

@@ -154,6 +154,8 @@ check('cropSwap hard-hides outgoing shot; focus stays inside frame', function ()
   assert.ok(kit.indexOf('/* Focus stays in-frame: dim/lift, no board scale. */') !== -1, 'focus must stay in-frame');
   assert.ok(!/board, \{\s*scale:\s*1\.0[6-9]/.test(kit), 'board-level scale leaks past the viz frame');
   assert.ok(kit.indexOf('autoAlpha: 0') !== -1, 'cropSwap must fully hide the outgoing shot');
+  assert.ok(kit.indexOf('at + 0.32') !== -1, 'cropSwap must wait for outgoing to hide before incoming');
+  assert.ok(kit.indexOf('onLeave:') !== -1, 'chapter leave must fade so proofs do not stack');
 });
 
 check('redesign bar is the experience lock', function () {
