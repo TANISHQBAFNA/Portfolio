@@ -65,8 +65,10 @@ check('Infoviz grammar: numbered beats, claim first, close on finding', function
   assert.ok(kit.indexOf('Claim first') !== -1 || kit.indexOf('autoAlpha: 1, y: 0') !== -1, 'kit does not keep claim readable first');
   assert.ok(kit.indexOf('data-focus-item') !== -1, 'kit missing progressive focus');
   assert.ok(kit.indexOf('is-stage') !== -1, 'kit missing claim-first viz stage overlay');
-  assert.ok(css.indexOf('.case-viz.is-stage') !== -1, 'css missing pinned viz stage');
+  assert.ok(css.indexOf('.case-viz__stage.is-stage') !== -1, 'css missing pinned viz stage');
   assert.ok(css.indexOf('img[hidden]') !== -1, 'img hidden must beat display:block so alt does not leak');
+  assert.ok(kit.indexOf('showStacked') !== -1, 'kit missing no-pin stacked first-frame path');
+  assert.ok(css.indexOf('max-width: 960px') !== -1, 'css missing narrow breakpoint');
 });
 
 check('captions from brief', function () {
@@ -125,6 +127,16 @@ check('cream bank-calm; no glitch theatre on case pages', function () {
 check('Infoviz locked in brief; grammar stolen not housing maps', function () {
   assert.ok(brief.indexOf('infoviz-cs5764.web.app') !== -1, 'brief missing Infoviz lock');
   assert.ok(!/Zillow|Falls Church|Malabar Hill|stamp-duty/.test(pages), 'copied Infoviz housing content');
+});
+
+check('Iris visual pass: no brief leak, ruled under proof, one carrying question', function () {
+  assert.ok(pages.indexOf('40799:120879') === -1, 'Figma node leaked into reader copy');
+  assert.ok(!/export pair/i.test(pages), 'build jargon in reader copy');
+  assert.ok(pages.indexOf("if (page.ruled) viz.appendChild") !== -1, 'ruled-out still in left claim stack');
+  assert.ok(pages.indexOf("if (page.note) viz.appendChild") !== -1, 'note still in left claim stack');
+  assert.ok(pages.indexOf('On a phone.') !== -1, 'device cue still says Mobile gaps');
+  assert.ok(pages.indexOf('Mobile gaps') === -1, 'Mobile gaps still in copy');
+  assert.ok(/Conventional or Islamic is a top-bar mode/.test(pages), 'Gulf beat should stay reader-facing under proof');
 });
 
 check('asset swap path documented in module', function () {

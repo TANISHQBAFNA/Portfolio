@@ -34,9 +34,9 @@ window.CaseScrollKit = (function () {
   }
 
   function setStage(page, on) {
-    var viz = page.querySelector('[data-case-viz]');
-    if (!viz) return;
-    viz.classList.toggle('is-stage', !!on);
+    var box = page.querySelector('[data-case-stage]') || page.querySelector('[data-case-viz]');
+    if (!box) return;
+    box.classList.toggle('is-stage', !!on);
   }
 
   function resetStages(world) {
@@ -68,6 +68,19 @@ window.CaseScrollKit = (function () {
           cap.style.transform = 'none';
         }
       });
+    });
+  }
+
+  function showStacked(page, frameEls) {
+    setStage(page, false);
+    var focusEls = Array.prototype.slice.call(page.querySelectorAll('[data-focus-item]'));
+    if (focusEls.length) {
+      window.gsap.set(focusEls, { autoAlpha: 1, y: 0 });
+    }
+    frameEls.forEach(function (frame) {
+      window.gsap.set(frame, { autoAlpha: 1, y: 0 });
+      var cap = captionsOf(frame);
+      if (cap) window.gsap.set(cap, { autoAlpha: 1, y: 0 });
     });
   }
 
@@ -108,9 +121,6 @@ window.CaseScrollKit = (function () {
       var frameEls = framesOf(page);
       var focusEls = Array.prototype.slice.call(page.querySelectorAll('[data-focus-item]'));
       var hold = page.querySelector('[data-case-hold]') || page;
-      var tl = gsap.timeline({
-        defaults: { ease: 'none', duration: 1 }
-      });
 
       /* Claim first: type is readable before any viz scrub. */
       [copy, claim, sentence, beat].forEach(function (node) {
@@ -124,7 +134,18 @@ window.CaseScrollKit = (function () {
         return;
       }
 
-      var stage = pin && frameEls.length > 0;
+      /* Narrow / no-pin: keep the first proof frame + caption on.
+         Do not crossfade later frames over the first — that inverted Ladder. */
+      if (!pin) {
+        showStacked(page, frameEls);
+        return;
+      }
+
+      var tl = gsap.timeline({
+        defaults: { ease: 'none', duration: 1 }
+      });
+
+      var stage = frameEls.length > 0;
       setStage(page, stage);
 
       if (focusEls.length) {
@@ -297,7 +318,15 @@ window.CaseScrollKit = (function () {
         setupStatic();
         return teardownStatic;
       });
-      mm.add('(prefers-reduced-motion: no-preference)', function () {
+      mm.add('(prefers-reduced-motion: no-preference) and (min-width: 961px)', function () {
+        bindCinematic(opts, pages, cinematic);
+        return function () {
+          killTriggers(cinematic.triggers);
+          cinematic.triggers = [];
+          resetStages(world);
+        };
+      });
+      mm.add('(prefers-reduced-motion: no-preference) and (max-width: 960px)', function () {
         bindCinematic(opts, pages, cinematic);
         return function () {
           killTriggers(cinematic.triggers);

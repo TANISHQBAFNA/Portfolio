@@ -59,7 +59,7 @@ window.Cbx300Case = (function () {
       roles: [
         { title: 'Owner', body: 'Needs one honest cash answer.', device: 'Web desk' },
         { title: 'Maker', body: 'Needs speed and no re-typing.', device: 'Web desk' },
-        { title: 'Approver', body: 'Needs the queue clear on a phone.', device: 'Mobile gaps' }
+        { title: 'Approver', body: 'Needs the queue clear on a phone.', device: 'On a phone.' }
       ],
       frames: [
         { brief: 4, kind: 'roles', file: FILE_ROOT + '04-roles.webp', src: '', nodes: 'drawn / annotate', caption: 'One person in a freelance business. Three people with three permission sets in a medium one.' },
@@ -99,7 +99,7 @@ window.Cbx300Case = (function () {
         { brief: 9, kind: 'export', shape: 'wide', file: FILE_ROOT + '09-validation.webp', src: '', nodes: 'Approvals crop · Total 128 Transactions · 3 Failed System Validation', caption: 'Three bad rows in a file of 128, surfaced before the approver signs rather than after.' },
         { brief: 10, kind: 'export', shape: 'web', file: FILE_ROOT + '10-balances.webp', src: '', nodes: '21058:88167 · spendable / booked / blocked / pending', caption: '“Balance” is four different numbers to a business. Showing one of them would be a lie.' }
       ],
-      note: 'A mode that reframes the product, not a second menu tree. Conventional | Islamic as a top-bar mode — export pair with Islamic Accounts Portfolio 40799:120879 if used.'
+      note: 'Conventional or Islamic is a top-bar mode — it reframes the product, not a second menu tree.'
     },
     {
       id: 'permissions',
@@ -480,6 +480,8 @@ window.Cbx300Case = (function () {
 
     var viz = el('div', 'case-viz');
     viz.setAttribute('data-case-viz', '');
+    var stage = el('div', 'case-viz__stage');
+    stage.setAttribute('data-case-stage', '');
 
     if (page.roles) {
       var roles = el('div', 'case-roles');
@@ -495,13 +497,14 @@ window.Cbx300Case = (function () {
       var roleCap = el('p', 'case-caption', 'One person in a freelance business. Three people with three permission sets in a medium one.');
       roleCap.setAttribute('data-case-caption', '');
       roles.appendChild(roleCap);
-      viz.appendChild(roles);
+      stage.appendChild(roles);
     }
 
-    appendFrames(viz, page.frames);
+    appendFrames(stage, page.frames);
+    viz.appendChild(stage);
 
-    if (page.ruled) copy.appendChild(el('p', 'case-ruled', page.ruled));
-    if (page.note) copy.appendChild(el('p', 'case-note', page.note));
+    if (page.ruled) viz.appendChild(el('p', 'case-ruled', page.ruled));
+    if (page.note) viz.appendChild(el('p', 'case-note', page.note));
     if (page.next) {
       var list = el('ul', 'case-next');
       page.next.forEach(function (item) { list.appendChild(el('li', '', item)); });

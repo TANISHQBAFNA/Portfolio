@@ -287,8 +287,8 @@ check('cache queries bumped for My Work glitch skin', function () {
     'index-multiverse.html must bump landing-multiverse.js cache to cbx1'
   );
   assert.ok(
-    /project-study\.js\?v=cbx1/.test(index),
-    'index.html must bump project-study.js cache to cbx1'
+    /project-study\.js\?v=cbx3/.test(index),
+    'index.html must bump project-study.js cache to cbx3'
   );
   assert.ok(
     /landing\.css\?v=aeo32/.test(index),

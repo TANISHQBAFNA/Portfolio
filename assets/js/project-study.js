@@ -1198,6 +1198,10 @@ window.ProjectStudy = (function () {
       caseMount = null;
       if (template === 'cbx300' && window.Cbx300Case) {
         caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
+        var caseWorld = root.querySelector('[data-world="cbx300"]');
+        var casePages = caseWorld ? caseWorld.querySelectorAll('[data-case-page]') : [];
+        setTotal(casePages.length);
+        setStep(0);
       }
       Array.prototype.forEach.call(root.querySelectorAll('[data-study-kicker]'), function (el) {
         el.textContent = pad(index + 1);
