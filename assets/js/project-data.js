@@ -53,11 +53,13 @@ window.PORTFOLIO_PROJECTS = [
   {
     index: '01',
     title: 'SME Banking',
+    studyTemplate: 'cbx300',
     tone: 'manila',
     tools: ['Figma', 'Design tokens', 'Storybook'],
     category: 'Fintech Product Design',
-    blurb: 'Making business banking - payments, approvals, onboarding - simpler to trust.',
-    detail: 'Product design for SME and corporate banking at Intellect Design - payments, approvals, onboarding and the design system that keeps them consistent across web and mobile. Replace this paragraph with the framing you want to lead with.',
+    hook: 'Banking for a business, not a person.',
+    blurb: 'Banking for a business, not a person. CBX300 SME banking across web and mobile.',
+    detail: 'Designing CBX300 — SME banking across web and mobile. Lisa Charlie bank is a demo brand, not a live client. 259 web · 377 mobile · ~147 flows.',
     slides: [
       {
         title: "Context",
@@ -183,13 +185,13 @@ window.PORTFOLIO_PROJECTS = [
         ],
       }
     ],
-    year: '2025 - Present',
-    role: 'Product Designer',
+    year: 'Jan 2026 – present',
+    role: 'Lead product designer — design system, end-to-end screens (web + mobile), through developer handoff',
     scope: 'Web + mobile, design system',
-    href: '#',
+    href: '?open=sme',
     cover: 'assets/img/covers/cover-01.svg',
-    coverTag: 'Payments · Approvals · FX',
-    status: 'placeholder'
+    coverTag: 'CBX300 · 636 screens · Lisa Charlie demo',
+    status: 'live'
   },
   {
     index: '02',
