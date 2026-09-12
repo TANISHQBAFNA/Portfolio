@@ -14,13 +14,14 @@
   var track = document.querySelector('[data-rail-track]');
   var html = document.documentElement;
   var WORK = [
-    {
-      re: /sme banking/i,
-      cardTitle: 'SME Banking',
-      cardCaption: 'Intellect · Fintech · Money flows that finish',
-      cardImage: 'assets/img/work/cin-work-sme.png',
-      tone: 'cream'
-    },
+      {
+        re: /sme banking/i,
+        cardTitle: 'SME Banking',
+        cardCaption: 'Intellect · Fintech · Money flows that finish',
+        cardImage: 'assets/img/work/cin-work-sme.png',
+        tone: 'cream',
+        studyTemplate: 'cbx300'
+      },
     {
       re: /agentic|workflow/i,
       cardTitle: 'AI workflow',
@@ -48,6 +49,7 @@
     found.cardImage = spec.cardImage;
     found.cover = spec.cardImage;
     found.bentoTone = spec.tone;
+    if (spec.studyTemplate) found.studyTemplate = spec.studyTemplate;
     return found;
   }).filter(Boolean);
 
@@ -1062,12 +1064,14 @@
       : null;
 
     var openQuery = /[?&]open=([^&]+)/.exec(location.search);
+    var pageQuery = /[?&]page=([^&]+)/.exec(location.search);
     if (openQuery && detail) {
       var needle = decodeURIComponent(openQuery[1]).replace(/\+/g, ' ').toLowerCase();
+      var pageId = pageQuery ? decodeURIComponent(pageQuery[1]).toLowerCase() : '';
       projects.forEach(function (project, i) {
         if (project.title.toLowerCase().indexOf(needle) !== -1) {
           var deepLink = slots[i] && slots[i].querySelector('[data-folder]');
-          detail.open(i, deepLink);
+          detail.open(i, deepLink, pageId);
         }
       });
     }

@@ -279,16 +279,16 @@ check('cache queries bumped for My Work glitch skin', function () {
     'index-multiverse.html must bump iris-motion-multiverse.js cache to mv9'
   );
   assert.ok(
-    /landing-multiverse\.js\?v=mv8/.test(index),
-    'index.html must bump landing-multiverse.js cache to mv8'
+    /landing-multiverse\.js\?v=cbx1/.test(index),
+    'index.html must bump landing-multiverse.js cache to cbx1'
   );
   assert.ok(
-    /landing-multiverse\.js\?v=mv8/.test(mvIndex),
-    'index-multiverse.html must bump landing-multiverse.js cache to mv8'
+    /landing-multiverse\.js\?v=cbx1/.test(mvIndex),
+    'index-multiverse.html must bump landing-multiverse.js cache to cbx1'
   );
   assert.ok(
-    /project-study\.js\?v=hz128/.test(index),
-    'index.html must bump project-study.js cache to hz128'
+    /project-study\.js\?v=cbx3/.test(index),
+    'index.html must bump project-study.js cache to cbx3'
   );
   assert.ok(
     /landing\.css\?v=aeo32/.test(index),
@@ -303,8 +303,8 @@ check('cache queries bumped for My Work glitch skin', function () {
     'index.html must keep beyond-transition.js cache at bx20 (Go Home FOUC cover)'
   );
   assert.ok(
-    /landing\.js\?v=aeo31/.test(index),
-    'index.html must bump landing.js cache for cream curtain mark-size lock'
+    /landing\.js\?v=cbx1/.test(index),
+    'index.html must bump landing.js cache for CBX300 case wiring'
   );
 });
 
