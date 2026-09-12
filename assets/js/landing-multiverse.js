@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  if (document.documentElement.classList.contains('is-multiverse')) return;
+  if (!document.documentElement.classList.contains('is-multiverse')) return;
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -83,6 +83,34 @@
     if (indexTotal) indexTotal.textContent = pad(projects.length);
   }
 
+  function wireStudyCurtainGlitch() {
+    var veil = document.querySelector('[data-study-veil]');
+    var fly = document.querySelector('[data-study-fly]');
+    var lastStudy = html.classList.contains('is-study');
+
+    if (window.IrisMotion && window.IrisMotion.ensureStudyHitch) {
+      window.IrisMotion.ensureStudyHitch(veil);
+    }
+
+    /* Fallback if a stale project-study.js never calls pulseStudyCurtain.
+       Skip when the hook already fired (veil is down / name painted). */
+    new MutationObserver(function () {
+      var study = html.classList.contains('is-study');
+      if (study && !lastStudy) {
+        window.setTimeout(function () {
+          var pulsed = window.IrisMotion && window.IrisMotion.studyPulseAt
+            ? window.IrisMotion.studyPulseAt()
+            : 0;
+          if (Date.now() - pulsed < 500) return;
+          if (window.IrisMotion && window.IrisMotion.pulseStudyCurtain) {
+            window.IrisMotion.pulseStudyCurtain(veil, fly, reduceMotion, 'both');
+          }
+        }, 180);
+      }
+      lastStudy = study;
+    }).observe(html, { attributes: true, attributeFilter: ['class'] });
+  }
+
   /* ── hero reveal ────────────────────────────────────────────────────── */
 
   function revealHero() {
@@ -136,8 +164,12 @@
 
   /* ── first-load sequence ────────────────────────────────────────────── */
 
-  var CURTAIN_TEXT = 'Tanishq Bafna'; /* full name — never "Tanishq." */
-  var NAME_BEATS = ['Tanishk Bafnaa', 'Tanish Bafna', 'Tanishq Bafna'];
+  var CURTAIN_TEXT = (window.IrisMotion && window.IrisMotion.FINAL_NAME) || 'Tanishq Bafna'; /* full name — never "Tanishq." */
+  var NAME_BEATS = (window.IrisMotion && window.IrisMotion.NAME_SEQUENCE)
+    ? window.IrisMotion.NAME_SEQUENCE.slice()
+    : ['Tanishk Bafnaa', 'Tanish Bafna', 'Tanishq Bafna'];
+  var BEAT_HOLD_MS = (window.IrisMotion && window.IrisMotion.NAME_BEAT_MS) || 2000;
+  var MARK_FONT = '"Syne", "Noto Sans Devanagari", "Noto Sans Arabic", "Noto Sans SC", "Noto Sans", sans-serif';
   var HOLD_MS = 400; /* short beat on the real name, then lift */
   var EXIT_MS = 900;
   var MOVE_MS = 900;
@@ -178,13 +210,26 @@
     html.style.setProperty('--panel-flush', flush.toFixed(4));
   }
 
+  var projectsHitchTimer = 0;
+  function hitchProjectsCurtain() {
+    if (reduceMotion.matches) return;
+    html.classList.add('is-projects-hitching');
+    if (projectsHitchTimer) window.clearTimeout(projectsHitchTimer);
+    projectsHitchTimer = window.setTimeout(function () {
+      html.classList.remove('is-projects-hitching');
+    }, 900);
+  }
+
   function applyRiseFromPanel(p) {
     var rise = 1 - Math.max(0, Math.min(1, p));
     html.style.setProperty('--rise', rise.toFixed(4));
     html.style.setProperty('--panel-flush', panelFlushFromRise(rise).toFixed(4));
     html.style.setProperty('--nav-out', '0');
     html.classList.remove('is-nav-away');
-    html.classList.toggle('is-projects-in', p > 0.08);
+    var wasIn = html.classList.contains('is-projects-in');
+    var nowIn = p > 0.08;
+    html.classList.toggle('is-projects-in', nowIn);
+    if (nowIn && !wasIn) hitchProjectsCurtain();
   }
 
   function tweenBento(next, immediate, opts) {
@@ -214,147 +259,20 @@
   }
 
   function openWork() {
-    var handle = document.querySelector('[data-work-cta]');
     if (!isDesktop()) {
       var work = document.getElementById('work');
-      if (handle) handle.classList.add('is-pulling');
-      html.classList.add('is-projects-pulling');
       if (work) {
         work.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth' });
       }
-      window.setTimeout(function () {
-        if (handle) handle.classList.remove('is-pulling');
-        html.classList.remove('is-projects-pulling');
-      }, 900);
       return;
     }
     pullLock = true;
-    if (handle) handle.classList.add('is-pulling');
-    html.classList.add('is-projects-pulling');
     window.scrollTo(0, riseMax());
     tweenBento(1, false, {
-      duration: 1.15,
-      ease: 'power3.inOut',
-      onComplete: function () {
-        pullLock = false;
-        if (handle) handle.classList.remove('is-pulling');
-        html.classList.remove('is-projects-pulling');
-      }
+      duration: 1.25,
+      ease: 'power2.inOut',
+      onComplete: function () { pullLock = false; }
     });
-  }
-
-  
-  function wireBeyondTabGlitch() {
-    var tab = document.querySelector('[data-beyond-tab]');
-    if (!tab || reduceMotion.matches) return;
-    var label = tab.querySelector('.multiverse-tab__label');
-    var ring = tab.querySelector('.multiverse-tab__ring');
-    if (!ring) {
-      ring = document.createElement('span');
-      ring.className = 'multiverse-tab__ring';
-      ring.setAttribute('aria-hidden', 'true');
-      tab.insertBefore(ring, tab.firstChild);
-    }
-    var oldTear = tab.querySelector('.multiverse-tab__tear');
-    if (oldTear) oldTear.remove();
-
-    var LATIN = (label && (label.getAttribute('data-latin') || label.textContent) || 'Go Beyond').trim();
-    if (label) {
-      label.setAttribute('data-latin', LATIN);
-      label.setAttribute('aria-label', LATIN);
-    }
-    var SPARK = {
-      G: ['Г', 'Γ', 'ग'], o: ['ο', 'о', 'օ'], B: ['Б', 'Β', 'ब'], e: ['е', 'ε', 'є'],
-      y: ['у', 'γ', 'ү'], n: ['н', 'ν', 'न'], d: ['д', 'δ'],
-      a: ['а', 'α', 'ا'], O: ['О', 'Ο', '〇']
-    };
-    var busy = false;
-
-    function letterSpark() {
-      if (!label) return;
-      var chars = LATIN.split('');
-      var idxs = [];
-      var i;
-      for (i = 0; i < chars.length; i += 1) {
-        if (chars[i] === ' ') continue;
-        if (SPARK[chars[i]] || SPARK[chars[i].toUpperCase()] || SPARK[chars[i].toLowerCase()]) {
-          idxs.push(i);
-        }
-      }
-      if (!idxs.length) return;
-      var pickCount = 2 + (Math.random() > 0.45 ? 1 : 0);
-      var picks = [];
-      while (picks.length < pickCount && idxs.length) {
-        var at = Math.floor(Math.random() * idxs.length);
-        picks.push(idxs.splice(at, 1)[0]);
-      }
-      function flash(roundsLeft) {
-        var next = LATIN.split('');
-        picks.forEach(function (idx) {
-          var ch = LATIN.charAt(idx);
-          var opts = SPARK[ch] || SPARK[ch.toUpperCase()] || SPARK[ch.toLowerCase()];
-          if (!opts) return;
-          next[idx] = opts[Math.floor(Math.random() * opts.length)];
-        });
-        tab.classList.add('is-sparking');
-        label.textContent = next.join('');
-        if (roundsLeft <= 1) {
-          window.setTimeout(function () {
-            label.textContent = LATIN;
-            tab.classList.remove('is-sparking');
-          }, 320);
-          return;
-        }
-        window.setTimeout(function () { flash(roundsLeft - 1); }, 140);
-      }
-      flash(2);
-    }
-
-    function pulseRing() {
-      tab.classList.remove('is-pulsing');
-      void tab.offsetWidth;
-      tab.classList.add('is-pulsing');
-      window.setTimeout(function () { tab.classList.remove('is-pulsing'); }, 980);
-    }
-
-    function playHitch() {
-      if (busy) return;
-      if (html.classList.contains('is-curtain') || html.classList.contains('is-projects-in') || html.classList.contains('is-study')) {
-        return;
-      }
-      busy = true;
-      pulseRing();
-      window.setTimeout(letterSpark, 80);
-      window.setTimeout(function () { busy = false; }, 1100);
-    }
-
-    function pulse() {
-      if (html.classList.contains('is-curtain') || html.classList.contains('is-projects-in') || html.classList.contains('is-study')) {
-        window.setTimeout(pulse, 10000);
-        return;
-      }
-      playHitch();
-      window.setTimeout(pulse, 10000);
-    }
-
-    tab.addEventListener('mouseenter', playHitch);
-    tab.addEventListener('focus', playHitch);
-    window.setTimeout(pulse, 10000);
-  }
-
-  function wireWorkCtaGlitch() {
-    var handle = document.querySelector('[data-work-cta]');
-    if (!handle || reduceMotion.matches) return;
-    function pulse() {
-      if (html.classList.contains('is-curtain') || html.classList.contains('is-projects-in') || html.classList.contains('is-study')) {
-        window.setTimeout(pulse, 30000);
-        return;
-      }
-      handle.classList.add('is-glitching');
-      window.setTimeout(function () { handle.classList.remove('is-glitching'); }, 420);
-      window.setTimeout(pulse, 28000 + Math.floor(Math.random() * 4000));
-    }
-    window.setTimeout(pulse, 30000);
   }
 
   function progressFromScroll() {
@@ -400,45 +318,29 @@
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 
-  function readSavedTheme() {
-    try {
-      var saved = sessionStorage.getItem('tb-world-theme');
-      if (saved === 'dark') return true;
-      if (saved === 'light') return false;
-    } catch (err) { /* ignore */ }
-    return systemDark();
-  }
-
-  function persistTheme(dark) {
-    try { sessionStorage.setItem('tb-world-theme', dark ? 'dark' : 'light'); } catch (err) { /* ignore */ }
-  }
-
-  function applyTheme(dark, persist) {
+  function applyTheme(dark) {
     html.classList.toggle('is-dark', !!dark);
+    html.classList.toggle('is-print', !dark);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#1E1510' : '#f4efe6');
+    if (meta) meta.setAttribute('content', dark ? '#0e1018' : '#f3eee4');
     var btn = document.querySelector('[data-theme-toggle]');
     if (btn) {
       btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
       btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
     }
-    if (persist) persistTheme(dark);
   }
 
   function wireTheme() {
-    applyTheme(readSavedTheme(), false);
+    applyTheme(systemDark());
     var btn = document.querySelector('[data-theme-toggle]');
     if (btn) {
       btn.addEventListener('click', function () {
-        applyTheme(!html.classList.contains('is-dark'), true);
+        applyTheme(!html.classList.contains('is-dark'));
       });
     }
     var media = window.matchMedia('(prefers-color-scheme: dark)');
     function onSystem(e) {
-      try {
-        if (sessionStorage.getItem('tb-world-theme')) return;
-      } catch (err) { /* ignore */ }
-      applyTheme(e.matches, false);
+      applyTheme(e.matches);
     }
     if (media.addEventListener) media.addEventListener('change', onSystem);
     else if (media.addListener) media.addListener(onSystem);
@@ -458,6 +360,9 @@
         logo.style.fontWeight = BOLD;
         logo.classList.add('is-arrived');
         logo.classList.remove('is-awaiting-curtain');
+        if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+          window.IrisMotion.burstGlitch(logo, reduceMotion);
+        }
       }
       if (identity) identity.classList.remove('is-awaiting-curtain');
     }
@@ -481,8 +386,12 @@
     if (reduceMotion.matches) {
       html.classList.add('is-curtain');
       mark.textContent = CURTAIN_TEXT;
+      mark.setAttribute('data-text', CURTAIN_TEXT);
+      mark.setAttribute('data-latin', CURTAIN_TEXT);
+      mark.setAttribute('aria-label', CURTAIN_TEXT);
+      mark.classList.add('glitch');
       mark.style.opacity = '1';
-      mark.style.color = '#f4efe6';
+      mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
       whenPageLoaded(function () {
         setTimeout(function () {
           revealHero();
@@ -505,52 +414,24 @@
     }
 
     html.classList.add('is-curtain');
-    mark.style.fontFamily = '"Syne", sans-serif';
+    mark.style.fontFamily = MARK_FONT;
     mark.style.fontWeight = BOLD;
     mark.style.fontSynthesis = 'none';
+    /* Match navbar logo size exactly (shared --mark-size) */
+    if (logo) {
+      mark.style.fontSize = window.getComputedStyle(logo).fontSize;
+      mark.style.letterSpacing = window.getComputedStyle(logo).letterSpacing;
+      mark.style.lineHeight = window.getComputedStyle(logo).lineHeight;
+    }
     mark.style.whiteSpace = 'nowrap';
-    mark.style.color = '#f4efe6';
+    mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
     mark.style.margin = '0';
     mark.style.opacity = '1';
+    mark.classList.add('glitch');
+    mark.setAttribute('data-text', CURTAIN_TEXT);
+    mark.setAttribute('data-latin', CURTAIN_TEXT);
+    mark.setAttribute('aria-label', CURTAIN_TEXT);
     mark.textContent = '';
-
-    /* CSS already sizes .curtain__mark with var(--mark-size). Do not copy
-       logo fontSize until that token (and the light-home masthead rule) apply —
-       a premature compute is the tiny base .masthead__name clamp. */
-    function markLayoutReady() {
-      var token = window.getComputedStyle(html).getPropertyValue('--mark-size').trim();
-      if (!token) return false;
-      if (!logo) return true;
-      var px = parseFloat(window.getComputedStyle(logo).fontSize) || 0;
-      var rootPx = parseFloat(window.getComputedStyle(html).fontSize) || 16;
-      return px + 0.25 >= 1.15 * rootPx;
-    }
-
-    function lockMarkToLogo() {
-      if (!logo || !markLayoutReady()) return;
-      var cs = window.getComputedStyle(logo);
-      mark.style.fontSize = cs.fontSize;
-      mark.style.letterSpacing = cs.letterSpacing;
-      mark.style.lineHeight = cs.lineHeight;
-    }
-
-    function whenMarkLayoutReady(then) {
-      var tries = 0;
-      function go() {
-        if (markLayoutReady() || tries > 90) {
-          lockMarkToLogo();
-          then();
-          return;
-        }
-        tries += 1;
-        window.setTimeout(go, 16);
-      }
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(go).catch(go);
-      } else {
-        go();
-      }
-    }
 
     var typedReady = false;
     var loadReady = document.readyState === 'complete';
@@ -609,11 +490,31 @@
       return ops;
     }
 
+    function armMarkGlitch(text) {
+      var latin = text || readMark() || CURTAIN_TEXT;
+      mark.classList.add('glitch');
+      mark.setAttribute('data-text', latin);
+      mark.setAttribute('data-latin', latin);
+      mark.setAttribute('aria-label', CURTAIN_TEXT);
+    }
+
+    var curtainGlitchId = 0;
+    function pulseCurtainGlitch() {
+      if (liftStarted || reduceMotion.matches) return;
+      armMarkGlitch(readMark() || CURTAIN_TEXT);
+      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+        window.IrisMotion.burstGlitch(mark, reduceMotion);
+      }
+    }
+
     function paintName(text, donePaint) {
       mark.textContent = '';
       var nodes = text.split('').map(makeChar);
       nodes.forEach(function (el) { mark.appendChild(el); });
+      armMarkGlitch(text);
+      window.setTimeout(function () { pulseCurtainGlitch(); }, 180);
       if (typeof gsap === 'undefined') {
+        pulseCurtainGlitch();
         if (donePaint) donePaint();
         return;
       }
@@ -633,6 +534,8 @@
       if (typeof gsap === 'undefined') {
         mark.textContent = '';
         toText.split('').forEach(function (ch) { mark.appendChild(makeChar(ch)); });
+        armMarkGlitch(toText);
+        pulseCurtainGlitch();
         if (doneMorph) doneMorph();
         return;
       }
@@ -667,7 +570,12 @@
         el.setAttribute('data-w', String(w));
       });
 
-      var tl = gsap.timeline({ onComplete: doneMorph });
+      var tl = gsap.timeline({
+        onComplete: function () {
+          pulseCurtainGlitch();
+          if (doneMorph) doneMorph();
+        }
+      });
       if (deleteEls.length) {
         tl.to(deleteEls, {
           opacity: 0,
@@ -702,33 +610,51 @@
           }
         }, deleteEls.length ? 0.08 : 0);
       }
-      if (!deleteEls.length && !insertEls.length && doneMorph) doneMorph();
     }
 
     function playNameBeats(doneBeats) {
       var step = 0;
-      var BEAT_HOLD = 580;
+      var BEAT_HOLD = BEAT_HOLD_MS;
 
-      function afterBeat() {
-        if (NAME_BEATS[step] === CURTAIN_TEXT && loadReady) {
-          setTimeout(doneBeats, HOLD_MS);
-          return;
-        }
-        var next = (step + 1) % NAME_BEATS.length;
-        morphName(NAME_BEATS[next], function () {
-          step = next;
-          setTimeout(afterBeat, BEAT_HOLD);
+      function settleToFullName() {
+        morphName(CURTAIN_TEXT, function () {
+          armMarkGlitch(CURTAIN_TEXT);
+          pulseCurtainGlitch();
+          function waitLoad() {
+            if (!loadReady) {
+              setTimeout(waitLoad, 40);
+              return;
+            }
+            setTimeout(doneBeats, HOLD_MS);
+          }
+          waitLoad();
         });
       }
 
+      function afterBeat() {
+        setTimeout(function () {
+          step += 1;
+          if (step < NAME_BEATS.length) {
+            morphName(NAME_BEATS[step], function () {
+              pulseCurtainGlitch();
+              afterBeat();
+            });
+            return;
+          }
+          settleToFullName();
+        }, BEAT_HOLD);
+      }
+
       paintName(NAME_BEATS[0], function () {
-        setTimeout(afterBeat, BEAT_HOLD);
+        pulseCurtainGlitch();
+        afterBeat();
       });
     }
 
     function beginLift() {
       if (liftStarted || !typedReady || !loadReady) return;
       liftStarted = true;
+      if (curtainGlitchId) window.clearTimeout(curtainGlitchId);
 
       if (!logo || !identity) {
         revealHero();
@@ -740,18 +666,31 @@
         return;
       }
 
-      var ink = getComputedStyle(html).getPropertyValue('--curtain-ink').trim() || '#1E1510';
+      var ink = getComputedStyle(html).getPropertyValue('--curtain-ink').trim() || '#f3eee4';
+      var logoStyle = window.getComputedStyle(logo);
 
       /* Flatten typed spans so the name is one solid word */
       mark.textContent = CURTAIN_TEXT;
-      mark.style.fontFamily = '"Syne", sans-serif';
+      mark.style.fontFamily = MARK_FONT;
       mark.style.fontWeight = BOLD;
       mark.style.fontSynthesis = 'none';
-      lockMarkToLogo();
+      mark.style.fontSize = logoStyle.fontSize;
+      mark.style.letterSpacing = logoStyle.letterSpacing;
+      mark.style.lineHeight = logoStyle.lineHeight;
       mark.style.whiteSpace = 'nowrap';
-      mark.style.color = '#f4efe6';
+      mark.style.color = getComputedStyle(html).getPropertyValue('--fg').trim() || '#f3eee4';
       mark.style.margin = '0';
+      mark.setAttribute('data-text', CURTAIN_TEXT);
+      mark.setAttribute('data-latin', CURTAIN_TEXT);
+      mark.setAttribute('aria-label', CURTAIN_TEXT);
+      mark.classList.add('glitch');
+      if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+        window.IrisMotion.burstGlitch(mark, reduceMotion);
+      }
       if (typeof gsap !== 'undefined') gsap.set(mark, { y: 0, opacity: 1, clearProps: 'transform' });
+      if (window.IrisMotion && window.IrisMotion.hitchCurtain) {
+        window.IrisMotion.hitchCurtain(curtain, reduceMotion);
+      }
 
       /* Pin the same name node over the page so it can rise with the curtain
          and slide left into the masthead seat. No clone, so nothing flashes. */
@@ -818,11 +757,10 @@
       }
     }
 
-    whenMarkLayoutReady(function () {
-      playNameBeats(function () {
-        typedReady = true;
-        beginLift();
-      });
+    /* Full Multiverse curtain always (name beats). Portal runs first when arriving via Go Beyond. */
+    playNameBeats(function () {
+      typedReady = true;
+      beginLift();
     });
 
     if (!loadReady) {
@@ -870,11 +808,62 @@
     requestFit();
   }
 
+  function wireMagneticNav() {
+    if (reduceMotion.matches || !window.matchMedia('(pointer: fine)').matches) return;
+    var links = document.querySelectorAll('[data-magnetic]');
+    links.forEach(function (link) {
+      link.addEventListener('pointermove', function (event) {
+        var box = link.getBoundingClientRect();
+        var dx = (event.clientX - (box.left + box.width / 2)) * 0.18;
+        var dy = (event.clientY - (box.top + box.height / 2)) * 0.18;
+        link.style.setProperty('--mx', dx.toFixed(1) + 'px');
+        link.style.setProperty('--my', dy.toFixed(1) + 'px');
+        link.classList.add('is-magnet');
+      });
+      link.addEventListener('pointerleave', function () {
+        link.style.setProperty('--mx', '0px');
+        link.style.setProperty('--my', '0px');
+        link.classList.remove('is-magnet');
+      });
+    });
+  }
+
+  function wireHeroGlitch() {
+    var shouts = document.querySelectorAll('.hero__kicker.glitch, .hero__accent.glitch, .hero__word.glitch, .masthead__name.glitch, .masthead__nav-label.glitch');
+    shouts.forEach(function (el) {
+      el.addEventListener('mouseenter', function () {
+        if (window.IrisMotion && window.IrisMotion.burstGlitch) {
+          window.IrisMotion.burstGlitch(el, reduceMotion);
+        }
+      });
+    });
+  }
+
+  function wireWorkCtaGlitch() {
+    var handle = document.querySelector('[data-work-cta]');
+    var label = handle && handle.querySelector('.work-cta__label');
+    if (!handle || !label) return;
+    if (window.IrisMotion && window.IrisMotion.armGlitchTarget) {
+      window.IrisMotion.armGlitchTarget(label, (label.textContent || 'My Work').trim());
+    }
+    function hitch() {
+      if (window.IrisMotion && window.IrisMotion.burstWorkCta) {
+        window.IrisMotion.burstWorkCta(reduceMotion);
+      }
+    }
+    handle.addEventListener('mouseenter', hitch);
+    handle.addEventListener('focus', hitch);
+  }
+
   renderProjects();
   wireTheme();
   wirePortrait();
   wireCursorLight();
   wireHeroFit();
+  wireMagneticNav();
+  wireHeroGlitch();
+  wireWorkCtaGlitch();
+  wireStudyCurtainGlitch();
   if (window.IrisMotion && window.IrisMotion.wireParticles) window.IrisMotion.wireParticles(reduceMotion);
   html.style.setProperty('--rise', /[?&]open=/.test(location.search) ? '0' : '1');
   html.style.setProperty('--nav-out', '0');
@@ -924,6 +913,7 @@
     html.classList.remove('curtain-skip');
 
     function startCurtain() {
+      if (curtainEl) curtainEl.style.visibility = '';
       playCurtain(function () {
         fitHeroType();
         if (!/[?&]open=/.test(location.search)) enableHomeScroll();
@@ -942,7 +932,7 @@
           gate.done = true;
           fn();
         }
-      }, 1600);
+      }, 2200);
     }
 
     afterPortal(startCurtain);
@@ -1139,6 +1129,5 @@
   ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (type) {
     window.addEventListener(type, armReset, { passive: true });
   });
-  wireBeyondTabGlitch();
   armReset();
 })();
