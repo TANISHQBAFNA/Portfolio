@@ -177,7 +177,10 @@ window.ProjectStudy = (function () {
     }
 
     function syncHead() {
-      root.style.setProperty('--study-head', headPx() + 'px');
+      var head = headPx();
+      var stage = Math.max(240, Math.round(root.clientHeight || window.innerHeight) - head);
+      root.style.setProperty('--study-head', head + 'px');
+      root.style.setProperty('--study-stage', stage + 'px');
     }
 
     function applyTemplate(name) {

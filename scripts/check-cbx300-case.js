@@ -79,10 +79,11 @@ check('Infoviz grammar: claim first, meaning-changing scrub, close on finding', 
   assert.ok(kit.indexOf('focusOne') !== -1, 'kit missing progressive focus');
   assert.ok(kit.indexOf('cropSwap') !== -1, 'kit missing crop/crossfade with scale');
   assert.ok(kit.indexOf('data-film-track') !== -1, 'kit missing horizontal pan ending');
-  assert.ok(kit.indexOf("pin: stage") !== -1, 'kit missing pinned stage');
+  assert.ok(kit.indexOf('pin: false') !== -1, 'kit must scrub without GSAP pin (sticky stage)');
   assert.ok(kit.indexOf('Claim stays readable') !== -1, 'kit missing claim-first lock');
   assert.ok(pages.indexOf("finding: true") !== -1, 'close is not a finding');
   assert.ok(pages.indexOf('259 web screens. 377 mobile screens. One grammar.') !== -1, 'missing volume finding');
+  assert.ok(pages.indexOf('What happens when three people share that bank') !== -1, 'missing carrying question');
   assert.ok(!/Zillow|Falls Church|Malabar Hill|stamp-duty/.test(pages), 'copied Infoviz housing content');
 });
 
@@ -135,21 +136,24 @@ check('free GSAP + ScrollTrigger only; no Club plugins', function () {
   assert.ok(kit.indexOf('ScrollTrigger') !== -1, 'kit missing ScrollTrigger');
 });
 
-check('pinned stage counts chrome once; captions not cropped by stage overflow', function () {
+check('sticky stage counts chrome once; captions reserved in the leftover viewport', function () {
+  assert.ok(/position:\s*sticky/.test(css), 'pinned chapters must stick under chrome');
   assert.ok(
-    /\[data-pin="true"\] \.film-stage[\s\S]{0,280}--study-stage/.test(css) ||
-      /\[data-pin="true"\] \.film-stage[\s\S]{0,280}100svh - var\(--study-head/.test(css),
-    'pinned stage must be leftover viewport under chrome, not extra 100svh'
+    /\[data-pin="true"\] \.film-stage[\s\S]{0,400}--study-stage/.test(css) ||
+      /\[data-pin="true"\] \.film-stage[\s\S]{0,400}100svh - var\(--study-head/.test(css),
+    'sticky stage must be leftover viewport under chrome, not extra 100svh'
   );
-  assert.ok(!/\.film-beat\[data-pin="true"\] \.film-stage \{[\s\S]{0,180}overflow:\s*hidden/.test(css), 'pinned stage still overflow:hidden');
-  assert.ok(kit.indexOf("start: function () { return 'top ' + head() + 'px'; }") !== -1, 'pin start must sit below chrome');
+  assert.ok(kit.indexOf("start: function () { return 'top ' + head() + 'px'; }") !== -1, 'scrub start must sit below chrome');
+  assert.ok(kit.indexOf('pin: false') !== -1, 'GSAP must not pin; hold is the runway');
   assert.ok(study.indexOf('return 72') !== -1, 'headPx fallback must match --study-head');
+  assert.ok(study.indexOf('--study-stage') !== -1, 'syncHead must set leftover stage height from scroller');
 });
 
 check('cropSwap hard-hides outgoing shot; focus stays inside frame', function () {
   assert.ok(/autoAlpha:\s*0\.08/.test(kit) === false, 'cropSwap still leaves ghost opacity');
-  assert.ok(kit.indexOf('xPercent: -4') !== -1, 'cropSwap still pans outgoing off-frame');
-  assert.ok(kit.indexOf("scale: on ? 1.05 : 0.94") !== -1, 'focus scale still blows past the frame');
+  assert.ok(kit.indexOf('/* Focus stays in-frame: dim/lift, no board scale. */') !== -1, 'focus must stay in-frame');
+  assert.ok(!/board, \{\s*scale:\s*1\.0[6-9]/.test(kit), 'board-level scale leaks past the viz frame');
+  assert.ok(kit.indexOf('autoAlpha: 0') !== -1, 'cropSwap must fully hide the outgoing shot');
 });
 
 check('redesign bar is the experience lock', function () {

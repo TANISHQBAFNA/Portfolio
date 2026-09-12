@@ -32,74 +32,80 @@ window.Cbx300Case = (function () {
       id: 'ladder',
       num: '01',
       title: 'One product for every size of small business',
+      body: 'A freelancer and a 50-person company are not the same day-to-day — but they should not need two banks. Complexity shows up only when the business needs it.',
       recipe: 'ends',
       pin: true,
       hold: 'tall',
       captions: [
-        'A freelancer and a 50-person company are not the same day-to-day, but they should not need two banks.',
         'A freelancer runs the whole day from one login.',
         'A fifty-person company has many hands on the same bank.',
         'Same product. Complexity shows up only when the business needs it.',
         'The same layout has to work for a business with no accounts and a business with four.'
-      ]
+      ],
+      ask: 'What happens when three people share that bank, not one?'
     },
     {
       id: 'roles',
       num: '02',
       title: 'Three jobs: owner, maker, approver',
+      body: 'Early on, one person wears all three hats. Later, three people. Design for the jobs, not the job titles.',
       recipe: 'jobs',
       pin: true,
       hold: 'mid',
       captions: [
-        'Early on, one person wears all three hats. Later, three people. Design for the jobs, not the job titles.',
         'Owner needs one honest cash answer.',
         'Maker needs speed and no re-typing.',
         'Approver needs the queue clear on a phone.'
-      ]
+      ],
+      ask: 'If approving is the work, where does that work live?'
     },
     {
       id: 'approvals',
       num: '03',
       title: 'Approvals get their own door',
+      body: 'For some people, approving is the work. So it sits in the main menu (and on the phone bar) — not buried in a bell.',
       recipe: 'door',
       pin: true,
       hold: 'mid',
       captions: [
-        'For some people, approving is the work. So it sits in the main menu, and on the phone bar.',
         'Approving is the job, so it has its own button, not a notification.',
         'The action is labelled with the number it will perform. No one approves a mystery quantity.'
-      ]
+      ],
+      ask: 'What should you see before anyone signs?'
     },
     {
       id: 'money',
       num: '04',
       title: 'Show the real money, catch mistakes early',
+      body: 'A business account has more than one “balance.” And if a salary file has bad rows, show that before someone signs — not after.',
       recipe: 'money',
       pin: true,
       hold: 'mid',
       captions: [
-        'A business account has more than one balance. Catch bad rows before someone signs.',
         'Bad rows turn red before you sign.',
         'Four balances on the card. One number would lie.'
-      ]
+      ],
+      ask: 'Who is allowed to start, check, view, send, or approve?'
     },
     {
       id: 'permissions',
       num: '05',
       title: 'Who can do what — in a clear grid',
+      body: 'Permissions are verbs (start, check, view, send, approve), not a pile of switches. One screen that still makes sense with one user or many.',
       recipe: 'verbs',
       pin: true,
       hold: 'mid',
       captions: [
-        'Permissions are verbs, not a pile of switches. One screen that still makes sense with one user or many.',
         'Start, check, view, send, approve. The verbs sit in a grid you can read.',
         'The same screen serves one freelancer and a fourteen-person finance team.'
-      ]
+      ],
+      ask: 'After the verbs, does every money path still end the same way?'
     },
     {
       id: 'grammar',
       num: '06',
       title: 'Every money path ends the same way',
+      body: 'Review → one-time code → done. Same three steps on payments, deposits, cards, loans — so people don’t relearn the ending.',
       recipe: 'ending',
       pin: true,
       hold: 'tall',
@@ -108,19 +114,21 @@ window.Cbx300Case = (function () {
         'Same three steps on payments, deposits, cards, loans.',
         'People do not relearn the ending.',
         'Week one for every new customer. Each empty screen offers the next action.'
-      ]
+      ],
+      ask: 'What did this produce, on web and on the phone?'
     },
     {
       id: 'scale',
-      num: '07',
+      num: '',
       title: META.finding,
+      body: 'That volume is the finding. Results stay blank until real numbers exist.',
       recipe: 'finding',
       pin: true,
       hold: 'short',
       finding: true,
       captions: [
-        META.finding,
-        'That volume is the finding. Results stay blank until real numbers exist.'
+        '259 web · 377 mobile · one grammar.',
+        'Lisa Charlie is the demo brand used to design the system, not a live client.'
       ],
       next: [
         'Check the verb grid with real admins.',
@@ -155,12 +163,6 @@ window.Cbx300Case = (function () {
     return node;
   }
 
-  function ghost(mods) {
-    var n = el('span', 'film-ghost' + (mods ? ' ' + mods : ''));
-    n.setAttribute('aria-hidden', 'true');
-    return n;
-  }
-
   function paperNote(text) {
     return el('p', 'film-slot-note', text);
   }
@@ -175,27 +177,50 @@ window.Cbx300Case = (function () {
     return wrap;
   }
 
+  function uiBand(mods) {
+    return el('span', 'film-ui-band' + (mods ? ' ' + mods : ''));
+  }
+
+  function uiCard(title, note) {
+    var card = el('div', 'film-ui-card');
+    if (title) card.appendChild(el('strong', '', title));
+    if (note) card.appendChild(el('span', '', note));
+    card.appendChild(uiBand('film-ui-band--lg'));
+    card.appendChild(uiBand());
+    return card;
+  }
+
   function coverCompose() {
     var board = el('div', 'film-board film-compose');
     var web = el('div', 'film-device film-device--web film-paper');
     var bar = el('div', 'film-device__bar');
     bar.setAttribute('aria-hidden', 'true');
-    bar.appendChild(el('span'));
-    bar.appendChild(el('span'));
-    bar.appendChild(el('span'));
+    bar.appendChild(el('span', 'film-device__dot'));
+    bar.appendChild(el('span', 'film-device__dot'));
+    bar.appendChild(el('span', 'film-device__dot'));
+    bar.appendChild(el('span', 'film-device__url', 'lisa-charlie.bank'));
     var body = el('div', 'film-device__body');
-    body.appendChild(ghost('film-ghost--lg'));
-    body.appendChild(ghost('film-ghost--md'));
-    body.appendChild(ghost('film-ghost--teal'));
-    body.appendChild(ghost());
+    var hero = el('div', 'film-ui-hero');
+    hero.appendChild(el('p', 'film-ui-kicker', 'Company cash'));
+    hero.appendChild(uiBand('film-ui-band--teal'));
+    hero.appendChild(uiBand('film-ui-band--lg'));
+    body.appendChild(hero);
+    var row = el('div', 'film-ui-row');
+    row.appendChild(uiCard('Spendable', 'What you can use'));
+    row.appendChild(uiCard('Approvals', 'Waiting on you'));
+    body.appendChild(row);
     web.appendChild(bar);
     web.appendChild(body);
     web.appendChild(paperNote('Web dashboard frame later'));
-    var phone = el('div', 'film-device film-device--phone');
+    var phone = el('div', 'film-device film-device--phone film-paper');
+    var pchrome = el('div', 'film-device__phone-bar');
+    pchrome.appendChild(el('span', 'film-device__pill'));
     var pbody = el('div', 'film-device__body');
-    pbody.appendChild(ghost('film-ghost--md'));
-    pbody.appendChild(ghost('film-ghost--teal'));
-    pbody.appendChild(ghost());
+    pbody.appendChild(el('p', 'film-ui-kicker', 'Today'));
+    pbody.appendChild(uiBand('film-ui-band--teal'));
+    pbody.appendChild(uiCard('Queue', 'On a phone'));
+    pbody.appendChild(uiBand());
+    phone.appendChild(pchrome);
     phone.appendChild(pbody);
     phone.appendChild(paperNote('Phone frame later'));
     board.appendChild(web);
@@ -224,17 +249,22 @@ window.Cbx300Case = (function () {
     var pair = el('div', 'film-pair');
     var empty = el('figure');
     var a = el('div', 'film-screen film-paper');
-    a.appendChild(ghost('film-ghost--lg'));
-    a.appendChild(ghost());
+    a.appendChild(el('p', 'film-ui-kicker', 'Accounts'));
+    a.appendChild(el('p', 'film-ui-empty', 'None yet'));
     a.appendChild(paperNote('Accounts, none yet'));
     empty.appendChild(a);
     empty.appendChild(el('figcaption', '', 'No accounts'));
     var full = el('figure');
     var b = el('div', 'film-screen film-paper');
-    b.appendChild(ghost('film-ghost--lg'));
-    b.appendChild(ghost('film-ghost--teal'));
-    b.appendChild(ghost('film-ghost--md'));
-    b.appendChild(ghost());
+    b.appendChild(el('p', 'film-ui-kicker', 'Accounts'));
+    var list = el('div', 'film-ui-stack');
+    ['Operating', 'Tax', 'Payroll', 'Reserve'].forEach(function (name) {
+      var row = el('div', 'film-ui-line');
+      row.appendChild(el('strong', '', name));
+      row.appendChild(uiBand('film-ui-band--sm'));
+      list.appendChild(row);
+    });
+    b.appendChild(list);
     b.appendChild(paperNote('Accounts, four'));
     full.appendChild(b);
     full.appendChild(el('figcaption', '', 'Four accounts'));
@@ -248,6 +278,10 @@ window.Cbx300Case = (function () {
     JOBS.forEach(function (job) {
       var card = el('article', 'film-job film-paper');
       card.setAttribute('data-focus', job.id);
+      var screen = el('div', 'film-job__screen');
+      screen.appendChild(uiBand('film-ui-band--teal'));
+      screen.appendChild(uiBand());
+      card.appendChild(screen);
       card.appendChild(el('small', '', job.device));
       card.appendChild(el('strong', '', job.title));
       card.appendChild(el('p', '', job.body));
@@ -291,7 +325,7 @@ window.Cbx300Case = (function () {
   }
 
   function failBoard() {
-    var board = el('div', 'film-board');
+    var board = el('div', 'film-board film-fail');
     var head = el('p', 'film-line', '128 rows in the file. 3 failed a check.');
     var rows = el('div', 'film-rows');
     [
@@ -322,6 +356,7 @@ window.Cbx300Case = (function () {
       var card = el('article', 'film-balance film-paper');
       card.appendChild(el('strong', '', item.name));
       card.appendChild(el('span', '', item.note));
+      card.appendChild(uiBand('film-ui-band--teal'));
       grid.appendChild(card);
     });
     return grid;
@@ -329,7 +364,7 @@ window.Cbx300Case = (function () {
 
   function verbBoard(solo) {
     var grid = el('div', 'film-board film-grid film-paper');
-    grid.appendChild(el('span', '', solo ? 'One user' : 'Function'));
+    grid.appendChild(el('span', 'film-grid__fn', solo ? 'One user' : 'Function'));
     VERBS.forEach(function (verb) {
       var head = el('span', 'film-grid__head', verb);
       grid.appendChild(head);
@@ -404,8 +439,6 @@ window.Cbx300Case = (function () {
     claim.appendChild(el('p', 'film-promise', META.promise));
     claim.appendChild(el('p', 'film-line', META.product));
     claim.appendChild(el('p', 'film-demo', META.demo));
-    claim.appendChild(el('p', 'film-meta', META.role + ' · ' + META.duration));
-    claim.appendChild(el('p', 'film-meta', META.status));
     return claim;
   }
 
@@ -414,6 +447,27 @@ window.Cbx300Case = (function () {
     claim.setAttribute('data-film-claim', '');
     if (beat.num) claim.appendChild(el('p', 'film-num', beat.num));
     claim.appendChild(el('h2', 'film-title', beat.title));
+    if (beat.body) claim.appendChild(el('p', 'film-body', beat.body));
+    if (beat.ask) {
+      var ask = el('p', 'film-ask', beat.ask);
+      ask.setAttribute('data-film-ask', '');
+      claim.appendChild(ask);
+    }
+    if (beat.next && beat.next.length) {
+      var list = el('ul', 'film-next');
+      beat.next.forEach(function (line) {
+        list.appendChild(el('li', '', line));
+      });
+      claim.appendChild(list);
+    }
+    if (beat.finding) {
+      var end = el('div', 'film-end');
+      var back = el('button', 'study__end-btn', 'Back to work');
+      back.type = 'button';
+      back.setAttribute('data-study-close', '');
+      end.appendChild(back);
+      claim.appendChild(end);
+    }
     return claim;
   }
 
@@ -464,7 +518,7 @@ window.Cbx300Case = (function () {
   }
 
   function buildBeat(beat) {
-    var section = el('section', 'film-beat' + (beat.layout === 'cover' ? ' film-beat--cover' : ''));
+    var section = el('section', 'film-beat' + (beat.layout === 'cover' ? ' film-beat--cover' : ' film-beat--chapter'));
     section.setAttribute('data-film-beat', beat.id);
     section.setAttribute('data-recipe', beat.recipe);
     section.setAttribute('data-pin', beat.pin ? 'true' : 'false');
@@ -481,23 +535,6 @@ window.Cbx300Case = (function () {
 
     stage.appendChild(buildViz(beat));
     stage.appendChild(captionStack(beat.captions || []));
-
-    if (beat.next && beat.next.length) {
-      var list = el('ul', 'film-next');
-      beat.next.forEach(function (line) {
-        list.appendChild(el('li', '', line));
-      });
-      stage.appendChild(list);
-    }
-
-    if (beat.finding) {
-      var end = el('div', 'film-end');
-      var back = el('button', 'study__end-btn', 'Back to work');
-      back.type = 'button';
-      back.setAttribute('data-study-close', '');
-      end.appendChild(back);
-      stage.appendChild(end);
-    }
 
     hold.appendChild(stage);
     section.appendChild(hold);

@@ -5,8 +5,10 @@
  * Claim stays readable. Scrub must change meaning: focus, crop/scale,
  * transform-origin, track pan. Opacity dim of context is secondary.
  *
- * Desktop: pin the stage below CLOSE/title; stage height is leftover
- * viewport (--study-stage), not 100svh. Scrub the argument.
+ * Desktop: CSS sticky stage under CLOSE/title; hold is the runway.
+ * GSAP scrubs the argument. It does not pin (pin + pinSpacing inside a
+ * tall hold added a second spacer and made scroll feel broken).
+ * Stage height is leftover viewport (--study-stage), not 100svh.
  * ≤960: staged stack, first proof visible, light focus on that proof.
  * prefers-reduced-motion: calm static stack, same order + captions.
  */
@@ -48,10 +50,14 @@ window.CaseScrollKit = (function () {
     return qq(page, '[data-shot]');
   }
 
+  function askEl(page) {
+    return q(page, '[data-film-ask]');
+  }
+
   function setCaption(caps, index) {
     caps.forEach(function (cap, i) {
       var on = i === index;
-      window.gsap.set(cap, { autoAlpha: on ? 1 : 0, y: on ? 0 : 12 });
+      window.gsap.set(cap, { autoAlpha: on ? 1 : 0, y: on ? 0 : 8 });
     });
   }
 
@@ -63,7 +69,7 @@ window.CaseScrollKit = (function () {
   function resetPage(page) {
     pinStage(page, false);
     page.classList.remove('is-static');
-    qq(page, '.film-board, [data-focus], [data-shot], [data-caption], [data-film-track], .film-sheet, .film-action').forEach(function (el) {
+    qq(page, '.film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-track], .film-sheet, .film-action').forEach(function (el) {
       window.gsap.set(el, { clearProps: 'transform,opacity,visibility,x,y,scale,xPercent,transformOrigin' });
     });
   }
@@ -72,7 +78,7 @@ window.CaseScrollKit = (function () {
     beatsOf(world).forEach(function (page) {
       page.classList.add('is-static');
       pinStage(page, false);
-      qq(page, '[data-caption]').forEach(function (cap) {
+      qq(page, '[data-caption], [data-film-ask]').forEach(function (cap) {
         window.gsap.set(cap, { autoAlpha: 1, y: 0, clearProps: 'visibility' });
       });
       qq(page, '[data-focus], [data-shot], .film-board, [data-film-track], .film-sheet').forEach(function (el) {
@@ -105,63 +111,58 @@ window.CaseScrollKit = (function () {
       var on = i === index;
       tl.to(cap, {
         autoAlpha: on ? 1 : 0,
-        y: on ? 0 : 10,
+        y: on ? 0 : 8,
         duration: 0.28
       }, at);
     });
   }
 
-  function focusOne(tl, items, index, at, origin) {
+  function askAt(tl, page, at) {
+    var ask = askEl(page);
+    if (!ask) return;
+    tl.to(ask, { autoAlpha: 1, y: 0, duration: 0.4 }, at);
+  }
+
+  /* Focus stays in-frame: dim/lift, no board scale. */
+  function focusOne(tl, items, index, at) {
     items.forEach(function (el, i) {
       var on = i === index;
       tl.to(el, {
-        scale: on ? 1.05 : 0.94,
-        autoAlpha: on ? 1 : 0.38,
-        y: on ? -4 : 6,
+        scale: 1,
+        autoAlpha: on ? 1 : 0.34,
+        y: on ? -10 : 0,
         duration: 0.55
       }, at);
     });
-    var board = items[0] && items[0].closest('.film-board');
-    if (board && origin) {
-      tl.to(board, {
-        scale: 1.06,
-        transformOrigin: origin,
-        duration: 0.55
-      }, at);
-    }
   }
 
-  function pullBack(tl, items, board, at) {
+  function pullBack(tl, items, at) {
     if (items.length) {
       tl.to(items, { scale: 1, autoAlpha: 1, y: 0, duration: 0.5 }, at);
-    }
-    if (board) {
-      tl.to(board, { scale: 1, transformOrigin: '50% 50%', duration: 0.5 }, at);
     }
   }
 
   function cropSwap(tl, outgoing, incoming, at) {
     if (outgoing) {
       tl.to(outgoing, {
-        scale: 0.94,
-        xPercent: -4,
+        scale: 1,
+        y: -16,
         autoAlpha: 0,
-        transformOrigin: '30% 50%',
-        duration: 0.55
+        duration: 0.5
       }, at);
     }
     if (incoming) {
       tl.fromTo(incoming, {
-        scale: 1.08,
-        xPercent: 6,
+        scale: 1.04,
+        y: 18,
         autoAlpha: 0,
         visibility: 'visible',
-        transformOrigin: '70% 42%'
+        transformOrigin: '50% 42%'
       }, {
         scale: 1,
-        xPercent: 0,
+        y: 0,
         autoAlpha: 1,
-        duration: 0.65
+        duration: 0.6
       }, at);
     }
   }
@@ -175,79 +176,86 @@ window.CaseScrollKit = (function () {
 
   function bindEnds(page, tl) {
     var items = focusEls(page);
-    var board = q(page, '.film-board');
     var caps = captions(page);
     var shotEls = shots(page);
     var n = items.length;
+    var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
     if (!n) return;
 
     window.gsap.set(items, { scale: 1, autoAlpha: 1, y: 0 });
-    if (board) window.gsap.set(board, { scale: 1, transformOrigin: '50% 50%' });
 
-    /* Freelancer end, then medium end, then both, then whole. */
-    focusOne(tl, items, 0, 0.05, '22% 70%');
+    /* Freelancer end, then medium end, then both, then whole, then accounts crop. */
+    focusOne(tl, items, 0, 0.05);
     captionAt(tl, caps, Math.min(1, caps.length - 1), 0.05);
-    focusOne(tl, items, n - 1, 0.55, '78% 70%');
+    focusOne(tl, items, n - 1, 0.55);
     captionAt(tl, caps, Math.min(2, caps.length - 1), 0.55);
     if (n > 2) {
-      tl.to(items, { scale: 0.94, autoAlpha: 0.34, y: 6, duration: 0.4 }, 1.05);
-      tl.to([items[0], items[n - 1]], { scale: 1.05, autoAlpha: 1, y: -4, duration: 0.4 }, 1.05);
-      if (board) tl.to(board, { scale: 1.04, transformOrigin: '50% 70%', duration: 0.4 }, 1.05);
+      tl.to(items, { autoAlpha: 0.28, y: 0, duration: 0.4 }, 1.05);
+      tl.to([items[0], items[n - 1]], { autoAlpha: 1, y: -10, duration: 0.4 }, 1.05);
       captionAt(tl, caps, Math.min(3, caps.length - 1), 1.05);
     }
-    pullBack(tl, items, board, 1.55);
+    pullBack(tl, items, 1.55);
     captionAt(tl, caps, 0, 1.55);
 
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1, xPercent: 0 });
-      window.gsap.set(shotEls.slice(1), { autoAlpha: 0, scale: 1.12, xPercent: 10 });
+      window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1, y: 0 });
+      window.gsap.set(shotEls.slice(1), { autoAlpha: 0, scale: 1.04, y: 16 });
       cropSwap(tl, shotEls[0], shotEls[1], 2.05);
       captionAt(tl, caps, Math.min(4, caps.length - 1), 2.05);
+      askAt(tl, page, 2.35);
+    } else {
+      askAt(tl, page, 1.7);
     }
   }
 
   function bindJobs(page, tl) {
     var items = focusEls(page);
     var caps = captions(page);
+    var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
     items.forEach(function (el, i) {
       focusOne(tl, items, i, i === 0 ? 0.08 : '>');
       captionAt(tl, caps, Math.min(i + 1, caps.length - 1), '<');
     });
-    pullBack(tl, items, null, '>');
+    pullBack(tl, items, '>');
     captionAt(tl, caps, 0, '<');
+    askAt(tl, page, '>');
   }
 
   function bindDoor(page, tl) {
     var door = q(page, '[data-focus="door"]');
     var rest = qq(page, '[data-focus="nav"]');
-    var board = q(page, '[data-shot="door"] .film-board') || q(page, '.film-board');
     var action = q(page, '.film-action');
     var shotEls = shots(page);
     var caps = captions(page);
+    var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
 
     if (door) {
-      tl.to(door, { scale: 1.08, y: -4, duration: 0.55 }, 0.08);
-      if (rest.length) tl.to(rest, { autoAlpha: 0.32, scale: 0.96, duration: 0.55 }, 0.08);
-      if (board) tl.to(board, { scale: 1.08, transformOrigin: '24% 42%', duration: 0.55 }, 0.08);
+      tl.to(door, { y: -6, duration: 0.55 }, 0.08);
+      if (rest.length) tl.to(rest, { autoAlpha: 0.32, duration: 0.55 }, 0.08);
       captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
-      tl.to(door, { scale: 1, y: 0, duration: 0.45 }, 0.7);
-      if (rest.length) tl.to(rest, { autoAlpha: 1, scale: 1, duration: 0.45 }, 0.7);
-      if (board) tl.to(board, { scale: 1, transformOrigin: '50% 50%', duration: 0.45 }, 0.7);
+      tl.to(door, { y: 0, duration: 0.45 }, 0.7);
+      if (rest.length) tl.to(rest, { autoAlpha: 1, duration: 0.45 }, 0.7);
     }
 
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, xPercent: 0, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, xPercent: 8, scale: 1.06 });
+      window.gsap.set(shotEls[0], { autoAlpha: 1, y: 0, scale: 1 });
+      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 16, scale: 1.04 });
       cropSwap(tl, shotEls[0], shotEls[1], 1.15);
       if (action) {
-        window.gsap.set(action, { scale: 0.84 });
-        tl.to(action, { scale: 1.08, duration: 0.4 }, 1.35);
-        tl.to(action, { scale: 1, duration: 0.3 }, 1.75);
+        window.gsap.set(action, { scale: 1 });
+        tl.to(action, { y: -4, duration: 0.35 }, 1.35);
+        tl.to(action, { y: 0, duration: 0.28 }, 1.7);
       }
       captionAt(tl, caps, Math.min(2, caps.length - 1), 1.15);
+      askAt(tl, page, 1.55);
+    } else {
+      askAt(tl, page, 0.9);
     }
   }
 
@@ -257,51 +265,55 @@ window.CaseScrollKit = (function () {
     var shotEls = shots(page);
     var balances = qq(page, '.film-balance');
     var caps = captions(page);
+    var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
 
     if (rows.length) {
-      tl.to(rows, { autoAlpha: 0.35, scale: 0.96, duration: 0.4 }, 0.08);
+      tl.to(rows, { autoAlpha: 0.32, duration: 0.4 }, 0.08);
       if (bad.length) {
-        tl.to(bad, { autoAlpha: 1, scale: 1.06, y: -4, duration: 0.45 }, 0.08);
+        tl.to(bad, { autoAlpha: 1, y: -4, duration: 0.45 }, 0.08);
       }
-      var board = q(page, '[data-shot="fail"] .film-board');
-      if (board) tl.to(board, { scale: 1.08, transformOrigin: '50% 28%', duration: 0.45 }, 0.08);
       captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
     }
 
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, y: 0, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 28, scale: 1.06 });
-      tl.to(shotEls[0], { scale: 0.94, y: -12, autoAlpha: 0, duration: 0.55 }, 0.7);
-      tl.to(shotEls[1], { autoAlpha: 1, y: 0, scale: 1, duration: 0.65 }, 0.7);
+      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 20, scale: 1.04 });
+      tl.to(shotEls[0], { y: -14, autoAlpha: 0, duration: 0.5 }, 0.7);
+      tl.to(shotEls[1], { autoAlpha: 1, y: 0, scale: 1, duration: 0.6 }, 0.7);
       captionAt(tl, caps, Math.min(2, caps.length - 1), 0.7);
       if (balances.length) {
         balances.forEach(function (el, i) {
-          tl.to(el, { scale: 1.08, duration: 0.28 }, i === 0 ? 1.15 : '>');
-          tl.to(el, { scale: 1, duration: 0.22 }, '>');
+          tl.to(el, { y: -6, duration: 0.24 }, i === 0 ? 1.15 : '>');
+          tl.to(el, { y: 0, duration: 0.2 }, '>');
         });
       }
+      askAt(tl, page, 1.6);
+    } else {
+      askAt(tl, page, 0.8);
     }
   }
 
   function bindVerbs(page, tl) {
     var heads = qq(page, '.film-grid__head');
-    var board = q(page, '.film-board');
     var shotEls = shots(page);
     var caps = captions(page);
+    var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
-    if (board) {
-      tl.to(board, { scale: 1.08, transformOrigin: '60% 12%', duration: 0.55 }, 0.08);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    if (heads.length) {
+      tl.to(heads, { autoAlpha: 1, y: -2, duration: 0.4 }, 0.08);
       captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
-      if (heads.length) tl.to(heads, { scale: 1.08, duration: 0.4 }, 0.08);
-      tl.to(board, { scale: 1, transformOrigin: '50% 50%', duration: 0.5 }, 0.7);
-      if (heads.length) tl.to(heads, { scale: 1, duration: 0.4 }, 0.7);
     }
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 1.06, xPercent: 4 });
-      cropSwap(tl, shotEls[0], shotEls[1], 1.2);
-      captionAt(tl, caps, Math.min(2, caps.length - 1), 1.2);
+      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 1.04, y: 12 });
+      cropSwap(tl, shotEls[0], shotEls[1], 1.15);
+      captionAt(tl, caps, Math.min(2, caps.length - 1), 1.15);
+      askAt(tl, page, 1.5);
+    } else {
+      askAt(tl, page, 0.8);
     }
   }
 
@@ -310,7 +322,9 @@ window.CaseScrollKit = (function () {
     var steps = qq(page, '.film-step');
     var shotEls = shots(page);
     var caps = captions(page);
+    var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
     if (track && steps.length) {
       window.gsap.set(track, { x: 0 });
       tl.to(track, {
@@ -327,10 +341,13 @@ window.CaseScrollKit = (function () {
       });
     }
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 20, scale: 1.06 });
-      tl.to(shotEls[0], { autoAlpha: 0, scale: 0.96, y: -8, duration: 0.5 }, 2.3);
+      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 16, scale: 1.04 });
+      tl.to(shotEls[0], { autoAlpha: 0, y: -10, duration: 0.5 }, 2.3);
       tl.to(shotEls[1], { autoAlpha: 1, y: 0, scale: 1, duration: 0.55 }, 2.3);
       captionAt(tl, caps, Math.min(3, caps.length - 1), 2.3);
+      askAt(tl, page, 2.5);
+    } else {
+      askAt(tl, page, 2.1);
     }
   }
 
@@ -339,8 +356,8 @@ window.CaseScrollKit = (function () {
     var caps = captions(page);
     if (caps.length) setCaption(caps, 0);
     if (!sheet) return;
-    window.gsap.set(sheet, { scale: 1.12, transformOrigin: '22% 24%' });
-    tl.to(sheet, { scale: 1.06, transformOrigin: '62% 48%', duration: 1, ease: 'none' }, 0);
+    window.gsap.set(sheet, { scale: 1.06, transformOrigin: '28% 30%' });
+    tl.to(sheet, { scale: 1.02, transformOrigin: '62% 48%', duration: 1, ease: 'none' }, 0);
     captionAt(tl, caps, Math.min(1, caps.length - 1), 0.15);
     tl.to(sheet, { scale: 1, transformOrigin: '50% 50%', duration: 1, ease: 'none' }, 1);
     captionAt(tl, caps, 0, 1);
@@ -379,14 +396,15 @@ window.CaseScrollKit = (function () {
       var recipe = page.getAttribute('data-recipe') || 'ends';
       var fn = recipeFor(recipe);
       var hold = q(page, '[data-film-hold]') || page;
-      var stage = q(page, '[data-film-stage]') || page;
       var caps = captions(page);
       var shotEls = shots(page);
+      var ask = askEl(page);
 
       if (caps.length) {
         gsap.set(caps[0], { autoAlpha: 1, y: 0 });
-        gsap.set(caps.slice(1), { autoAlpha: 0, y: 12 });
+        gsap.set(caps.slice(1), { autoAlpha: 0, y: 8 });
       }
+      if (ask) gsap.set(ask, { autoAlpha: 0, y: 8 });
 
       if (!pinWanted) {
         fn(page, gsap.timeline({ paused: true }), scroller);
@@ -402,18 +420,17 @@ window.CaseScrollKit = (function () {
       var tl = gsap.timeline({ defaults: { ease: 'none' } });
       fn(page, tl, scroller);
 
-      /* Chrome counted once: pin start is below CLOSE; CSS height is --study-stage. */
+      /* Chrome counted once: sticky stage sits at --study-head.
+         Scrub maps hold travel. pin: false — hold already is the spacer. */
       triggers.push(window.ScrollTrigger.create({
         trigger: hold,
         scroller: scroller,
         start: function () { return 'top ' + head() + 'px'; },
         end: 'bottom bottom',
-        pin: stage,
-        pinSpacing: true,
-        scrub: 0.65,
+        pin: false,
+        scrub: 0.45,
         animation: tl,
-        invalidateOnRefresh: true,
-        anticipatePin: 1
+        invalidateOnRefresh: true
       }));
     });
   }
@@ -426,28 +443,27 @@ window.CaseScrollKit = (function () {
     pages.forEach(function (page) {
       pinStage(page, false);
       var items = focusEls(page);
-      var board = q(page, '.film-board');
       var caps = captions(page);
       var shotEls = shots(page);
+      var ask = askEl(page);
       var recipe = page.getAttribute('data-recipe') || '';
 
       if (caps.length) {
         gsap.set(caps, { autoAlpha: 1, y: 0 });
       }
+      if (ask) gsap.set(ask, { autoAlpha: 1, y: 0 });
       if (shotEls.length) {
         gsap.set(shotEls, { autoAlpha: 1, x: 0, y: 0, scale: 1, xPercent: 0, clearProps: 'visibility' });
       }
 
-      if (!items.length && !board) return;
+      if (!items.length) return;
       if (page.getAttribute('data-pin') === 'false') return;
 
       var tl = gsap.timeline({ defaults: { ease: 'none' } });
-      if (items.length && recipe !== 'cover') {
+      if (recipe !== 'cover') {
         window.gsap.set(items, { scale: 1, autoAlpha: 1, y: 0 });
-        focusOne(tl, items, 0, 0, recipe === 'ends' ? '8% 70%' : '50% 50%');
-        pullBack(tl, items, board, 0.7);
-      } else if (board && recipe === 'finding') {
-        tl.fromTo(board, { scale: 1.18, transformOrigin: '30% 30%' }, { scale: 1, duration: 1, ease: 'none' }, 0);
+        focusOne(tl, items, 0, 0);
+        pullBack(tl, items, 0.7);
       }
 
       triggers.push(window.ScrollTrigger.create({
