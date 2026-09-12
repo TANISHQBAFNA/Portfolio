@@ -11,9 +11,9 @@
 | Field | Value |
 |---|---|
 | Role | Lead product designer — design system, end-to-end screens (web + mobile), through developer handoff |
-| Duration | ___ |
+| Duration | Jan 2026 – present |
 | Team | ___ |
-| Status | ___ |
+| Status | Design system complete; majority of functional screens and full user flows designed through handoff (ongoing) |
 
 ### Sell locks
 - **Hook:** Banking for a business, not a person.
