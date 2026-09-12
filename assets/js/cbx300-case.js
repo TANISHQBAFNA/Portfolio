@@ -376,7 +376,7 @@ window.Cbx300Case = (function () {
             file: slot.file,
             src: slot.src,
             nodes: slot.nodes,
-            shape: i % 5 === 0 ? 'phone' : 'web'
+            shape: 'web'
           }, true));
         }
         if (slot.caption) {
@@ -448,12 +448,12 @@ window.Cbx300Case = (function () {
     phone.classList.add('case-cover__phone');
     devices.appendChild(web);
     devices.appendChild(phone);
-    var composeCap = el('p', 'case-caption', 'CBX300 — SME banking across web and mobile. 636 screens, one system.');
-    composeCap.setAttribute('data-case-caption', '');
-    devices.appendChild(composeCap);
 
     hold.appendChild(type);
     hold.appendChild(devices);
+    var composeCap = el('p', 'case-caption case-cover__caption', 'CBX300 — SME banking across web and mobile. 636 screens, one system.');
+    composeCap.setAttribute('data-case-caption', '');
+    hold.appendChild(composeCap);
     page.appendChild(hold);
     return page;
   }

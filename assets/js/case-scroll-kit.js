@@ -128,23 +128,20 @@ window.CaseScrollKit = (function () {
       setStage(page, stage);
 
       if (focusEls.length) {
-        gsap.set(focusEls, { autoAlpha: 0.22 });
+        gsap.set(focusEls, { autoAlpha: 1 });
       }
 
       frameEls.forEach(function (frame, i) {
         var cap = captionsOf(frame);
-        if (cap) gsap.set(cap, { autoAlpha: 0, y: 8 });
-        gsap.set(frame, { autoAlpha: 0, y: stage ? 0 : 10 });
+        var isFirst = i === 0;
+        if (cap) gsap.set(cap, { autoAlpha: isFirst ? 1 : 0, y: isFirst ? 0 : 8 });
+        gsap.set(frame, { autoAlpha: isFirst ? 1 : 0, y: 0 });
 
-        if (i > 0) {
+        if (!isFirst) {
           tl.to(frameEls[i - 1], { autoAlpha: 0, duration: 0.55 }, '>');
+          tl.to(frame, { autoAlpha: 1, duration: 0.7 }, '<');
+          if (cap) tl.to(cap, { autoAlpha: 1, y: 0, duration: 0.35 }, '<0.28');
         }
-
-        tl.to(frame, {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.7
-        }, i === 0 ? 0.08 : '<');
 
         var localFocus = Array.prototype.slice.call(frame.querySelectorAll('[data-focus-item]'));
         if (localFocus.length) {
@@ -154,20 +151,18 @@ window.CaseScrollKit = (function () {
           var rest = localFocus.filter(function (el) {
             return el.getAttribute('data-focus-item') !== 'end';
           });
+          var focusAt = isFirst ? 0.12 : '>';
           if (ends.length) {
-            tl.to(ends, { autoAlpha: 1, duration: 0.55 }, '>');
+            tl.to(rest, { autoAlpha: 0.22, duration: 0.45 }, focusAt);
+            tl.to(ends, { autoAlpha: 1, duration: 0.45 }, '<');
             tl.to(rest.concat(ends), { autoAlpha: 1, duration: 0.5 }, '>');
           } else {
             localFocus.forEach(function (item, fi) {
-              tl.to(localFocus, { autoAlpha: 0.22, duration: 0.25 }, fi === 0 ? '>' : '>');
+              tl.to(localFocus, { autoAlpha: 0.22, duration: 0.25 }, fi === 0 ? focusAt : '>');
               tl.to(item, { autoAlpha: 1, duration: 0.4 }, '<');
             });
             tl.to(localFocus, { autoAlpha: 1, duration: 0.45 }, '>');
           }
-        }
-
-        if (cap) {
-          tl.to(cap, { autoAlpha: 1, y: 0, duration: 0.35 }, '<0.28');
         }
       });
 

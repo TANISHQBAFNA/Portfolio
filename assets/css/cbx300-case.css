@@ -209,9 +209,16 @@ html.is-dark .case-world {
   width: min(1280px, 100%);
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
-  gap: clamp(28px, 5vw, 72px);
+  grid-template-rows: 1fr auto;
+  gap: clamp(28px, 5vw, 72px) clamp(28px, 5vw, 72px);
   align-items: end;
   min-height: calc(100svh - var(--study-head, 72px) - 48px);
+}
+
+.case-cover__caption {
+  grid-column: 1 / -1;
+  margin: 0;
+  max-width: 42rem;
 }
 
 .case-cover__type {
@@ -277,6 +284,7 @@ html.is-dark .case-world {
   position: relative;
   min-height: min(62vh, 560px);
   transform-origin: 70% 80%;
+  padding-bottom: 4.75rem;
 }
 
 .case-cover__web {
@@ -288,7 +296,7 @@ html.is-dark .case-world {
 .case-cover__phone {
   position: absolute;
   right: 4%;
-  bottom: 18%;
+  bottom: 5.5rem;
   width: min(42%, 220px);
   z-index: 2;
 }
@@ -365,6 +373,7 @@ html.is-dark .case-world {
   height: 100%;
   object-fit: cover;
 }
+.case-frame__slot img[hidden] { display: none; }
 
 .case-pending,
 .case-error {
@@ -614,7 +623,7 @@ html.is-dark .case-world {
   .case-claim { max-width: 18ch; }
   .case-page--cover {
     margin-left: 0;
-    grid-template-columns: 1fr;
+    padding-top: calc(var(--study-head, 72px) + 28px);
   }
   .case-page--cover .case-hold {
     grid-template-columns: 1fr;

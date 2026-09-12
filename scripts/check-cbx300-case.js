@@ -66,6 +66,7 @@ check('Infoviz grammar: numbered beats, claim first, close on finding', function
   assert.ok(kit.indexOf('data-focus-item') !== -1, 'kit missing progressive focus');
   assert.ok(kit.indexOf('is-stage') !== -1, 'kit missing claim-first viz stage overlay');
   assert.ok(css.indexOf('.case-viz.is-stage') !== -1, 'css missing pinned viz stage');
+  assert.ok(css.indexOf('img[hidden]') !== -1, 'img hidden must beat display:block so alt does not leak');
 });
 
 check('captions from brief', function () {
