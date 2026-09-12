@@ -329,7 +329,8 @@ html.is-dark .film-ghost {
   justify-content: center;
   gap: 18px;
   height: 100%;
-  padding: 8px 2px;
+  padding: 12px 20px;
+  box-sizing: border-box;
 }
 
 .film-ladder__row {
