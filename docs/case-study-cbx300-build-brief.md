@@ -12,7 +12,6 @@
 |---|---|
 | Role | Lead product designer — design system, end-to-end screens (web + mobile), through developer handoff |
 | Duration | Jan 2026 – present |
-| Team | ___ |
 | Status | Design system complete; majority of functional screens and full user flows designed through handoff (ongoing) |
 
 ### Sell locks
@@ -55,7 +54,7 @@ Optional footnote strip (not a page): How it was built (tokens, freeze protocol)
 **Type block:**
 - Hook (large): Banking for a business, not a person.
 - Sub: Designing CBX300 — SME banking across web and mobile
-- Meta row (small): Role · Duration · Team · Status (placeholders until filled)
+- Meta row (small): Role · Duration · Status (Team omitted for now — optional)
 - Proof: 259 web · 377 mobile · ~147 flows
 
 **Image 1**  
