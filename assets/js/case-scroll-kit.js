@@ -115,7 +115,7 @@ window.CaseScrollKit = (function () {
       tl.to(cap, {
         autoAlpha: 0,
         y: 6,
-        duration: 0.24,
+        duration: 0.28,
         overwrite: 'auto'
       }, at);
     });
