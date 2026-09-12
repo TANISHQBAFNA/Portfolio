@@ -76,10 +76,13 @@ html.is-dark .study[data-template="cbx300"] {
 .film-beat[data-hold="mid"] .film-hold { min-height: 260vh; }
 .film-beat[data-hold="tall"] .film-hold { min-height: 340vh; }
 
+/* Pin starts below CLOSE/title. Height is the leftover viewport, not 100svh
+   (that double-counted chrome and clipped captions off-screen). */
 .film-beat[data-pin="true"] .film-stage {
-  height: 100svh;
-  min-height: 100svh;
-  overflow: hidden;
+  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  padding-top: 12px;
+  overflow: visible;
 }
 
 .film-claim {
@@ -151,6 +154,7 @@ html.is-dark .study[data-template="cbx300"] {
   position: relative;
   min-height: 0;
   min-width: 0;
+  overflow: hidden;
 }
 
 .film-board {
@@ -160,12 +164,14 @@ html.is-dark .study[data-template="cbx300"] {
   min-height: 240px;
   transform-origin: 50% 50%;
   will-change: transform;
+  overflow: hidden;
 }
 
 .film-shot-stack {
   position: relative;
   height: 100%;
   min-height: 240px;
+  overflow: hidden;
 }
 
 .film-shot-stack.is-stage > [data-shot] {
@@ -188,8 +194,10 @@ html.is-dark .study[data-template="cbx300"] {
 
 .film-caption-stack {
   position: relative;
+  z-index: 2;
   min-height: 3.4em;
   max-width: 46rem;
+  flex-shrink: 0;
 }
 
 .film-caption {

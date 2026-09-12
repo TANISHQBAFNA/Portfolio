@@ -135,6 +135,23 @@ check('free GSAP + ScrollTrigger only; no Club plugins', function () {
   assert.ok(kit.indexOf('ScrollTrigger') !== -1, 'kit missing ScrollTrigger');
 });
 
+check('pinned stage counts chrome once; captions not cropped by stage overflow', function () {
+  assert.ok(
+    /\[data-pin="true"\] \.film-stage[\s\S]{0,280}--study-stage/.test(css) ||
+      /\[data-pin="true"\] \.film-stage[\s\S]{0,280}100svh - var\(--study-head/.test(css),
+    'pinned stage must be leftover viewport under chrome, not extra 100svh'
+  );
+  assert.ok(!/\.film-beat\[data-pin="true"\] \.film-stage \{[\s\S]{0,180}overflow:\s*hidden/.test(css), 'pinned stage still overflow:hidden');
+  assert.ok(kit.indexOf("start: function () { return 'top ' + head() + 'px'; }") !== -1, 'pin start must sit below chrome');
+  assert.ok(study.indexOf('return 72') !== -1, 'headPx fallback must match --study-head');
+});
+
+check('cropSwap hard-hides outgoing shot; focus stays inside frame', function () {
+  assert.ok(/autoAlpha:\s*0\.08/.test(kit) === false, 'cropSwap still leaves ghost opacity');
+  assert.ok(kit.indexOf('xPercent: -4') !== -1, 'cropSwap still pans outgoing off-frame');
+  assert.ok(kit.indexOf("scale: on ? 1.05 : 0.94") !== -1, 'focus scale still blows past the frame');
+});
+
 check('redesign bar is the experience lock', function () {
   assert.ok(bar.indexOf('infoviz-cs5764.web.app') !== -1, 'bar missing Infoviz lock');
   assert.ok(bar.indexOf('PR #18 rejected') !== -1, 'bar missing reject note');

@@ -5,7 +5,8 @@
  * Claim stays readable. Scrub must change meaning: focus, crop/scale,
  * transform-origin, track pan. Opacity dim of context is secondary.
  *
- * Desktop: pin the stage, scrub the argument.
+ * Desktop: pin the stage below CLOSE/title; stage height is leftover
+ * viewport (--study-stage), not 100svh. Scrub the argument.
  * ≤960: staged stack, first proof visible, light focus on that proof.
  * prefers-reduced-motion: calm static stack, same order + captions.
  */
@@ -31,7 +32,7 @@ window.CaseScrollKit = (function () {
   function headPx(scroller, headerFn) {
     if (typeof headerFn === 'function') return headerFn();
     var chrome = scroller.querySelector('.study__chrome');
-    if (!chrome) return 88;
+    if (!chrome) return 72;
     return Math.round(chrome.getBoundingClientRect().bottom);
   }
 
@@ -114,16 +115,16 @@ window.CaseScrollKit = (function () {
     items.forEach(function (el, i) {
       var on = i === index;
       tl.to(el, {
-        scale: on ? 1.12 : 0.88,
-        autoAlpha: on ? 1 : 0.32,
-        y: on ? -10 : 14,
+        scale: on ? 1.05 : 0.94,
+        autoAlpha: on ? 1 : 0.38,
+        y: on ? -4 : 6,
         duration: 0.55
       }, at);
     });
     var board = items[0] && items[0].closest('.film-board');
     if (board && origin) {
       tl.to(board, {
-        scale: 1.16,
+        scale: 1.06,
         transformOrigin: origin,
         duration: 0.55
       }, at);
@@ -142,24 +143,25 @@ window.CaseScrollKit = (function () {
   function cropSwap(tl, outgoing, incoming, at) {
     if (outgoing) {
       tl.to(outgoing, {
-        scale: 0.86,
-        xPercent: -12,
-        autoAlpha: 0.08,
-        transformOrigin: '20% 50%',
-        duration: 0.6
+        scale: 0.94,
+        xPercent: -4,
+        autoAlpha: 0,
+        transformOrigin: '30% 50%',
+        duration: 0.55
       }, at);
     }
     if (incoming) {
       tl.fromTo(incoming, {
-        scale: 1.18,
-        xPercent: 14,
+        scale: 1.08,
+        xPercent: 6,
         autoAlpha: 0,
-        transformOrigin: '78% 42%'
+        visibility: 'visible',
+        transformOrigin: '70% 42%'
       }, {
         scale: 1,
         xPercent: 0,
         autoAlpha: 1,
-        duration: 0.7
+        duration: 0.65
       }, at);
     }
   }
@@ -184,14 +186,14 @@ window.CaseScrollKit = (function () {
     if (board) window.gsap.set(board, { scale: 1, transformOrigin: '50% 50%' });
 
     /* Freelancer end, then medium end, then both, then whole. */
-    focusOne(tl, items, 0, 0.05, '8% 70%');
+    focusOne(tl, items, 0, 0.05, '22% 70%');
     captionAt(tl, caps, Math.min(1, caps.length - 1), 0.05);
-    focusOne(tl, items, n - 1, 0.55, '92% 70%');
+    focusOne(tl, items, n - 1, 0.55, '78% 70%');
     captionAt(tl, caps, Math.min(2, caps.length - 1), 0.55);
     if (n > 2) {
-      tl.to(items, { scale: 0.9, autoAlpha: 0.3, y: 10, duration: 0.4 }, 1.05);
-      tl.to([items[0], items[n - 1]], { scale: 1.1, autoAlpha: 1, y: -8, duration: 0.4 }, 1.05);
-      if (board) tl.to(board, { scale: 1.06, transformOrigin: '50% 70%', duration: 0.4 }, 1.05);
+      tl.to(items, { scale: 0.94, autoAlpha: 0.34, y: 6, duration: 0.4 }, 1.05);
+      tl.to([items[0], items[n - 1]], { scale: 1.05, autoAlpha: 1, y: -4, duration: 0.4 }, 1.05);
+      if (board) tl.to(board, { scale: 1.04, transformOrigin: '50% 70%', duration: 0.4 }, 1.05);
       captionAt(tl, caps, Math.min(3, caps.length - 1), 1.05);
     }
     pullBack(tl, items, board, 1.55);
@@ -227,9 +229,9 @@ window.CaseScrollKit = (function () {
     if (caps.length) setCaption(caps, 0);
 
     if (door) {
-      tl.to(door, { scale: 1.18, y: -6, duration: 0.55 }, 0.08);
-      if (rest.length) tl.to(rest, { autoAlpha: 0.28, scale: 0.94, duration: 0.55 }, 0.08);
-      if (board) tl.to(board, { scale: 1.22, transformOrigin: '12% 42%', duration: 0.55 }, 0.08);
+      tl.to(door, { scale: 1.08, y: -4, duration: 0.55 }, 0.08);
+      if (rest.length) tl.to(rest, { autoAlpha: 0.32, scale: 0.96, duration: 0.55 }, 0.08);
+      if (board) tl.to(board, { scale: 1.08, transformOrigin: '24% 42%', duration: 0.55 }, 0.08);
       captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
       tl.to(door, { scale: 1, y: 0, duration: 0.45 }, 0.7);
       if (rest.length) tl.to(rest, { autoAlpha: 1, scale: 1, duration: 0.45 }, 0.7);
@@ -238,7 +240,7 @@ window.CaseScrollKit = (function () {
 
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, xPercent: 0, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, xPercent: 18, scale: 1.08 });
+      window.gsap.set(shotEls[1], { autoAlpha: 0, xPercent: 8, scale: 1.06 });
       cropSwap(tl, shotEls[0], shotEls[1], 1.15);
       if (action) {
         window.gsap.set(action, { scale: 0.84 });
@@ -263,14 +265,14 @@ window.CaseScrollKit = (function () {
         tl.to(bad, { autoAlpha: 1, scale: 1.06, y: -4, duration: 0.45 }, 0.08);
       }
       var board = q(page, '[data-shot="fail"] .film-board');
-      if (board) tl.to(board, { scale: 1.2, transformOrigin: '50% 28%', duration: 0.45 }, 0.08);
+      if (board) tl.to(board, { scale: 1.08, transformOrigin: '50% 28%', duration: 0.45 }, 0.08);
       captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
     }
 
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, y: 0, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 40, scale: 1.12 });
-      tl.to(shotEls[0], { scale: 0.9, y: -24, autoAlpha: 0.1, duration: 0.55 }, 0.7);
+      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 28, scale: 1.06 });
+      tl.to(shotEls[0], { scale: 0.94, y: -12, autoAlpha: 0, duration: 0.55 }, 0.7);
       tl.to(shotEls[1], { autoAlpha: 1, y: 0, scale: 1, duration: 0.65 }, 0.7);
       captionAt(tl, caps, Math.min(2, caps.length - 1), 0.7);
       if (balances.length) {
@@ -289,7 +291,7 @@ window.CaseScrollKit = (function () {
     var caps = captions(page);
     if (caps.length) setCaption(caps, 0);
     if (board) {
-      tl.to(board, { scale: 1.22, transformOrigin: '60% 8%', duration: 0.55 }, 0.08);
+      tl.to(board, { scale: 1.08, transformOrigin: '60% 12%', duration: 0.55 }, 0.08);
       captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
       if (heads.length) tl.to(heads, { scale: 1.08, duration: 0.4 }, 0.08);
       tl.to(board, { scale: 1, transformOrigin: '50% 50%', duration: 0.5 }, 0.7);
@@ -297,7 +299,7 @@ window.CaseScrollKit = (function () {
     }
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 1.14, xPercent: 8 });
+      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 1.06, xPercent: 4 });
       cropSwap(tl, shotEls[0], shotEls[1], 1.2);
       captionAt(tl, caps, Math.min(2, caps.length - 1), 1.2);
     }
@@ -325,8 +327,8 @@ window.CaseScrollKit = (function () {
       });
     }
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 28, scale: 1.08 });
-      tl.to(shotEls[0], { autoAlpha: 0.12, scale: 0.92, y: -16, duration: 0.5 }, 2.3);
+      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 20, scale: 1.06 });
+      tl.to(shotEls[0], { autoAlpha: 0, scale: 0.96, y: -8, duration: 0.5 }, 2.3);
       tl.to(shotEls[1], { autoAlpha: 1, y: 0, scale: 1, duration: 0.55 }, 2.3);
       captionAt(tl, caps, Math.min(3, caps.length - 1), 2.3);
     }
@@ -337,8 +339,8 @@ window.CaseScrollKit = (function () {
     var caps = captions(page);
     if (caps.length) setCaption(caps, 0);
     if (!sheet) return;
-    window.gsap.set(sheet, { scale: 1.34, transformOrigin: '18% 22%' });
-    tl.to(sheet, { scale: 1.12, transformOrigin: '62% 48%', duration: 1, ease: 'none' }, 0);
+    window.gsap.set(sheet, { scale: 1.12, transformOrigin: '22% 24%' });
+    tl.to(sheet, { scale: 1.06, transformOrigin: '62% 48%', duration: 1, ease: 'none' }, 0);
     captionAt(tl, caps, Math.min(1, caps.length - 1), 0.15);
     tl.to(sheet, { scale: 1, transformOrigin: '50% 50%', duration: 1, ease: 'none' }, 1);
     captionAt(tl, caps, 0, 1);
@@ -400,12 +402,14 @@ window.CaseScrollKit = (function () {
       var tl = gsap.timeline({ defaults: { ease: 'none' } });
       fn(page, tl, scroller);
 
+      /* Chrome counted once: pin start is below CLOSE; CSS height is --study-stage. */
       triggers.push(window.ScrollTrigger.create({
         trigger: hold,
         scroller: scroller,
         start: function () { return 'top ' + head() + 'px'; },
         end: 'bottom bottom',
         pin: stage,
+        pinSpacing: true,
         scrub: 0.65,
         animation: tl,
         invalidateOnRefresh: true,

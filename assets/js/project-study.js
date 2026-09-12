@@ -172,7 +172,7 @@ window.ProjectStudy = (function () {
 
     function headPx() {
       var chrome = root.querySelector('.study__chrome');
-      if (!chrome) return 108;
+      if (!chrome) return 72;
       return Math.round(chrome.getBoundingClientRect().bottom);
     }
 
@@ -1206,7 +1206,13 @@ window.ProjectStudy = (function () {
       html.classList.add('is-study-wipe');
       html.classList.remove('is-study');
       playIntro(function () {
-        afterLayout(bindMotion);
+        afterLayout(function () {
+          try {
+            bindMotion();
+          } catch (err) {
+            if (typeof console !== 'undefined' && console.error) console.error(err);
+          }
+        });
       });
       if (options.onOpen) options.onOpen(index);
     }
