@@ -1,5 +1,8 @@
 # CBX300 case study — page-by-page build brief
 
+> **2026-09-12:** First implement (PR #18) rejected on experience. Ship from the redesign bar: [`case-study-cbx300-redesign-bar.md`](case-study-cbx300-redesign-bar.md) (Echo simpler copy + Infoviz motion + cream vibe). Do not polish the wireframe.
+
+
 **For:** Portfolio opened-case experience (center folder with pages)  
 **Product language:** Hiring-manager skim first; no unexplained jargon  
 **Story:** Echo · **Experience:** Iris · **Build:** Camila  
