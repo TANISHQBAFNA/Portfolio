@@ -28,6 +28,7 @@
 - Loading: quiet hold on page chrome; don’t flash raw HTML.
 - Error: “Couldn’t load this frame” + retry — bank-calm, not glitch theatre (unless case is opened inside Multiverse skin).
 - **Motion (locked 2026-09-12):** GSAP + ScrollTrigger cinematic scroll storytelling. The case reads as a film you scroll through — chapters pin, frames reveal, captions land with the beat — not a flat stack of screenshots. Prefer scrubbed timelines tied to scroll; keep reduced-motion as a calm fade/stack fallback.
+- **Scroll reference (locked 2026-09-12):** Infoviz https://infoviz-cs5764.web.app/ — chapter rhythm, claim-first, progressive focus (grammar only).
 - **Images (locked 2026-09-12):** Place Figma exports into the image slots (node IDs in this brief). Placeholders until each export lands are OK; do not block page chrome on missing art.
 - **Brief status:** Tanishk OK’d this brief (2026-09-12). Camila may implement on a new branch; merge to main only after verified working.
 
@@ -48,6 +49,20 @@
 6. **Reduced motion** — OS prefers-reduced-motion: no pins/scrub; static stack with same order and captions.
 
 **Do not:** Autoplay video loops as the primary story; infinite bounce; motion that hides the claim.
+
+**Reference (locked 2026-09-12):** [Infoviz CS5764 — Virginia & Mumbai housing](https://infoviz-cs5764.web.app/)
+
+Steal the *storytelling grammar*, not the housing topic or map chrome:
+
+1. **Numbered chapter beats** — short claim title per scroll stop (e.g. “01 · Ladder”), then one sentence that lands before the proof frame.
+2. **Claim first, viz second** — the argument is readable; the image/diagram proves it as you scrub.
+3. **Progressive focus** — light the part that matters (ends of the ladder, one role, one approval door), then pull back to the whole.
+4. **Same question, next chapter** — each page answers one clear question; the next page continues the thread (roles → approvals → money), like Infoviz’s Virginia → Mumbai handoff.
+5. **Editorial calm** — cinematic pin/scrub, not carnival; cream case stays bank-calm (no Multiverse glitch).
+6. **Close on a finding** — last page is “what this produced / next,” not more decoration.
+
+Camila: match Infoviz’s chapter rhythm + caption sync with GSAP ScrollTrigger; CBX300 content and Figma frames stay ours.
+
 
 ---
 
