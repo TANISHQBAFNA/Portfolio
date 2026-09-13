@@ -189,6 +189,17 @@ check('Decision layer on six chapters, not cover or scale', function () {
   assert.ok(kit.indexOf('function rungPose') !== -1, 'ladder must walk a 3D staircase');
   assert.ok(css.indexOf('perspective: 1500px') !== -1, 'ladder stage missing 3D perspective');
   assert.ok(css.indexOf('.film-beat[data-recipe="ends"] .film-shot-stack') !== -1, 'ladder 3D fan must unclip shot-stack');
+  var reduceAt = css.indexOf('@media (prefers-reduced-motion: reduce)');
+  var bang = css.indexOf('transform: none !important');
+  assert.ok(reduceAt !== -1 && bang > reduceAt, 'kill-transform must live inside reduced-motion');
+  var slice = css.slice(reduceAt, bang);
+  var depth = 0;
+  var i;
+  for (i = 0; i < slice.length; i += 1) {
+    if (slice[i] === '{') depth += 1;
+    if (slice[i] === '}') depth -= 1;
+  }
+  assert.ok(depth > 0, 'reduced-motion closed before kill-transform — 3D ladder would flatten');
 });
 
 check('redesign bar is the experience lock', function () {
