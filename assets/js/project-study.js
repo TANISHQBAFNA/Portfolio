@@ -22,12 +22,13 @@ window.ProjectStudy = (function () {
   function unlockFilmScroller(htmlEl) {
     if (!htmlEl) return;
     htmlEl.classList.add('is-study-film');
+    /* One scroller only (html). Dual html+body overflow:scroll fights Arc/Chromium. */
     htmlEl.style.setProperty('overflow-x', 'hidden', 'important');
-    htmlEl.style.setProperty('overflow-y', 'scroll', 'important');
+    htmlEl.style.setProperty('overflow-y', 'auto', 'important');
     htmlEl.style.setProperty('height', 'auto', 'important');
     htmlEl.style.setProperty('max-height', 'none', 'important');
     document.body.style.setProperty('overflow-x', 'hidden', 'important');
-    document.body.style.setProperty('overflow-y', 'scroll', 'important');
+    document.body.style.setProperty('overflow-y', 'visible', 'important');
     document.body.style.setProperty('height', 'auto', 'important');
     document.body.style.setProperty('max-height', 'none', 'important');
     window.scrollTo(0, 0);
@@ -781,13 +782,21 @@ window.ProjectStudy = (function () {
       });
     }
 
-    function bindCbx300() {
+    function bindCbx300(attempt) {
       var world = root.querySelector('[data-world="cbx300"]');
-      if (!world || !window.CaseScrollKit) return;
+      if (!world) return;
+      var tries = typeof attempt === 'number' ? attempt : 0;
+      /* Unlock BEFORE kit/gsap — a missed CaseScrollKit left Arc with overflow:hidden. */
+      unlockFilmScroller(html);
       var beats = world.querySelectorAll('[data-film-beat]');
       setTotal(beats.length);
       setStep(0);
-      unlockFilmScroller(html);
+      if (!window.CaseScrollKit) {
+        if (tries < 40 && mode === 'study') {
+          window.setTimeout(function () { bindCbx300(tries + 1); }, 50);
+        }
+        return;
+      }
       if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
         ScrollTrigger.config({ ignoreMobileResize: true });
@@ -800,6 +809,9 @@ window.ProjectStudy = (function () {
         startPage: pendingPage || '',
         forceStatic: typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined'
       });
+      window.setTimeout(function () {
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      }, 120);
     }
 
     function bindMotion() {
@@ -1252,12 +1264,15 @@ window.ProjectStudy = (function () {
       syncHead();
       paintTitle(project.cardTitle || project.title || 'Project');
       caseMount = null;
-      if (template === 'cbx300' && window.Cbx300Case) {
-        caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
-        var caseWorld = root.querySelector('[data-world="cbx300"]');
-        var caseBeats = caseWorld ? caseWorld.querySelectorAll('[data-film-beat]') : [];
-        setTotal(caseBeats.length);
-        setStep(0);
+      if (template === 'cbx300') {
+        unlockFilmScroller(html);
+        if (window.Cbx300Case) {
+          caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
+          var caseWorld = root.querySelector('[data-world="cbx300"]');
+          var caseBeats = caseWorld ? caseWorld.querySelectorAll('[data-film-beat]') : [];
+          setTotal(caseBeats.length);
+          setStep(0);
+        }
       }
       root.scrollTop = 0;
       window.scrollTo(0, 0);

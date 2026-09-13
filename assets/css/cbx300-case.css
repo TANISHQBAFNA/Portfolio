@@ -17,14 +17,19 @@ html.is-study-film {
 /* Must beat html.is-study { overflow:hidden !important } from landing.css,
    which is injected AFTER this file and would otherwise kill window scroll. */
 html.is-study.is-study-film,
-html.is-study.is-study-film body,
-html.is-study-film,
-html.is-study-film body {
+html.is-study-film {
   overflow-x: hidden !important;
   overflow-y: auto !important;
   height: auto !important;
   max-height: none !important;
   overscroll-behavior-y: contain;
+}
+html.is-study.is-study-film body,
+html.is-study-film body {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  height: auto !important;
+  max-height: none !important;
 }
 html.is-study.is-study-film .study[data-template="cbx300"],
 html.is-study-film .study[data-template="cbx300"] {
