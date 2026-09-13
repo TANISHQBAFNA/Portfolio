@@ -80,7 +80,7 @@ check('Infoviz grammar: claim first, meaning-changing scrub, close on finding', 
   assert.ok(kit.indexOf('scaleY') !== -1, 'kit missing matrix draw');
   assert.ok(kit.indexOf('data-film-track') !== -1, 'kit missing horizontal pan ending');
   assert.ok(kit.indexOf('pin: true') !== -1, 'kit must GSAP-pin the leftover stage');
-  assert.ok(kit.indexOf('pinSpacing: true') !== -1, 'kit missing pinSpacing runway');
+  assert.ok(kit.indexOf('preventOverlaps: true') !== -1, 'pin triggers must prevent chapter overlap');
   assert.ok(kit.indexOf('Claim stays readable') !== -1, 'kit missing claim-first lock');
   assert.ok(kit.indexOf('Opacity-only fades are a fail') !== -1, 'kit missing opacity-only fail lock');
   assert.ok(pages.indexOf("finding: true") !== -1, 'close is not a finding');
@@ -153,7 +153,7 @@ check('GSAP pin holds leftover stage; captions sequential; focus in-frame', func
 
 check('crop/wipe hard-hides outgoing shot; captions sequential', function () {
   assert.ok(/autoAlpha:\s*0\.08/.test(kit) === false, 'crop still leaves ghost opacity');
-  assert.ok(kit.indexOf('clipPath') !== -1, 'crop/wipe must use clip-path');
+  assert.ok(kit.indexOf('immediateRender: false') !== -1, 'incoming crop/wipe must not paint before its beat');
   assert.ok(kit.indexOf('autoAlpha: 0') !== -1, 'outgoing shot must fully hide after crop/wipe');
   assert.ok(kit.indexOf('outgoing caption hidden first') !== -1, 'captions must sequential-swap like crop');
   assert.ok(kit.indexOf('at + 0.28') !== -1, 'captionAt must wait for outgoing to hide before incoming');

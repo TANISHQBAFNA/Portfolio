@@ -702,6 +702,7 @@ html.is-dark .film-ui-band {
   height: 100%;
   max-width: 22rem;
   padding: 12px 8px;
+  overflow: visible;
 }
 
 .film-nav__item {
@@ -815,15 +816,16 @@ html.is-dark .film-nav__item.is-door {
 /* Permissions */
 .film-grid {
   display: grid;
-  grid-template-columns: 1.3fr repeat(5, minmax(0, 1fr));
+  grid-template-columns: 1.4fr repeat(5, minmax(0, 1fr));
   gap: 6px;
   height: 100%;
   align-content: center;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 0.78rem;
-  padding: 18px 14px;
+  padding: 22px 18px;
   box-sizing: border-box;
   border-radius: 12px;
+  overflow: visible;
 }
 
 .film-grid span {
@@ -866,7 +868,9 @@ html.is-dark .film-nav__item.is-door {
 }
 
 .film-step {
-  flex: 0 0 min(68vw, 400px);
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: none;
   padding: 28px 24px;
   display: flex;
   flex-direction: column;
@@ -874,6 +878,7 @@ html.is-dark .film-nav__item.is-door {
   gap: 10px;
   min-height: 220px;
   border-radius: 14px;
+  box-sizing: border-box;
 }
 
 .film-step strong {

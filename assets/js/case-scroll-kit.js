@@ -184,20 +184,26 @@ window.CaseScrollKit = (function () {
         scale: 1,
         y: 0,
         clipPath: 'inset(0% 0% 0% 0%)',
-        duration: 0.5
+        duration: 0.5,
+        immediateRender: false
       }, innAt);
     }
   }
 
   function wipeSplit(tl, outgoing, incoming, at) {
     if (!incoming) return;
-    window.gsap.set(incoming, {
+    tl.fromTo(incoming, {
       autoAlpha: 1,
       visibility: 'visible',
       xPercent: 42,
       clipPath: 'inset(0% 0% 0% 68%)',
       scale: 1
-    });
+    }, {
+      xPercent: 0,
+      clipPath: 'inset(0% 0% 0% 0%)',
+      duration: 0.6,
+      immediateRender: false
+    }, at);
     if (outgoing) {
       tl.to(outgoing, {
         xPercent: -22,
@@ -206,13 +212,6 @@ window.CaseScrollKit = (function () {
         clipPath: 'inset(0% 52% 0% 0%)',
         duration: 0.55
       }, at);
-    }
-    tl.to(incoming, {
-      xPercent: 0,
-      clipPath: 'inset(0% 0% 0% 0%)',
-      duration: 0.6
-    }, at);
-    if (outgoing) {
       tl.to(outgoing, { autoAlpha: 0, duration: 0.2 }, at + 0.55);
     }
   }
@@ -306,8 +305,14 @@ window.CaseScrollKit = (function () {
     captionAt(tl, caps, 0, tAll);
 
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1, y: 0, clipPath: 'inset(0% 0% 0% 0%)' });
-      window.gsap.set(shotEls.slice(1), { autoAlpha: 1, scale: 1.18, y: 16, clipPath: 'inset(100% 0% 0% 0%)' });
+      window.gsap.set(shotEls[0], {
+        autoAlpha: 1, x: 0, y: 0, scale: 1, xPercent: 0,
+        clipPath: 'inset(0% 0% 0% 0%)'
+      });
+      window.gsap.set(shotEls.slice(1), {
+        autoAlpha: 0,
+        clipPath: 'inset(100% 0% 0% 0%)'
+      });
       cropIn(tl, shotEls[0], shotEls[1], tAll + 0.5);
       captionAt(tl, caps, Math.min(4, caps.length - 1), tAll + 0.5);
       askAt(tl, page, tAll + 0.85);
@@ -376,9 +381,9 @@ window.CaseScrollKit = (function () {
 
     if (door) {
       window.gsap.set(door, { scale: 1, x: 0, transformOrigin: '12% 50%' });
-      tl.to(door, { scale: 1.18, x: 10, y: -8, duration: 0.7 }, t0);
+      tl.to(door, { scale: 1.1, x: 6, y: -4, duration: 0.7 }, t0);
       if (rest.length) {
-        tl.to(rest, { scale: 0.9, x: -16, y: 8, duration: 0.7 }, t0);
+        tl.to(rest, { scale: 0.94, x: -10, y: 6, duration: 0.7 }, t0);
       }
       captionAt(tl, caps, Math.min(1, caps.length - 1), t0);
     }
@@ -422,17 +427,22 @@ window.CaseScrollKit = (function () {
 
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, xPercent: 0, scale: 1, clipPath: 'inset(0% 0% 0% 0%)' });
-      window.gsap.set(shotEls[1], { autoAlpha: 1, xPercent: 28, scale: 1, clipPath: 'inset(0% 0% 0% 100%)' });
+      window.gsap.set(shotEls[1], { autoAlpha: 0, xPercent: 28, scale: 1, clipPath: 'inset(0% 0% 0% 100%)' });
       tl.to(shotEls[0], {
         xPercent: -24,
         scale: 0.92,
         clipPath: 'inset(0% 40% 0% 0%)',
         duration: 0.5
       }, t0 + 0.75);
-      tl.to(shotEls[1], {
+      tl.fromTo(shotEls[1], {
+        autoAlpha: 1,
+        xPercent: 28,
+        clipPath: 'inset(0% 0% 0% 100%)'
+      }, {
         xPercent: 0,
         clipPath: 'inset(0% 0% 0% 0%)',
-        duration: 0.55
+        duration: 0.55,
+        immediateRender: false
       }, t0 + 0.75);
       tl.to(shotEls[0], { autoAlpha: 0, duration: 0.2 }, t0 + 1.2);
       captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 0.85);
@@ -473,9 +483,8 @@ window.CaseScrollKit = (function () {
 
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1, transformOrigin: '50% 50%', clipPath: 'inset(0% 0% 0% 0%)' });
-      window.gsap.set(shotEls[1], { autoAlpha: 1, scale: 0.72, clipPath: 'inset(100% 0% 0% 0%)' });
-      tl.to(shotEls[0], { scale: 0.62, y: -12, duration: 0.5 }, t0 + 1.35);
-      cropIn(tl, shotEls[0], shotEls[1], t0 + 1.45);
+      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 0.92, clipPath: 'inset(100% 0% 0% 0%)' });
+      cropIn(tl, shotEls[0], shotEls[1], t0 + 1.35);
       captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 1.45);
       if (ruled) tl.to(ruled, { autoAlpha: 1, duration: 0.35 }, t0 + 1.6);
       askAt(tl, page, t0 + 1.95);
@@ -496,18 +505,29 @@ window.CaseScrollKit = (function () {
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
 
     if (track && steps.length) {
+      var wrap = track.parentNode;
+      function sizeSteps() {
+        var w = wrap ? wrap.clientWidth : 0;
+        if (!w) return 0;
+        steps.forEach(function (step) {
+          step.style.flex = '0 0 ' + w + 'px';
+          step.style.width = w + 'px';
+        });
+        return w;
+      }
+      sizeSteps();
       window.gsap.set(track, { x: 0 });
-      window.gsap.set(steps, { scale: 0.9, y: 16 });
-      tl.to(steps[0], { scale: 1.04, y: 0, duration: 0.35 }, t0);
+      window.gsap.set(steps, { scale: 0.94, y: 14 });
+      tl.to(steps[0], { scale: 1, y: 0, duration: 0.35 }, t0);
       steps.forEach(function (step, i) {
-        var at = t0 + i * 0.85;
+        var at = t0 + i * 0.9;
         if (i > 0) {
           tl.to(track, {
-            x: function () { return -Math.round(step.offsetLeft); },
+            x: function () { return -Math.round(sizeSteps() * i); },
             duration: 0.45
           }, at);
-          tl.to(steps[i - 1], { scale: 0.88, y: 10, duration: 0.35 }, at);
-          tl.to(step, { scale: 1.04, y: 0, duration: 0.4 }, at);
+          tl.to(steps[i - 1], { scale: 0.92, y: 10, duration: 0.35 }, at);
+          tl.to(step, { scale: 1, y: 0, duration: 0.4 }, at);
         }
         captionAt(tl, caps, Math.min(i, caps.length - 1), at);
       });
@@ -515,7 +535,7 @@ window.CaseScrollKit = (function () {
 
     var tFan = t0 + Math.max(1, steps.length) * 0.85;
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[1], { autoAlpha: 1, scale: 1, y: 0, clipPath: 'inset(100% 0% 0% 0%)' });
+      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 1, y: 0, clipPath: 'inset(100% 0% 0% 0%)' });
       cropIn(tl, shotEls[0], shotEls[1], tFan);
       if (empties.length) {
         window.gsap.set(empties, { scale: 0.7, y: 28, rotation: 0 });
@@ -539,9 +559,9 @@ window.CaseScrollKit = (function () {
     var caps = captions(page);
     if (caps.length) setCaption(caps, 0);
     if (!sheet) return;
-    window.gsap.set(sheet, { scale: 1.42, transformOrigin: '28% 30%' });
-    if (tiles.length) window.gsap.set(tiles, { scale: 0.42, transformOrigin: '50% 50%' });
-    tl.to(sheet, { scale: 1.12, transformOrigin: '58% 46%', duration: 1.05 }, 0);
+    window.gsap.set(sheet, { scale: 1.16, transformOrigin: '30% 32%' });
+    if (tiles.length) window.gsap.set(tiles, { scale: 0.55, transformOrigin: '50% 50%' });
+    tl.to(sheet, { scale: 1.06, transformOrigin: '58% 46%', duration: 1.05 }, 0);
     if (tiles.length) {
       tl.to(tiles, { scale: 1, duration: 0.55, stagger: { each: 0.018, from: 'center' } }, 0.15);
     }
@@ -605,7 +625,7 @@ window.CaseScrollKit = (function () {
           autoAlpha: 1, x: 0, y: 0, scale: 1, xPercent: 0,
           clipPath: 'inset(0% 0% 0% 0%)'
         });
-        gsap.set(shotEls.slice(1), { autoAlpha: 1, clipPath: 'inset(100% 0% 0% 0%)' });
+        gsap.set(shotEls.slice(1), { autoAlpha: 0, clipPath: 'inset(100% 0% 0% 0%)' });
       }
 
       var tl = gsap.timeline({ defaults: { ease: 'none' } });
@@ -613,8 +633,11 @@ window.CaseScrollKit = (function () {
 
       if (!pinWanted) return;
 
+      var index = pages.indexOf(page);
+
       /* Chrome counted once: pin the leftover stage under --study-head.
-         pinSpacing is the runway. pin: true — sticky CSS is not the hold. */
+         pinSpacing is the runway. pin: true — sticky CSS is not the hold.
+         preventOverlaps stops the last chapter from sitting on the next. */
       triggers.push(window.ScrollTrigger.create({
         trigger: hold,
         scroller: scroller,
@@ -627,7 +650,16 @@ window.CaseScrollKit = (function () {
         scrub: 0.55,
         animation: tl,
         invalidateOnRefresh: true,
-        anticipatePin: 1
+        anticipatePin: 1,
+        preventOverlaps: true,
+        fastScrollEnd: true,
+        onToggle: function (self) {
+          if (!self.isActive) return;
+          if (opts.onStep) opts.onStep(index);
+          pages.forEach(function (el, j) {
+            el.classList.toggle('is-on', j === index);
+          });
+        }
       }));
     });
   }
@@ -700,8 +732,8 @@ window.CaseScrollKit = (function () {
       function (context) {
         var cond = context.conditions || {};
         killLocal();
-        watchSteps(scroller, pages, opts.onStep, triggers);
         if (cond.reduceMotion) {
+          watchSteps(scroller, pages, opts.onStep, triggers);
           setupStatic(world);
         } else {
           bindCinematic(opts, pages, triggers);
