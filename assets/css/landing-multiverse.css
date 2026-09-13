@@ -34,6 +34,11 @@
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 
   --gutter:  clamp(20px, 4vw, 64px);
+  /* Layout viewport = browser page pane, never device screen.
+     svh = chrome showing; dvh tracks chrome. viewport.js may overwrite
+     --vvh/--vvw in px from visualViewport (pinch-zoom excluded). */
+  --vvh: 100svh;
+  --vvw: 100svw;
   /* Must be at least what the masthead actually measures — the deck panel is
      positioned at `top: var(--head-h)`, so a token smaller than the real header
      slides the top of a slide underneath it. Checked against the rendered
@@ -41,16 +46,16 @@
   --head-h:  clamp(42px, 5vh, 52px);
   /* Where the row starts: low, so the folders sit on the bottom edge with roughly
      45% of each below the fold. Whichever is lower of 72% down the viewport or the
-     point that leaves that much under the fold — bounded at 82svh so an unusually
-     tall window cannot push the hero out of proportion. */
+     point that leaves that much under the fold — bounded at 80% of --vvh so an
+     unusually tall window cannot push the hero out of proportion. */
   /* the shorter header hands its height to the row: a little lower on the screen
      and showing more of each folder above the fold */
-  --rail-top: min(80svh, max(69svh, calc(100svh - var(--card-h) * 0.60)));
+  --rail-top: min(calc(var(--vvh) * 0.80), max(calc(var(--vvh) * 0.69), calc(var(--vvh) - var(--card-h) * 0.60)));
   /* The folder is proportioned, not fixed: its height follows its width, so it
      reads the same shape on a laptop and on a 27-inch screen instead of
      stretching into a sliver. Capped so it can never outgrow the viewport. */
   --card-ratio: 1.28;
-  --card-h: min(calc(var(--card-w) * var(--card-ratio)), 70svh);
+  --card-h: min(calc(var(--card-w) * var(--card-ratio)), calc(var(--vvh) * 0.70));
   /* Hovering pulls a folder up until this much of it is on screen. 0.90 leaves
      the cover's bottom edge just below the fold, so it sits a touch higher —
      enough to clear the whole cover and the "open" row under it. Derived from
@@ -63,7 +68,7 @@
   /* max(): were a folder ever fully on screen at rest the arithmetic would go
      negative and push it *down* on hover. It always rises. */
   --hover-lift: max(14px, calc(var(--card-h) * var(--hover-reveal) + var(--hover-clear)
-                               - 100svh + var(--rail-top)));
+                               - var(--vvh) + var(--rail-top)));
   /* Inside a case study the row sits lower, so the same reveal needs a longer
      lift — one rule, one result: hover always shows a whole folder. */
   --peek-lift:  max(14px, calc(var(--card-h) * var(--hover-reveal) + var(--hover-clear)
@@ -78,12 +83,12 @@
      gutters is what made the slides look arbitrary. */
   --col-gap: clamp(16px, 2vw, 32px);
   /* how far a slide travels as it is pushed out and the next pushed in */
-  /* A full screen width, not a nudge. With no fade to hide it, the outgoing
-     slide has to be genuinely OFF the screen before its content is swapped —
-     otherwise you would watch the words change in mid-air. `100vw` clears any
-     element that starts inside the viewport, whatever its width or position;
+  /* A full layout-viewport width, not a nudge. With no fade to hide it, the
+     outgoing slide has to be genuinely OFF the pane before its content is swapped —
+     otherwise you would watch the words change in mid-air. `--vvw` clears any
+     element that starts inside the browser pane, whatever its width or position;
      `.stage` clips the overflow so nothing scrolls. */
-  --swap-shift: 100vw;
+  --swap-shift: var(--vvw);
   --swap-out-ms: 680ms;   /* must match SWAP_OUT_MS in project-detail.js */
   --swap-in-ms: 900ms;
   /* Gentler than it was. The old curve (0.5, 0, 0.75, 0.35) yanked the content
@@ -93,10 +98,10 @@
   --ease-in: cubic-bezier(0.32, 0, 0.7, 0.16);
   /* how far the whole page travels when a project opens or closes — further
      than a slide swap, because it is a bigger move */
-  --page-shift: 100vw;
+  --page-shift: var(--vvw);
   /* overshoots slightly, so the row's last movement is DOWNWARD into place */
   --ease-settle: cubic-bezier(0.33, 1.32, 0.62, 1);
-  --slide-img-max: 62svh;  /* only a ceiling — the row track is the real bound,
+  --slide-img-max: calc(var(--vvh) * 0.62);  /* only a ceiling — the row track is the real bound,
                               so imagery grows to whatever the slide has spare */
   --pill-h:    66px;   /* rendered height of the control pill; the deck panel
                           reserves this band so nothing runs under it */
@@ -106,13 +111,20 @@
   --rail-gap: clamp(14px, 1.7vw, 28px);
   /* The closing panel absorbs exactly the space the last folder cannot fill,
      so the rail ends on a composed frame instead of dead canvas. */
-  --end-w:    max(240px, calc(100vw - var(--card-w) - var(--gutter) * 2 - var(--rail-gap)));
+  --end-w:    max(240px, calc(var(--vvw) - var(--card-w) - var(--gutter) * 2 - var(--rail-gap)));
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 
   --felt: #10112a;
   --felt-moss: rgba(0, 160, 160, 0.12);
   --felt-deep: rgba(8, 10, 32, 0.55);
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --vvh: 100dvh;
+    --vvw: 100dvw;
+  }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -287,7 +299,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Far enough to start fully below the fold, so they genuinely rise into view. */
 .stage.is-intro .folder-slot {
-  --intro-rise: calc(100svh - var(--rail-top) + 24px);
+  --intro-rise: calc(var(--vvh) - var(--rail-top) + 24px);
   animation: intro-folder 0.78s var(--ease) backwards;
   animation-delay: calc(0.26s + var(--enter-index, 0) * 0.085s);
 }
@@ -434,7 +446,7 @@ a { color: inherit; text-decoration: none; }
    main size, so declared earlier it did nothing. Desktop only: mobile sets its
    own 4:5 crop, and putting the height in the base rule overrode that instead. */
 @media (min-width: 768px) {
-  .portrait__frame { flex: 0 1 auto; height: clamp(240px, 42svh, 420px); }
+  .portrait__frame { flex: 0 1 auto; height: clamp(240px, calc(var(--vvh) * 0.42), 420px); }
 }
 
 .portrait__frame::after {   /* film-like top light */
@@ -707,7 +719,7 @@ body:has(.stage.is-detail) .atmosphere {
    the card simply slides out of view below the viewport. pointer-events are cut
    so the invisible card cannot intercept clicks on the slide content above it. */
 .detail.hide-folder .detail__card {
-  transform: translateY(100vh);
+  transform: translateY(var(--vvh));
   pointer-events: none;
   transition: transform var(--swap-out-ms, 600ms) var(--ease);
 }
@@ -848,7 +860,7 @@ body:has(.stage.is-detail) .atmosphere {
 .detail.is-out.from-first .detail__type,
 .detail.is-out.from-first .detail__card {
   transition: transform var(--swap-out-ms) cubic-bezier(0.32, 1.06, 0.5, 1);
-  transform: translateY(100vh);
+  transform: translateY(var(--vvh));
 }
 /* The docked folder's arrival on open. It rides the same distance and curve as the
    words, so the cover screen slides in as one piece. Separate from the
@@ -872,12 +884,12 @@ body:has(.stage.is-detail) .atmosphere {
 }
 /* When returning to the first slide, the header enters upwards from the bottom and fades in */
 .detail.is-in.to-first .detail__type {
-  transform: translateY(100vh);
+  transform: translateY(var(--vvh));
   opacity: 0;
   transition: none;
 }
 .detail.is-in.to-first .detail__card {
-  transform: translateY(100vh);
+  transform: translateY(var(--vvh));
   transition: none;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1039,7 +1051,7 @@ body:has(.stage.is-detail) .atmosphere {
   /* Same height as the folder in the row below it. `flex: 0 0 auto` matters:
      the dock has no fixed height here, so flex-basis would otherwise win over
      the height and collapse the card to its content. */
-  .folder--docked { flex: 0 0 auto; height: clamp(430px, 66svh, 560px); }
+  .folder--docked { flex: 0 0 auto; height: clamp(430px, calc(var(--vvh) * 0.66), 560px); }
   .detail__type { grid-column: 1; }
   .detail__actions { gap: 14px; }
   .detail__cta, .detail__close { min-height: 44px; }
@@ -1060,7 +1072,7 @@ body:has(.stage.is-detail) .atmosphere {
     --deck-trim: clamp(12px, 1.8vh, 22px);
     --deck-pad-top: clamp(12px, 2vh, 22px);
     --deck-pad-bottom: calc(var(--pill-h) + clamp(14px, 2.2vh, 26px));
-    --deck-band: clamp(148px, 16.5svh, 168px);
+    --deck-band: clamp(148px, calc(var(--vvh) * 0.165), 168px);
     --deck-gap: clamp(14px, 2.2vh, 26px);
     /* Air kept above and below the block no matter what. Without it a slide
        carrying one big image expands to fill the panel edge to edge and sits
@@ -1074,11 +1086,11 @@ body:has(.stage.is-detail) .atmosphere {
                            - var(--deck-breathe) * 2);
     --deck-caption: 28px;
     /* what the content box actually measures, inside the padding */
-    --deck-content: calc(100svh - var(--head-h) - var(--deck-trim)
+    --deck-content: calc(var(--vvh) - var(--head-h) - var(--deck-trim)
                          - var(--deck-pad-top) - var(--deck-pad-bottom));
 
     /* nothing sits at the bottom while a project is open, so take the full height */
-    height: calc(100svh - var(--head-h) - var(--deck-trim));
+    height: calc(var(--vvh) - var(--head-h) - var(--deck-trim));
     /* The pill sits at the bottom centre now, so the band it needs is reserved
        there — which hands the whole top of the panel back to the content. */
     padding-top: var(--deck-pad-top);
@@ -1294,7 +1306,7 @@ body:has(.stage.is-detail) .atmosphere {
      has to match at least that specificity or it is silently ignored — which is
      exactly what happened the first time this was written. */
   .stage.is-detail .detail[data-slide-type="full"] {
-    --deck-band: clamp(104px, 11.5svh, 124px);
+    --deck-band: clamp(104px, calc(var(--vvh) * 0.115), 124px);
     --deck-breathe: clamp(10px, 1.6vh, 22px);
   }
   .detail[data-slide-type="full"] .detail__slide-body { max-width: 62ch; }
@@ -1349,7 +1361,7 @@ body:has(.stage.is-detail) .atmosphere {
 
 @media (max-width: 767px) {
   .detail__media { grid-column: 1; grid-template-columns: 1fr !important; }
-  .detail__media img { width: auto; height: auto; max-height: 44svh; }
+  .detail__media img { width: auto; height: auto; max-height: calc(var(--vvh) * 0.44); }
 }
 
 /* ── ProjectRail ──────────────────────────────────────────────────────── */
@@ -1374,13 +1386,13 @@ body:has(.stage.is-detail) .atmosphere {
   /* Held at the peeking position — this is where the folder flies back to when a
      project closes, so the row must be here to receive it. */
   .stage.is-detail .rail {
-    transform: translateY(calc(100svh - var(--peek) - var(--rail-top)));
+    transform: translateY(calc(var(--vvh) - var(--peek) - var(--rail-top)));
   }
   /* While a project is actually open, the row drops off the bottom entirely and
      fades. Hidden, not removed: `close()` clears this class before measuring the
      flight home, so the row is back in place to land on. */
   .stage.is-detail.rail-away .rail {
-    transform: translateY(calc(100svh - var(--rail-top) + var(--lift) + 40px));
+    transform: translateY(calc(var(--vvh) - var(--rail-top) + var(--lift) + 40px));
     opacity: 0;
     pointer-events: none;
     transition: transform 0.62s var(--ease), opacity 0.42s var(--ease);
@@ -2024,7 +2036,7 @@ body:has(.stage.is-detail) .atmosphere {
     padding-top: clamp(22px, 5vh, 36px);
   }
   .portrait { grid-column: 1; grid-row: auto; }
-  .portrait__frame { aspect-ratio: 4 / 5; max-height: 52svh; flex: none; }
+  .portrait__frame { aspect-ratio: 4 / 5; max-height: calc(var(--vvh) * 0.52); flex: none; }
   .hero__type, .hero__facts { grid-column: 1; grid-row: auto; }
   .hero__heading { font-size: clamp(1.95rem, 8.6vw, 2.9rem); max-width: none; }
   .hero__support { max-width: none; font-size: 0.88rem; }
@@ -2044,7 +2056,7 @@ body:has(.stage.is-detail) .atmosphere {
     scroll-snap-type: x mandatory;
   }
   .folder-slot { height: auto; }
-  .folder { height: clamp(430px, 66svh, 560px); transform: none; filter: none; }
+  .folder { height: clamp(430px, calc(var(--vvh) * 0.66), 560px); transform: none; filter: none; }
   .folder::after { inset: 30px -6px -8px 7px; }
   .folder__title { font-size: 1.55rem; }
   /* the slip is taller here (its list wraps in a narrower folder), so it reaches
@@ -2084,7 +2096,7 @@ body:has(.stage.is-detail) .atmosphere {
   /* Same height as the folder in the row below it. `flex: 0 0 auto` matters:
      the dock has no fixed height here, so flex-basis would otherwise win over
      the height and collapse the card to its content. */
-  .folder--docked { flex: 0 0 auto; height: clamp(430px, 66svh, 560px); }
+  .folder--docked { flex: 0 0 auto; height: clamp(430px, calc(var(--vvh) * 0.66), 560px); }
 }
 
 
@@ -2128,7 +2140,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   position: fixed;
   inset: 0;
   top: 0;
-  height: 100svh;
+  height: var(--vvh);
   padding: calc(var(--head-h) + 18px) var(--gutter) 96px;
   z-index: 70;
   display: grid;
@@ -2189,7 +2201,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
   --sheet-back: #f0e4cc;
   position: relative;
   width: min(380px, 78vw);
-  height: min(486px, 62svh);
+  height: min(486px, calc(var(--vvh) * 0.62));
   min-height: 0;
   border-radius: 6px 14px 12px 12px;
   background:
@@ -2221,7 +2233,7 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 /* Size blooms with is-open; cover/book reveal waits for is-flipped. */
 .detail--folder.is-open .case-folder__shell {
   width: min(1100px, 94vw);
-  height: min(640px, calc(100svh - var(--head-h) - 128px));
+  height: min(640px, calc(var(--vvh) - var(--head-h) - 128px));
 }
 
 .case-folder__shell[data-tone="kraft"] {
@@ -2842,8 +2854,8 @@ body:has(.stage.is-detail:has(.detail--folder)) .atmosphere {
 
 @media (max-width: 720px) {
   .detail--folder.is-open .case-folder__shell {
-    width: min(100vw - 20px, 560px);
-    height: min(78svh, 640px);
+    width: min(var(--vvw) - 20px, 560px);
+    height: min(calc(var(--vvh) * 0.78), 640px);
   }
   .case-folder__book {
     grid-template-columns: 0.42fr 1fr;
@@ -3373,7 +3385,7 @@ html.is-multiverse .hero__role {
     display: flex !important;
     flex-direction: column;
     overflow: hidden !important;
-    min-height: 100svh;
+    min-height: var(--vvh);
   }
 }
 
@@ -3515,7 +3527,7 @@ html.is-multiverse .portrait { display: none !important; }
   }
   html.is-multiverse.is-home-scroll .scroll-run {
     display: block !important;
-    height: 200vh;
+    height: calc(var(--vvh) * 2);
     pointer-events: none;
     visibility: hidden;
   }
@@ -3534,7 +3546,7 @@ html.is-multiverse .portrait { display: none !important; }
     position: absolute;
     inset: 0;
     top: 0;
-    height: 100svh;
+    height: var(--vvh);
     z-index: 40;
     background: var(--projects-panel, #1E1510);
     border-radius: calc(var(--panel-radius) * (1 - var(--panel-flush, 0)));
@@ -3687,7 +3699,7 @@ html.is-multiverse .work-card__caption {
     display: flex;
     flex-direction: column;
     overflow: visible !important;
-    min-height: 100svh;
+    min-height: var(--vvh);
     height: auto;
   }
   html.is-multiverse .masthead {
@@ -3915,7 +3927,7 @@ html:has(body.leaf-page) body {
     overflow: visible !important;
     display: block !important;
     height: auto !important;
-    min-height: 100svh;
+    min-height: var(--vvh);
   }
 }
 
@@ -4139,10 +4151,10 @@ html.is-study-wipe .work-cta {
 
 .study {
   --study-head: 108px;
-  --study-stage: calc(100svh - var(--study-head));
+  --study-stage: calc(var(--vvh) - var(--study-head));
   position: relative;
   z-index: 90;
-  min-height: 100svh;
+  min-height: var(--vvh);
   overflow: visible;
   background: var(--cream, #f4efe6);
   color: var(--coffee, #1E1510);
@@ -4349,7 +4361,7 @@ html.is-dark .study__chrome {
 
 .study-scene {
   position: relative;
-  min-height: 100svh;
+  min-height: var(--vvh);
   padding: var(--study-head) var(--gutter, 24px) 32px;
   display: flex;
   flex-direction: column;

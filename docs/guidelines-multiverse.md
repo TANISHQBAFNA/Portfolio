@@ -100,3 +100,5 @@ Multiverse is a **glitch skin** on the same IA and the same chrome layout. Share
 Same control = same code. If My Work floats over `THOUGHTFUL`, a Multiverse layout fork is the bug — delete it, do not patch a second transform.
 
 Both worlds load `landing.css`. This file stacks after it as skin. Phase B (later): collapse remaining duplicated layout in this file toward glitch-only overrides.
+
+**Viewport lock (shared):** browser pane, not device screen. Same `--vvh` / `visualViewport` rule as cream. See [`viewport-lock.md`](./viewport-lock.md).

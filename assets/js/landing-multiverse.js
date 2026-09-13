@@ -184,9 +184,17 @@
   var bentoInputWired = false;
   var pullLock = false;
 
+  function viewportHeight() {
+    if (window.layoutViewport) return window.layoutViewport.height();
+    var vv = window.visualViewport;
+    if (vv && (vv.scale || 1) <= 1.01 && vv.height) return vv.height;
+    return document.documentElement.clientHeight || window.innerHeight;
+  }
+
   function riseMax() {
+    var vh = viewportHeight();
     var run = document.querySelector('.scroll-run');
-    return Math.max(1, (run ? run.offsetHeight : window.innerHeight * 2) - window.innerHeight);
+    return Math.max(1, (run ? run.offsetHeight : vh * 2) - vh);
   }
 
   function panelFlushFromRise(rise) {

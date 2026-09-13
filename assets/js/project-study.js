@@ -20,6 +20,22 @@ window.ProjectStudy = (function () {
     return String(n).length < 2 ? '0' + n : String(n);
   }
 
+  function viewportSize() {
+    if (window.layoutViewport) return window.layoutViewport.size();
+    var root = document.documentElement;
+    var vv = window.visualViewport;
+    var fallbackH = root.clientHeight || window.innerHeight || 0;
+    var fallbackW = root.clientWidth || window.innerWidth || 0;
+    if (!vv || (vv.scale || 1) > 1.01) {
+      return { height: fallbackH, width: fallbackW, offsetTop: 0 };
+    }
+    return {
+      height: vv.height || fallbackH,
+      width: vv.width || fallbackW,
+      offsetTop: vv.offsetTop || 0
+    };
+  }
+
   function create(options) {
     var root = options.root;
     var projects = options.projects || [];
@@ -152,7 +168,7 @@ window.ProjectStudy = (function () {
 
     function onScroll() {
       if (mode !== 'study') return;
-      var max = document.documentElement.scrollHeight - window.innerHeight;
+      var max = document.documentElement.scrollHeight - viewportSize().height;
       var p = max > 0 ? window.scrollY / max : 0;
       if (nodes.progress) {
         nodes.progress.style.transform = 'scaleX(' + Math.max(0.02, Math.min(1, p)).toFixed(4) + ')';
@@ -736,7 +752,7 @@ window.ProjectStudy = (function () {
     function flyMaxWidth() {
       var veil = nodes.veil;
       var gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gutter')) || 24;
-      if (!veil) return Math.max(80, window.innerWidth - gutter * 2);
+      if (!veil) return Math.max(80, viewportSize().width - gutter * 2);
       var cs = getComputedStyle(veil);
       var pl = parseFloat(cs.paddingLeft) || gutter;
       var pr = parseFloat(cs.paddingRight) || gutter;
@@ -890,7 +906,10 @@ window.ProjectStudy = (function () {
     function measureLargeRect() {
       var fly = nodes.fly;
       var veil = nodes.veil;
-      if (!fly) return { left: 24, top: window.innerHeight - 160, width: 120, height: 48 };
+      if (!fly) {
+        var fallback = viewportSize();
+        return { left: 24, top: fallback.offsetTop + fallback.height - 160, width: 120, height: 48 };
+      }
       flattenFly();
       var w = Math.max(fly.offsetWidth, fly.getBoundingClientRect().width, 1);
       var h = Math.max(fly.offsetHeight, fly.getBoundingClientRect().height, 1);
@@ -900,9 +919,10 @@ window.ProjectStudy = (function () {
         pad.left = parseFloat(cs.paddingLeft) || 24;
         pad.bottom = parseFloat(cs.paddingBottom) || 48;
       }
+      var pane = viewportSize();
       return {
         left: pad.left,
-        top: window.innerHeight - pad.bottom - h,
+        top: pane.offsetTop + pane.height - pad.bottom - h,
         width: w,
         height: h
       };
@@ -1211,11 +1231,13 @@ window.ProjectStudy = (function () {
     window.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && mode === 'study') close();
     });
-    window.addEventListener('resize', function () {
+    function onViewport() {
       if (mode !== 'study') return;
       syncHead();
       if (window.ScrollTrigger) ScrollTrigger.refresh();
-    });
+    }
+    window.addEventListener('resize', onViewport);
+    html.addEventListener('layoutviewport', onViewport);
 
     return {
       open: open,

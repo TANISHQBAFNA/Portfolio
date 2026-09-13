@@ -1,8 +1,8 @@
 # Cream home design guidelines (`index.html`)
 
 **Status:** Production direction. Cursor must not deviate without an explicit Tanishk / Iris lock update.  
-**Scope:** `index.html`, `assets/css/landing.css`, `assets/js/landing.js`, `assets/js/iris-motion.js` (and shared assets those files already use).  
-**Shared with Multiverse:** chrome **layout** for My Work, `landing-chrome`, edge dock geometry, and `--rise`. Those rules live in `landing.css` under `html.is-light-home` + `html.is-multiverse`. Glitch / comic skin stays in [`guidelines-multiverse.md`](./guidelines-multiverse.md).
+**Scope:** `index.html`, `assets/css/landing.css`, `assets/js/landing.js`, `assets/js/iris-motion.js`, `assets/js/viewport.js` (and shared assets those files already use).  
+**Shared with Multiverse:** chrome **layout** for My Work, `landing-chrome`, edge dock geometry, `--rise`, and viewport lock (`--vvh` = browser pane). Those rules live in `landing.css` under `html.is-light-home` + `html.is-multiverse`. Glitch / comic skin stays in [`guidelines-multiverse.md`](./guidelines-multiverse.md).
 
 ---
 
@@ -28,6 +28,7 @@ A calm, editorial product-designer portfolio. Cream paper, coffee ink, teal acce
 7. **No glitch on project / work-card titles.**
 8. Softboard / hologram / flip-book experiments are **dead** for this home unless Tanishk reopens them.
 9. Briefs and visible product language stay non-code for Tanishk; implementation stays in these production files only when the job is cream home.
+10. **Viewport = browser pane, not device screen.** Never `screen.width` / `screen.height` / `availWidth` / `availHeight` for layout. Full-height uses `--vvh`/`--vvw` (`svh`/`dvh`, JS `visualViewport`). See [`viewport-lock.md`](./viewport-lock.md).
 
 ---
 
@@ -77,12 +78,14 @@ Dark (`html.is-light-home.is-dark`): swap bg/fg to coffee/cream; keep teal accen
 
 Cream Syne light-home baseline (hz63→hz66 lineage): shout `I DESIGN / THOUGHTFUL / EXPERIENCES`, coffee type, numbered nav, particle web. Treat live `index.html` + `landing.css` as source of truth over old experiments.
 
+**Viewport lock (2026-09-13):** browser pane, not device screen. `--vvh` / `visualViewport`. [`viewport-lock.md`](./viewport-lock.md).
+
 ## Edge utilities (locked 2026-09-09)
 
 - Bottom-right **edge dock**: quiet `Go Beyond` text tab (links to `index-multiverse.html`) beside the theme switch — fun mode, not primary nav.
 - Bottom-center primary CTA: **My Work** (`#work`) — teal pill, Syne, main action on the home stage.
 - Both hide during curtain / project rail / study like the theme tab.
-- Desktop My Work is `position: fixed` at the bottom and rides `--rise` with the projects panel (`translate3d(-50%, calc((var(--rise, 1) - 1) * 100svh), 0)`). No `transition: transform` on the button — JS updates `--rise` every frame. Curtain hide must keep the `-50%` X so the tab does not jump on lift.
+- Desktop My Work is `position: fixed` at the bottom and rides `--rise` with the projects panel (`translate3d(-50%, calc((var(--rise, 1) - 1) * var(--vvh)), 0)`). No `transition: transform` on the button — JS updates `--rise` every frame. Curtain hide must keep the `-50%` X so the tab does not jump on lift.
 
 ## Shared layout vs glitch skin
 

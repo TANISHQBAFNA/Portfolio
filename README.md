@@ -678,7 +678,9 @@ The cover and slide SVGs hardcode `#00a0a0` — an `<img>` cannot read CSS
 variables, so if you change the accent, run a find-and-replace across
 `assets/img/covers/*.svg` and `assets/img/slides/*.svg` too.
 
-## The rail adapts to the screen
+## The rail adapts to the viewport
+
+**viewport = browser pane, not device screen.** Folder and bento card geometry use `--vvh` / `--vvw` (`svh`/`dvh`, with `visualViewport` in JS). Never `screen.*`. See `docs/viewport-lock.md`.
 
 Two things make the row feel sized for the display rather than pinned to one
 laptop:
@@ -686,7 +688,7 @@ laptop:
 **The folder is proportioned, not fixed.** `--card-h` derives from `--card-w`
 through `--card-ratio` (1.28), so a folder keeps the same shape — roughly 0.78
 wide-to-tall — at every width instead of stretching into a sliver on a large
-monitor. It is capped at `70svh` so it can never outgrow the viewport.
+monitor. It is capped at `70%` of `--vvh` so it can never outgrow the viewport.
 
 **The row fills the screen when the columns genuinely fit.** `fitRail()` in
 `landing.js` measures the track on load and on resize: if every folder plus the
@@ -725,12 +727,12 @@ rises.
 below the fold:
 
 ```css
---rail-top: min(82svh, max(72svh, calc(100svh - var(--card-h) * 0.55)));
+--rail-top: min(calc(var(--vvh) * 0.80), max(calc(var(--vvh) * 0.69), calc(var(--vvh) - var(--card-h) * 0.60)));
 ```
 
-Whichever is lower of 72% down the viewport, or the point that leaves that much
-under the fold — bounded at 82svh so an unusually tall window cannot push the hero
-out of proportion. Measured at 45% clipped on both 1440×900 and 2000×1125, with
+Whichever is lower of 69–80% down the **browser pane**, or the point that leaves that much
+under the fold — `--vvh` is `svh`/`dvh`, overwritten from `visualViewport` so iPad Safari
+chrome is not counted. Measured at 45% clipped on both 1440×900 and 2000×1125, with
 hover clearing the card by 12px in each.
 
 ## Dropping this into the live site
