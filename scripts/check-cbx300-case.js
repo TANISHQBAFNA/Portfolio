@@ -283,22 +283,33 @@ check('Multiverse glitch is header-only', function () {
 });
 
 check('Iris 3D stills sit on growth beats 1–4', function () {
-  var stills = [
+  var pngs = [
+    'assets/img/aisha-growth/01-freelancer.png',
+    'assets/img/aisha-growth/02-sole-prop.png',
+    'assets/img/aisha-growth/03-small-company.png',
+    'assets/img/aisha-growth/04-midsize.png'
+  ];
+  var webps = [
     'assets/img/cbx300/aisha-stage-01-freelancer.webp',
     'assets/img/cbx300/aisha-stage-02-soleprop.webp',
     'assets/img/cbx300/aisha-stage-03-team10.webp',
     'assets/img/cbx300/aisha-stage-04-midsize.webp'
   ];
-  stills.forEach(function (rel) {
+  pngs.forEach(function (rel) {
     assert.ok(pages.indexOf(rel) !== -1, 'case js missing still ' + rel);
     var abs = path.join(ROOT, rel);
-    if (!fs.existsSync(abs)) return;
+    assert.ok(fs.existsSync(abs), 'missing binary ' + rel);
     var buf = fs.readFileSync(abs);
-    assert.ok(buf.length > 8000, rel + ' too small to be the clay board');
+    assert.ok(buf.length > 8000, rel + ' too small');
+    assert.ok(buf.slice(0, 8).toString('hex') === '89504e470d0a1a0a', rel + ' is not a PNG');
+  });
+  webps.forEach(function (rel) {
+    var abs = path.join(ROOT, rel);
+    assert.ok(fs.existsSync(abs), 'missing mirrored slot ' + rel);
+    var buf = fs.readFileSync(abs);
     assert.ok(buf.slice(0, 4).toString() === 'RIFF', rel + ' is not a WebP (RIFF)');
     assert.ok(buf.slice(8, 12).toString() === 'WEBP', rel + ' is not a WebP (WEBP)');
   });
-  assert.ok(pages.indexOf('assets/img/aisha-growth/') === -1, 'case js still points at aisha-growth PNG slots');
   assert.ok(kit.indexOf('function bindIrisStill') !== -1, 'kit missing still ken-burns');
   assert.ok(css.indexOf('.film-iris') !== -1, 'css missing iris still stage');
   assert.ok(pages.indexOf('Iris drop-in') !== -1, 'missing Iris drop-in placeholder label');

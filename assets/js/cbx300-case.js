@@ -1,7 +1,7 @@
 /**
  * CBX300 cream scroll film — Echo 8-beat Aisha story.
- * Beats 1–4 proof: static Iris stills (PNG/WebP) at
- * assets/img/cbx300/aisha-stage-0{1-4}-*.webp. Image slots, not a WebGL runtime.
+ * Beats 1–4 proof: Iris cream 3D stills (static PNG) at
+ * assets/img/aisha-growth/0{1-4}-*.png, mirrored to assets/img/cbx300/*.webp.
  * Cover / devices / corporate / close stay designed placeholders.
  * Lisa Charlie is a demo brand. Aisha is a representative story, not a real interview.
  * No invented quotes or outcomes.
@@ -24,20 +24,20 @@ window.Cbx300Case = (function () {
 
   var IRIS_STILL = {
     freelancer: {
-      src: 'assets/img/cbx300/aisha-stage-01-freelancer.webp',
-      alt: 'Clay cutout of Aisha standing alone. Stage 01 freelancer. Aisha works alone.'
+      src: 'assets/img/aisha-growth/01-freelancer.png',
+      alt: 'Freelancer proof still. Phone pay and get paid on a cream desk with an invoice.'
     },
     sole: {
-      src: 'assets/img/cbx300/aisha-stage-02-soleprop.webp',
-      alt: 'Clay cutout of Aisha standing alone. Stage 02 sole proprietor. One-person business.'
+      src: 'assets/img/aisha-growth/02-sole-prop.png',
+      alt: 'Sole prop proof still. Available leads four balances, beneficiary details carried forward.'
     },
     ten: {
-      src: 'assets/img/cbx300/aisha-stage-03-team10.webp',
-      alt: 'Clay cutouts of Aisha and three teammates. Stage 03 small office, about ten people.'
+      src: 'assets/img/aisha-growth/03-small-company.png',
+      alt: 'Team of about ten proof still. Prepare form on the left, approvals list on the right.'
     },
     mid: {
-      src: 'assets/img/cbx300/aisha-stage-04-midsize.webp',
-      alt: 'Clay cutouts of Aisha and three teammates. Stage 04 mid-size. Growing company.'
+      src: 'assets/img/aisha-growth/04-midsize.png',
+      alt: 'Mid-size proof still. Waiting-on-me queue and a permissions matrix.'
     }
   };
 

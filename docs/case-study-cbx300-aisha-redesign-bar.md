@@ -41,7 +41,7 @@ Captions: one sentence, Fact → what you see.
 No invented research, quotes, or NPS beyond the source HTML. Aisha is a representative example.
 
 ### 5. Visual
-Portfolio cream paper. Product demos may keep **bank-green** accents from the source **inside UI mock frames**. Bank-calm, editorial, detailed — not a grey tab deck. Beats 1–4 proof stills are a **static Iris 3D art-pass** (PNG/WebP at `assets/img/cbx300/aisha-stage-0{1-4}-*.webp`). Image slots, not a WebGL runtime. Cover / devices / corporate / close stay designed placeholders.
+Portfolio cream paper. Product demos may keep **bank-green** accents from the source **inside UI mock frames**. Bank-calm, editorial, detailed — not a grey tab deck. Beats 1–4 proof stills are an **Iris cream 3D art-pass** at `assets/img/aisha-growth/0{1-4}-*.png` (mirrored to `assets/img/cbx300/aisha-stage-0{1-4}-*.webp`). Image slots, not a WebGL runtime. Cover / devices / corporate / close stay designed placeholders.
 
 ### 6. Meta
 Lead product designer. Jan 2026-present. DS complete. Majority of screens / flows through handoff.  
