@@ -31,10 +31,12 @@ Opening SME Banking should feel like the cream portfolio continued: warm paper, 
 - Cover → ladder → roles → approvals → money → permissions → grammar → close as one scroll film.
 
 ### 2. Infoviz motion grammar (GSAP + ScrollTrigger)
-- **Claim first**, then viz works: progressive focus / crop / scrub on real frames (ladder ends, one role, approval door) — not fade-to-next-empty-box.
-- Pin where the beat needs hold; scrub must change what you see (focus, scale, crop, crossfade with meaning).
-- Caption sync: caption lands with the frame that proves it.
-- Desktop + laptop-width must feel cinematic. Reduced-motion = calm static stack (same order). Tablet should not feel like a broken film (staged stack with first proof visible, not inverted).
+- **Claim / Decision first**, then viz works under scroll. Numbered chapter, then proof. Steal Infoviz grammar only — not housing maps.
+- **GSAP pin** holds the leftover stage under CLOSE/title. `pinSpacing` is the runway. Do not CSS-tall the hold (double spacer = a document with no film).
+- Scrub must **visibly transform** what you see: scale, crop, focus, draw, split, pan. Opacity-only fades are a fail.
+- Caption sync: one live caption with the frame that proves it. Sequential swap, no dual subtitles.
+- Desktop + laptop: continuous pin/scrub film. Tablet keeps pin/scrub (one-column overlay proofs), not a dead stack. Reduced-motion = calm static stack, same order, Decision chips readable.
+- Cream bank-calm. No Multiverse glitch theatre on cream case pages.
 
 ### 3. Cream portfolio vibe (not briefing-deck grey)
 - Field: warm `--cream` / `--paper` end-to-end. No cool `#F3F4F6` cover hero; no `#e7e9ed` wireframe slabs as the main material.
@@ -70,6 +72,38 @@ Examples: “Approving is the job — so it has its own button, not a notificati
 ### 6. Close on a finding
 - Last beat is volume / what this produced — not another empty grid.
 - Prefer real contact-sheet or honest scaled proof when exports exist.
+
+### 7. Decision layer (UX/UI why)
+Every chapter (ladder, roles, approvals, money, permissions, grammar) stages **Finding/constraint → Choice → UI proof**. Not claim → screen only. Cover has no Decision chip. Scale stays close-on-finding.
+
+**No invented research.** Use only these locked briefs:
+
+| Chapter | Finding or constraint | Choice | UI proof |
+|---|---|---|---|
+| Ladder | Freelancers and mid-market teams are stages of one customer, not five products. | One platform. Complexity only when the business needs it. | Same accounts layout at both ends of the ladder (placeholders OK). |
+| Roles | Early on one login wears three hats. Later, three people. | Design for owner / maker / approver jobs, not job titles. | Three role cards + web vs phone cues. |
+| Approvals | Approval is a legal act. You cannot hide the rows. | Permanent Approvals door + batch that still shows every line. | Nav Approvals + Approve (N) with rows still visible. Ruled out: select-all with no per-row visibility. |
+| Money | “Balance” is four numbers to a business. Bad file rows after sign is too late. | Four balances on the card. Fail validation before signature. | Failed-rows crop, then four-balance card (placeholders OK). |
+| Permissions | A one-question-per-screen wizard dies at ~50 permissions. | One verb grid (start / check / view / send / approve) that scales from 1 to many. | Verb matrix. Ruled out: wizard, one question per screen. |
+| Grammar | Money paths that relearn endings break trust. | Same ending everywhere — Review → one-time code → done. | Three-step strip + empty states that offer the next action. |
+
+On-film: cream editorial chip in the claim column (label Finding or Constraint, then finding line, then Choice). Lands before the proof scrub. Ruled-out is a quiet secondary line under the chip. Captions stay proof-sync. Keep Echo’s six chapter titles + one-line bodies.
+
+Product language belongs in this doc. Stay off the page: entitlements, maker-checker, mental model, dual control, seamless, intuitive, fake %.
+
+### 8. Motion variety lock
+Each important chapter has a **distinct scrub storytelling device**. Opacity-only = fail.
+
+| Beat | Device (Infoviz analog) |
+|---|---|
+| Cover | Quiet hold, then soft scale-in of web + phone (boot calm). |
+| Ladder | Horizontal stage walk L→R; freelancer vs medium focus; pull-back; crop to accounts pair. |
+| Roles | Cards assemble; one role enlarges while others recede; device cue morphs web desk vs phone. |
+| Approvals | Crop/zoom the Approvals door, then wipe/split to batch Approve (N) with rows visible. |
+| Money | Fail-rows punch-crop first; slide to four-balance card with sequential callouts. |
+| Permissions | Matrix draws cell-by-cell (`scaleY`); compose-shrink to solo-user grid. |
+| Grammar | Three-step strip as pinned hard beats (Review / OTP / done); empty-state grid fans in. |
+| Scale | Contact sheet zoom-out / mosaic reveal. Close on finding. |
 
 ---
 

@@ -744,7 +744,7 @@ window.ProjectStudy = (function () {
         headerOffset: headPx,
         onStep: setStep,
         startPage: pendingPage || '',
-        forceStatic: reduceMotion.matches || typeof gsap === 'undefined'
+        forceStatic: typeof gsap === 'undefined'
       });
     }
 
@@ -753,7 +753,12 @@ window.ProjectStudy = (function () {
       syncHead();
       if (template === 'cbx300') {
         bindCbx300();
-        if (window.ScrollTrigger) ScrollTrigger.refresh();
+        afterLayout(function () {
+          if (window.ScrollTrigger) ScrollTrigger.refresh();
+        });
+        window.setTimeout(function () {
+          if (window.ScrollTrigger) ScrollTrigger.refresh();
+        }, 280);
         return;
       }
       if (reduceMotion.matches || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {

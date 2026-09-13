@@ -2,18 +2,27 @@
  * CaseScrollKit — Infoviz grammar for opened-case films.
  * Free GSAP core + ScrollTrigger only. No Club plugins.
  *
- * Claim stays readable. Scrub must change meaning: focus, crop/scale,
- * transform-origin, track pan. Opacity dim of context is secondary.
+ * Claim stays readable. Opacity-only fades are a fail.
+ * Scrub must transform: scale, crop (clip-path), focus, draw, split, pan.
  *
- * Desktop: CSS sticky stage under CLOSE/title; hold is the runway.
- * GSAP scrubs the argument. It does not pin (pin + pinSpacing inside a
- * tall hold added a second spacer and made scroll feel broken).
- * Stage height is leftover viewport (--study-stage), not 100svh.
- * ≤960: staged stack, first proof visible, light focus on that proof.
- * prefers-reduced-motion: calm static stack, same order + captions.
+ * GSAP pin holds the stage under CLOSE/title. pinSpacing is the runway.
+ * Do not also CSS-tall the hold (that double-spacer was the dead film).
+ * Stage height is leftover viewport (--study-stage), not extra 100svh.
+ * prefers-reduced-motion: calm static stack, same order + Decision chips.
  */
 window.CaseScrollKit = (function () {
   'use strict';
+
+  var END_RATIO = {
+    cover: 1.5,
+    ends: 3.35,
+    jobs: 2.7,
+    door: 2.55,
+    money: 2.6,
+    verbs: 2.8,
+    ending: 3.15,
+    finding: 2.0
+  };
 
   function reduceQuery() {
     return window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -54,6 +63,10 @@ window.CaseScrollKit = (function () {
     return q(page, '[data-film-ask]');
   }
 
+  function chipEl(page) {
+    return q(page, '[data-film-decision]');
+  }
+
   function setCaption(caps, index) {
     caps.forEach(function (cap, i) {
       var on = i === index;
@@ -66,11 +79,13 @@ window.CaseScrollKit = (function () {
     if (stack) stack.classList.toggle('is-stage', !!on);
   }
 
+  var CLEAR = 'transform,opacity,visibility,x,y,scale,scaleX,scaleY,xPercent,yPercent,transformOrigin,clipPath';
+
   function resetPage(page) {
     pinStage(page, false);
     page.classList.remove('is-static');
-    qq(page, '[data-film-stage], .film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-track], .film-sheet, .film-action').forEach(function (el) {
-      window.gsap.set(el, { clearProps: 'transform,opacity,visibility,x,y,scale,xPercent,transformOrigin' });
+    qq(page, '[data-film-stage], [data-film-hold], .film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-decision], [data-film-ruled], [data-film-track], .film-sheet, .film-sheet i, .film-action, .film-ladder__row, .film-cell, .film-grid__head, .film-balance, .film-job__screen, .film-device, .film-ui-band, .film-empty article, .film-step').forEach(function (el) {
+      window.gsap.set(el, { clearProps: CLEAR });
     });
   }
 
@@ -78,11 +93,11 @@ window.CaseScrollKit = (function () {
     beatsOf(world).forEach(function (page) {
       page.classList.add('is-static');
       pinStage(page, false);
-      qq(page, '[data-caption], [data-film-ask]').forEach(function (cap) {
+      qq(page, '[data-caption], [data-film-ask], [data-film-decision], [data-film-ruled]').forEach(function (cap) {
         window.gsap.set(cap, { autoAlpha: 1, y: 0, clearProps: 'visibility' });
       });
-      qq(page, '[data-focus], [data-shot], .film-board, [data-film-track], .film-sheet').forEach(function (el) {
-        window.gsap.set(el, { autoAlpha: 1, scale: 1, x: 0, y: 0, xPercent: 0 });
+      qq(page, '[data-focus], [data-shot], .film-board, [data-film-track], .film-sheet, .film-sheet i, .film-cell, .film-device, .film-empty article, .film-step, .film-ladder__row').forEach(function (el) {
+        window.gsap.set(el, { autoAlpha: 1, scale: 1, scaleX: 1, scaleY: 1, x: 0, y: 0, xPercent: 0, clipPath: 'inset(0% 0% 0% 0%)' });
       });
     });
   }
@@ -133,59 +148,110 @@ window.CaseScrollKit = (function () {
     tl.to(ask, { autoAlpha: 1, y: 0, duration: 0.4 }, at);
   }
 
-  /* Focus stays in-frame: dim/lift, no board scale. */
-  function focusOne(tl, items, index, at) {
-    items.forEach(function (el, i) {
-      var on = i === index;
-      tl.to(el, {
-        scale: 1,
-        autoAlpha: on ? 1 : 0.34,
-        y: on ? -10 : 0,
-        duration: 0.55
-      }, at);
-    });
-  }
-
-  function pullBack(tl, items, at) {
-    if (items.length) {
-      tl.to(items, { scale: 1, autoAlpha: 1, y: 0, duration: 0.5 }, at);
+  /* Claim + Decision readable before viz work. Transform settle, not a fade-in of the argument. */
+  function leadDecision(tl, page) {
+    var chip = chipEl(page);
+    var ruled = q(page, '[data-film-ruled]');
+    if (chip) {
+      window.gsap.set(chip, { autoAlpha: 1, y: 0 });
+      tl.fromTo(chip, { y: 14 }, { y: 0, duration: 0.55 }, 0);
     }
+    if (ruled) window.gsap.set(ruled, { autoAlpha: 0.4, y: 0 });
+    return 0.58;
   }
 
-  function cropSwap(tl, outgoing, incoming, at) {
-    var innAt = typeof at === 'number' ? at + 0.32 : '>';
+  function cropIn(tl, outgoing, incoming, at) {
+    var innAt = typeof at === 'number' ? at + 0.28 : '>';
     if (outgoing) {
       tl.to(outgoing, {
-        y: -10,
+        scale: 1.14,
+        y: -18,
+        clipPath: 'inset(0% 0% 42% 0%)',
+        transformOrigin: '50% 32%',
         autoAlpha: 0,
-        duration: 0.32
+        duration: 0.42
       }, at);
     }
     if (incoming) {
       tl.fromTo(incoming, {
-        scale: 1.04,
-        y: 14,
-        autoAlpha: 0,
+        scale: 1.22,
+        y: 20,
+        autoAlpha: 1,
         visibility: 'visible',
+        clipPath: 'inset(16% 10% 22% 10%)',
         transformOrigin: '50% 42%'
       }, {
         scale: 1,
         y: 0,
-        autoAlpha: 1,
-        duration: 0.42
+        clipPath: 'inset(0% 0% 0% 0%)',
+        duration: 0.5
       }, innAt);
     }
   }
 
-  function bindCover(page) {
-    var board = q(page, '.film-board');
+  function wipeSplit(tl, outgoing, incoming, at) {
+    if (!incoming) return;
+    window.gsap.set(incoming, {
+      autoAlpha: 1,
+      visibility: 'visible',
+      xPercent: 42,
+      clipPath: 'inset(0% 0% 0% 68%)',
+      scale: 1
+    });
+    if (outgoing) {
+      tl.to(outgoing, {
+        xPercent: -22,
+        scale: 1.08,
+        transformOrigin: '8% 50%',
+        clipPath: 'inset(0% 52% 0% 0%)',
+        duration: 0.55
+      }, at);
+    }
+    tl.to(incoming, {
+      xPercent: 0,
+      clipPath: 'inset(0% 0% 0% 0%)',
+      duration: 0.6
+    }, at);
+    if (outgoing) {
+      tl.to(outgoing, { autoAlpha: 0, duration: 0.2 }, at + 0.55);
+    }
+  }
+
+  function bindCover(page, tl) {
+    var web = q(page, '.film-device--web');
+    var phone = q(page, '.film-device--phone');
     var caps = captions(page);
-    if (caps.length) window.gsap.set(caps[0], { autoAlpha: 1, y: 0 });
-    if (board) window.gsap.set(board, { scale: 1 });
+    if (caps.length) setCaption(caps, 0);
+    if (web) {
+      tl.fromTo(web, {
+        scale: 0.88,
+        y: 42,
+        transformOrigin: '48% 62%'
+      }, {
+        scale: 1,
+        y: 0,
+        duration: 1.15
+      }, 0.2);
+    }
+    if (phone) {
+      tl.fromTo(phone, {
+        scale: 0.78,
+        x: 56,
+        y: 32,
+        transformOrigin: '85% 90%'
+      }, {
+        scale: 1,
+        x: 0,
+        y: 0,
+        duration: 1.1
+      }, 0.38);
+    }
   }
 
   function bindEnds(page, tl) {
+    var t0 = leadDecision(tl, page);
     var items = focusEls(page);
+    var row = q(page, '.film-ladder__row');
     var caps = captions(page);
     var shotEls = shots(page);
     var n = items.length;
@@ -194,181 +260,294 @@ window.CaseScrollKit = (function () {
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
     if (!n) return;
 
-    window.gsap.set(items, { scale: 1, autoAlpha: 1, y: 0 });
+    window.gsap.set(items, { scale: 0.84, y: 22, transformOrigin: '50% 80%' });
+    if (row) window.gsap.set(row, { x: 0 });
 
-    /* Freelancer end, then medium end, then both, then whole, then accounts crop. */
-    focusOne(tl, items, 0, 0.05);
-    captionAt(tl, caps, Math.min(1, caps.length - 1), 0.05);
-    focusOne(tl, items, n - 1, 0.55);
-    captionAt(tl, caps, Math.min(2, caps.length - 1), 0.55);
-    if (n > 2) {
-      tl.to(items, { autoAlpha: 0.28, y: 0, duration: 0.4 }, 1.05);
-      tl.to([items[0], items[n - 1]], { autoAlpha: 1, y: -10, duration: 0.4 }, 1.05);
-      captionAt(tl, caps, Math.min(3, caps.length - 1), 1.05);
-    }
-    pullBack(tl, items, 1.55);
-    captionAt(tl, caps, 0, 1.55);
+    items.forEach(function (el, i) {
+      var at = t0 + i * 0.32;
+      tl.to(el, { scale: 1.08, y: -10, duration: 0.28 }, at);
+      if (i > 0) {
+        tl.to(items[i - 1], { scale: 0.92, y: 4, duration: 0.28 }, at);
+      }
+      if (row && i >= 1) {
+        tl.to(row, {
+          x: function () { return -Math.round(Math.min(el.offsetLeft * 0.42, 120)); },
+          duration: 0.28
+        }, at);
+      }
+    });
+
+    var tWalk = t0 + n * 0.32;
+    /* Ends pull focus (freelancer, then medium), then pull-back to the whole. */
+    items.forEach(function (el, i) {
+      var on = i === 0;
+      tl.to(el, { scale: on ? 1.14 : 0.82, y: on ? -16 : 10, duration: 0.45 }, tWalk);
+    });
+    if (row) tl.to(row, { x: 0, duration: 0.45 }, tWalk);
+    captionAt(tl, caps, Math.min(1, caps.length - 1), tWalk);
+
+    var tMed = tWalk + 0.55;
+    items.forEach(function (el, i) {
+      var on = i === n - 1;
+      tl.to(el, { scale: on ? 1.14 : 0.82, y: on ? -16 : 10, duration: 0.45 }, tMed);
+    });
+    captionAt(tl, caps, Math.min(2, caps.length - 1), tMed);
+
+    var tBoth = tMed + 0.55;
+    items.forEach(function (el, i) {
+      var on = i === 0 || i === n - 1;
+      tl.to(el, { scale: on ? 1.1 : 0.8, y: on ? -12 : 8, duration: 0.4 }, tBoth);
+    });
+    captionAt(tl, caps, Math.min(3, caps.length - 1), tBoth);
+
+    var tAll = tBoth + 0.5;
+    tl.to(items, { scale: 1, y: 0, duration: 0.45 }, tAll);
+    if (row) tl.to(row, { x: 0, duration: 0.45 }, tAll);
+    captionAt(tl, caps, 0, tAll);
 
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1, y: 0 });
-      window.gsap.set(shotEls.slice(1), { autoAlpha: 0, scale: 1.04, y: 16 });
-      cropSwap(tl, shotEls[0], shotEls[1], 2.05);
-      captionAt(tl, caps, Math.min(4, caps.length - 1), 2.05);
-      askAt(tl, page, 2.35);
+      window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1, y: 0, clipPath: 'inset(0% 0% 0% 0%)' });
+      window.gsap.set(shotEls.slice(1), { autoAlpha: 1, scale: 1.18, y: 16, clipPath: 'inset(100% 0% 0% 0%)' });
+      cropIn(tl, shotEls[0], shotEls[1], tAll + 0.5);
+      captionAt(tl, caps, Math.min(4, caps.length - 1), tAll + 0.5);
+      askAt(tl, page, tAll + 0.85);
     } else {
-      askAt(tl, page, 1.7);
+      askAt(tl, page, tAll + 0.2);
     }
   }
 
   function bindJobs(page, tl) {
+    var t0 = leadDecision(tl, page);
     var items = focusEls(page);
     var caps = captions(page);
     var ask = askEl(page);
+    var screens = qq(page, '.film-job__screen');
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+
+    window.gsap.set(items, { scale: 0.78, y: 48, x: 0, transformOrigin: '50% 70%' });
     items.forEach(function (el, i) {
-      focusOne(tl, items, i, i === 0 ? 0.08 : '>');
-      captionAt(tl, caps, Math.min(i + 1, caps.length - 1), '<');
+      tl.to(el, { scale: 1, y: 0, duration: 0.4 }, t0 + i * 0.16);
     });
-    pullBack(tl, items, '>');
-    captionAt(tl, caps, 0, '<');
-    askAt(tl, page, '>');
+
+    var tCycle = t0 + 0.7;
+    items.forEach(function (el, i) {
+      var at = tCycle + i * 0.7;
+      items.forEach(function (card, j) {
+        var on = i === j;
+        tl.to(card, {
+          scale: on ? 1.14 : 0.86,
+          y: on ? -18 : 16,
+          x: on ? 0 : (j - i) * 8,
+          duration: 0.5
+        }, at);
+      });
+      screens.forEach(function (screen, j) {
+        var phone = items[j] && items[j].getAttribute('data-focus') === 'approver';
+        var on = i === j;
+        tl.to(screen, {
+          scaleX: on && phone ? 0.62 : 1,
+          scaleY: on && phone ? 1.12 : 1,
+          transformOrigin: '50% 0%',
+          duration: 0.5
+        }, at);
+      });
+      captionAt(tl, caps, Math.min(i, caps.length - 1), at);
+    });
+
+    var tBack = tCycle + items.length * 0.7;
+    tl.to(items, { scale: 1, y: 0, x: 0, duration: 0.45 }, tBack);
+    tl.to(screens, { scaleX: 1, scaleY: 1, duration: 0.45 }, tBack);
+    captionAt(tl, caps, 0, tBack);
+    askAt(tl, page, tBack + 0.2);
   }
 
   function bindDoor(page, tl) {
+    var t0 = leadDecision(tl, page);
     var door = q(page, '[data-focus="door"]');
     var rest = qq(page, '[data-focus="nav"]');
     var action = q(page, '.film-action');
     var shotEls = shots(page);
     var caps = captions(page);
     var ask = askEl(page);
+    var ruled = q(page, '[data-film-ruled]');
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
 
     if (door) {
-      tl.to(door, { y: -6, duration: 0.55 }, 0.08);
-      if (rest.length) tl.to(rest, { autoAlpha: 0.32, duration: 0.55 }, 0.08);
-      captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
-      tl.to(door, { y: 0, duration: 0.45 }, 0.7);
-      if (rest.length) tl.to(rest, { autoAlpha: 1, duration: 0.45 }, 0.7);
+      window.gsap.set(door, { scale: 1, x: 0, transformOrigin: '12% 50%' });
+      tl.to(door, { scale: 1.18, x: 10, y: -8, duration: 0.7 }, t0);
+      if (rest.length) {
+        tl.to(rest, { scale: 0.9, x: -16, y: 8, duration: 0.7 }, t0);
+      }
+      captionAt(tl, caps, Math.min(1, caps.length - 1), t0);
     }
 
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, y: 0, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 16, scale: 1.04 });
-      cropSwap(tl, shotEls[0], shotEls[1], 1.15);
+      window.gsap.set(shotEls[0], { autoAlpha: 1, xPercent: 0, scale: 1, clipPath: 'inset(0% 0% 0% 0%)' });
+      wipeSplit(tl, shotEls[0], shotEls[1], t0 + 0.85);
       if (action) {
-        window.gsap.set(action, { scale: 1 });
-        tl.to(action, { y: -4, duration: 0.35 }, 1.35);
-        tl.to(action, { y: 0, duration: 0.28 }, 1.7);
+        window.gsap.set(action, { scale: 1, transformOrigin: '80% 50%' });
+        tl.to(action, { scale: 1.08, y: -6, duration: 0.35 }, t0 + 1.25);
+        tl.to(action, { scale: 1, y: 0, duration: 0.28 }, t0 + 1.6);
       }
-      captionAt(tl, caps, Math.min(2, caps.length - 1), 1.15);
-      askAt(tl, page, 1.55);
+      captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 0.85);
+      if (ruled) tl.to(ruled, { autoAlpha: 1, y: 0, duration: 0.4 }, t0 + 1.15);
+      askAt(tl, page, t0 + 1.55);
     } else {
-      askAt(tl, page, 0.9);
+      askAt(tl, page, t0 + 0.9);
     }
   }
 
   function bindMoney(page, tl) {
+    var t0 = leadDecision(tl, page);
     var bad = qq(page, '.film-row.is-bad');
-    var rows = qq(page, '.film-row');
+    var ok = qq(page, '.film-row:not(.is-bad)');
+    var fail = q(page, '[data-shot="fail"] .film-board') || q(page, '.film-fail');
     var shotEls = shots(page);
     var balances = qq(page, '.film-balance');
+    var bands = qq(page, '.film-balance .film-ui-band');
     var caps = captions(page);
     var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
 
-    if (rows.length) {
-      tl.to(rows, { autoAlpha: 0.32, duration: 0.4 }, 0.08);
-      if (bad.length) {
-        tl.to(bad, { autoAlpha: 1, y: -4, duration: 0.45 }, 0.08);
-      }
-      captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
+    if (fail) {
+      window.gsap.set(fail, { scale: 1, transformOrigin: '50% 18%' });
+      tl.to(fail, { scale: 1.16, y: -12, duration: 0.55 }, t0);
     }
+    if (ok.length) tl.to(ok, { scale: 0.92, y: 10, duration: 0.45 }, t0);
+    if (bad.length) tl.to(bad, { scale: 1.08, y: -8, duration: 0.5 }, t0);
+    captionAt(tl, caps, Math.min(1, caps.length - 1), t0);
 
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, y: 0, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 16, scale: 1.04 });
-      cropSwap(tl, shotEls[0], shotEls[1], 0.7);
-      captionAt(tl, caps, Math.min(2, caps.length - 1), 1.02);
+      window.gsap.set(shotEls[0], { autoAlpha: 1, xPercent: 0, scale: 1, clipPath: 'inset(0% 0% 0% 0%)' });
+      window.gsap.set(shotEls[1], { autoAlpha: 1, xPercent: 28, scale: 1, clipPath: 'inset(0% 0% 0% 100%)' });
+      tl.to(shotEls[0], {
+        xPercent: -24,
+        scale: 0.92,
+        clipPath: 'inset(0% 40% 0% 0%)',
+        duration: 0.5
+      }, t0 + 0.75);
+      tl.to(shotEls[1], {
+        xPercent: 0,
+        clipPath: 'inset(0% 0% 0% 0%)',
+        duration: 0.55
+      }, t0 + 0.75);
+      tl.to(shotEls[0], { autoAlpha: 0, duration: 0.2 }, t0 + 1.2);
+      captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 0.85);
       if (balances.length) {
+        window.gsap.set(balances, { scale: 0.86, y: 18 });
+        window.gsap.set(bands, { scaleX: 0.18, transformOrigin: '0% 50%' });
         balances.forEach(function (el, i) {
-          tl.to(el, { y: -6, duration: 0.24 }, i === 0 ? 1.35 : '>');
-          tl.to(el, { y: 0, duration: 0.2 }, '>');
+          var at = t0 + 1.35 + i * 0.22;
+          tl.to(el, { scale: 1.06, y: -6, duration: 0.22 }, at);
+          if (bands[i]) tl.to(bands[i], { scaleX: 1, duration: 0.22 }, at);
+          tl.to(el, { scale: 1, y: 0, duration: 0.16 }, at + 0.22);
         });
       }
-      askAt(tl, page, 1.7);
+      askAt(tl, page, t0 + 2.2);
     } else {
-      askAt(tl, page, 0.8);
+      askAt(tl, page, t0 + 0.8);
     }
   }
 
   function bindVerbs(page, tl) {
-    var heads = qq(page, '.film-grid__head');
+    var t0 = leadDecision(tl, page);
+    var cells = qq(page, '[data-shot="grid"] .film-cell');
+    var heads = qq(page, '[data-shot="grid"] .film-grid__head');
     var shotEls = shots(page);
     var caps = captions(page);
     var ask = askEl(page);
+    var ruled = q(page, '[data-film-ruled]');
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
-    if (heads.length) {
-      tl.to(heads, { autoAlpha: 1, y: -2, duration: 0.4 }, 0.08);
-      captionAt(tl, caps, Math.min(1, caps.length - 1), 0.08);
+
+    if (cells.length) {
+      window.gsap.set(cells, { scaleY: 0, transformOrigin: '50% 100%' });
+      window.gsap.set(heads, { y: 10, scale: 0.92 });
+      tl.to(heads, { y: 0, scale: 1, duration: 0.35 }, t0);
+      tl.to(cells, { scaleY: 1, duration: 0.28, stagger: 0.045 }, t0 + 0.12);
+      captionAt(tl, caps, Math.min(1, caps.length - 1), t0);
     }
+
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1 });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 1.04, y: 12 });
-      cropSwap(tl, shotEls[0], shotEls[1], 1.15);
-      captionAt(tl, caps, Math.min(2, caps.length - 1), 1.15);
-      askAt(tl, page, 1.5);
+      window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1, transformOrigin: '50% 50%', clipPath: 'inset(0% 0% 0% 0%)' });
+      window.gsap.set(shotEls[1], { autoAlpha: 1, scale: 0.72, clipPath: 'inset(100% 0% 0% 0%)' });
+      tl.to(shotEls[0], { scale: 0.62, y: -12, duration: 0.5 }, t0 + 1.35);
+      cropIn(tl, shotEls[0], shotEls[1], t0 + 1.45);
+      captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 1.45);
+      if (ruled) tl.to(ruled, { autoAlpha: 1, duration: 0.35 }, t0 + 1.6);
+      askAt(tl, page, t0 + 1.95);
     } else {
-      askAt(tl, page, 0.8);
+      askAt(tl, page, t0 + 0.9);
     }
   }
 
   function bindEnding(page, tl, scroller) {
+    var t0 = leadDecision(tl, page);
     var track = q(page, '[data-film-track]');
     var steps = qq(page, '.film-step');
+    var empties = qq(page, '.film-empty article');
     var shotEls = shots(page);
     var caps = captions(page);
     var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+
     if (track && steps.length) {
       window.gsap.set(track, { x: 0 });
-      tl.to(track, {
-        x: function () {
-          var wrap = track.parentNode;
-          var max = Math.max(0, track.scrollWidth - (wrap ? wrap.clientWidth : scroller.clientWidth));
-          return -max;
-        },
-        ease: 'none',
-        duration: 2.2
-      }, 0.05);
+      window.gsap.set(steps, { scale: 0.9, y: 16 });
+      tl.to(steps[0], { scale: 1.04, y: 0, duration: 0.35 }, t0);
       steps.forEach(function (step, i) {
-        captionAt(tl, caps, Math.min(i, caps.length - 1), 0.05 + i * 0.7);
+        var at = t0 + i * 0.85;
+        if (i > 0) {
+          tl.to(track, {
+            x: function () { return -Math.round(step.offsetLeft); },
+            duration: 0.45
+          }, at);
+          tl.to(steps[i - 1], { scale: 0.88, y: 10, duration: 0.35 }, at);
+          tl.to(step, { scale: 1.04, y: 0, duration: 0.4 }, at);
+        }
+        captionAt(tl, caps, Math.min(i, caps.length - 1), at);
       });
     }
+
+    var tFan = t0 + Math.max(1, steps.length) * 0.85;
     if (shotEls.length > 1) {
-      window.gsap.set(shotEls[1], { autoAlpha: 0, y: 16, scale: 1.04 });
-      cropSwap(tl, shotEls[0], shotEls[1], 2.3);
-      captionAt(tl, caps, Math.min(3, caps.length - 1), 2.62);
-      askAt(tl, page, 2.7);
+      window.gsap.set(shotEls[1], { autoAlpha: 1, scale: 1, y: 0, clipPath: 'inset(100% 0% 0% 0%)' });
+      cropIn(tl, shotEls[0], shotEls[1], tFan);
+      if (empties.length) {
+        window.gsap.set(empties, { scale: 0.7, y: 28, rotation: 0 });
+        tl.to(empties, {
+          scale: 1,
+          y: 0,
+          duration: 0.4,
+          stagger: 0.08
+        }, tFan + 0.4);
+      }
+      captionAt(tl, caps, Math.min(3, caps.length - 1), tFan);
+      askAt(tl, page, tFan + 0.7);
     } else {
-      askAt(tl, page, 2.1);
+      askAt(tl, page, tFan);
     }
   }
 
   function bindFinding(page, tl) {
     var sheet = q(page, '.film-sheet');
+    var tiles = qq(page, '.film-sheet i');
     var caps = captions(page);
     if (caps.length) setCaption(caps, 0);
     if (!sheet) return;
-    window.gsap.set(sheet, { scale: 1.06, transformOrigin: '28% 30%' });
-    tl.to(sheet, { scale: 1.02, transformOrigin: '62% 48%', duration: 1, ease: 'none' }, 0);
-    captionAt(tl, caps, Math.min(1, caps.length - 1), 0.15);
-    tl.to(sheet, { scale: 1, transformOrigin: '50% 50%', duration: 1, ease: 'none' }, 1);
-    captionAt(tl, caps, 0, 1);
+    window.gsap.set(sheet, { scale: 1.42, transformOrigin: '28% 30%' });
+    if (tiles.length) window.gsap.set(tiles, { scale: 0.42, transformOrigin: '50% 50%' });
+    tl.to(sheet, { scale: 1.12, transformOrigin: '58% 46%', duration: 1.05 }, 0);
+    if (tiles.length) {
+      tl.to(tiles, { scale: 1, duration: 0.55, stagger: { each: 0.018, from: 'center' } }, 0.15);
+    }
+    captionAt(tl, caps, Math.min(1, caps.length - 1), 0.2);
+    tl.to(sheet, { scale: 1, transformOrigin: '50% 50%', duration: 0.9 }, 1.1);
+    captionAt(tl, caps, 0, 1.15);
   }
 
   function recipeFor(name) {
@@ -394,6 +573,10 @@ window.CaseScrollKit = (function () {
     }
   }
 
+  function endRatio(recipe) {
+    return END_RATIO[recipe] || 2.4;
+  }
+
   function bindCinematic(opts, pages, triggers) {
     var scroller = opts.scroller;
     var gsap = window.gsap;
@@ -404,94 +587,47 @@ window.CaseScrollKit = (function () {
       var recipe = page.getAttribute('data-recipe') || 'ends';
       var fn = recipeFor(recipe);
       var hold = q(page, '[data-film-hold]') || page;
-      var stage = q(page, '[data-film-stage]') || page;
       var caps = captions(page);
       var shotEls = shots(page);
       var ask = askEl(page);
+      var chip = chipEl(page);
 
       if (caps.length) {
         gsap.set(caps[0], { autoAlpha: 1, y: 0 });
         gsap.set(caps.slice(1), { autoAlpha: 0, y: 8 });
       }
       if (ask) gsap.set(ask, { autoAlpha: 0, y: 8 });
-
-      if (!pinWanted) {
-        fn(page, gsap.timeline({ paused: true }), scroller);
-        return;
-      }
+      if (chip) gsap.set(chip, { autoAlpha: 1, y: 0 });
 
       if (shotEls.length > 1) {
         pinStage(page, true);
-        gsap.set(shotEls[0], { autoAlpha: 1, x: 0, y: 0, scale: 1, xPercent: 0 });
-        gsap.set(shotEls.slice(1), { autoAlpha: 0 });
+        gsap.set(shotEls[0], {
+          autoAlpha: 1, x: 0, y: 0, scale: 1, xPercent: 0,
+          clipPath: 'inset(0% 0% 0% 0%)'
+        });
+        gsap.set(shotEls.slice(1), { autoAlpha: 1, clipPath: 'inset(100% 0% 0% 0%)' });
       }
 
       var tl = gsap.timeline({ defaults: { ease: 'none' } });
       fn(page, tl, scroller);
 
-      var isLast = page.getAttribute('data-finding') === 'true';
-      /* Chrome counted once: sticky stage sits at --study-head.
-         Scrub maps hold travel. pin: false — hold already is the spacer.
-         Fade the stage off as the hold leaves so the next chapter does not stack. */
+      if (!pinWanted) return;
+
+      /* Chrome counted once: pin the leftover stage under --study-head.
+         pinSpacing is the runway. pin: true — sticky CSS is not the hold. */
       triggers.push(window.ScrollTrigger.create({
         trigger: hold,
         scroller: scroller,
         start: function () { return 'top ' + head() + 'px'; },
-        end: 'bottom bottom',
-        pin: false,
-        scrub: 0.45,
+        end: function () {
+          return '+=' + Math.round(Math.max(scroller.clientHeight, 480) * endRatio(recipe));
+        },
+        pin: true,
+        pinSpacing: true,
+        scrub: 0.55,
         animation: tl,
         invalidateOnRefresh: true,
-        onEnter: function () { gsap.to(stage, { autoAlpha: 1, duration: 0.2, overwrite: 'auto' }); },
-        onEnterBack: function () { gsap.to(stage, { autoAlpha: 1, duration: 0.2, overwrite: 'auto' }); },
-        onLeave: function () {
-          if (isLast) return;
-          gsap.to(stage, { autoAlpha: 0, duration: 0.28, overwrite: 'auto' });
-        },
-        onLeaveBack: function () { gsap.to(stage, { autoAlpha: 0, duration: 0.28, overwrite: 'auto' }); }
-      }));
-    });
-  }
-
-  function bindStaged(opts, pages, triggers) {
-    var scroller = opts.scroller;
-    var gsap = window.gsap;
-    var head = function () { return headPx(scroller, opts.headerOffset); };
-
-    pages.forEach(function (page) {
-      pinStage(page, false);
-      var items = focusEls(page);
-      var caps = captions(page);
-      var shotEls = shots(page);
-      var ask = askEl(page);
-      var recipe = page.getAttribute('data-recipe') || '';
-
-      if (caps.length) {
-        gsap.set(caps, { autoAlpha: 1, y: 0 });
-      }
-      if (ask) gsap.set(ask, { autoAlpha: 1, y: 0 });
-      if (shotEls.length) {
-        gsap.set(shotEls, { autoAlpha: 1, x: 0, y: 0, scale: 1, xPercent: 0, clearProps: 'visibility' });
-      }
-
-      if (!items.length) return;
-      if (page.getAttribute('data-pin') === 'false') return;
-
-      var tl = gsap.timeline({ defaults: { ease: 'none' } });
-      if (recipe !== 'cover') {
-        window.gsap.set(items, { scale: 1, autoAlpha: 1, y: 0 });
-        focusOne(tl, items, 0, 0);
-        pullBack(tl, items, 0.7);
-      }
-
-      triggers.push(window.ScrollTrigger.create({
-        trigger: page,
-        scroller: scroller,
-        start: function () { return 'top ' + (head() + 24) + 'px'; },
-        end: 'bottom 55%',
-        scrub: 0.5,
-        animation: tl,
-        invalidateOnRefresh: true
+        anticipatePin: 1
       }));
     });
   }
@@ -515,8 +651,11 @@ window.CaseScrollKit = (function () {
     var pages = beatsOf(world);
     var mm = null;
     var triggers = [];
+    var refreshTimers = [];
 
     function killLocal() {
+      refreshTimers.forEach(function (id) { window.clearTimeout(id); });
+      refreshTimers = [];
       triggers.forEach(function (t) {
         if (t && t.kill) t.kill();
       });
@@ -530,7 +669,14 @@ window.CaseScrollKit = (function () {
       goToBeat(scroller, world, opts.headerOffset, id);
     }
 
-    if (!gsap || !ScrollTrigger || opts.forceStatic || reduceQuery().matches) {
+    function refreshSoon() {
+      if (!ScrollTrigger) return;
+      ScrollTrigger.refresh();
+      refreshTimers.push(window.setTimeout(function () { ScrollTrigger.refresh(); }, 160));
+      refreshTimers.push(window.setTimeout(function () { ScrollTrigger.refresh(); }, 520));
+    }
+
+    if (!gsap || !ScrollTrigger || opts.forceStatic) {
       if (gsap) setupStatic(world);
       else {
         pages.forEach(function (page) { page.classList.add('is-static'); });
@@ -548,8 +694,7 @@ window.CaseScrollKit = (function () {
     mm = gsap.matchMedia();
     mm.add(
       {
-        isDesktop: '(min-width: 961px)',
-        isTablet: '(max-width: 960px)',
+        motion: '(prefers-reduced-motion: no-preference)',
         reduceMotion: '(prefers-reduced-motion: reduce)'
       },
       function (context) {
@@ -558,8 +703,6 @@ window.CaseScrollKit = (function () {
         watchSteps(scroller, pages, opts.onStep, triggers);
         if (cond.reduceMotion) {
           setupStatic(world);
-        } else if (cond.isTablet) {
-          bindStaged(opts, pages, triggers);
         } else {
           bindCinematic(opts, pages, triggers);
         }
@@ -567,8 +710,8 @@ window.CaseScrollKit = (function () {
       }
     );
 
-    ScrollTrigger.refresh();
-    window.setTimeout(startPage, 60);
+    refreshSoon();
+    window.setTimeout(startPage, 80);
 
     return {
       kill: function () {

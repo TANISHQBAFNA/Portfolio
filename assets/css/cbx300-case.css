@@ -47,6 +47,7 @@ html.is-dark .study[data-template="cbx300"] {
   isolation: isolate;
   background: var(--film-cream, #f4efe6);
   color: var(--film-ink, #1e1510);
+  padding-top: var(--study-head, 72px);
 }
 
 .film-world[hidden] {
@@ -70,19 +71,15 @@ html.is-dark .study[data-template="cbx300"] {
   min-height: 100svh;
 }
 
+/* One leftover viewport. GSAP pin + pinSpacing is the runway.
+   Do not CSS-tall this hold (double spacer = dead film). */
 .film-beat[data-pin="true"] .film-hold {
-  height: 240vh;
+  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
 }
 
-.film-beat[data-hold="short"] .film-hold { height: 180vh; }
-.film-beat[data-hold="mid"] .film-hold { height: 220vh; }
-.film-beat[data-hold="tall"] .film-hold { height: 280vh; }
-
-/* Sticky under CLOSE/title. Height is leftover viewport, not 100svh.
-   GSAP scrubs the hold; it does not pin (avoids a second spacer). */
 .film-beat[data-pin="true"] .film-stage {
-  position: sticky;
-  top: var(--study-head, 72px);
+  position: relative;
   height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
   min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
   max-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
@@ -111,6 +108,7 @@ html.is-dark .study[data-template="cbx300"] {
   flex-direction: column;
   justify-content: center;
   min-height: 0;
+  overflow: auto;
 }
 
 .film-beat[data-pin="true"] .film-viz {
@@ -201,6 +199,48 @@ html.is-dark .study[data-template="cbx300"] {
   color: var(--film-deep);
 }
 
+.film-decision {
+  margin: 16px 0 0;
+  max-width: 38ch;
+  padding: 0 0 0 12px;
+  border-left: 2px solid var(--film-teal);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.film-decision__label,
+.film-decision__choice-label {
+  margin: 0;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--film-teal);
+}
+
+.film-decision__choice-label {
+  margin-top: 8px;
+  color: var(--film-deep);
+}
+
+.film-decision__finding,
+.film-decision__choice {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--film-ink);
+}
+
+.film-decision__ruled {
+  margin: 8px 0 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.74rem;
+  line-height: 1.4;
+  color: var(--film-faint);
+}
+
 .film-viz {
   position: relative;
   min-height: 0;
@@ -234,6 +274,7 @@ html.is-dark .study[data-template="cbx300"] {
   width: 100%;
   height: 100%;
   min-height: 0;
+  will-change: transform;
 }
 
 .film-paper {
@@ -244,10 +285,11 @@ html.is-dark .study[data-template="cbx300"] {
 
 .film-caption-stack {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   min-height: 3.1em;
   max-width: 54rem;
   flex-shrink: 0;
+  background: var(--film-cream);
 }
 
 .film-caption {
@@ -278,17 +320,17 @@ html.is-dark .study[data-template="cbx300"] {
   visibility: visible;
 }
 
-/* Cover: one viewport under chrome. Type then stage. */
+/* Cover: leftover viewport under chrome, then pin-scrub scale-in. */
 .film-beat--cover .film-hold {
-  height: auto;
-  min-height: 0;
+  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
 }
 
 .film-beat--cover .film-stage {
-  height: 100svh;
-  min-height: 100svh;
-  max-height: 100svh;
-  padding: var(--study-head, 72px) var(--film-gutter) 32px;
+  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  max-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  padding: 20px var(--film-gutter) 22px;
   overflow: hidden;
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
@@ -510,6 +552,7 @@ html.is-dark .film-ui-band {
   height: 100%;
   padding: 18px 6%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .film-ladder__row {
@@ -930,26 +973,13 @@ html.is-dark .film-nav__item.is-door {
 }
 
 @media (max-width: 960px) {
-  .film-beat[data-pin="true"] .film-hold,
-  .film-beat[data-hold="short"] .film-hold,
-  .film-beat[data-hold="mid"] .film-hold,
-  .film-beat[data-hold="tall"] .film-hold {
-    height: auto;
-    min-height: 0;
-  }
-
+  /* Still a pinned film. One column, overlay proofs. Not a dead stack. */
   .film-beat[data-pin="true"] .film-stage,
   .film-beat--cover .film-stage {
-    position: relative;
-    top: auto;
-    height: auto;
-    max-height: none;
-    min-height: calc(100svh - var(--study-head, 72px));
-    overflow: visible;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: calc(var(--study-head, 72px) + 8px) var(--film-gutter) 48px;
+    gap: 14px;
+    padding: 16px var(--film-gutter) 16px;
   }
 
   .film-beat[data-pin="true"] .film-claim,
@@ -963,17 +993,25 @@ html.is-dark .film-nav__item.is-door {
     width: 100%;
   }
 
+  .film-beat[data-pin="true"] .film-claim,
+  .film-beat--cover .film-claim {
+    flex: 0 1 auto;
+    max-height: 38%;
+  }
+
+  .film-beat[data-pin="true"] .film-viz,
+  .film-beat--cover .film-viz {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
   .film-title {
     max-width: 18ch;
+    font-size: clamp(1.35rem, 4.2vw, 2rem);
   }
 
-  .film-shot-stack.is-stage > [data-shot] {
-    position: relative;
-    inset: auto;
-  }
-
-  .film-shot-stack [data-shot] + [data-shot] {
-    margin-top: 20px;
+  .film-body {
+    display: none;
   }
 
   .film-ladder__row,
@@ -1004,17 +1042,6 @@ html.is-dark .film-nav__item.is-door {
   .film-sheet {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
-
-  .film-caption-stack [data-caption] + [data-caption] {
-    position: relative;
-    margin-top: 6px;
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .film-ask {
-    opacity: 1;
-  }
 }
 
 @media (max-width: 640px) {
@@ -1040,9 +1067,7 @@ html.is-dark .film-nav__item.is-door {
 
 @media (prefers-reduced-motion: reduce) {
   .film-beat[data-pin="true"] .film-hold,
-  .film-beat[data-hold="short"] .film-hold,
-  .film-beat[data-hold="mid"] .film-hold,
-  .film-beat[data-hold="tall"] .film-hold {
+  .film-beat--cover .film-hold {
     height: auto;
     min-height: 0;
   }
@@ -1055,6 +1080,13 @@ html.is-dark .film-nav__item.is-door {
     max-height: none;
     min-height: auto;
     overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .film-body {
+    display: block;
   }
 
   .film-shot-stack.is-stage > [data-shot] {
@@ -1062,13 +1094,34 @@ html.is-dark .film-nav__item.is-door {
     inset: auto;
   }
 
+  .film-shot-stack [data-shot] + [data-shot] {
+    margin-top: 20px;
+  }
+
+  .film-caption-stack [data-caption] + [data-caption] {
+    position: relative;
+    margin-top: 6px;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .film-decision,
+  .film-decision__ruled,
+  .film-ask {
+    opacity: 1;
+  }
+
   .film-board,
   .film-job,
   .film-stage-card,
   .film-nav__item,
   .film-track,
-  .film-sheet {
+  .film-sheet,
+  .film-device,
+  .film-cell,
+  .film-shot {
     transform: none !important;
     opacity: 1 !important;
+    clip-path: none !important;
   }
 }

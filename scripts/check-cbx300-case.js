@@ -76,11 +76,13 @@ check('Echo locked hook + six plain chapter titles', function () {
 
 check('Infoviz grammar: claim first, meaning-changing scrub, close on finding', function () {
   assert.ok(kit.indexOf('transformOrigin') !== -1, 'kit missing crop/scale origin');
-  assert.ok(kit.indexOf('focusOne') !== -1, 'kit missing progressive focus');
-  assert.ok(kit.indexOf('cropSwap') !== -1, 'kit missing crop/crossfade with scale');
+  assert.ok(kit.indexOf('clipPath') !== -1, 'kit missing crop/wipe clip-path');
+  assert.ok(kit.indexOf('scaleY') !== -1, 'kit missing matrix draw');
   assert.ok(kit.indexOf('data-film-track') !== -1, 'kit missing horizontal pan ending');
-  assert.ok(kit.indexOf('pin: false') !== -1, 'kit must scrub without GSAP pin (sticky stage)');
+  assert.ok(kit.indexOf('pin: true') !== -1, 'kit must GSAP-pin the leftover stage');
+  assert.ok(kit.indexOf('pinSpacing: true') !== -1, 'kit missing pinSpacing runway');
   assert.ok(kit.indexOf('Claim stays readable') !== -1, 'kit missing claim-first lock');
+  assert.ok(kit.indexOf('Opacity-only fades are a fail') !== -1, 'kit missing opacity-only fail lock');
   assert.ok(pages.indexOf("finding: true") !== -1, 'close is not a finding');
   assert.ok(pages.indexOf('259 web screens. 377 mobile screens. One grammar.') !== -1, 'missing volume finding');
   assert.ok(pages.indexOf('What happens when three people share that bank') !== -1, 'missing carrying question');
@@ -103,13 +105,13 @@ check('cream paper, not cool grey wireframe', function () {
   assert.ok(!/@keyframes\s+.*glitch/i.test(css), 'glitch keyframes in film css');
 });
 
-check('tablet staged film + reduced-motion static stack', function () {
+check('tablet keeps pin/scrub; reduced-motion static stack', function () {
   assert.ok(css.indexOf('max-width: 960px') !== -1, 'missing tablet breakpoint');
-  assert.ok(kit.indexOf('bindStaged') !== -1, 'kit missing staged tablet path');
-  assert.ok(kit.indexOf('first proof visible') !== -1 || kit.indexOf('isTablet') !== -1, 'kit missing tablet branch');
+  assert.ok(kit.indexOf('bindCinematic') !== -1, 'kit missing cinematic pin path');
   assert.ok(kit.indexOf('setupStatic') !== -1, 'kit missing static path');
   assert.ok(kit.indexOf('prefers-reduced-motion') !== -1, 'kit missing reduced-motion');
   assert.ok(css.indexOf('prefers-reduced-motion') !== -1, 'css missing reduced-motion');
+  assert.ok(kit.indexOf('bindStaged') === -1, 'dead tablet stack path leaked back');
 });
 
 check('Lisa Charlie demo only; no invented NPS/outcomes', function () {
@@ -136,27 +138,24 @@ check('free GSAP + ScrollTrigger only; no Club plugins', function () {
   assert.ok(kit.indexOf('ScrollTrigger') !== -1, 'kit missing ScrollTrigger');
 });
 
-check('sticky stage counts chrome once; captions reserved in the leftover viewport', function () {
-  assert.ok(/position:\s*sticky/.test(css), 'pinned chapters must stick under chrome');
+check('GSAP pin holds leftover stage; captions sequential; focus in-frame', function () {
   assert.ok(
     /\[data-pin="true"\] \.film-stage[\s\S]{0,400}--study-stage/.test(css) ||
       /\[data-pin="true"\] \.film-stage[\s\S]{0,400}100svh - var\(--study-head/.test(css),
-    'sticky stage must be leftover viewport under chrome, not extra 100svh'
+    'pinned stage must be leftover viewport under chrome, not extra 100svh'
   );
   assert.ok(kit.indexOf("start: function () { return 'top ' + head() + 'px'; }") !== -1, 'scrub start must sit below chrome');
-  assert.ok(kit.indexOf('pin: false') !== -1, 'GSAP must not pin; hold is the runway');
+  assert.ok(kit.indexOf('pin: true') !== -1, 'GSAP must pin the leftover stage');
+  assert.ok(kit.indexOf('pinSpacing: true') !== -1, 'pinSpacing must be the runway');
   assert.ok(study.indexOf('return 72') !== -1, 'headPx fallback must match --study-head');
   assert.ok(study.indexOf('--study-stage') !== -1, 'syncHead must set leftover stage height from scroller');
 });
 
-check('cropSwap hard-hides outgoing shot; focus stays inside frame', function () {
-  assert.ok(/autoAlpha:\s*0\.08/.test(kit) === false, 'cropSwap still leaves ghost opacity');
-  assert.ok(kit.indexOf('/* Focus stays in-frame: dim/lift, no board scale. */') !== -1, 'focus must stay in-frame');
-  assert.ok(!/board, \{\s*scale:\s*1\.0[6-9]/.test(kit), 'board-level scale leaks past the viz frame');
-  assert.ok(kit.indexOf('autoAlpha: 0') !== -1, 'cropSwap must fully hide the outgoing shot');
-  assert.ok(kit.indexOf('at + 0.32') !== -1, 'cropSwap must wait for outgoing to hide before incoming');
-  assert.ok(kit.indexOf('onLeave:') !== -1, 'chapter leave must fade so proofs do not stack');
-  assert.ok(kit.indexOf('outgoing caption hidden first') !== -1, 'captions must sequential-swap like cropSwap');
+check('crop/wipe hard-hides outgoing shot; captions sequential', function () {
+  assert.ok(/autoAlpha:\s*0\.08/.test(kit) === false, 'crop still leaves ghost opacity');
+  assert.ok(kit.indexOf('clipPath') !== -1, 'crop/wipe must use clip-path');
+  assert.ok(kit.indexOf('autoAlpha: 0') !== -1, 'outgoing shot must fully hide after crop/wipe');
+  assert.ok(kit.indexOf('outgoing caption hidden first') !== -1, 'captions must sequential-swap like crop');
   assert.ok(kit.indexOf('at + 0.28') !== -1, 'captionAt must wait for outgoing to hide before incoming');
   assert.ok(!/function captionAt[\s\S]{0,320}autoAlpha: on \? 1 : 0/.test(kit), 'captionAt still dual-fades at the same time');
   assert.ok(
@@ -165,9 +164,29 @@ check('cropSwap hard-hides outgoing shot; focus stays inside frame', function ()
   );
 });
 
+check('Decision layer on six chapters, not cover or scale', function () {
+  var n = (pages.match(/decision:\s*\{/g) || []).length;
+  assert.strictEqual(n, 6, 'expected 6 Decision chips, got ' + n);
+  assert.ok(pages.indexOf("data-film-decision") !== -1, 'missing Decision chip markup');
+  assert.ok(pages.indexOf('stages of one customer, not five products') !== -1, 'missing ladder finding');
+  assert.ok(pages.indexOf('one login wears three hats') !== -1, 'missing roles finding');
+  assert.ok(pages.indexOf('You cannot hide the rows') !== -1, 'missing approvals constraint');
+  assert.ok(pages.indexOf('four numbers to a business') !== -1, 'missing money finding');
+  assert.ok(pages.indexOf('wizard dies at about 50 permissions') !== -1, 'missing permissions constraint');
+  assert.ok(pages.indexOf('relearn endings break trust') !== -1, 'missing grammar finding');
+  assert.ok(pages.indexOf('Ruled out: select-all') !== -1, 'missing approvals ruled-out');
+  assert.ok(pages.indexOf('Ruled out: wizard') !== -1, 'missing permissions ruled-out');
+  assert.ok(css.indexOf('.film-decision') !== -1, 'missing Decision chip css');
+  assert.ok(kit.indexOf('leadDecision') !== -1, 'Decision chip must land before viz scrub');
+});
+
 check('redesign bar is the experience lock', function () {
   assert.ok(bar.indexOf('infoviz-cs5764.web.app') !== -1, 'bar missing Infoviz lock');
   assert.ok(bar.indexOf('PR #18 rejected') !== -1, 'bar missing reject note');
+  assert.ok(bar.indexOf('7. Decision layer') !== -1, 'bar missing Decision layer lock');
+  assert.ok(/no invented research/i.test(bar), 'bar missing no-invented-research lock');
+  assert.ok(bar.indexOf('8. Motion variety lock') !== -1, 'bar missing motion variety lock');
+  assert.ok(/opacity-only = fail/i.test(bar), 'bar missing opacity-only fail');
 });
 
 check('export path reserved, not required for this slice', function () {

@@ -24,7 +24,7 @@ window.Cbx300Case = (function () {
       num: '',
       title: META.hook,
       recipe: 'cover',
-      pin: false,
+      pin: true,
       layout: 'cover',
       captions: ['CBX300 across web and phone. 636 screens, one system.']
     },
@@ -35,7 +35,11 @@ window.Cbx300Case = (function () {
       body: 'A freelancer and a 50-person company are not the same day-to-day — but they should not need two banks. Complexity shows up only when the business needs it.',
       recipe: 'ends',
       pin: true,
-      hold: 'tall',
+      decision: {
+        kind: 'Finding',
+        finding: 'Freelancers and mid-market teams are stages of one customer, not five products.',
+        choice: 'One platform. Complexity only when the business needs it.'
+      },
       captions: [
         'A freelancer runs the whole day from one login.',
         'A fifty-person company has many hands on the same bank.',
@@ -51,7 +55,11 @@ window.Cbx300Case = (function () {
       body: 'Early on, one person wears all three hats. Later, three people. Design for the jobs, not the job titles.',
       recipe: 'jobs',
       pin: true,
-      hold: 'mid',
+      decision: {
+        kind: 'Finding',
+        finding: 'Early on one login wears three hats. Later, three people.',
+        choice: 'Design for owner, maker, and approver jobs, not job titles.'
+      },
       captions: [
         'Owner needs one honest cash answer.',
         'Maker needs speed and no re-typing.',
@@ -66,7 +74,12 @@ window.Cbx300Case = (function () {
       body: 'For some people, approving is the work. So it sits in the main menu (and on the phone bar) — not buried in a bell.',
       recipe: 'door',
       pin: true,
-      hold: 'mid',
+      decision: {
+        kind: 'Constraint',
+        finding: 'Approval is a legal act. You cannot hide the rows.',
+        choice: 'A permanent Approvals door, plus a batch that still shows every line.',
+        ruledOut: 'Ruled out: select-all with no per-row visibility.'
+      },
       captions: [
         'Approving is the job, so it has its own button, not a notification.',
         'The action is labelled with the number it will perform. No one approves a mystery quantity.'
@@ -80,7 +93,11 @@ window.Cbx300Case = (function () {
       body: 'A business account has more than one “balance.” And if a salary file has bad rows, show that before someone signs — not after.',
       recipe: 'money',
       pin: true,
-      hold: 'mid',
+      decision: {
+        kind: 'Finding',
+        finding: '"Balance" is four numbers to a business. Bad file rows after sign is too late.',
+        choice: 'Four balances on the card. Fail the check before anyone signs.'
+      },
       captions: [
         'Bad rows turn red before you sign.',
         'Four balances on the card. One number would lie.'
@@ -94,7 +111,12 @@ window.Cbx300Case = (function () {
       body: 'Permissions are verbs (start, check, view, send, approve), not a pile of switches. One screen that still makes sense with one user or many.',
       recipe: 'verbs',
       pin: true,
-      hold: 'mid',
+      decision: {
+        kind: 'Constraint',
+        finding: 'A one-question-per-screen wizard dies at about 50 permissions.',
+        choice: 'One verb grid (start, check, view, send, approve) that scales from one user to many.',
+        ruledOut: 'Ruled out: wizard, one question per screen.'
+      },
       captions: [
         'Start, check, view, send, approve. The verbs sit in a grid you can read.',
         'The same screen serves one freelancer and a fourteen-person finance team.'
@@ -108,7 +130,11 @@ window.Cbx300Case = (function () {
       body: 'Review → one-time code → done. Same three steps on payments, deposits, cards, loans — so people don’t relearn the ending.',
       recipe: 'ending',
       pin: true,
-      hold: 'tall',
+      decision: {
+        kind: 'Finding',
+        finding: 'Money paths that relearn endings break trust.',
+        choice: 'Same ending everywhere: Review, one-time code, done.'
+      },
       captions: [
         'Review, then a one-time code, then done.',
         'Same three steps on payments, deposits, cards, loans.',
@@ -175,6 +201,22 @@ window.Cbx300Case = (function () {
       wrap.appendChild(p);
     });
     return wrap;
+  }
+
+  function decisionChip(d) {
+    if (!d) return null;
+    var aside = el('aside', 'film-decision');
+    aside.setAttribute('data-film-decision', '');
+    aside.appendChild(el('p', 'film-decision__label', d.kind || 'Finding'));
+    aside.appendChild(el('p', 'film-decision__finding', d.finding));
+    aside.appendChild(el('p', 'film-decision__choice-label', 'Choice'));
+    aside.appendChild(el('p', 'film-decision__choice', d.choice));
+    if (d.ruledOut) {
+      var ruled = el('p', 'film-decision__ruled', d.ruledOut);
+      ruled.setAttribute('data-film-ruled', '');
+      aside.appendChild(ruled);
+    }
+    return aside;
   }
 
   function uiBand(mods) {
@@ -448,6 +490,8 @@ window.Cbx300Case = (function () {
     if (beat.num) claim.appendChild(el('p', 'film-num', beat.num));
     claim.appendChild(el('h2', 'film-title', beat.title));
     if (beat.body) claim.appendChild(el('p', 'film-body', beat.body));
+    var chip = decisionChip(beat.decision);
+    if (chip) claim.appendChild(chip);
     if (beat.ask) {
       var ask = el('p', 'film-ask', beat.ask);
       ask.setAttribute('data-film-ask', '');
