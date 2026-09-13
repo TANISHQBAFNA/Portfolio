@@ -98,7 +98,7 @@ Each important chapter has a **distinct scrub storytelling device**. Opacity-onl
 | Beat | Device (Infoviz analog) |
 |---|---|
 | Cover | Quiet hold, then soft scale-in of web + phone (boot calm). |
-| Ladder | Horizontal stage walk L→R; freelancer vs medium focus; pull-back; crop to accounts pair. |
+| Ladder | 3D staircase walk: camera steps each rung (z / rotationY / scale); growth fill; crop to accounts pair. |
 | Roles | Cards assemble; one role enlarges while others recede; device cue morphs web desk vs phone. |
 | Approvals | Crop/zoom the Approvals door, then wipe/split to batch Approve (N) with rows visible. |
 | Money | Fail-rows punch-crop first; slide to four-balance card with sequential callouts. |

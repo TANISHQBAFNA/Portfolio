@@ -1,21 +1,23 @@
 /**
  * CBX300 cream scroll film.
- * Echo copy from docs/case-study-cbx300-redesign-bar.md.
+ * Aisha story from the simple-story case study. Cream portfolio chrome.
  * Designed placeholders stand in for Figma frames (CEO lock 2026-09-12).
- * Lisa Charlie is a demo brand. No invented outcomes.
+ * Lisa Charlie is a demo brand. Aisha is a representative example.
+ * No invented outcomes.
  */
 window.Cbx300Case = (function () {
   'use strict';
 
   var META = {
-    hook: 'Banking for a company, not for one person.',
-    promise: 'A small-business bank app that grows with the company — from one person who does everything, to a team with different jobs — without learning a new product.',
-    product: 'CBX300 · web + phone · 636 screens · demo brand: Lisa Charlie',
+    hook: 'Banking that grows with the business.',
+    promise: 'CBX300 helps business owners understand their money, make payments safely, approve work, and manage team access as their business grows.',
+    quote: 'A business should not need a new banking product just because it has grown.',
+    product: 'CBX300 · web + phone · 259 web · 377 mobile · ~147 flows · demo brand: Lisa Charlie',
     role: 'Lead product designer — design system, end-to-end screens (web + phone), through developer handoff',
     duration: 'Jan 2026 – present',
     status: 'Design system complete. Majority of functional screens and full user flows designed through handoff.',
-    demo: 'Lisa Charlie bank is a demo brand, not a live client.',
-    finding: '259 web screens. 377 mobile screens. One grammar.'
+    demo: 'Lisa Charlie bank is a demo brand. Aisha is a representative story, not a real customer interview.',
+    finding: '259 web screens. 377 mobile screens. ~147 flows. One shared system.'
   };
 
   var BEATS = [
@@ -26,115 +28,117 @@ window.Cbx300Case = (function () {
       recipe: 'cover',
       pin: true,
       layout: 'cover',
-      captions: ['CBX300 across web and phone. 636 screens, one system.']
+      captions: ['259 web · 377 mobile · ~147 flows. One shared system.']
     },
     {
       id: 'ladder',
       num: '01',
-      title: 'One product for every size of small business',
-      body: 'A freelancer and a 50-person company are not the same day-to-day — but they should not need two banks. Complexity shows up only when the business needs it.',
+      title: 'Meet Aisha.',
+      body: 'Aisha runs a growing distribution business. She began by managing every financial task herself. As the company grew, banking became a shared job.',
       recipe: 'ends',
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'Small businesses grow — yesterday’s freelancer is tomorrow’s payroll team.',
-        choice: 'One platform that gets more complex only when the business does — not five separate products.'
+        finding: 'Aisha started doing every financial task herself. As the company grew, banking became a shared job.',
+        choice: 'One product that shows more control only when it is needed — not five separate banks.'
       },
       captions: [
-        'A freelancer runs the whole day from one login.',
-        'A fifty-person company has many hands on the same bank.',
-        'Same product. Complexity shows up only when the business needs it.',
+        'Independent professional. One person. Quick visibility.',
+        'Sole proprietor. Daily cash, bills, and supplier payments.',
+        'Micro. A helper begins to work with company money.',
+        'Small. Finance prepares. An owner or director approves.',
+        'Medium. More accounts, more users, stronger controls.',
         'The same layout has to work for a business with no accounts and a business with four.'
       ],
-      ask: 'What happens when three people share that bank, not one?'
+      ask: 'Who prepared this payment? Does it need my approval?'
     },
     {
       id: 'roles',
       num: '02',
-      title: 'Three jobs: owner, maker, approver',
-      body: 'Early on, one person wears all three hats. Later, three people. Design for the jobs, not the job titles.',
+      title: 'I designed for roles, not one user.',
+      body: 'The same business account can be used by people with very different responsibilities. The product needs to help each person do their job clearly.',
       recipe: 'jobs',
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'Early on, one person owns, pays, and approves. Later, those are three different people.',
-        choice: 'Design for those three jobs, not for job titles — so one login and many logins both fit.'
+        finding: 'The same business account is used by people with very different jobs.',
+        choice: 'Design for the owner, the payment maker, and the approver — not one generic user.'
       },
       captions: [
-        'Owner needs one honest cash answer.',
-        'Maker needs speed and no re-typing.',
-        'Approver needs the queue clear on a phone.'
+        'The owner wants a clear view of cash and what is waiting.',
+        'The payment maker needs speed, less retyping, and errors early.',
+        'The approver needs key facts first, on a phone.'
       ],
       ask: 'If approving is the work, where does that work live?'
     },
     {
       id: 'approvals',
       num: '03',
-      title: 'Approvals get their own door',
-      body: 'For some people, approving is the work. So it sits in the main menu (and on the phone bar) — not buried in a bell.',
+      title: 'My team can prepare. I need to approve.',
+      body: 'As the business grows, banking work is shared. A payment can be prepared, reviewed, approved, rejected, or completed. Each stage has to stay obvious.',
       recipe: 'door',
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'Approving other people’s money is the job, and it is a legal act — you must see every line you sign.',
-        choice: 'Approvals get their own door, and batch approve keeps each row visible.',
+        finding: 'Preparing a payment is not the same as approving it. Submitted can look like completed.',
+        choice: 'Approvals get their own door, and batch approve names the count while rows stay visible.',
         ruledOut: 'Ruled out: bury under Payments, or select-all with no line of sight.'
       },
       captions: [
         'Approving is the job, so it has its own button, not a notification.',
         'The action is labelled with the number it will perform. No one approves a mystery quantity.'
       ],
-      ask: 'What should you see before anyone signs?'
+      ask: 'Tell me what is wrong before I approve.'
     },
     {
       id: 'money',
       num: '04',
-      title: 'Show the real money, catch mistakes early',
-      body: 'A business account has more than one “balance.” And if a salary file has bad rows, show that before someone signs — not after.',
+      title: 'Can I afford to pay this supplier today?',
+      body: 'A business balance is not always one number. Some money may be held, some may not be cleared yet, and some may already be booked.',
       recipe: 'money',
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'A business account has more than one “balance,” and a salary file can hide bad rows until after you sign.',
-        choice: 'Show four balances on the card (available first), and surface failures before the signature.',
+        finding: 'One balance can be misleading — some money is held, pending, or uncleared.',
+        choice: 'Available balance leads the page because it answers what Aisha can pay today.',
         ruledOut: 'Ruled out: one big number, or a clean list that fails after submit.'
       },
       captions: [
         'Bad rows turn red before you sign.',
-        'Four balances on the card. One number would lie.'
+        'Available, current, held, uncleared. One number would lie.'
       ],
-      ask: 'Who is allowed to start, check, view, send, or approve?'
+      ask: 'Did the system use the right beneficiary?'
     },
     {
       id: 'permissions',
       num: '05',
-      title: 'Who can do what — in a clear grid',
-      body: 'Permissions are verbs (start, check, view, send, approve), not a pile of switches. One screen that still makes sense with one user or many.',
+      title: 'My team needs access, but not all access.',
+      body: 'Giving access is also a money decision. A person needs the right actions for the right business accounts — not automatic access to everything.',
       recipe: 'verbs',
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'Who can do what is many verbs per product — a step-by-step wizard collapses when the list gets long.',
-        choice: 'A grid of verbs (start, check, view, send, approve) on one screen.',
+        finding: 'A role name does not explain which actions a person can take or which accounts they can use.',
+        choice: 'A safe permission connects a person, an action, and the right financial scope.',
         ruledOut: 'Ruled out: one question per screen.'
       },
       captions: [
         'Start, check, view, send, approve. The verbs sit in a grid you can read.',
-        'The same screen serves one freelancer and a fourteen-person finance team.'
+        'The same screen serves one person and a fourteen-person finance team.'
       ],
       ask: 'After the verbs, does every money path still end the same way?'
     },
     {
       id: 'grammar',
       num: '06',
-      title: 'Every money path ends the same way',
-      body: 'Review → one-time code → done. Same three steps on payments, deposits, cards, loans — so people don’t relearn the ending.',
+      title: 'Same goal. Different moment.',
+      body: 'Aisha uses web for detailed work. She uses mobile for quick checks and urgent approval. The task stays the same. The layout changes.',
       recipe: 'ending',
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'Dozens of money forms, same consequence — money moves or a mandate changes. Relearning the ending breaks trust.',
-        choice: 'Every money path ends the same way: check → one-time code → result.'
+        finding: 'Web is the workspace. Mobile is the urgent check. Shrinking the desktop onto a phone loses the moment.',
+        choice: 'Keep the meaning of the task, then change the layout for the device.'
       },
       captions: [
         'Review, then a one-time code, then done.',
@@ -154,30 +158,30 @@ window.Cbx300Case = (function () {
       hold: 'short',
       finding: true,
       captions: [
-        '259 web · 377 mobile · one grammar.',
-        'Lisa Charlie is the demo brand used to design the system, not a live client.'
+        '259 web · 377 mobile · ~147 flows · one shared system.',
+        'Aisha is a representative story. Lisa Charlie is the demo brand, not a live client.'
       ],
       next: [
-        'Check the verb grid with real admins.',
-        'Instrument the approval queue.',
-        'Push empty-states further.',
-        'Close the tokens-to-code loop.'
+        'Test payment, approval, and access journeys with real business users.',
+        'Measure time to complete key tasks and understand status.',
+        'Track errors, abandoned steps, and support requests.',
+        'Test whether web and mobile tell the same clear story.'
       ]
     }
   ];
 
   var STAGES = [
-    { id: 'freelancer', name: 'Freelancer', people: '1 person' },
-    { id: 'sole', name: 'Sole prop', people: '1 to 2' },
-    { id: 'micro', name: 'Micro', people: 'A few' },
-    { id: 'small', name: 'Small', people: 'A team' },
-    { id: 'medium', name: 'Medium', people: 'Many hands' }
+    { id: 'indie', num: '01', name: 'Independent professional', people: 'Needs: quick visibility', need: 'One person manages income, expenses, and a few payments.' },
+    { id: 'sole', num: '02', name: 'Sole proprietor', people: 'Needs: simple payments', need: 'The owner manages daily cash, bills, and supplier payments.' },
+    { id: 'micro', num: '03', name: 'Micro business', people: 'Needs: safe delegation', need: 'A helper or bookkeeper begins to work with company money.' },
+    { id: 'small', num: '04', name: 'Small business', people: 'Needs: clear approval', need: 'A finance person prepares. An owner or director approves.' },
+    { id: 'medium', num: '05', name: 'Medium business', people: 'Needs: control at scale', need: 'More accounts, more users, payment batches, stronger controls.' }
   ];
 
   var JOBS = [
-    { id: 'owner', title: 'Owner', body: 'Needs one honest cash answer.', device: 'Web desk' },
-    { id: 'maker', title: 'Maker', body: 'Needs speed and no re-typing.', device: 'Web desk' },
-    { id: 'approver', title: 'Approver', body: 'Needs the queue clear on a phone.', device: 'On a phone.' }
+    { id: 'owner', title: 'The owner', body: 'A clear view of cash, important activity, and decisions waiting.', device: 'Web desk' },
+    { id: 'maker', title: 'The payment maker', body: 'Prepares payments. Needs speed, less retyping, errors early.', device: 'Web desk' },
+    { id: 'approver', title: 'The approver', body: 'Reviews work prepared by someone else. Often from a phone.', device: 'On a phone.' }
   ];
 
   var VERBS = ['Start', 'Check', 'View', 'Send', 'Approve'];
@@ -273,18 +277,30 @@ window.Cbx300Case = (function () {
 
   function ladderBoard() {
     var board = el('div', 'film-board film-ladder');
+    var world = el('div', 'film-ladder__world');
+    world.setAttribute('data-ladder-world', '');
     var row = el('div', 'film-ladder__row');
     STAGES.forEach(function (stage) {
       var card = el('article', 'film-stage-card film-paper');
       card.setAttribute('data-focus', stage.id);
+      card.appendChild(el('span', 'film-stage-card__num', stage.num));
       card.appendChild(el('strong', '', stage.name));
-      card.appendChild(el('span', '', stage.people));
+      card.appendChild(el('p', '', stage.need));
+      card.appendChild(el('small', '', stage.people));
       row.appendChild(card);
     });
+    world.appendChild(row);
     var bar = el('div', 'film-ladder__bar');
-    bar.appendChild(el('em', '', 'one product'));
-    board.appendChild(row);
+    var fill = el('span', 'film-ladder__fill');
+    fill.setAttribute('data-ladder-fill', '');
+    bar.appendChild(fill);
+    var words = el('div', 'film-ladder__words');
+    words.appendChild(el('span', '', 'One person'));
+    words.appendChild(el('em', '', 'One platform'));
+    words.appendChild(el('span', '', 'Finance team'));
+    board.appendChild(world);
     board.appendChild(bar);
+    board.appendChild(words);
     return board;
   }
 
@@ -480,6 +496,7 @@ window.Cbx300Case = (function () {
     var title = el('h2', 'film-title film-title--hook', beat.title);
     claim.appendChild(title);
     claim.appendChild(el('p', 'film-promise', META.promise));
+    claim.appendChild(el('p', 'film-quote', META.quote));
     claim.appendChild(el('p', 'film-line', META.product));
     claim.appendChild(el('p', 'film-demo', META.demo));
     return claim;

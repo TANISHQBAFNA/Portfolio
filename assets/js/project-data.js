@@ -57,9 +57,9 @@ window.PORTFOLIO_PROJECTS = [
     tone: 'manila',
     tools: ['Figma', 'Design tokens', 'Storybook'],
     category: 'Fintech Product Design',
-    hook: 'Banking for a company, not for one person.',
-    blurb: 'Banking for a company, not for one person. CBX300 SME banking across web and phone.',
-    detail: 'A small-business bank app that grows with the company. Lisa Charlie bank is a demo brand, not a live client. CBX300 · web + phone · 636 screens.',
+    hook: 'Banking that grows with the business.',
+    blurb: 'Banking that grows with the business. CBX300 SME banking across web and phone.',
+    detail: 'CBX300 helps a growing business understand money, pay, approve, and share access. Lisa Charlie bank is a demo brand. Aisha is a representative story. 259 web · 377 mobile · ~147 flows.',
     slides: [
       {
         title: "Context",
@@ -190,7 +190,7 @@ window.PORTFOLIO_PROJECTS = [
     scope: 'Web + phone, design system',
     href: '?open=sme',
     cover: 'assets/img/covers/cover-01.svg',
-    coverTag: 'CBX300 · 636 screens · Lisa Charlie demo',
+    coverTag: 'CBX300 · 259 web · 377 mobile · Lisa Charlie demo',
     status: 'live'
   },
   {

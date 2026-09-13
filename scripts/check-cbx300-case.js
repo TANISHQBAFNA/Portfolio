@@ -58,20 +58,21 @@ check('eight beats cover through close', function () {
   });
 });
 
-check('Echo locked hook + six plain chapter titles', function () {
-  assert.ok(pages.indexOf('Banking for a company, not for one person.') !== -1, 'missing Echo hook');
+check('Aisha simple-story beats + six chapter titles', function () {
+  assert.ok(pages.indexOf('Banking that grows with the business.') !== -1, 'missing Aisha hook');
   [
-    'One product for every size of small business',
-    'Three jobs: owner, maker, approver',
-    'Approvals get their own door',
-    'Show the real money, catch mistakes early',
-    'Who can do what — in a clear grid',
-    'Every money path ends the same way'
+    'Meet Aisha.',
+    'I designed for roles, not one user.',
+    'My team can prepare. I need to approve.',
+    'Can I afford to pay this supplier today?',
+    'My team needs access, but not all access.',
+    'Same goal. Different moment.'
   ].forEach(function (title) {
     assert.ok(pages.indexOf(title) !== -1, 'missing chapter title: ' + title);
   });
-  assert.ok(pages.indexOf('grows with the company') !== -1, 'missing Echo promise');
-  assert.ok(data.indexOf('Banking for a company, not for one person.') !== -1, 'project-data missing Echo hook');
+  assert.ok(pages.indexOf('grows') !== -1, 'missing grow-with-business promise');
+  assert.ok(data.indexOf('Banking that grows with the business.') !== -1, 'project-data missing Aisha hook');
+  assert.ok(pages.indexOf('Independent professional') !== -1, 'missing 3D ladder rung copy');
 });
 
 check('Infoviz grammar: claim first, meaning-changing scrub, close on finding', function () {
@@ -84,8 +85,8 @@ check('Infoviz grammar: claim first, meaning-changing scrub, close on finding', 
   assert.ok(kit.indexOf('Claim stays readable') !== -1, 'kit missing claim-first lock');
   assert.ok(kit.indexOf('Opacity-only fades are a fail') !== -1, 'kit missing opacity-only fail lock');
   assert.ok(pages.indexOf("finding: true") !== -1, 'close is not a finding');
-  assert.ok(pages.indexOf('259 web screens. 377 mobile screens. One grammar.') !== -1, 'missing volume finding');
-  assert.ok(pages.indexOf('What happens when three people share that bank') !== -1, 'missing carrying question');
+  assert.ok(pages.indexOf('259 web screens. 377 mobile screens. ~147 flows. One shared system.') !== -1, 'missing volume finding');
+  assert.ok(pages.indexOf('Who prepared this payment? Does it need my approval?') !== -1, 'missing carrying question');
   assert.ok(!/Zillow|Falls Church|Malabar Hill|stamp-duty/.test(pages), 'copied Infoviz housing content');
 });
 
@@ -168,25 +169,26 @@ check('Decision layer on six chapters, not cover or scale', function () {
   var n = (pages.match(/decision:\s*\{/g) || []).length;
   assert.strictEqual(n, 6, 'expected 6 Decision chips, got ' + n);
   assert.ok(pages.indexOf("data-film-decision") !== -1, 'missing Decision chip markup');
-  assert.ok(pages.indexOf('yesterday’s freelancer is tomorrow’s payroll team') !== -1, 'missing ladder finding');
-  assert.ok(pages.indexOf('not five separate products') !== -1, 'missing ladder choice');
-  assert.ok(pages.indexOf('one person owns, pays, and approves') !== -1, 'missing roles finding');
-  assert.ok(pages.indexOf('one login and many logins both fit') !== -1, 'missing roles choice');
-  assert.ok(pages.indexOf('you must see every line you sign') !== -1, 'missing approvals finding');
-  assert.ok(pages.indexOf('batch approve keeps each row visible') !== -1, 'missing approvals choice');
-  assert.ok(pages.indexOf('more than one “balance,”') !== -1, 'missing money finding');
-  assert.ok(pages.indexOf('available first') !== -1, 'missing money choice');
-  assert.ok(pages.indexOf('a step-by-step wizard collapses') !== -1, 'missing permissions finding');
-  assert.ok(pages.indexOf('A grid of verbs (start, check, view, send, approve) on one screen.') !== -1, 'missing permissions choice');
-  assert.ok(pages.indexOf('Dozens of money forms, same consequence') !== -1, 'missing grammar finding');
-  assert.ok(pages.indexOf('check → one-time code → result') !== -1, 'missing grammar choice');
+  assert.ok(pages.indexOf('banking became a shared job') !== -1, 'missing ladder finding');
+  assert.ok(pages.indexOf('not five separate banks') !== -1, 'missing ladder choice');
+  assert.ok(pages.indexOf('people with very different jobs') !== -1, 'missing roles finding');
+  assert.ok(pages.indexOf('not one generic user') !== -1, 'missing roles choice');
+  assert.ok(pages.indexOf('Preparing a payment is not the same as approving it') !== -1, 'missing approvals finding');
+  assert.ok(pages.indexOf('batch approve names the count') !== -1, 'missing approvals choice');
+  assert.ok(pages.indexOf('One balance can be misleading') !== -1, 'missing money finding');
+  assert.ok(pages.indexOf('Available balance leads the page') !== -1, 'missing money choice');
+  assert.ok(pages.indexOf('A role name does not explain') !== -1, 'missing permissions finding');
+  assert.ok(pages.indexOf('person, an action, and the right financial scope') !== -1, 'missing permissions choice');
+  assert.ok(pages.indexOf('Shrinking the desktop onto a phone') !== -1, 'missing grammar finding');
+  assert.ok(pages.indexOf('change the layout for the device') !== -1, 'missing grammar choice');
   assert.ok(pages.indexOf('Ruled out: bury under Payments, or select-all with no line of sight.') !== -1, 'missing approvals ruled-out');
   assert.ok(pages.indexOf('Ruled out: one big number, or a clean list that fails after submit.') !== -1, 'missing money ruled-out');
   assert.ok(pages.indexOf('Ruled out: one question per screen.') !== -1, 'missing permissions ruled-out');
-  assert.ok(bar.indexOf('yesterday’s freelancer is tomorrow’s payroll team') !== -1, 'bar §7 missing Echo ladder finding');
-  assert.ok(bar.indexOf('check → one-time code → result') !== -1, 'bar §7 missing Echo grammar choice');
+  assert.ok(bar.indexOf('3D staircase') !== -1, 'bar missing 3D ladder motion lock');
   assert.ok(css.indexOf('.film-decision') !== -1, 'missing Decision chip css');
-  assert.ok(kit.indexOf('leadDecision') !== -1, 'Decision chip must land before viz scrub');
+  assert.ok(kit.indexOf('function rungPose') !== -1, 'ladder must walk a 3D staircase');
+  assert.ok(css.indexOf('perspective: 1500px') !== -1, 'ladder stage missing 3D perspective');
+  assert.ok(css.indexOf('.film-beat[data-recipe="ends"] .film-shot-stack') !== -1, 'ladder 3D fan must unclip shot-stack');
 });
 
 check('redesign bar is the experience lock', function () {

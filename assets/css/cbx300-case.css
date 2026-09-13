@@ -283,6 +283,18 @@ html.is-dark .study[data-template="cbx300"] {
   overflow: hidden;
 }
 
+.film-beat[data-recipe="ends"] .film-viz,
+.film-beat[data-recipe="ends"] .film-shot-stack,
+.film-beat[data-recipe="ends"] .film-board,
+.film-beat[data-recipe="ends"] .film-shot {
+  overflow: visible;
+}
+
+.film-beat[data-recipe="ends"] .film-claim {
+  z-index: 12;
+  isolation: isolate;
+}
+
 .film-shot-stack.is-stage > [data-shot] {
   position: absolute;
   inset: 0;
@@ -562,64 +574,152 @@ html.is-dark .film-ui-band {
   color: var(--film-faint);
 }
 
-/* Ladder */
+.film-quote {
+  margin: 18px 0 0;
+  padding-left: 14px;
+  max-width: 36ch;
+  border-left: 2px solid var(--film-teal);
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--film-ink);
+}
+
+/* Ladder — 3D staircase. Camera walks rungs on desktop. */
 .film-ladder {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 20px;
+  justify-content: flex-end;
+  gap: 18px;
   height: 100%;
-  padding: 18px 6%;
+  padding: 12px 4% 18px;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
+  perspective: 1500px;
+  perspective-origin: 50% 36%;
+}
+
+.film-ladder__world {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 280px;
+  transform-style: preserve-3d;
+  transform-origin: 50% 70%;
 }
 
 .film-ladder__row {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(8px, 1.2vw, 14px);
-  align-items: stretch;
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
 }
 
 .film-stage-card {
-  padding: clamp(14px, 1.8vw, 22px) clamp(10px, 1.2vw, 16px);
-  min-height: 132px;
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  width: min(42%, 268px);
+  min-height: 176px;
+  padding: clamp(16px, 2vw, 24px) clamp(14px, 1.6vw, 20px);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   gap: 6px;
-  border-radius: 12px;
+  border-radius: 16px;
   transform-origin: 50% 80%;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  box-shadow: 0 22px 48px rgba(30, 21, 16, 0.12);
+}
+
+.film-stage-card__num {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--film-teal);
 }
 
 .film-stage-card strong {
   font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(0.92rem, 1.4vw, 1.12rem);
-  letter-spacing: -0.03em;
+  font-size: clamp(1rem, 1.6vw, 1.22rem);
+  letter-spacing: -0.034em;
+  line-height: 1.15;
 }
 
+.film-stage-card p {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--film-muted);
+}
+
+.film-stage-card small,
 .film-stage-card span {
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.76rem;
-  color: var(--film-muted);
+  font-size: 0.72rem;
+  color: var(--film-faint);
 }
 
 .film-ladder__bar {
   position: relative;
   height: 6px;
-  background: rgba(0, 160, 160, 0.2);
+  flex-shrink: 0;
+  background: rgba(0, 160, 160, 0.18);
   border-radius: 99px;
+  overflow: hidden;
 }
 
-.film-ladder__bar em {
-  position: absolute;
-  left: 0;
-  top: -20px;
+.film-ladder__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #7ec9c9, var(--film-teal));
+  transform-origin: 0% 50%;
+  transform: scaleX(0.2);
+}
+
+.film-ladder__words {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
   font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--film-faint);
+}
+
+.film-ladder__words em {
   font-style: normal;
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
+  font-weight: 600;
   color: var(--film-deep);
+}
+
+.film-beat.is-static .film-ladder,
+.film-beat.is-static .film-ladder__world {
+  perspective: none;
+  transform: none;
+}
+
+.film-beat.is-static .film-ladder__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  inset: auto;
+  min-height: 0;
+}
+
+.film-beat.is-static .film-stage-card {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: auto;
+  min-height: 140px;
+  transform: none;
 }
 
 .film-pair {
@@ -1038,16 +1138,11 @@ html.is-dark .film-nav__item.is-door {
     display: none;
   }
 
-  .film-ladder__row,
   .film-jobs,
   .film-pair,
   .film-balances,
   .film-empty {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .film-ladder__row .film-stage-card:last-child {
-    grid-column: 1 / -1;
   }
 
   .film-jobs {
@@ -1069,14 +1164,35 @@ html.is-dark .film-nav__item.is-door {
 }
 
 @media (max-width: 640px) {
-  .film-ladder__row,
+  .film-ladder {
+    perspective: none;
+    overflow: hidden;
+  }
+
+  .film-ladder__world {
+    min-height: 0;
+    transform: none;
+  }
+
+  .film-ladder__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    inset: auto;
+  }
+
+  .film-stage-card {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    min-height: 108px;
+  }
+
   .film-pair,
   .film-balances {
     grid-template-columns: 1fr;
-  }
-
-  .film-ladder__row .film-stage-card:last-child {
-    grid-column: auto;
   }
 
   .film-compose {
@@ -1127,6 +1243,28 @@ html.is-dark .film-nav__item.is-door {
     margin-top: 6px;
     opacity: 1;
     visibility: visible;
+  }
+
+  .film-ladder,
+  .film-ladder__world {
+    perspective: none;
+    transform: none;
+  }
+
+  .film-ladder__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    inset: auto;
+  }
+
+  .film-stage-card {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+  }
   }
 
   .film-decision,
