@@ -86,9 +86,21 @@
     var liveLinks = {};
     var cellSize = 120;
 
+    function viewportSize() {
+      if (global.layoutViewport) return global.layoutViewport.size();
+      var vv = global.visualViewport;
+      var fallbackH = document.documentElement.clientHeight || global.innerHeight || 0;
+      var fallbackW = document.documentElement.clientWidth || global.innerWidth || 0;
+      if (!vv || (vv.scale || 1) > 1.01) {
+        return { width: fallbackW, height: fallbackH };
+      }
+      return { width: vv.width || fallbackW, height: vv.height || fallbackH };
+    }
+
     function resize() {
-      w = window.innerWidth;
-      h = window.innerHeight;
+      var pane = viewportSize();
+      w = pane.width;
+      h = pane.height;
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       canvas.style.width = w + "px";
@@ -333,10 +345,12 @@
         my = -9999;
       });
     }
-    window.addEventListener("resize", function () {
+    function onViewport() {
       resize();
       spawn();
-    });
+    }
+    window.addEventListener("resize", onViewport);
+    document.documentElement.addEventListener("layoutviewport", onViewport);
     resize();
     spawn();
     requestAnimationFrame(tick);

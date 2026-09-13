@@ -26,6 +26,8 @@ var mvLanding = fs.readFileSync(path.join(ROOT, 'assets/js/landing-multiverse.js
 var mvMotion = fs.readFileSync(path.join(ROOT, 'assets/js/iris-motion-multiverse.js'), 'utf8');
 var studyJs = fs.readFileSync(path.join(ROOT, 'assets/js/project-study.js'), 'utf8');
 var creamLanding = fs.readFileSync(path.join(ROOT, 'assets/js/landing.js'), 'utf8');
+var viewportJs = fs.readFileSync(path.join(ROOT, 'assets/js/viewport.js'), 'utf8');
+var creamMotion = fs.readFileSync(path.join(ROOT, 'assets/js/iris-motion.js'), 'utf8');
 
 function mediaBlocks(css, query) {
   var needle = '@media (' + query + ')';
@@ -263,48 +265,52 @@ check('cream CSS file does not gain skin-pending / FOUC cover', function () {
 
 check('cache queries bumped for My Work glitch skin', function () {
   assert.ok(
-    /landing-multiverse\.css\?v=mv12/.test(index),
-    'index.html must bump landing-multiverse.css cache to mv12'
+    /landing-multiverse\.css\?v=mv13/.test(index),
+    'index.html must bump landing-multiverse.css cache to mv13'
   );
   assert.ok(
-    /landing-multiverse\.css\?v=mv12/.test(mvIndex),
-    'index-multiverse.html must bump landing-multiverse.css cache to mv12'
+    /landing-multiverse\.css\?v=mv13/.test(mvIndex),
+    'index-multiverse.html must bump landing-multiverse.css cache to mv13'
   );
   assert.ok(
-    /iris-motion-multiverse\.js\?v=mv9/.test(index),
-    'index.html must bump iris-motion-multiverse.js cache to mv9'
+    /iris-motion-multiverse\.js\?v=mv10/.test(index),
+    'index.html must bump iris-motion-multiverse.js cache to mv10'
   );
   assert.ok(
-    /iris-motion-multiverse\.js\?v=mv9/.test(mvIndex),
-    'index-multiverse.html must bump iris-motion-multiverse.js cache to mv9'
+    /iris-motion-multiverse\.js\?v=mv10/.test(mvIndex),
+    'index-multiverse.html must bump iris-motion-multiverse.js cache to mv10'
   );
   assert.ok(
-    /landing-multiverse\.js\?v=mv8/.test(index),
-    'index.html must bump landing-multiverse.js cache to mv8'
+    /landing-multiverse\.js\?v=mv9/.test(index),
+    'index.html must bump landing-multiverse.js cache to mv9'
   );
   assert.ok(
-    /landing-multiverse\.js\?v=mv8/.test(mvIndex),
-    'index-multiverse.html must bump landing-multiverse.js cache to mv8'
+    /landing-multiverse\.js\?v=mv9/.test(mvIndex),
+    'index-multiverse.html must bump landing-multiverse.js cache to mv9'
   );
   assert.ok(
-    /project-study\.js\?v=hz128/.test(index),
-    'index.html must bump project-study.js cache to hz128'
+    /project-study\.js\?v=hz129/.test(index),
+    'index.html must bump project-study.js cache to hz129'
   );
   assert.ok(
-    /landing\.css\?v=aeo32/.test(index),
-    'index.html must bump landing.css cache to aeo32 for shared chrome layout'
+    /landing\.css\?v=aeo33/.test(index),
+    'index.html must bump landing.css cache to aeo33 for shared chrome layout'
   );
   assert.ok(
-    /landing\.css\?v=aeo32/.test(mvIndex),
-    'index-multiverse.html must load shared landing.css (aeo32)'
+    /landing\.css\?v=aeo33/.test(mvIndex),
+    'index-multiverse.html must load shared landing.css (aeo33)'
   );
   assert.ok(
     /beyond-transition\.js\?v=bx20/.test(index),
     'index.html must keep beyond-transition.js cache at bx20 (Go Home FOUC cover)'
   );
   assert.ok(
-    /landing\.js\?v=aeo31/.test(index),
+    /landing\.js\?v=aeo32/.test(index),
     'index.html must bump landing.js cache for cream curtain mark-size lock'
+  );
+  assert.ok(
+    /viewport\.js\?v=vp1/.test(index) && /viewport\.js\?v=vp1/.test(mvIndex),
+    'both homes must load viewport.js so --vvh tracks the browser pane'
   );
 });
 
@@ -338,7 +344,7 @@ check('My Work + landing-chrome + rise live in one shared landing.css rule set',
   assert.ok(desk.length, 'landing.css missing min-width 768px block');
   assert.ok(
     sharedChrome('\\.work-cta').test(desk) &&
-      /translate3d\(\s*-50%\s*,\s*calc\(\s*\(var\(--rise,\s*1\)\s*-\s*1\)\s*\*\s*100svh\s*\)/.test(desk),
+      /translate3d\(\s*-50%\s*,\s*calc\(\s*\(var\(--rise,\s*1\)\s*-\s*1\)\s*\*\s*var\(--vvh\)\s*\)/.test(desk),
     'desktop shared .work-cta must use one --rise handle math for both worlds'
   );
   assert.ok(
@@ -422,15 +428,15 @@ check('Multiverse My Work has comic / RGB skin; cream does not', function () {
 
 check('both worlds load shared landing.css; Multiverse adds glitch sheet after', function () {
   assert.ok(
-    /landing\.css\?v=aeo32/.test(index),
+    /landing\.css\?v=aeo33/.test(index),
     'index.html must load shared landing.css'
   );
   assert.ok(
-    /landing\.css\?v=aeo32/.test(mvIndex),
+    /landing\.css\?v=aeo33/.test(mvIndex),
     'index-multiverse.html must load shared landing.css'
   );
-  var mvLink = mvIndex.indexOf('landing-multiverse.css?v=mv12');
-  var layoutLink = mvIndex.indexOf('landing.css?v=aeo32');
+  var mvLink = mvIndex.indexOf('landing-multiverse.css?v=mv13');
+  var layoutLink = mvIndex.indexOf('landing.css?v=aeo33');
   assert.ok(layoutLink !== -1 && mvLink !== -1 && layoutLink < mvLink,
     'index-multiverse.html must load landing.css before landing-multiverse.css');
 });
@@ -468,6 +474,59 @@ check('project open curtain uses the same IrisMotion hitch / letter-glitch as ho
     !/is-study-wipe[\s\S]{0,180}hitchVeil/.test(mvLanding),
     'landing-multiverse.js must not hitch the project curtain on is-study-wipe start (veil still offscreen)'
   );
+});
+
+function stripComments(src) {
+  return String(src)
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|[^:])\/\/.*$/gm, '$1');
+}
+
+check('layout never uses device screen.* metrics', function () {
+  var screenRe = /\bscreen\.(width|height|availWidth|availHeight)\b/;
+  var files = [
+    ['viewport.js', viewportJs],
+    ['landing.js', creamLanding],
+    ['landing-multiverse.js', mvLanding],
+    ['project-study.js', studyJs],
+    ['iris-motion.js', creamMotion],
+    ['iris-motion-multiverse.js', mvMotion],
+    ['landing.css', creamCss],
+    ['landing-multiverse.css', mvCss]
+  ];
+  files.forEach(function (pair) {
+    assert.ok(!screenRe.test(stripComments(pair[1])), pair[0] + ' must not use screen.* for layout');
+  });
+});
+
+check('full-height layout uses --vvh (browser pane), not 100vh parks', function () {
+  assert.ok(/--vvh:\s*100svh/.test(creamCss), 'landing.css must default --vvh to 100svh');
+  assert.ok(/--vvh:\s*100dvh/.test(creamCss), 'landing.css must upgrade --vvh to 100dvh');
+  assert.ok(/--vvh:\s*100svh/.test(mvCss) && /--vvh:\s*100dvh/.test(mvCss),
+    'landing-multiverse.css must keep --vvh parity');
+  assert.ok(!/translateY\(\s*100vh\s*\)/.test(creamCss),
+    'landing.css off-screen parks must not use 100vh');
+  assert.ok(!/translateY\(\s*100vh\s*\)/.test(mvCss),
+    'landing-multiverse.css off-screen parks must not use 100vh');
+  assert.ok(/height:\s*var\(--vvh\)/.test(creamCss),
+    'landing.css rail / study full-height must use var(--vvh)');
+  assert.ok(/--study-stage:\s*calc\(\s*var\(--vvh\)\s*-\s*var\(--study-head\)\s*\)/.test(creamCss),
+    'study stage must track --vvh, not device vh');
+  assert.ok(/--study-stage:\s*calc\(\s*var\(--vvh\)\s*-\s*var\(--study-head\)\s*\)/.test(mvCss),
+    'Multiverse study stage must track --vvh');
+});
+
+check('JS sizes to visualViewport / layoutViewport, not innerHeight alone', function () {
+  assert.ok(/visualViewport/.test(viewportJs) && /layoutViewport/.test(viewportJs),
+    'viewport.js must expose layoutViewport from visualViewport');
+  assert.ok(/layoutViewport/.test(creamLanding) && /visualViewport/.test(creamLanding),
+    'landing.js riseMax must prefer layoutViewport / visualViewport');
+  assert.ok(/layoutViewport/.test(mvLanding) && /visualViewport/.test(mvLanding),
+    'landing-multiverse.js riseMax must stay in cream parity');
+  assert.ok(/function viewportSize/.test(studyJs) && /visualViewport/.test(studyJs),
+    'project-study.js must size the film stage from the browser pane');
+  assert.ok(/layoutViewport/.test(creamMotion) && /layoutViewport/.test(mvMotion),
+    'particle canvas must fill the layout viewport, not screen');
 });
 
 if (failed) {
