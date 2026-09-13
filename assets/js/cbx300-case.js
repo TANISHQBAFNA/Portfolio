@@ -37,8 +37,8 @@ window.Cbx300Case = (function () {
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'Freelancers and mid-market teams are stages of one customer, not five products.',
-        choice: 'One platform. Complexity only when the business needs it.'
+        finding: 'Small businesses grow — yesterday’s freelancer is tomorrow’s payroll team.',
+        choice: 'One platform that gets more complex only when the business does — not five separate products.'
       },
       captions: [
         'A freelancer runs the whole day from one login.',
@@ -57,8 +57,8 @@ window.Cbx300Case = (function () {
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'Early on one login wears three hats. Later, three people.',
-        choice: 'Design for owner, maker, and approver jobs, not job titles.'
+        finding: 'Early on, one person owns, pays, and approves. Later, those are three different people.',
+        choice: 'Design for those three jobs, not for job titles — so one login and many logins both fit.'
       },
       captions: [
         'Owner needs one honest cash answer.',
@@ -75,10 +75,10 @@ window.Cbx300Case = (function () {
       recipe: 'door',
       pin: true,
       decision: {
-        kind: 'Constraint',
-        finding: 'Approval is a legal act. You cannot hide the rows.',
-        choice: 'A permanent Approvals door, plus a batch that still shows every line.',
-        ruledOut: 'Ruled out: select-all with no per-row visibility.'
+        kind: 'Finding',
+        finding: 'Approving other people’s money is the job, and it is a legal act — you must see every line you sign.',
+        choice: 'Approvals get their own door, and batch approve keeps each row visible.',
+        ruledOut: 'Ruled out: bury under Payments, or select-all with no line of sight.'
       },
       captions: [
         'Approving is the job, so it has its own button, not a notification.',
@@ -95,8 +95,9 @@ window.Cbx300Case = (function () {
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: '"Balance" is four numbers to a business. Bad file rows after sign is too late.',
-        choice: 'Four balances on the card. Fail the check before anyone signs.'
+        finding: 'A business account has more than one “balance,” and a salary file can hide bad rows until after you sign.',
+        choice: 'Show four balances on the card (available first), and surface failures before the signature.',
+        ruledOut: 'Ruled out: one big number, or a clean list that fails after submit.'
       },
       captions: [
         'Bad rows turn red before you sign.',
@@ -112,10 +113,10 @@ window.Cbx300Case = (function () {
       recipe: 'verbs',
       pin: true,
       decision: {
-        kind: 'Constraint',
-        finding: 'A one-question-per-screen wizard dies at about 50 permissions.',
-        choice: 'One verb grid (start, check, view, send, approve) that scales from one user to many.',
-        ruledOut: 'Ruled out: wizard, one question per screen.'
+        kind: 'Finding',
+        finding: 'Who can do what is many verbs per product — a step-by-step wizard collapses when the list gets long.',
+        choice: 'A grid of verbs (start, check, view, send, approve) on one screen.',
+        ruledOut: 'Ruled out: one question per screen.'
       },
       captions: [
         'Start, check, view, send, approve. The verbs sit in a grid you can read.',
@@ -132,8 +133,8 @@ window.Cbx300Case = (function () {
       pin: true,
       decision: {
         kind: 'Finding',
-        finding: 'Money paths that relearn endings break trust.',
-        choice: 'Same ending everywhere: Review, one-time code, done.'
+        finding: 'Dozens of money forms, same consequence — money moves or a mandate changes. Relearning the ending breaks trust.',
+        choice: 'Every money path ends the same way: check → one-time code → result.'
       },
       captions: [
         'Review, then a one-time code, then done.',

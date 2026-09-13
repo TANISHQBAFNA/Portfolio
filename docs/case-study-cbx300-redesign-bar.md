@@ -74,20 +74,20 @@ Examples: “Approving is the job — so it has its own button, not a notificati
 - Prefer real contact-sheet or honest scaled proof when exports exist.
 
 ### 7. Decision layer (UX/UI why)
-Every chapter (ladder, roles, approvals, money, permissions, grammar) stages **Finding/constraint → Choice → UI proof**. Not claim → screen only. Cover has no Decision chip. Scale stays close-on-finding.
+Every chapter (ladder, roles, approvals, money, permissions, grammar) stages **Finding → Choice → UI proof**. Not claim → screen only. Cover has no Decision chip. Scale stays close-on-finding.
 
-**No invented research.** Use only these locked briefs:
+**No invented research.** Echo locked these Finding → Choice pairs. Prefer them over any earlier draft wording. One sentence each on film (grammar finding is Echo’s two-sentence lock). Ruled-out is quiet secondary only where Echo included it.
 
-| Chapter | Finding or constraint | Choice | UI proof |
-|---|---|---|---|
-| Ladder | Freelancers and mid-market teams are stages of one customer, not five products. | One platform. Complexity only when the business needs it. | Same accounts layout at both ends of the ladder (placeholders OK). |
-| Roles | Early on one login wears three hats. Later, three people. | Design for owner / maker / approver jobs, not job titles. | Three role cards + web vs phone cues. |
-| Approvals | Approval is a legal act. You cannot hide the rows. | Permanent Approvals door + batch that still shows every line. | Nav Approvals + Approve (N) with rows still visible. Ruled out: select-all with no per-row visibility. |
-| Money | “Balance” is four numbers to a business. Bad file rows after sign is too late. | Four balances on the card. Fail validation before signature. | Failed-rows crop, then four-balance card (placeholders OK). |
-| Permissions | A one-question-per-screen wizard dies at ~50 permissions. | One verb grid (start / check / view / send / approve) that scales from 1 to many. | Verb matrix. Ruled out: wizard, one question per screen. |
-| Grammar | Money paths that relearn endings break trust. | Same ending everywhere — Review → one-time code → done. | Three-step strip + empty states that offer the next action. |
+| Chapter | Finding | Choice | Ruled out (quiet) | UI proof |
+|---|---|---|---|---|
+| Ladder | Small businesses grow — yesterday’s freelancer is tomorrow’s payroll team. | One platform that gets more complex only when the business does — not five separate products. | — | Same accounts layout at both ends of the ladder (placeholders OK). |
+| Roles | Early on, one person owns, pays, and approves. Later, those are three different people. | Design for those three jobs, not for job titles — so one login and many logins both fit. | — | Three role cards + web vs phone cues. |
+| Approvals | Approving other people’s money is the job, and it is a legal act — you must see every line you sign. | Approvals get their own door, and batch approve keeps each row visible. | bury under Payments, or select-all with no line of sight. | Nav Approvals + Approve (N) with rows still visible. |
+| Money | A business account has more than one “balance,” and a salary file can hide bad rows until after you sign. | Show four balances on the card (available first), and surface failures before the signature. | one big number, or a clean list that fails after submit. | Failed-rows crop, then four-balance card (placeholders OK). |
+| Permissions | Who can do what is many verbs per product — a step-by-step wizard collapses when the list gets long. | A grid of verbs (start, check, view, send, approve) on one screen. | one question per screen. | Verb matrix. |
+| Grammar | Dozens of money forms, same consequence — money moves or a mandate changes. Relearning the ending breaks trust. | Every money path ends the same way: check → one-time code → result. | — | Three-step strip + empty states that offer the next action. |
 
-On-film: cream editorial chip in the claim column (label Finding or Constraint, then finding line, then Choice). Lands before the proof scrub. Ruled-out is a quiet secondary line under the chip. Captions stay proof-sync. Keep Echo’s six chapter titles + one-line bodies.
+On-film: cream editorial chip in the claim column (label Finding, then finding line, then Choice). Lands before the proof scrub. Ruled-out is a quiet secondary line under the chip where Echo included it. Captions stay proof-sync. Keep Echo’s six chapter titles + one-line bodies.
 
 Product language belongs in this doc. Stay off the page: entitlements, maker-checker, mental model, dual control, seamless, intuitive, fake %.
 
