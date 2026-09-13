@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CBX300 · Banking that grows with the business</title>
+  <style>
+    :root {
+      --cream: #f4efe6;
+      --paper: #efeae1;
+      --ink: #1e1510;
+      --muted: rgba(30, 21, 16, 0.62);
+      --teal: #00a0a0;
+      --bank: #147a4a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Outfit, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.55;
+    }
+    main { max-width: 52rem; margin: 0 auto; padding: 48px 24px 96px; }
+    h1, h2, h3 { font-family: Syne, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.03em; }
+    h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.08; margin: 0 0 16px; }
+    h2 { font-size: 1.45rem; margin: 48px 0 12px; }
+    h3 { font-size: 1.08rem; margin: 28px 0 8px; }
+    p, li { color: var(--ink); }
+    .muted { color: var(--muted); }
+    .quote {
+      margin: 24px 0;
+      padding: 0 0 0 16px;
+      border-left: 2px solid var(--teal);
+      font-size: 1.15rem;
+      font-weight: 500;
+    }
+    .stats { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 20px 0; font-size: 0.92rem; }
+    .stats strong { color: var(--teal); }
+    .disclaimer {
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 12px 14px;
+      background: var(--paper);
+      border: 1px solid rgba(30, 21, 16, 0.1);
+    }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0 24px;
+    }
+    @media (max-width: 720px) { .pair { grid-template-columns: 1fr; } }
+    .card {
+      padding: 16px 16px 18px;
+      background: var(--paper);
+      border: 1px solid rgba(30, 21, 16, 0.1);
+    }
+    .card.risk { border-left: 3px solid #a02820; }
+    .card.change { border-left: 3px solid var(--bank); }
+    .card .k { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin: 0 0 6px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid rgba(30, 21, 16, 0.1); vertical-align: top; }
+    th { font-family: Syne, sans-serif; font-size: 0.82rem; }
+    .meta { font-size: 0.82rem; color: var(--muted); }
+    footer { margin-top: 56px; font-size: 0.8rem; color: var(--muted); }
+    ol.ladder { padding-left: 1.2rem; }
+    .bar { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin: 8px 0 24px; padding-top: 8px; border-top: 3px solid var(--teal); }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="meta">Lead product designer · Jan 2026–present · Design system complete. Majority of screens and flows through handoff.</p>
+    <h1>Banking that grows with the business.</h1>
+    <p>CBX300 helps business owners understand money, make payments safely, approve work, and manage team access as the business grows.</p>
+    <p class="quote">“A business should not need a new banking product just because it has grown.”</p>
+    <p class="stats">
+      <span><strong>259</strong> web</span>
+      <span><strong>377</strong> mobile</span>
+      <span><strong>~147</strong> flows</span>
+      <span>One shared system</span>
+    </p>
+    <p class="meta">Demo brand in product frames: Lisa Charlie bank. Product demos may keep bank-green accents inside UI mock frames.</p>
+
+    <h2>Meet Aisha</h2>
+    <p class="disclaimer">Aisha is a representative example used to tell the product story. She is not a real interview, and not a live customer of Lisa Charlie.</p>
+    <p>Aisha runs a growing distribution business. Early on she managed every financial task herself. The questions were simple: do I have enough to pay this supplier today?</p>
+    <p>As the company grew, banking became a shared job. The questions changed:</p>
+    <ul>
+      <li>Who prepared this?</li>
+      <li>Does it need approval?</li>
+      <li>Can my accountant see only the right info?</li>
+    </ul>
+    <p>CBX300 is designed so Aisha does not have to replace her bank when those questions arrive.</p>
+
+    <h2>The ladder</h2>
+    <p>Small businesses are sold as one audience. Day to day they are stages of the same customer.</p>
+    <ol class="ladder">
+      <li><strong>Independent professional.</strong> One person. Quick visibility of income, expenses, a few payments.</li>
+      <li><strong>Sole proprietor.</strong> The owner manages daily cash, bills, and supplier payments.</li>
+      <li><strong>Micro.</strong> A helper or bookkeeper begins to work with company money.</li>
+      <li><strong>Small.</strong> Finance prepares. An owner or director approves.</li>
+      <li><strong>Medium.</strong> More accounts, more users, payment batches, stronger controls.</li>
+    </ol>
+    <p class="bar"><span>One person</span><span>One platform</span><span>Finance team</span></p>
+    <p>Complexity lives in the system. It shows up only when the business needs it. The same accounts layout has to work with no accounts and with four.</p>
+
+    <h2>Roles, not one user</h2>
+    <p>The same business account can be used by people with very different jobs. Early on, one person wears all three hats. Later, three people. Design for the jobs, not one generic user.</p>
+    <ul>
+      <li><strong>Owner</strong> needs a clear view of cash, important activity, and decisions waiting. Often on web, sometimes a quick check on a phone.</li>
+      <li><strong>Payment maker</strong> prepares payments. Needs speed, less retyping, and errors early. Web desk.</li>
+      <li><strong>Approver</strong> reviews work prepared by someone else. Key facts first. Often from a phone.</li>
+    </ul>
+
+    <h2>Product promise</h2>
+    <ol>
+      <li><strong>Start simple.</strong> One person can run the account without a finance team.</li>
+      <li><strong>Give context.</strong> Numbers mean something. Available leads because it answers what can be paid today.</li>
+      <li><strong>Share work safely.</strong> A teammate can prepare. An owner can approve. Submitted is not completed.</li>
+      <li><strong>Prevent errors.</strong> Failures surface in review, before anyone signs.</li>
+      <li><strong>Stay familiar.</strong> Web and phone keep the same meaning. Money paths end the same way.</li>
+    </ol>
+
+    <h2>Aisha moments</h2>
+    <p>Each moment is a risk, a change, and a UI proof. Placeholders stand in for Figma frames until exports land.</p>
+
+    <h3>1. Can I afford to pay this supplier today?</h3>
+    <div class="pair">
+      <article class="card risk">
+        <p class="k">Risk</p>
+        <p>One balance is misleading. Some money is held. Some is not cleared. Some is already booked. A single number would let Aisha pay what she cannot spend.</p>
+      </article>
+      <article class="card change">
+        <p class="k">What I changed</p>
+        <p>Show available, current, held, and uncleared. Available leads the page because it answers what she can pay today.</p>
+      </article>
+    </div>
+    <p class="muted">Demo: account card with four balances. Available is first and larger. Annotation: “this is spendable now.”</p>
+
+    <h3>2. Pay the right supplier</h3>
+    <div class="pair">
+      <article class="card risk">
+        <p class="k">Risk</p>
+        <p>A long payment form asks for everything at once. People fill fields that do not apply, or skip the ones that do. Wrong type, wrong details.</p>
+      </article>
+      <article class="card change">
+        <p class="k">What I changed</p>
+        <p>Start with payment type. Details arrive only when they are needed for that type.</p>
+      </article>
+    </div>
+    <p class="muted">Demo: type chips (transfer, bill, payroll, FX). Form fields reveal after a type is chosen. Annotation: “type first, then the fields that belong.”</p>
+
+    <h3>3. Did the system use the right beneficiary?</h3>
+    <div class="pair">
+      <article class="card risk">
+        <p class="k">Risk</p>
+        <p>Invisible automation is risky. If the product pre-fills a beneficiary, Aisha may send money to the last used name without seeing the handoff.</p>
+      </article>
+      <article class="card change">
+        <p class="k">What I changed</p>
+        <p>Confirm the handoff. Show who was suggested and why. Keep a pre-fill message in the open, not in the background.</p>
+      </article>
+    </div>
+    <p class="muted">Demo: confirm card with beneficiary name, account hint, and “suggested from last payment to this supplier.”</p>
+
+    <h3>4. My team can prepare. I need to approve.</h3>
+    <div class="pair">
+      <article class="card risk">
+        <p class="k">Risk</p>
+        <p>Submitted can look like completed. Preparing a payment is not the same as approving it. If the state is vague, Aisha signs something she thinks is already done, or waits on something that never reached her.</p>
+      </article>
+      <article class="card change">
+        <p class="k">What I changed</p>
+        <p>Clear states for prepared, submitted, waiting, approved, rejected, completed. Approvals get their own door. Batch Approve (N) names the count while rows stay visible.</p>
+      </article>
+    </div>
+    <p class="muted">Demo: nav item Approvals with a count. Queue with rows still on screen. Action labelled Approve (6). Ruled out: bury under Payments, or select-all with no line of sight.</p>
+
+    <h3>5. Tell me what is wrong before I approve</h3>
+    <div class="pair">
+      <article class="card risk">
+        <p class="k">Risk</p>
+        <p>Errors arrive too late. A salary file can hide bad rows until after someone signs. That is a legal act on a dirty list.</p>
+      </article>
+      <article class="card change">
+        <p class="k">What I changed</p>
+        <p>Validation lives in review. Surface failures before the signature. 128 transactions, 3 failed a check, named on the page.</p>
+      </article>
+    </div>
+    <p class="muted">Demo: review header “128 transactions · 3 failed system validation.” Failed rows in red: account missing, amount unreadable, duplicate line. Ruled out: a clean list that fails after submit.</p>
+
+    <h3>6. My team needs access, but not all access</h3>
+    <div class="pair">
+      <article class="card risk">
+        <p class="k">Risk</p>
+        <p>A role name is not enough. “Accountant” does not say which actions a person can take, or which accounts they can use. Automatic access to everything is a money decision dressed as convenience.</p>
+      </article>
+      <article class="card change">
+        <p class="k">What I changed</p>
+        <p>A safe permission connects a person, an action, and the right financial scope, step by step. Verbs stay readable: start, check, view, send, approve.</p>
+      </article>
+    </div>
+    <p class="muted">Demo: three steps. Person (Sara, bookkeeper). Action (view, prepare). Scope (operating account, not payroll, not reserve). Ruled out: one question per screen that collapses at fifty permissions.</p>
+
+    <h2>UI strategy</h2>
+    <p><strong>Calm when reading. Clear when acting.</strong></p>
+    <ul>
+      <li><strong>Hierarchy.</strong> Available balance, the next approval, the failed row. One thing leads.</li>
+      <li><strong>Colour.</strong> Cream paper for reading. Bank-green inside product frames for money that can move. Red only for failed checks.</li>
+      <li><strong>Actions.</strong> Named with the count they will perform. Approve (N), not a mystery tick.</li>
+      <li><strong>Layout.</strong> Web is the workspace. Phone is the urgent check. Do not shrink the desk onto a handset.</li>
+    </ul>
+
+    <h2>Web vs mobile</h2>
+    <p>Same goal. Different moment.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Goal</th>
+          <th>Web</th>
+          <th>Mobile</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Can I pay today?</td>
+          <td>Four balances, available first, room to compare.</td>
+          <td>Available leads. Current / held / uncleared sit under a tap.</td>
+        </tr>
+        <tr>
+          <td>Pay a supplier</td>
+          <td>Type, then details, then review.</td>
+          <td>Confirm the beneficiary. Send from thumb reach.</td>
+        </tr>
+        <tr>
+          <td>Approve work</td>
+          <td>Queue with every row visible. Approve (N).</td>
+          <td>The screen changes mode. Actions sit in thumb reach.</td>
+        </tr>
+        <tr>
+          <td>Share access</td>
+          <td>Person, action, financial scope on one readable path.</td>
+          <td>Check who has access. Escalate edits to web if the matrix is long.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Web is the workspace. Mobile is the urgent check. Shrinking the desktop onto a phone loses the moment. Keep the meaning of the task, then change the layout for the device.</p>
+
+    <h2>System</h2>
+    <ul>
+      <li><strong>Navigation.</strong> Approvals have a permanent address, on web and on the phone bar. Work is not buried in a bell.</li>
+      <li><strong>Forms.</strong> Type first. Details when needed. Right column holds context, never extra questions.</li>
+      <li><strong>Information and states.</strong> Prepared, submitted, waiting, approved, rejected, completed. Failed rows named before signature.</li>
+      <li><strong>Familiar endings.</strong> Review, then a one-time code, then done. Same three steps on payments, deposits, cards, loans. People do not relearn the ending. Empty screens offer the next action instead of apologising.</li>
+    </ul>
+
+    <h2>Outcome</h2>
+    <p>A bank that does not need replacing when Aisha’s business grows. 259 web screens. 377 mobile screens. ~147 flows. One shared system.</p>
+    <p>Results stay blank until real numbers exist. No invented NPS, time saved, or adoption.</p>
+    <h3>What I would test next</h3>
+    <ul>
+      <li>Test payment, approval, and access journeys with real business users.</li>
+      <li>Measure time to complete key tasks and understand status.</li>
+      <li>Track errors, abandoned steps, and support requests.</li>
+      <li>Test whether web and mobile tell the same clear story.</li>
+    </ul>
+
+    <footer>
+      <p>Lisa Charlie bank is a demo brand. Aisha is a representative story, not a real customer interview.</p>
+      <p>Figma frames are placeholders until exports land. Designed slots stand in for product art. Do not read grey bands as the shipped UI.</p>
+    </footer>
+  </main>
+</body>
+</html>

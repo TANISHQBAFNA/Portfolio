@@ -4,6 +4,16 @@
 
 /* Window is the scroller. Nested .study + overflow-x:clip + html overflow
    hidden was a Safari/iPad dead film: the page never panned, scrub never ran. */
+html.is-study-film {
+  --vvh: 100svh;
+  --vvw: 100svw;
+}
+@supports (height: 100dvh) {
+  html.is-study-film {
+    --vvh: 100dvh;
+    --vvw: 100dvw;
+  }
+}
 html.is-study-film,
 html.is-study-film body {
   overflow-x: hidden !important;
@@ -32,6 +42,8 @@ html.is-study-film .study[data-template="cbx300"] {
   --film-line: rgba(30, 21, 16, 0.1);
   --film-teal: #00a0a0;
   --film-deep: #00615f;
+  --film-bank: #147a4a;
+  --film-bank-soft: rgba(20, 122, 74, 0.14);
   --film-gutter: var(--gutter, 24px);
   --film-ease: var(--ease, cubic-bezier(0.22, 0.61, 0.36, 1));
   background: var(--film-cream);
@@ -49,15 +61,26 @@ html.is-dark .study[data-template="cbx300"] {
   --film-line: rgba(244, 239, 230, 0.12);
   --film-teal: #56c6c6;
   --film-deep: #56c6c6;
+  --film-bank: #3d9a68;
+  --film-bank-soft: rgba(61, 154, 104, 0.18);
 }
 
 .study[data-template="cbx300"] .study__temps {
   display: none;
 }
 
-.study[data-template="cbx300"] .glitch,
-.study[data-template="cbx300"] [data-text]::before,
-.study[data-template="cbx300"] [data-text]::after {
+/* Cream: no glitch in the opened case, including chrome. */
+html:not(.is-multiverse) .study[data-template="cbx300"] .glitch,
+html:not(.is-multiverse) .study[data-template="cbx300"] [data-text]::before,
+html:not(.is-multiverse) .study[data-template="cbx300"] [data-text]::after {
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+/* Multiverse: glitch only on study chrome / mark / title hitch. Film body stays calm. */
+html.is-multiverse .study[data-template="cbx300"] .film-world .glitch,
+html.is-multiverse .study[data-template="cbx300"] .film-world [data-text]::before,
+html.is-multiverse .study[data-template="cbx300"] .film-world [data-text]::after {
   animation: none !important;
   text-shadow: none !important;
 }
@@ -87,21 +110,21 @@ html.is-dark .study[data-template="cbx300"] {
   display: grid;
   box-sizing: border-box;
   padding: var(--study-head, 72px) var(--film-gutter) 32px;
-  min-height: 100svh;
+  min-height: var(--vvh, 100svh);
 }
 
 /* One leftover viewport. GSAP pin + pinSpacing is the runway.
    Do not CSS-tall this hold (double spacer = dead film). */
 .film-beat[data-pin="true"] .film-hold {
-  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
+  min-height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
 }
 
 .film-beat[data-pin="true"] .film-stage {
   position: relative;
-  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  max-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
+  min-height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
+  max-height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
   padding: 20px var(--film-gutter) 22px;
   overflow: hidden;
   display: grid;
@@ -353,14 +376,14 @@ html.is-dark .study[data-template="cbx300"] {
 
 /* Cover: leftover viewport under chrome, then pin-scrub scale-in. */
 .film-beat--cover .film-hold {
-  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
+  min-height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
 }
 
 .film-beat--cover .film-stage {
-  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  max-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
+  height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
+  min-height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
+  max-height: var(--study-stage, calc(var(--vvh, 100svh) - var(--study-head, 72px)));
   padding: 20px var(--film-gutter) 22px;
   overflow: hidden;
   grid-template-rows: minmax(0, 1fr) auto;
@@ -548,6 +571,305 @@ html.is-dark .film-ui-band {
 .film-ui-band--teal {
   width: 42%;
   background: rgba(0, 160, 160, 0.32);
+}
+
+.film-ui-band--bank {
+  width: 48%;
+  background: rgba(20, 122, 74, 0.42);
+}
+
+.film-ui-figure {
+  margin: 0;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  letter-spacing: -0.04em;
+  color: var(--film-bank, #147a4a);
+}
+
+.film-ui-figure--sm {
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+}
+
+.film-bank .film-ui-kicker {
+  color: var(--film-bank, #147a4a);
+}
+
+.film-risk {
+  height: 100%;
+  min-height: 220px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  border-radius: 14px;
+  border-left: 3px solid #a02820;
+  box-sizing: border-box;
+}
+
+.film-risk__k {
+  margin: 0;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a02820;
+}
+
+.film-risk strong {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  letter-spacing: -0.03em;
+}
+
+.film-risk p {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--film-muted);
+}
+
+.film-portrait {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.7fr) minmax(0, 1.3fr);
+  gap: 16px;
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.film-persona {
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  border-radius: 14px;
+}
+
+.film-persona strong {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: -0.04em;
+}
+
+.film-persona p {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.88rem;
+  color: var(--film-muted);
+}
+
+.film-questions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.film-question {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+
+.film-question__n {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--film-teal);
+}
+
+.film-question p {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.film-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.film-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.film-type {
+  padding: 8px 14px;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.85rem;
+  background: var(--film-cream);
+  color: var(--film-ink);
+  border: 1px solid var(--film-line);
+  border-radius: 99px;
+}
+
+.film-type.is-on {
+  background: var(--film-bank, #147a4a);
+  color: var(--film-cream);
+  border-color: transparent;
+}
+
+.film-form__details {
+  padding: 18px 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.film-handoff {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  padding: 8px;
+}
+
+.film-confirm {
+  flex: 1;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  border-radius: 14px;
+}
+
+.film-confirm strong {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+  letter-spacing: -0.03em;
+}
+
+.film-handoff__msg {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  background: var(--film-bank-soft, rgba(20, 122, 74, 0.14));
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.film-wizard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.film-wizard__card {
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  border-radius: 14px;
+}
+
+.film-wizard__card strong {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: -0.03em;
+}
+
+.film-wizard__card p {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--film-muted);
+}
+
+.film-ui-strategy,
+.film-system {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.film-strategy-card,
+.film-pillar {
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  border-radius: 14px;
+}
+
+.film-strategy-card strong,
+.film-pillar strong {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: -0.03em;
+}
+
+.film-strategy-card p,
+.film-pillar p {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--film-muted);
+}
+
+.film-compare {
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.film-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.86rem;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.film-table th,
+.film-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--film-line);
+  vertical-align: top;
+}
+
+.film-table th {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.78rem;
+  color: var(--film-teal);
+}
+
+.film-table tbody tr {
+  transform-origin: 0% 50%;
+}
+
+.film-balance.is-lead {
+  border-left: 3px solid var(--film-bank, #147a4a);
+  grid-column: 1 / -1;
 }
 
 .film-ui-stack {
@@ -1141,11 +1463,17 @@ html.is-dark .film-nav__item.is-door {
   .film-jobs,
   .film-pair,
   .film-balances,
-  .film-empty {
+  .film-empty,
+  .film-ui-strategy,
+  .film-system,
+  .film-wizard,
+  .film-portrait {
     grid-template-columns: 1fr 1fr;
   }
 
-  .film-jobs {
+  .film-jobs,
+  .film-wizard,
+  .film-portrait {
     grid-template-columns: 1fr;
   }
 
@@ -1191,7 +1519,9 @@ html.is-dark .film-nav__item.is-door {
   }
 
   .film-pair,
-  .film-balances {
+  .film-balances,
+  .film-ui-strategy,
+  .film-system {
     grid-template-columns: 1fr;
   }
 
@@ -1280,7 +1610,15 @@ html.is-dark .film-nav__item.is-door {
   .film-sheet,
   .film-device,
   .film-cell,
-  .film-shot {
+  .film-shot,
+  .film-risk,
+  .film-question,
+  .film-wizard__card,
+  .film-strategy-card,
+  .film-pillar,
+  .film-type,
+  .film-confirm,
+  .film-balance {
     transform: none !important;
     opacity: 1 !important;
     clip-path: none !important;

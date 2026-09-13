@@ -16,11 +16,20 @@ window.CaseScrollKit = (function () {
   'use strict';
 
   var END_RATIO = {
-    cover: 1.5,
-    ends: 4.8,
+    cover: 1.55,
+    portrait: 2.15,
+    ends: 4.6,
     jobs: 2.7,
+    steps: 3.35,
+    money: 2.45,
+    form: 2.35,
+    handoff: 2.2,
     door: 2.55,
-    money: 2.6,
+    fail: 2.4,
+    wizard: 2.85,
+    cards: 2.5,
+    table: 2.4,
+    system: 2.55,
     verbs: 2.8,
     ending: 3.15,
     finding: 2.0
@@ -47,7 +56,15 @@ window.CaseScrollKit = (function () {
   }
 
   function viewH(scroller) {
-    if (isView(scroller)) return window.innerHeight || 800;
+    if (isView(scroller)) {
+      if (window.layoutViewport && typeof window.layoutViewport.height === 'function') {
+        return window.layoutViewport.height() || 800;
+      }
+      if (window.visualViewport && window.visualViewport.height) {
+        return window.visualViewport.height;
+      }
+      return window.innerHeight || 800;
+    }
     return scroller.clientHeight || 800;
   }
 
@@ -112,7 +129,7 @@ window.CaseScrollKit = (function () {
   function resetPage(page) {
     pinStage(page, false);
     page.classList.remove('is-static');
-    qq(page, '[data-film-stage], [data-film-hold], .film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-decision], [data-film-ruled], [data-film-track], .film-sheet, .film-sheet i, .film-action, .film-ladder, .film-ladder__world, .film-ladder__row, .film-ladder__fill, .film-cell, .film-grid__head, .film-balance, .film-job__screen, .film-device, .film-ui-band, .film-empty article, .film-step').forEach(function (el) {
+    qq(page, '[data-film-stage], [data-film-hold], .film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-decision], [data-film-ruled], [data-film-track], .film-sheet, .film-sheet i, .film-action, .film-ladder, .film-ladder__world, .film-ladder__row, .film-ladder__fill, .film-cell, .film-grid__head, .film-balance, .film-job__screen, .film-device, .film-ui-band, .film-empty article, .film-step, .film-risk, .film-type, .film-question, .film-persona, .film-confirm, .film-wizard__card, .film-strategy-card, .film-pillar, .film-table tr, .film-handoff__msg, .film-form__details').forEach(function (el) {
       window.gsap.set(el, { clearProps: CLEAR });
     });
   }
@@ -124,7 +141,7 @@ window.CaseScrollKit = (function () {
       qq(page, '[data-caption], [data-film-ask], [data-film-decision], [data-film-ruled]').forEach(function (cap) {
         window.gsap.set(cap, { autoAlpha: 1, y: 0, clearProps: 'visibility' });
       });
-      qq(page, '[data-focus], [data-shot], .film-board, [data-film-track], .film-sheet, .film-sheet i, .film-cell, .film-device, .film-empty article, .film-step, .film-ladder__row, .film-ladder__world, .film-ladder__fill').forEach(function (el) {
+      qq(page, '[data-focus], [data-shot], .film-board, [data-film-track], .film-sheet, .film-sheet i, .film-cell, .film-device, .film-empty article, .film-step, .film-ladder__row, .film-ladder__world, .film-ladder__fill, .film-risk, .film-question, .film-wizard__card, .film-strategy-card, .film-pillar, .film-table tr').forEach(function (el) {
         window.gsap.set(el, {
           autoAlpha: 1, scale: 1, scaleX: 1, scaleY: 1,
           x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0,
@@ -379,6 +396,14 @@ window.CaseScrollKit = (function () {
     }
 
     var tWalk = t0 + n * step;
+    if (world && threeD) {
+      tl.to(world, {
+        rotationY: 0,
+        rotationX: 4,
+        z: -36,
+        duration: 0.55
+      }, tWalk);
+    }
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], {
         autoAlpha: 1, x: 0, y: 0, scale: 1, xPercent: 0,
@@ -481,34 +506,32 @@ window.CaseScrollKit = (function () {
 
   function bindMoney(page, tl) {
     var t0 = leadDecision(tl, page);
-    var bad = qq(page, '.film-row.is-bad');
-    var ok = qq(page, '.film-row:not(.is-bad)');
-    var fail = q(page, '[data-shot="fail"] .film-board') || q(page, '.film-fail');
+    var risk = q(page, '.film-risk');
     var shotEls = shots(page);
     var balances = qq(page, '.film-balance');
+    var lead = q(page, '.film-balance.is-lead');
+    var rest = qq(page, '.film-balance:not(.is-lead)');
     var bands = qq(page, '.film-balance .film-ui-band');
     var caps = captions(page);
     var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
 
-    if (fail) {
-      window.gsap.set(fail, { scale: 1, transformOrigin: '50% 18%' });
-      tl.to(fail, { scale: 1.16, y: -12, duration: 0.55 }, t0);
+    if (risk) {
+      window.gsap.set(risk, { scale: 0.94, y: 16, transformOrigin: '50% 40%' });
+      tl.to(risk, { scale: 1.06, y: -8, duration: 0.55 }, t0);
     }
-    if (ok.length) tl.to(ok, { scale: 0.92, y: 10, duration: 0.45 }, t0);
-    if (bad.length) tl.to(bad, { scale: 1.08, y: -8, duration: 0.5 }, t0);
-    captionAt(tl, caps, Math.min(1, caps.length - 1), t0);
+    captionAt(tl, caps, 0, t0);
 
     if (shotEls.length > 1) {
       window.gsap.set(shotEls[0], { autoAlpha: 1, xPercent: 0, scale: 1, clipPath: 'inset(0% 0% 0% 0%)' });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, xPercent: 28, scale: 1, clipPath: 'inset(0% 0% 0% 100%)' });
+      window.gsap.set(shotEls[1], { autoAlpha: 0, xPercent: 28, clipPath: 'inset(0% 0% 0% 100%)' });
       tl.to(shotEls[0], {
         xPercent: -24,
         scale: 0.92,
         clipPath: 'inset(0% 40% 0% 0%)',
         duration: 0.5
-      }, t0 + 0.75);
+      }, t0 + 0.7);
       tl.fromTo(shotEls[1], {
         autoAlpha: 1,
         xPercent: 28,
@@ -518,23 +541,274 @@ window.CaseScrollKit = (function () {
         clipPath: 'inset(0% 0% 0% 0%)',
         duration: 0.55,
         immediateRender: false
-      }, t0 + 0.75);
-      tl.to(shotEls[0], { autoAlpha: 0, duration: 0.2 }, t0 + 1.2);
-      captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 0.85);
+      }, t0 + 0.7);
+      tl.to(shotEls[0], { autoAlpha: 0, duration: 0.2 }, t0 + 1.15);
+      captionAt(tl, caps, Math.min(1, caps.length - 1), t0 + 0.8);
       if (balances.length) {
         window.gsap.set(balances, { scale: 0.86, y: 18 });
         window.gsap.set(bands, { scaleX: 0.18, transformOrigin: '0% 50%' });
-        balances.forEach(function (el, i) {
-          var at = t0 + 1.35 + i * 0.22;
-          tl.to(el, { scale: 1.06, y: -6, duration: 0.22 }, at);
-          if (bands[i]) tl.to(bands[i], { scaleX: 1, duration: 0.22 }, at);
-          tl.to(el, { scale: 1, y: 0, duration: 0.16 }, at + 0.22);
+        if (lead) {
+          tl.to(lead, { scale: 1.12, y: -10, duration: 0.32 }, t0 + 1.25);
+          if (bands[0]) tl.to(bands[0], { scaleX: 1, duration: 0.32 }, t0 + 1.25);
+        }
+        rest.forEach(function (el, i) {
+          var at = t0 + 1.55 + i * 0.18;
+          tl.to(el, { scale: 1, y: 0, duration: 0.22 }, at);
         });
+        if (lead) tl.to(lead, { scale: 1.04, y: 0, duration: 0.22 }, t0 + 2.05);
       }
       askAt(tl, page, t0 + 2.2);
     } else {
       askAt(tl, page, t0 + 0.8);
     }
+  }
+
+  function bindPortrait(page, tl) {
+    var t0 = 0.12;
+    var persona = q(page, '.film-persona');
+    var items = qq(page, '.film-question');
+    var caps = captions(page);
+    var ask = askEl(page);
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    if (persona) {
+      window.gsap.set(persona, { scale: 0.92, y: 22, transformOrigin: '50% 80%' });
+      tl.to(persona, { scale: 1, y: 0, duration: 0.55 }, t0);
+    }
+    window.gsap.set(items, { y: 28, scale: 0.92, transformOrigin: '8% 50%' });
+    items.forEach(function (el, i) {
+      var at = t0 + 0.45 + i * 0.55;
+      items.forEach(function (card, j) {
+        var on = i === j;
+        tl.to(card, {
+          y: on ? 0 : 12,
+          scale: on ? 1.06 : 0.94,
+          x: on ? 8 : 0,
+          duration: 0.4
+        }, at);
+      });
+      captionAt(tl, caps, Math.min(i, caps.length - 1), at);
+    });
+    var tBack = t0 + 0.45 + items.length * 0.55;
+    tl.to(items, { y: 0, scale: 1, x: 0, duration: 0.4 }, tBack);
+    askAt(tl, page, tBack + 0.15);
+  }
+
+  function bindSteps(page, tl) {
+    bindEnding(page, tl);
+  }
+
+  function bindForm(page, tl) {
+    var t0 = leadDecision(tl, page);
+    var risk = q(page, '.film-risk');
+    var types = qq(page, '.film-type');
+    var details = q(page, '.film-form__details');
+    var shotEls = shots(page);
+    var caps = captions(page);
+    var ask = askEl(page);
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    if (risk) {
+      window.gsap.set(risk, { scale: 0.94, y: 14 });
+      tl.to(risk, { scale: 1.04, y: -6, duration: 0.45 }, t0);
+    }
+    captionAt(tl, caps, 0, t0);
+    if (shotEls.length > 1) {
+      window.gsap.set(shotEls[0], { autoAlpha: 1, clipPath: 'inset(0% 0% 0% 0%)' });
+      wipeSplit(tl, shotEls[0], shotEls[1], t0 + 0.7);
+      captionAt(tl, caps, Math.min(1, caps.length - 1), t0 + 0.75);
+    }
+    if (types.length) {
+      window.gsap.set(types, { scale: 0.9, y: 10 });
+      types.forEach(function (chip, i) {
+        var at = t0 + 1.15 + i * 0.22;
+        types.forEach(function (other, j) {
+          tl.to(other, {
+            scale: i === j ? 1.08 : 0.94,
+            y: i === j ? -6 : 4,
+            duration: 0.22
+          }, at);
+        });
+      });
+    }
+    if (details) {
+      window.gsap.set(details, { y: 28, clipPath: 'inset(0% 0% 100% 0%)' });
+      tl.to(details, { y: 0, clipPath: 'inset(0% 0% 0% 0%)', duration: 0.45 }, t0 + 1.35);
+    }
+    askAt(tl, page, t0 + 2.05);
+  }
+
+  function bindHandoff(page, tl) {
+    var t0 = leadDecision(tl, page);
+    var risk = q(page, '.film-risk');
+    var confirm = q(page, '.film-confirm');
+    var msg = q(page, '.film-handoff__msg');
+    var shotEls = shots(page);
+    var caps = captions(page);
+    var ask = askEl(page);
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    if (risk) {
+      window.gsap.set(risk, { scale: 0.94, y: 16 });
+      tl.to(risk, { scale: 1.05, y: -6, duration: 0.45 }, t0);
+    }
+    captionAt(tl, caps, 0, t0);
+    if (shotEls.length > 1) {
+      window.gsap.set(shotEls[0], { autoAlpha: 1, clipPath: 'inset(0% 0% 0% 0%)' });
+      wipeSplit(tl, shotEls[0], shotEls[1], t0 + 0.65);
+      captionAt(tl, caps, Math.min(1, caps.length - 1), t0 + 0.7);
+    }
+    if (confirm) {
+      window.gsap.set(confirm, { scale: 0.92, y: 18 });
+      tl.to(confirm, { scale: 1, y: 0, duration: 0.4 }, t0 + 1.05);
+    }
+    if (msg) {
+      window.gsap.set(msg, { y: 12, scale: 0.96 });
+      tl.to(msg, { y: 0, scale: 1.02, duration: 0.35 }, t0 + 1.35);
+      tl.to(msg, { scale: 1, duration: 0.2 }, t0 + 1.7);
+    }
+    askAt(tl, page, t0 + 1.85);
+  }
+
+  function bindFail(page, tl) {
+    var t0 = leadDecision(tl, page);
+    var risk = q(page, '.film-risk');
+    var bad = qq(page, '.film-row.is-bad');
+    var ok = qq(page, '.film-row:not(.is-bad)');
+    var fail = q(page, '.film-fail');
+    var shotEls = shots(page);
+    var caps = captions(page);
+    var ask = askEl(page);
+    var ruled = q(page, '[data-film-ruled]');
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    if (risk) {
+      window.gsap.set(risk, { scale: 0.94, y: 14 });
+      tl.to(risk, { scale: 1.05, y: -8, duration: 0.45 }, t0);
+    }
+    captionAt(tl, caps, 0, t0);
+    if (shotEls.length > 1) {
+      window.gsap.set(shotEls[0], { autoAlpha: 1, clipPath: 'inset(0% 0% 0% 0%)' });
+      cropIn(tl, shotEls[0], shotEls[1], t0 + 0.65);
+      captionAt(tl, caps, Math.min(1, caps.length - 1), t0 + 0.7);
+    }
+    if (fail) {
+      window.gsap.set(fail, { scale: 1, transformOrigin: '50% 12%' });
+      tl.to(fail, { scale: 1.14, y: -10, duration: 0.45 }, t0 + 1.05);
+    }
+    if (ok.length) tl.to(ok, { scale: 0.92, y: 8, duration: 0.4 }, t0 + 1.05);
+    if (bad.length) tl.to(bad, { scale: 1.08, y: -8, duration: 0.45 }, t0 + 1.1);
+    if (ruled) tl.to(ruled, { autoAlpha: 1, y: 0, duration: 0.35 }, t0 + 1.4);
+    askAt(tl, page, t0 + 1.7);
+  }
+
+  function bindWizard(page, tl) {
+    var t0 = leadDecision(tl, page);
+    var risk = q(page, '.film-risk');
+    var cards = qq(page, '.film-wizard__card');
+    var shotEls = shots(page);
+    var caps = captions(page);
+    var ask = askEl(page);
+    var ruled = q(page, '[data-film-ruled]');
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    if (risk) {
+      window.gsap.set(risk, { scale: 0.94, y: 14 });
+      tl.to(risk, { scale: 1.04, y: -6, duration: 0.4 }, t0);
+    }
+    if (shotEls.length > 1) {
+      window.gsap.set(shotEls[0], { autoAlpha: 1, clipPath: 'inset(0% 0% 0% 0%)' });
+      cropIn(tl, shotEls[0], shotEls[1], t0 + 0.55);
+    }
+    window.gsap.set(cards, { y: 36, scale: 0.88, transformOrigin: '50% 80%' });
+    cards.forEach(function (card, i) {
+      var at = t0 + 1.0 + i * 0.55;
+      cards.forEach(function (other, j) {
+        var on = i === j;
+        tl.to(other, {
+          y: on ? -10 : 14,
+          scale: on ? 1.08 : 0.9,
+          duration: 0.4
+        }, at);
+      });
+      captionAt(tl, caps, Math.min(i, caps.length - 1), at);
+    });
+    var tBack = t0 + 1.0 + cards.length * 0.55;
+    tl.to(cards, { y: 0, scale: 1, duration: 0.4 }, tBack);
+    if (ruled) tl.to(ruled, { autoAlpha: 1, duration: 0.3 }, tBack);
+    askAt(tl, page, tBack + 0.15);
+  }
+
+  function bindCards(page, tl) {
+    var t0 = leadDecision(tl, page);
+    var cards = qq(page, '.film-strategy-card');
+    var caps = captions(page);
+    var ask = askEl(page);
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    window.gsap.set(cards, { scale: 0.82, y: 28, transformOrigin: '50% 70%' });
+    cards.forEach(function (card, i) {
+      var at = t0 + i * 0.55;
+      cards.forEach(function (other, j) {
+        var on = i === j;
+        tl.to(other, {
+          scale: on ? 1.08 : (j < i ? 1 : 0.82),
+          y: on ? -12 : (j < i ? 0 : 20),
+          duration: 0.4
+        }, at);
+      });
+      captionAt(tl, caps, Math.min(i, caps.length - 1), at);
+    });
+    var tBack = t0 + cards.length * 0.55;
+    tl.to(cards, { scale: 1, y: 0, duration: 0.4 }, tBack);
+    askAt(tl, page, tBack + 0.12);
+  }
+
+  function bindTable(page, tl) {
+    var t0 = leadDecision(tl, page);
+    var rows = qq(page, '.film-table tbody tr');
+    var table = q(page, '.film-table');
+    var caps = captions(page);
+    var ask = askEl(page);
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    if (table) {
+      window.gsap.set(table, { x: 24, scale: 0.96, transformOrigin: '0% 50%' });
+      tl.to(table, { x: 0, scale: 1, duration: 0.5 }, t0);
+    }
+    window.gsap.set(rows, { x: 28, scale: 0.96 });
+    rows.forEach(function (row, i) {
+      var at = t0 + 0.35 + i * 0.4;
+      rows.forEach(function (other, j) {
+        tl.to(other, {
+          x: 0,
+          scale: i === j ? 1.03 : 1,
+          y: i === j ? -4 : 0,
+          duration: 0.32
+        }, at);
+      });
+      captionAt(tl, caps, Math.min(i, caps.length - 1), at);
+    });
+    var tBack = t0 + 0.35 + rows.length * 0.4;
+    tl.to(rows, { scale: 1, y: 0, duration: 0.3 }, tBack);
+    askAt(tl, page, tBack + 0.1);
+  }
+
+  function bindSystem(page, tl) {
+    var t0 = leadDecision(tl, page);
+    var pillars = qq(page, '.film-pillar');
+    var caps = captions(page);
+    var ask = askEl(page);
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    window.gsap.set(pillars, { y: 40, scale: 0.88, transformOrigin: '50% 100%' });
+    pillars.forEach(function (el, i) {
+      var at = t0 + i * 0.5;
+      tl.to(el, { y: 0, scale: 1.06, duration: 0.35 }, at);
+      tl.to(el, { scale: 1, duration: 0.2 }, at + 0.35);
+      captionAt(tl, caps, Math.min(i, caps.length - 1), at);
+    });
+    askAt(tl, page, t0 + pillars.length * 0.5 + 0.1);
   }
 
   function bindVerbs(page, tl) {
@@ -649,22 +923,42 @@ window.CaseScrollKit = (function () {
     switch (name) {
       case 'cover':
         return bindCover;
+      case 'portrait':
+        return bindPortrait;
       case 'ends':
         return bindEnds;
       case 'jobs':
         return bindJobs;
+      case 'steps':
+        return bindSteps;
       case 'door':
         return bindDoor;
       case 'money':
         return bindMoney;
+      case 'form':
+        return bindForm;
+      case 'handoff':
+        return bindHandoff;
+      case 'fail':
+        return bindFail;
+      case 'wizard':
+        return bindWizard;
+      case 'cards':
+        return bindCards;
+      case 'table':
+        return bindTable;
+      case 'system':
+        return bindSystem;
       case 'verbs':
         return bindVerbs;
       case 'ending':
         return bindEnding;
       case 'finding':
         return bindFinding;
-      default:
-        return bindEnds;
+      default: {
+        var unknown = name;
+        return unknown ? bindEnds : bindEnds;
+      }
     }
   }
 

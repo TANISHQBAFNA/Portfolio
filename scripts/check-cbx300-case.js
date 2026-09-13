@@ -2,8 +2,8 @@
 'use strict';
 
 /**
- * Guards CBX300 cream Infoviz film (rebuild after PR #18 reject).
- * Echo copy, no Pages rail, cream paper, meaning-changing scrub, placeholders.
+ * Guards CBX300 Aisha cream Infoviz film (full case rebuild).
+ * Source HTML, 15-beat film, meaning-changing scrub, cream paper, placeholders.
  */
 var fs = require('fs');
 var path = require('path');
@@ -23,7 +23,9 @@ var study = read('assets/js/project-study.js');
 var landing = read('assets/js/landing.js');
 var data = read('assets/js/project-data.js');
 var css = read('assets/css/cbx300-case.css');
-var bar = read('docs/case-study-cbx300-redesign-bar.md');
+var bar = read('docs/case-study-cbx300-aisha-redesign-bar.md');
+var source = read('docs/source/cbx300-aisha-case.html');
+var viewport = read('assets/js/viewport.js');
 
 var failed = 0;
 var passed = 0;
@@ -50,35 +52,58 @@ check('wires CBX300 film into existing ProjectStudy router', function () {
   assert.ok(index.indexOf('cbx300-case.css') !== -1, 'index.html missing film css');
   assert.ok(index.indexOf('case-scroll-kit.js') !== -1, 'index.html missing scroll kit');
   assert.ok(index.indexOf('cbx300-case.js') !== -1, 'index.html missing case js');
+  assert.ok(index.indexOf('assets/js/viewport.js') !== -1, 'index.html missing viewport.js');
+  assert.ok(mvIndex.indexOf('assets/js/viewport.js') !== -1, 'multiverse missing viewport.js');
 });
 
-check('eight beats cover through close', function () {
-  ['cover', 'ladder', 'roles', 'approvals', 'money', 'permissions', 'grammar', 'scale'].forEach(function (id) {
+check('fifteen beats cover through outcome', function () {
+  [
+    'cover', 'aisha', 'ladder', 'roles', 'promise',
+    'pay-today', 'supplier', 'beneficiary', 'approve', 'validation',
+    'access', 'ui', 'devices', 'system', 'outcome'
+  ].forEach(function (id) {
     assert.ok(pages.indexOf("id: '" + id + "'") !== -1, 'missing beat ' + id);
   });
 });
 
-check('Aisha simple-story beats + six chapter titles', function () {
+check('Aisha source beats + chapter titles', function () {
   assert.ok(pages.indexOf('Banking that grows with the business.') !== -1, 'missing Aisha hook');
   [
     'Meet Aisha.',
+    'Five stages of the same business.',
     'I designed for roles, not one user.',
-    'My team can prepare. I need to approve.',
+    'How the product keeps its promise.',
     'Can I afford to pay this supplier today?',
+    'Pay the right supplier.',
+    'Did the system use the right beneficiary?',
+    'My team can prepare. I need to approve.',
+    'Tell me what is wrong before I approve.',
     'My team needs access, but not all access.',
-    'Same goal. Different moment.'
+    'Calm when reading. Clear when acting.',
+    'Same goal. Different moment.',
+    'One system, four habits.',
+    'A bank that does not need replacing when Aisha’s business grows.'
   ].forEach(function (title) {
     assert.ok(pages.indexOf(title) !== -1, 'missing chapter title: ' + title);
   });
-  assert.ok(pages.indexOf('grows') !== -1, 'missing grow-with-business promise');
   assert.ok(data.indexOf('Banking that grows with the business.') !== -1, 'project-data missing Aisha hook');
-  assert.ok(pages.indexOf('Independent professional') !== -1, 'missing 3D ladder rung copy');
+  assert.ok(pages.indexOf('Independent professional') !== -1, 'missing ladder rung copy');
+  assert.ok(pages.indexOf('representative example') !== -1, 'missing Aisha disclaimer');
+});
+
+check('six Aisha moments keep risk and change', function () {
+  assert.ok(pages.indexOf('Available') !== -1 && pages.indexOf('Uncleared') !== -1, 'missing four balances');
+  assert.ok(pages.indexOf('Payment type first') !== -1, 'missing payment-type form');
+  assert.ok(pages.indexOf('Confirm beneficiary') !== -1, 'missing beneficiary handoff');
+  assert.ok(pages.indexOf('Approve (6)') !== -1, 'missing Approve (N)');
+  assert.ok(pages.indexOf('128 transactions · 3 failed system validation') !== -1, 'missing 128/3 validation');
+  assert.ok(pages.indexOf('Financial scope') !== -1, 'missing access scope step');
+  assert.ok(pages.indexOf("function riskCard") !== -1, 'missing risk card builder');
 });
 
 check('Infoviz grammar: claim first, meaning-changing scrub, close on finding', function () {
   assert.ok(kit.indexOf('transformOrigin') !== -1, 'kit missing crop/scale origin');
   assert.ok(kit.indexOf('clipPath') !== -1, 'kit missing crop/wipe clip-path');
-  assert.ok(kit.indexOf('scaleY') !== -1, 'kit missing matrix draw');
   assert.ok(kit.indexOf('data-film-track') !== -1, 'kit missing horizontal pan ending');
   assert.ok(kit.indexOf('pin: true') !== -1, 'kit must GSAP-pin the leftover stage');
   assert.ok(kit.indexOf('preventOverlaps: true') !== -1, 'pin triggers must prevent chapter overlap');
@@ -86,8 +111,13 @@ check('Infoviz grammar: claim first, meaning-changing scrub, close on finding', 
   assert.ok(kit.indexOf('Opacity-only fades are a fail') !== -1, 'kit missing opacity-only fail lock');
   assert.ok(pages.indexOf("finding: true") !== -1, 'close is not a finding');
   assert.ok(pages.indexOf('259 web screens. 377 mobile screens. ~147 flows. One shared system.') !== -1, 'missing volume finding');
-  assert.ok(pages.indexOf('Who prepared this payment? Does it need my approval?') !== -1, 'missing carrying question');
   assert.ok(!/Zillow|Falls Church|Malabar Hill|stamp-duty/.test(pages), 'copied Infoviz housing content');
+  [
+    'bindPortrait', 'bindSteps', 'bindForm', 'bindHandoff', 'bindFail',
+    'bindWizard', 'bindCards', 'bindTable', 'bindSystem'
+  ].forEach(function (fn) {
+    assert.ok(kit.indexOf('function ' + fn) !== -1, 'missing distinct scrub ' + fn);
+  });
 });
 
 check('no Pages rail as primary wayfinding', function () {
@@ -104,6 +134,7 @@ check('cream paper, not cool grey wireframe', function () {
   assert.ok(css.indexOf('#e7e9ed') === -1, 'wireframe slot grey leaked');
   assert.ok(css.indexOf('Syne') !== -1 && css.indexOf('Outfit') !== -1, 'missing portfolio type');
   assert.ok(!/@keyframes\s+.*glitch/i.test(css), 'glitch keyframes in film css');
+  assert.ok(css.indexOf('#147a4a') !== -1, 'missing bank-green inside product frames');
 });
 
 check('tablet keeps pin/scrub; reduced-motion static stack', function () {
@@ -142,7 +173,8 @@ check('free GSAP + ScrollTrigger only; no Club plugins', function () {
 check('GSAP pin holds leftover stage; captions sequential; focus in-frame', function () {
   assert.ok(
     /\[data-pin="true"\] \.film-stage[\s\S]{0,400}--study-stage/.test(css) ||
-      /\[data-pin="true"\] \.film-stage[\s\S]{0,400}100svh - var\(--study-head/.test(css),
+      /\[data-pin="true"\] \.film-stage[\s\S]{0,400}100svh - var\(--study-head/.test(css) ||
+      /\[data-pin="true"\] \.film-stage[\s\S]{0,400}--vvh/.test(css),
     'pinned stage must be leftover viewport under chrome, not extra 100svh'
   );
   assert.ok(kit.indexOf("start: function () { return 'top ' + head() + 'px'; }") !== -1, 'scrub start must sit below chrome');
@@ -165,10 +197,10 @@ check('crop/wipe hard-hides outgoing shot; captions sequential', function () {
   );
 });
 
-check('Decision layer on six chapters, not cover or scale', function () {
+check('Decision layer on twelve chapters, not cover or outcome', function () {
   var n = (pages.match(/decision:\s*\{/g) || []).length;
-  assert.strictEqual(n, 6, 'expected 6 Decision chips, got ' + n);
-  assert.ok(pages.indexOf("data-film-decision") !== -1, 'missing Decision chip markup');
+  assert.strictEqual(n, 12, 'expected 12 Decision chips, got ' + n);
+  assert.ok(pages.indexOf('data-film-decision') !== -1, 'missing Decision chip markup');
   assert.ok(pages.indexOf('banking became a shared job') !== -1, 'missing ladder finding');
   assert.ok(pages.indexOf('not five separate banks') !== -1, 'missing ladder choice');
   assert.ok(pages.indexOf('people with very different jobs') !== -1, 'missing roles finding');
@@ -182,13 +214,10 @@ check('Decision layer on six chapters, not cover or scale', function () {
   assert.ok(pages.indexOf('Shrinking the desktop onto a phone') !== -1, 'missing grammar finding');
   assert.ok(pages.indexOf('change the layout for the device') !== -1, 'missing grammar choice');
   assert.ok(pages.indexOf('Ruled out: bury under Payments, or select-all with no line of sight.') !== -1, 'missing approvals ruled-out');
-  assert.ok(pages.indexOf('Ruled out: one big number, or a clean list that fails after submit.') !== -1, 'missing money ruled-out');
   assert.ok(pages.indexOf('Ruled out: one question per screen.') !== -1, 'missing permissions ruled-out');
-  assert.ok(bar.indexOf('3D staircase') !== -1, 'bar missing 3D ladder motion lock');
   assert.ok(css.indexOf('.film-decision') !== -1, 'missing Decision chip css');
   assert.ok(kit.indexOf('function rungPose') !== -1, 'ladder must walk a 3D staircase');
   assert.ok(css.indexOf('perspective: 1500px') !== -1, 'ladder stage missing 3D perspective');
-  assert.ok(css.indexOf('.film-beat[data-recipe="ends"] .film-shot-stack') !== -1, 'ladder 3D fan must unclip shot-stack');
   var reduceAt = css.indexOf('@media (prefers-reduced-motion: reduce)');
   var bang = css.indexOf('transform: none !important');
   assert.ok(reduceAt !== -1 && bang > reduceAt, 'kill-transform must live inside reduced-motion');
@@ -202,13 +231,15 @@ check('Decision layer on six chapters, not cover or scale', function () {
   assert.ok(depth > 0, 'reduced-motion closed before kill-transform — 3D ladder would flatten');
 });
 
-check('redesign bar is the experience lock', function () {
+check('Aisha redesign bar is the experience lock', function () {
   assert.ok(bar.indexOf('infoviz-cs5764.web.app') !== -1, 'bar missing Infoviz lock');
-  assert.ok(bar.indexOf('PR #18 rejected') !== -1, 'bar missing reject note');
-  assert.ok(bar.indexOf('7. Decision layer') !== -1, 'bar missing Decision layer lock');
+  assert.ok(bar.indexOf('15') !== -1, 'bar missing 15-beat map');
   assert.ok(/no invented research/i.test(bar), 'bar missing no-invented-research lock');
-  assert.ok(bar.indexOf('8. Motion variety lock') !== -1, 'bar missing motion variety lock');
   assert.ok(/opacity-only = fail/i.test(bar), 'bar missing opacity-only fail');
+  assert.ok(bar.indexOf('header-only') !== -1 || bar.indexOf('header elements') !== -1, 'bar missing Multiverse header-only glitch');
+  assert.ok(source.indexOf('Banking that grows with the business.') !== -1, 'source HTML missing hook');
+  assert.ok(source.indexOf('representative example') !== -1, 'source HTML missing Aisha disclaimer');
+  assert.ok(source.indexOf('128 transactions') !== -1, 'source HTML missing validation beat');
 });
 
 check('viewport is the film scroller; GSAP is local; Safari clip is gone', function () {
@@ -223,8 +254,20 @@ check('viewport is the film scroller; GSAP is local; Safari clip is gone', funct
   assert.ok(kit.indexOf('function isView') !== -1, 'kit missing viewport scroller helper');
   assert.ok(kit.indexOf('viewH(scroller)') !== -1, 'pin end must use viewH, not scroller.clientHeight');
   assert.ok(kit.indexOf('normalizeScroll') !== -1, 'kit missing iOS normalizeScroll');
+  assert.ok(kit.indexOf('layoutViewport') !== -1, 'kit must read layoutViewport / visualViewport');
+  assert.ok(css.indexOf('--vvh') !== -1, 'film css missing --vvh');
+  assert.ok(viewport.indexOf('visualViewport') !== -1, 'viewport.js missing visualViewport');
+  assert.ok(viewport.indexOf('screen.width') === -1 || viewport.indexOf('never device screen') !== -1, 'viewport lock comment ok');
+  assert.ok(!/\bscreen\.(width|height|availWidth|availHeight)\b/.test(kit), 'kit must not use screen.*');
+  assert.ok(!/\bscreen\.(width|height|availWidth|availHeight)\b/.test(study), 'study must not use screen.*');
   var landingCss = read('assets/css/landing.css');
   assert.ok(/html\.is-study \.study[\s\S]{0,220}overflow-x:\s*hidden/.test(landingCss), 'study must overflow-x hidden, not clip');
+});
+
+check('Multiverse glitch is header-only', function () {
+  assert.ok(css.indexOf('html:not(.is-multiverse) .study[data-template="cbx300"] .glitch') !== -1, 'cream must kill all case glitch');
+  assert.ok(css.indexOf('html.is-multiverse .study[data-template="cbx300"] .film-world .glitch') !== -1, 'multiverse must kill film-body glitch only');
+  assert.ok(study.indexOf('armGlitchTarget') !== -1, 'multiverse study mark must still arm hitch');
 });
 
 check('export path reserved, not required for this slice', function () {
