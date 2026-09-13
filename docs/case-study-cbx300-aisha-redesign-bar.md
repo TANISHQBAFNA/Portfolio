@@ -1,7 +1,7 @@
 # CBX300 Aisha case — redesign bar (experience)
 
-**Status:** Full opened-case rebuild from the Aisha source HTML. Do not polish the eight-beat flatten.  
-**Story:** Aisha CBX300 case (`docs/source/cbx300-aisha-case.html`) · **Experience:** Iris · **Build:** Camila  
+**Status:** Echo 8-beat cream GSAP scroll film. Do not polish rejected PR #18 wireframe.  
+**Story:** Echo 8-beat spine · representative Aisha · **Experience:** Iris · **Build:** Camila  
 **Motion north star:** https://infoviz-cs5764.web.app/ (grammar only)  
 **Visual north star:** cream portfolio paper `#f4efe6`, Syne / Outfit, teal `#00a0a0`
 
@@ -11,14 +11,14 @@
 
 Opening SME Banking should feel like the cream portfolio continued: warm paper, editorial type, teal chrome — and like Infoviz: **one continuous scroll film** where each chapter claim lands, then the proof does work under the scroll.
 
-Tanishk can scroll and feel cinematic chapter-by-chapter storytelling with Aisha’s risks and choices intact.
+Tanishk can scroll an 8-beat cream film: cover ladder, freelancer phone, sole-prop money, prepare∥approve, control room, web↔phone, light vs heavy, finding pin.
 
 ---
 
 ## Hard locks
 
 ### 1. One continuous story scroll
-Chapters are beats in one world, not a TOC of PDF pages. No Pages rail. Tiny progress (`01 / 15`) is enough.
+Chapters are beats in one world, not a TOC of PDF pages. No Pages rail. Tiny progress (`01 / 08`) is enough.
 
 ### 2. Infoviz motion (GSAP + ScrollTrigger)
 - Claim / Decision first, then viz works under scroll.
@@ -29,72 +29,42 @@ Chapters are beats in one world, not a TOC of PDF pages. No Pages rail. Tiny pro
 - Each important chapter has a **distinct** scrub device.
 - Desktop + iPad: pin / scrub. Reduced motion: calm static stack, same order, Decision chips readable.
 - Cream bank-calm. No Multiverse glitch theatre on the cream case **body**.
+- **Prepare ∥ approve: NEVER fade prepare→approve.** Door/crop or split only.
 
 ### 3. Cream + Multiverse parity
 Same content. Same major layout / CSS for the case film.  
 **Multiverse only glitches header elements** (study chrome / mark / title hitch). Not the cream case body. Not Multiverse theatre on product chapters.
 
 ### 4. Decision layer
-Each major Aisha moment stages **Finding / constraint → Choice → UI proof**.  
-Risk card = finding. “What I changed” = choice. Demo UI = proof.  
-No invented research beyond the source HTML.
+Each major beat stages **Finding / constraint → Choice → UI proof** before the scrub.  
+Captions: one sentence, Fact → what you see.  
+No invented research, quotes, or NPS beyond the source HTML. Aisha is a representative example.
 
 ### 5. Visual
 Portfolio cream paper. Product demos may keep **bank-green** accents from the source **inside UI mock frames**. Bank-calm, editorial, detailed — not a grey tab deck. Placeholders OK for Figma art.
 
 ### 6. Meta
-Lead product designer. Jan 2026–present. DS complete. Majority of screens / flows through handoff.  
+Lead product designer. Jan 2026-present. DS complete. Majority of screens / flows through handoff.  
 Lisa Charlie = demo brand. Aisha = story persona only.
 
 ---
 
-## Chapter map
+## Chapter map (Echo 8-beat)
 
-| # | id | Title | Job on film |
-|---|---|---|---|
-| 0 | `cover` | Banking that grows with the business. | Hook, promise, quote, 259 / 377 / ~147. Soft device compose. |
-| 1 | `aisha` | Meet Aisha. | Representative example (disclaimer). Questions evolve. |
-| 2 | `ladder` | Five stages of the same business. | Independent professional → Medium. One person → One platform → Finance team. |
-| 3 | `roles` | I designed for roles, not one user. | Owner / Payment maker / Approver. |
-| 4 | `promise` | How the product keeps its promise. | Start simple → Give context → Share work safely → Prevent errors → Stay familiar. |
-| 5 | `pay-today` | Can I afford to pay this supplier today? | Risk: one balance misleading. Change: available / current / held / uncleared. Available leads. |
-| 6 | `supplier` | Pay the right supplier. | Risk: long form mistakes. Change: start with payment type. |
-| 7 | `beneficiary` | Did the system use the right beneficiary? | Risk: invisible automation. Change: confirm handoff / pre-fill message. |
-| 8 | `approve` | My team can prepare. I need to approve. | Risk: submitted ≠ completed. Change: clear states; Approve (N) with rows visible. |
-| 9 | `validation` | Tell me what is wrong before I approve. | Risk: errors too late. Change: validation in review (128 tx / 3 failed). |
-| 10 | `access` | My team needs access, but not all access. | Risk: role name not enough. Change: person + action + financial scope. |
-| 11 | `ui` | Calm when reading. Clear when acting. | Hierarchy / Colour / Actions / Layout. |
-| 12 | `devices` | Same goal. Different moment. | Web vs mobile comparison table. |
-| 13 | `system` | One system, four habits. | Navigation, Forms, Information / states, Familiar endings. |
-| 14 | `outcome` | A bank that does not need replacing. | Volume finding. Next-test bullets. Footer disclaimer. |
+| # | id | Title | Iris slot | Motion |
+|---|---|---|---|---|
+| 0 | `cover` | Banking that grows with the business. | title+ladder | title pin + ladder ken-burns |
+| 1 | `freelancer` | Did I get paid. Can I pay. | phone pay | phone-frame focus scrub |
+| 2 | `sole` | How much can I safely spend. | four-balance+beneficiary | available scale-up + beneficiary crop |
+| 3 | `ten` | Prepare is not approve. | approvals door+list | door/crop or split prepare∥approve. NEVER fade. |
+| 4 | `mid` | Control room. Safe handoffs. | waiting-on-me+permissions | control-room pin + matrix draw |
+| 5 | `devices` | Same task. Device-fit. | web∥phone | web↔phone morph |
+| 6 | `corporate` | Control without day-one corporate weight. | light vs heavy | split-compare scrub |
+| 7 | `close` | A bank she does not outgrow. | finding pin | finding pin / ladder complete |
 
-Cover and outcome have no Decision chip. Aisha is context (disclaimer readable). Ladder through system each stage Finding → Choice → proof.
+On page say prepare / approve, not maker-checker jargon.
 
----
-
-## Motion variety
-
-Each important chapter has a distinct scrub. Opacity-only = fail.
-
-| Beat | Device |
-|---|---|
-| Hero / cover | Soft device compose: web scale-in, phone offset compose. |
-| Meet Aisha | Quote pull + question list step-up (y / scale, not fade-only). |
-| Ladder | L→R 3D stage walk, then pull-back to accounts pair. |
-| Roles | Focus cycle owner → maker → approver; others recede. |
-| Promise flow | Step-advance scrub across five promise cards. |
-| Afford to pay | Risk card, then four-balance punch. Available leads (scale). |
-| Right supplier | Type chips first; details wipe in when a type is chosen. |
-| Right beneficiary | Confirm-handoff card wipe; pre-fill message stays visible. |
-| Team approves | Approvals door crop, then wipe to Approve (N) with rows. |
-| Validation | Fail-row punch-crop (128 / 3). Bad rows enlarge. |
-| Access | Three-step wizard: person → action → scope. |
-| UI strategy | Four cards sequential scale (hierarchy, colour, actions, layout). |
-| Web vs mobile | Split compare: web column vs phone column, table rows light. |
-| System | Four pillars sequential light-up. |
-| Outcome | Contact-sheet zoom-out / mosaic. Close on finding. |
-
-Reduced motion: same chapter order, Decision chips and risk / change cards readable, no pins.
+Cover through corporate carry Decision chips (risk → change → UI). Close is a finding.
 
 ---
 
@@ -110,4 +80,4 @@ Reduced motion: same chapter order, Decision chips and risk / change cards reada
 
 ## Done when
 
-Tanishk can scroll cream `?theme=light&open=sme` and feel cinematic chapter-by-chapter storytelling with Aisha’s risks and choices intact. Multiverse matches film content. Header-only glitch. Scrub works on desktop and iPad Safari with Reduce Motion off.
+Tanishk can scroll cream `?theme=light&open=sme` and feel an 8-beat cinematic story with Aisha’s risks and choices intact. Multiverse matches film content. Header-only glitch. Scrub works on desktop and iPad Safari with Reduce Motion off. Placeholders stand in until Figma exports land.

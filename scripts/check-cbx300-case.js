@@ -2,8 +2,8 @@
 'use strict';
 
 /**
- * Guards CBX300 Aisha cream Infoviz film (full case rebuild).
- * Source HTML, 15-beat film, meaning-changing scrub, cream paper, placeholders.
+ * Guards CBX300 Aisha cream Infoviz film (Echo 8-beat story).
+ * Window scroller, meaning-changing scrub, cream paper, placeholders.
  */
 var fs = require('fs');
 var path = require('path');
@@ -56,68 +56,86 @@ check('wires CBX300 film into existing ProjectStudy router', function () {
   assert.ok(mvIndex.indexOf('assets/js/viewport.js') !== -1, 'multiverse missing viewport.js');
 });
 
-check('fifteen beats cover through outcome', function () {
+check('eight Echo beats cover through close', function () {
   [
-    'cover', 'aisha', 'ladder', 'roles', 'promise',
-    'pay-today', 'supplier', 'beneficiary', 'approve', 'validation',
-    'access', 'ui', 'devices', 'system', 'outcome'
+    'cover', 'freelancer', 'sole', 'ten', 'mid', 'devices', 'corporate', 'close'
   ].forEach(function (id) {
     assert.ok(pages.indexOf("id: '" + id + "'") !== -1, 'missing beat ' + id);
   });
+  assert.strictEqual((pages.match(/id: '/g) || []).length >= 8, true, 'expected eight beats');
 });
 
-check('Aisha source beats + chapter titles', function () {
+check('Aisha source hook + representative disclaimer', function () {
   assert.ok(pages.indexOf('Banking that grows with the business.') !== -1, 'missing Aisha hook');
   [
-    'Meet Aisha.',
-    'Five stages of the same business.',
-    'I designed for roles, not one user.',
-    'How the product keeps its promise.',
-    'Can I afford to pay this supplier today?',
-    'Pay the right supplier.',
-    'Did the system use the right beneficiary?',
-    'My team can prepare. I need to approve.',
-    'Tell me what is wrong before I approve.',
-    'My team needs access, but not all access.',
-    'Calm when reading. Clear when acting.',
-    'Same goal. Different moment.',
-    'One system, four habits.',
-    'A bank that does not need replacing when Aisha’s business grows.'
+    'Did I get paid. Can I pay.',
+    'How much can I safely spend.',
+    'Prepare is not approve.',
+    'Control room. Safe handoffs.',
+    'Same task. Device-fit.',
+    'Control without day-one corporate weight.',
+    'A bank she does not outgrow.'
   ].forEach(function (title) {
     assert.ok(pages.indexOf(title) !== -1, 'missing chapter title: ' + title);
   });
   assert.ok(data.indexOf('Banking that grows with the business.') !== -1, 'project-data missing Aisha hook');
-  assert.ok(pages.indexOf('Independent professional') !== -1, 'missing ladder rung copy');
   assert.ok(pages.indexOf('representative example') !== -1, 'missing Aisha disclaimer');
+  assert.ok(pages.indexOf('not five separate banks') !== -1, 'missing ladder choice');
 });
 
-check('six Aisha moments keep risk and change', function () {
+check('Iris slots for all eight beats', function () {
+  [
+    'title+ladder',
+    'phone pay',
+    'four-balance+beneficiary',
+    'approvals door+list',
+    'waiting-on-me+permissions',
+    'web∥phone',
+    'light vs heavy',
+    'finding pin'
+  ].forEach(function (slot) {
+    assert.ok(pages.indexOf(slot) !== -1, 'missing Iris slot ' + slot);
+  });
+});
+
+check('proof UI for each beat', function () {
+  assert.ok(pages.indexOf('Get paid') !== -1 && pages.indexOf('Pay') !== -1, 'missing phone pay/get paid');
   assert.ok(pages.indexOf('Available') !== -1 && pages.indexOf('Uncleared') !== -1, 'missing four balances');
-  assert.ok(pages.indexOf('Payment type first') !== -1, 'missing payment-type form');
   assert.ok(pages.indexOf('Confirm beneficiary') !== -1, 'missing beneficiary handoff');
   assert.ok(pages.indexOf('Approve (6)') !== -1, 'missing Approve (N)');
   assert.ok(pages.indexOf('128 transactions · 3 failed system validation') !== -1, 'missing 128/3 validation');
-  assert.ok(pages.indexOf('Financial scope') !== -1, 'missing access scope step');
-  assert.ok(pages.indexOf("function riskCard") !== -1, 'missing risk card builder');
+  assert.ok(pages.indexOf('Waiting on me') !== -1, 'missing waiting-on-me');
+  assert.ok(pages.indexOf('Start') !== -1 && pages.indexOf('Approve') !== -1, 'missing verb grid');
+  assert.ok(pages.indexOf('Command desk') !== -1, 'missing heavy corporate column');
 });
 
 check('Infoviz grammar: claim first, meaning-changing scrub, close on finding', function () {
   assert.ok(kit.indexOf('transformOrigin') !== -1, 'kit missing crop/scale origin');
   assert.ok(kit.indexOf('clipPath') !== -1, 'kit missing crop/wipe clip-path');
-  assert.ok(kit.indexOf('data-film-track') !== -1, 'kit missing horizontal pan ending');
   assert.ok(kit.indexOf('pin: true') !== -1, 'kit must GSAP-pin the leftover stage');
-  assert.ok(kit.indexOf('preventOverlaps: true') !== -1, 'pin triggers must prevent chapter overlap');
   assert.ok(kit.indexOf('Claim stays readable') !== -1, 'kit missing claim-first lock');
   assert.ok(kit.indexOf('Opacity-only fades are a fail') !== -1, 'kit missing opacity-only fail lock');
   assert.ok(pages.indexOf("finding: true") !== -1, 'close is not a finding');
   assert.ok(pages.indexOf('259 web screens. 377 mobile screens. ~147 flows. One shared system.') !== -1, 'missing volume finding');
   assert.ok(!/Zillow|Falls Church|Malabar Hill|stamp-duty/.test(pages), 'copied Infoviz housing content');
   [
-    'bindPortrait', 'bindSteps', 'bindForm', 'bindHandoff', 'bindFail',
-    'bindWizard', 'bindCards', 'bindTable', 'bindSystem'
+    'bindKenBurns', 'bindPhone', 'bindMoneyCrop', 'bindSplitDoor',
+    'bindControl', 'bindMorph', 'bindSplitWeight', 'bindFinding'
   ].forEach(function (fn) {
     assert.ok(kit.indexOf('function ' + fn) !== -1, 'missing distinct scrub ' + fn);
   });
+});
+
+check('prepare/approve split never fades prepare into approve', function () {
+  var start = kit.indexOf('function bindSplitDoor');
+  var end = kit.indexOf('function bindControl');
+  assert.ok(start !== -1 && end > start, 'bindSplitDoor block missing');
+  var door = kit.slice(start, end);
+  assert.ok(door.indexOf("data-pane=\"prepare\"") !== -1 || door.indexOf("[data-pane=\"prepare\"]") !== -1, 'split missing prepare pane');
+  assert.ok(door.indexOf("[data-pane=\"approve\"]") !== -1, 'split missing approve pane');
+  assert.ok(!/tl\.to\(\s*prepare[\s\S]{0,120}autoAlpha:\s*0/.test(door), 'prepare pane fades out');
+  assert.ok(!/tl\.to\(\s*approve[\s\S]{0,120}autoAlpha:\s*0/.test(door), 'approve pane fades in via opacity');
+  assert.ok(door.indexOf('clipPath') !== -1, 'split must crop/clip, not fade');
 });
 
 check('no Pages rail as primary wayfinding', function () {
@@ -168,6 +186,7 @@ check('free GSAP + ScrollTrigger only; no Club plugins', function () {
     assert.ok(!/gsap\/SplitText|MorphSVGPlugin|gsap\/Flip|registerPlugin\(\s*Flip/.test(src), 'Club plugin reference found');
   });
   assert.ok(kit.indexOf('ScrollTrigger') !== -1, 'kit missing ScrollTrigger');
+  assert.ok(!/three\.js|@react-three|Spline/i.test(pages + kit), '3D runtime leaked onto cream film');
 });
 
 check('GSAP pin holds leftover stage; captions sequential; focus in-frame', function () {
@@ -197,27 +216,20 @@ check('crop/wipe hard-hides outgoing shot; captions sequential', function () {
   );
 });
 
-check('Decision layer on twelve chapters, not cover or outcome', function () {
+check('Decision layer on seven chapters, not close', function () {
   var n = (pages.match(/decision:\s*\{/g) || []).length;
-  assert.strictEqual(n, 12, 'expected 12 Decision chips, got ' + n);
+  assert.strictEqual(n, 7, 'expected 7 Decision chips, got ' + n);
   assert.ok(pages.indexOf('data-film-decision') !== -1, 'missing Decision chip markup');
-  assert.ok(pages.indexOf('banking became a shared job') !== -1, 'missing ladder finding');
-  assert.ok(pages.indexOf('not five separate banks') !== -1, 'missing ladder choice');
-  assert.ok(pages.indexOf('people with very different jobs') !== -1, 'missing roles finding');
-  assert.ok(pages.indexOf('not one generic user') !== -1, 'missing roles choice');
-  assert.ok(pages.indexOf('Preparing a payment is not the same as approving it') !== -1, 'missing approvals finding');
-  assert.ok(pages.indexOf('batch approve names the count') !== -1, 'missing approvals choice');
-  assert.ok(pages.indexOf('One balance can be misleading') !== -1, 'missing money finding');
-  assert.ok(pages.indexOf('Available balance leads the page') !== -1, 'missing money choice');
-  assert.ok(pages.indexOf('A role name does not explain') !== -1, 'missing permissions finding');
-  assert.ok(pages.indexOf('person, an action, and the right financial scope') !== -1, 'missing permissions choice');
-  assert.ok(pages.indexOf('Shrinking the desktop onto a phone') !== -1, 'missing grammar finding');
-  assert.ok(pages.indexOf('change the layout for the device') !== -1, 'missing grammar choice');
+  assert.ok(pages.indexOf('film-decision__ui') !== -1, 'Decision chip missing UI line');
+  assert.ok(pages.indexOf('Did I get paid') !== -1, 'missing freelancer finding');
+  assert.ok(pages.indexOf('Available leads') !== -1, 'missing money choice');
+  assert.ok(pages.indexOf('Prepare is not approve') !== -1, 'missing approvals finding');
+  assert.ok(pages.indexOf('Waiting on me') !== -1, 'missing control-room proof');
+  assert.ok(pages.indexOf('Keep the meaning. Change the layout to fit the device.') !== -1, 'missing device choice');
+  assert.ok(pages.indexOf('Keep prepare and approve.') !== -1, 'missing corporate choice');
   assert.ok(pages.indexOf('Ruled out: bury under Payments, or select-all with no line of sight.') !== -1, 'missing approvals ruled-out');
   assert.ok(pages.indexOf('Ruled out: one question per screen.') !== -1, 'missing permissions ruled-out');
   assert.ok(css.indexOf('.film-decision') !== -1, 'missing Decision chip css');
-  assert.ok(kit.indexOf('function rungPose') !== -1, 'ladder must walk a 3D staircase');
-  assert.ok(css.indexOf('perspective: 1500px') !== -1, 'ladder stage missing 3D perspective');
   var reduceAt = css.indexOf('@media (prefers-reduced-motion: reduce)');
   var bang = css.indexOf('transform: none !important');
   assert.ok(reduceAt !== -1 && bang > reduceAt, 'kill-transform must live inside reduced-motion');
@@ -228,18 +240,18 @@ check('Decision layer on twelve chapters, not cover or outcome', function () {
     if (slice[i] === '{') depth += 1;
     if (slice[i] === '}') depth -= 1;
   }
-  assert.ok(depth > 0, 'reduced-motion closed before kill-transform — 3D ladder would flatten');
+  assert.ok(depth > 0, 'reduced-motion closed before kill-transform');
 });
 
-check('Aisha redesign bar is the experience lock', function () {
+check('Aisha redesign bar is the Echo 8-beat lock', function () {
   assert.ok(bar.indexOf('infoviz-cs5764.web.app') !== -1, 'bar missing Infoviz lock');
-  assert.ok(bar.indexOf('15') !== -1, 'bar missing 15-beat map');
+  assert.ok(bar.indexOf('8-beat') !== -1 || bar.indexOf('eight-beat') !== -1, 'bar missing 8-beat map');
   assert.ok(/no invented research/i.test(bar), 'bar missing no-invented-research lock');
   assert.ok(/opacity-only = fail/i.test(bar), 'bar missing opacity-only fail');
   assert.ok(bar.indexOf('header-only') !== -1 || bar.indexOf('header elements') !== -1, 'bar missing Multiverse header-only glitch');
+  assert.ok(bar.indexOf('NEVER fade') !== -1, 'bar missing prepare/approve no-fade lock');
   assert.ok(source.indexOf('Banking that grows with the business.') !== -1, 'source HTML missing hook');
   assert.ok(source.indexOf('representative example') !== -1, 'source HTML missing Aisha disclaimer');
-  assert.ok(source.indexOf('128 transactions') !== -1, 'source HTML missing validation beat');
 });
 
 check('viewport is the film scroller; GSAP is local; Safari clip is gone', function () {

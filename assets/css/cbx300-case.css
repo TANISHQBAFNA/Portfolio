@@ -294,6 +294,23 @@ html.is-multiverse .study[data-template="cbx300"] .film-world [data-text]::after
   color: var(--film-faint);
 }
 
+.film-decision__ui-label {
+  margin: 8px 0 0;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--film-teal);
+}
+
+.film-decision__ui {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--film-ink);
+}
+
 .film-viz {
   position: relative;
   min-height: 0;
@@ -1429,6 +1446,230 @@ html.is-dark .film-nav__item.is-door {
   justify-self: start;
 }
 
+/* Echo 8-beat boards */
+.film-ladder-strip {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  height: 100%;
+  padding: 8px 2% 10px;
+  box-sizing: border-box;
+  overflow: visible;
+  will-change: transform;
+}
+
+.film-ladder-strip__row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.film-rung {
+  padding: 16px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  min-height: 148px;
+  border-radius: 14px;
+  transform-origin: 50% 80%;
+}
+
+.film-rung__num {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--film-teal);
+}
+
+.film-rung strong {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(0.98rem, 1.5vw, 1.18rem);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.film-rung p {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--film-muted);
+}
+
+.film-ladder-strip.is-complete .film-ladder__fill,
+.film-ladder__fill.is-full {
+  transform: scaleX(1);
+}
+
+.film-phone-stage {
+  position: relative;
+  width: min(100%, 22rem);
+  height: 100%;
+  min-height: 280px;
+  margin: 0 auto;
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.film-phone-faces {
+  position: relative;
+  height: calc(100% - 22px);
+  overflow: hidden;
+}
+
+.film-pay-face {
+  position: absolute;
+  inset: 12px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 18px 16px;
+  background: var(--film-cream);
+  border: 1px solid var(--film-line);
+  border-radius: 16px;
+  will-change: transform, clip-path;
+}
+
+.film-pay-face--out {
+  inset: 42% 12px 16px;
+}
+
+.film-pay-face p {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.84rem;
+  color: var(--film-muted);
+}
+
+.film-balance.is-lead {
+  grid-column: 1 / -1;
+  min-height: 132px;
+}
+
+.film-split-door {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.42fr) minmax(0, 1fr);
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.film-split-door .film-nav {
+  max-width: none;
+  padding: 4px 0;
+}
+
+.film-split-panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.film-split-pane {
+  min-height: 0;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  will-change: transform, clip-path;
+}
+
+.film-split-pane .film-rows {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.film-control {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.film-waiting {
+  padding: 16px 16px 14px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.film-morph {
+  position: relative;
+  height: 100%;
+  min-height: 260px;
+  overflow: hidden;
+}
+
+.film-morph .film-device--web {
+  inset: 4% 18% 10% 0;
+}
+
+.film-morph .film-device--phone {
+  width: 38%;
+  height: 72%;
+  right: 0;
+  bottom: 0;
+}
+
+.film-weight-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.film-weight {
+  padding: 16px 14px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+  will-change: transform, clip-path;
+}
+
+.film-weight .film-nav__item {
+  padding: 10px 12px;
+  font-size: 0.86rem;
+}
+
+.film-weight--heavy {
+  background: var(--film-paper-2);
+}
+
+.film-finding-stage {
+  height: 100%;
+  min-height: 0;
+}
+
+.film-beat[data-recipe="kenburns"] .film-viz,
+.film-beat[data-recipe="kenburns"] .film-shot-stack,
+.film-beat[data-recipe="splitDoor"] .film-viz,
+.film-beat[data-recipe="morph"] .film-viz,
+.film-beat[data-recipe="splitWeight"] .film-viz {
+  overflow: visible;
+}
+
 @media (max-width: 960px) {
   /* Still a pinned film. One column, overlay proofs. Not a dead stack. */
   .film-beat[data-pin="true"] .film-stage,
@@ -1478,8 +1719,15 @@ html.is-dark .film-nav__item.is-door {
   .film-ui-strategy,
   .film-system,
   .film-wizard,
-  .film-portrait {
+  .film-portrait,
+  .film-ladder-strip__row,
+  .film-split-panes,
+  .film-weight-split {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .film-split-door {
+    grid-template-columns: 1fr;
   }
 
   .film-jobs,
@@ -1532,7 +1780,10 @@ html.is-dark .film-nav__item.is-door {
   .film-pair,
   .film-balances,
   .film-ui-strategy,
-  .film-system {
+  .film-system,
+  .film-ladder-strip__row,
+  .film-split-panes,
+  .film-weight-split {
     grid-template-columns: 1fr;
   }
 
@@ -1629,7 +1880,13 @@ html.is-dark .film-nav__item.is-door {
   .film-pillar,
   .film-type,
   .film-confirm,
-  .film-balance {
+  .film-balance,
+  .film-rung,
+  .film-pay-face,
+  .film-split-pane,
+  .film-waiting,
+  .film-weight,
+  .film-ladder-strip {
     transform: none !important;
     opacity: 1 !important;
     clip-path: none !important;
