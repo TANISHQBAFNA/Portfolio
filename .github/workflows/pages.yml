@@ -1,0 +1,51 @@
+# Deploy this branch as a static GitHub Pages preview.
+# Does not publish tanishqbafna.com. Do not merge this workflow to main
+# unless Pages is intentionally the preview host.
+name: Deploy CBX300 preview to Pages
+
+on:
+  push:
+    branches:
+      - cursor/preview-cbx300-iris-4c1f
+      - gh-pages
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Stage public site
+        run: |
+          mkdir -p _site
+          cp -a index.html index-multiverse.html about.html contact.html 404.html llms.txt robots.txt sitemap.xml _site/
+          cp -a "About me.html" _site/
+          cp -a assets _site/assets
+          touch _site/.nojekyll
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
