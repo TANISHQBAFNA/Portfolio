@@ -1,7 +1,8 @@
 /**
  * CBX300 cream scroll film — Echo 8-beat Aisha story.
- * Beats 1–4 proof: Tanishk clay cutouts at assets/img/cbx300/aisha-stage-0{1-4}-*.webp.
- * Cover / devices / corporate / close still use designed placeholders until Figma exports.
+ * Beats 1–4 proof: static Iris stills (PNG/WebP) at
+ * assets/img/cbx300/aisha-stage-0{1-4}-*.webp. Image slots, not a WebGL runtime.
+ * Cover / devices / corporate / close stay designed placeholders.
  * Lisa Charlie is a demo brand. Aisha is a representative story, not a real interview.
  * No invented quotes or outcomes.
  */
@@ -18,7 +19,7 @@ window.Cbx300Case = (function () {
     demo: 'Lisa Charlie bank is a demo brand. Aisha is a representative example, not a real customer interview.',
     finding: 'A bank she does not outgrow.',
     volume: '259 web screens. 377 mobile screens. ~147 flows. One shared system.',
-    figma: 'Clay cutouts mark Aisha on the growth beats. Product frames stay designed placeholders until Figma exports land.'
+    figma: 'Beats 1–4 stills are an Iris art-pass (static 3D renders). Product frames stay designed placeholders until Figma exports land.'
   };
 
   var IRIS_STILL = {
@@ -196,7 +197,7 @@ window.Cbx300Case = (function () {
       captions: [
         'Freelancer through mid-size, same product. A bank she does not outgrow.',
         'Aisha is a representative story. Lisa Charlie is the demo brand, not a live client.',
-        'Clay cutouts mark the ladder. Product frames stay placeholders until Figma exports land.'
+        'Iris 3D stills mark the ladder. Product frames stay placeholders until Figma exports land.'
       ],
       next: [
         'Test payment, approval, and access journeys with real business users.',
@@ -273,7 +274,13 @@ window.Cbx300Case = (function () {
     img.decoding = 'async';
     img.setAttribute('width', '1600');
     img.setAttribute('height', '900');
+    var note = paperNote(spec.src.replace(/^.*\//, '') + ' · Iris drop-in');
+    note.setAttribute('data-iris-drop', '');
     fig.appendChild(img);
+    fig.appendChild(note);
+    img.addEventListener('load', function () {
+      note.hidden = true;
+    });
     return fig;
   }
 

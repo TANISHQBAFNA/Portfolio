@@ -41,7 +41,7 @@ Captions: one sentence, Fact → what you see.
 No invented research, quotes, or NPS beyond the source HTML. Aisha is a representative example.
 
 ### 5. Visual
-Portfolio cream paper. Product demos may keep **bank-green** accents from the source **inside UI mock frames**. Bank-calm, editorial, detailed — not a grey tab deck. Beats 1–4 proof stills are Tanishk clay cutouts at `assets/img/cbx300/aisha-stage-0{1-4}-*.webp` (not generated, not photoreal). Cover / devices / corporate / close stay designed placeholders until Figma exports.
+Portfolio cream paper. Product demos may keep **bank-green** accents from the source **inside UI mock frames**. Bank-calm, editorial, detailed — not a grey tab deck. Beats 1–4 proof stills are a **static Iris 3D art-pass** (PNG/WebP at `assets/img/cbx300/aisha-stage-0{1-4}-*.webp`). Image slots, not a WebGL runtime. Cover / devices / corporate / close stay designed placeholders.
 
 ### 6. Meta
 Lead product designer. Jan 2026-present. DS complete. Majority of screens / flows through handoff.  
@@ -80,4 +80,4 @@ Cover through corporate carry Decision chips (risk → change → UI). Close is 
 
 ## Done when
 
-Tanishk can scroll cream `?theme=light&open=sme` and feel an 8-beat cinematic story with Aisha’s risks and choices intact. Multiverse matches film content. Header-only glitch. Scrub works on desktop and iPad Safari with Reduce Motion off. Beats 1–4 show clay cutouts. Other beats stay placeholders until Figma exports land.
+Tanishk can scroll cream `?theme=light&open=sme` and feel an 8-beat cinematic story with Aisha’s risks and choices intact. Multiverse matches film content. Header-only glitch. Scrub works on desktop and iPad Safari with Reduce Motion off. Beats 1–4 show Iris 3D stills when the WebPs land. Other beats stay placeholders until Figma exports land.

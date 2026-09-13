@@ -282,7 +282,7 @@ check('Multiverse glitch is header-only', function () {
   assert.ok(study.indexOf('armGlitchTarget') !== -1, 'multiverse study mark must still arm hitch');
 });
 
-check('clay cutouts are the beat 1–4 proof stills', function () {
+check('Iris 3D stills sit on growth beats 1–4', function () {
   var stills = [
     'assets/img/cbx300/aisha-stage-01-freelancer.webp',
     'assets/img/cbx300/aisha-stage-02-soleprop.webp',
@@ -301,6 +301,7 @@ check('clay cutouts are the beat 1–4 proof stills', function () {
   assert.ok(pages.indexOf('assets/img/aisha-growth/') === -1, 'case js still points at aisha-growth PNG slots');
   assert.ok(kit.indexOf('function bindIrisStill') !== -1, 'kit missing still ken-burns');
   assert.ok(css.indexOf('.film-iris') !== -1, 'css missing iris still stage');
+  assert.ok(pages.indexOf('Iris drop-in') !== -1, 'missing Iris drop-in placeholder label');
   assert.ok(pages.indexOf('withIris') !== -1, 'beats 1–4 not wrapped with withIris');
 });
 
