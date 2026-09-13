@@ -198,6 +198,22 @@ check('redesign bar is the experience lock', function () {
   assert.ok(/opacity-only = fail/i.test(bar), 'bar missing opacity-only fail');
 });
 
+check('viewport is the film scroller; GSAP is local; Safari clip is gone', function () {
+  assert.ok(index.indexOf('assets/vendor/gsap.min.js') !== -1, 'index missing local GSAP');
+  assert.ok(index.indexOf('assets/vendor/ScrollTrigger.min.js') !== -1, 'index missing local ScrollTrigger');
+  assert.ok(mvIndex.indexOf('assets/vendor/gsap.min.js') !== -1, 'multiverse missing local GSAP');
+  assert.ok(fs.existsSync(path.join(ROOT, 'assets/vendor/gsap.min.js')), 'vendored gsap.min.js missing');
+  assert.ok(fs.existsSync(path.join(ROOT, 'assets/vendor/ScrollTrigger.min.js')), 'vendored ScrollTrigger.min.js missing');
+  assert.ok(study.indexOf("scroller: null") !== -1, 'cbx300 must bind viewport scroller, not nested .study');
+  assert.ok(study.indexOf('is-study-film') !== -1, 'missing is-study-film class');
+  assert.ok(css.indexOf('html.is-study-film') !== -1, 'missing window-scroll film css');
+  assert.ok(kit.indexOf('function isView') !== -1, 'kit missing viewport scroller helper');
+  assert.ok(kit.indexOf('viewH(scroller)') !== -1, 'pin end must use viewH, not scroller.clientHeight');
+  assert.ok(kit.indexOf('normalizeScroll') !== -1, 'kit missing iOS normalizeScroll');
+  var landingCss = read('assets/css/landing.css');
+  assert.ok(/html\.is-study \.study[\s\S]{0,220}overflow-x:\s*hidden/.test(landingCss), 'study must overflow-x hidden, not clip');
+});
+
 check('export path reserved, not required for this slice', function () {
   assert.ok(fs.existsSync(path.join(ROOT, 'assets/img/cbx300')), 'missing assets/img/cbx300 folder');
   assert.ok(pages.indexOf('Designed placeholders') !== -1, 'missing placeholder lock comment');

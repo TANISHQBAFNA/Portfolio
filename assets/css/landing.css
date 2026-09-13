@@ -4412,7 +4412,7 @@ html.is-study .study {
   inset: 0;
   z-index: 90;
   height: 100svh;
-  overflow-x: clip;
+  overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }

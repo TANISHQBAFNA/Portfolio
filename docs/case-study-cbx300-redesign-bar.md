@@ -33,6 +33,7 @@ Opening SME Banking should feel like the cream portfolio continued: warm paper, 
 ### 2. Infoviz motion grammar (GSAP + ScrollTrigger)
 - **Claim / Decision first**, then viz works under scroll. Numbered chapter, then proof. Steal Infoviz grammar only — not housing maps.
 - **GSAP pin** holds the leftover stage under CLOSE/title. `pinSpacing` is the runway. Do not CSS-tall the hold (double spacer = a document with no film).
+- **Viewport is the scroller.** Nested `.study` + `overflow-x: clip` + `html { overflow: hidden }` is a Safari/iPad dead-scroll (page never pans, scrub never runs). `html.is-study-film` lets the window scroll; ScrollTrigger tracks the viewport.
 - Scrub must **visibly transform** what you see: scale, crop, focus, draw, split, pan. Opacity-only fades are a fail.
 - Caption sync: one live caption with the frame that proves it. Sequential swap, no dual subtitles.
 - Desktop + laptop: continuous pin/scrub film. Tablet keeps pin/scrub (one-column overlay proofs), not a dead stack. Reduced-motion = calm static stack, same order, Decision chips readable.

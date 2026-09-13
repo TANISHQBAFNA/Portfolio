@@ -8,6 +8,8 @@
  * GSAP pin holds the stage under CLOSE/title. pinSpacing is the runway.
  * Do not also CSS-tall the hold (that double-spacer was the dead film).
  * Stage height is leftover viewport (--study-stage), not extra 100svh.
+ * Viewport is the scroller (Infoviz). Nested .study + overflow-x:clip
+ * was a Safari dead-scroll: html overflow hidden, study never panned.
  * prefers-reduced-motion: calm static stack, same order + Decision chips.
  */
 window.CaseScrollKit = (function () {
@@ -40,9 +42,35 @@ window.CaseScrollKit = (function () {
     return Array.prototype.slice.call(root.querySelectorAll(sel));
   }
 
+  function isView(scroller) {
+    return !scroller || scroller === window || scroller === document.documentElement || scroller === document.body;
+  }
+
+  function viewH(scroller) {
+    if (isView(scroller)) return window.innerHeight || 800;
+    return scroller.clientHeight || 800;
+  }
+
+  function viewY(scroller) {
+    if (isView(scroller)) return window.pageYOffset || document.documentElement.scrollTop || 0;
+    return scroller.scrollTop || 0;
+  }
+
+  function scrollToY(scroller, y) {
+    if (isView(scroller)) window.scrollTo(0, y);
+    else scroller.scrollTo(0, y);
+  }
+
+  function stVars(scroller, extra) {
+    var vars = extra || {};
+    if (!isView(scroller)) vars.scroller = scroller;
+    return vars;
+  }
+
   function headPx(scroller, headerFn) {
     if (typeof headerFn === 'function') return headerFn();
-    var chrome = scroller.querySelector('.study__chrome');
+    var root = isView(scroller) ? document : scroller;
+    var chrome = root.querySelector ? root.querySelector('.study__chrome') : null;
     if (!chrome) return 72;
     return Math.round(chrome.getBoundingClientRect().bottom);
   }
@@ -104,9 +132,8 @@ window.CaseScrollKit = (function () {
 
   function watchSteps(scroller, pages, onStep, triggers) {
     pages.forEach(function (page, i) {
-      triggers.push(window.ScrollTrigger.create({
+      triggers.push(window.ScrollTrigger.create(stVars(scroller, {
         trigger: page,
-        scroller: scroller,
         start: 'top 55%',
         end: 'bottom 40%',
         onToggle: function (self) {
@@ -116,7 +143,7 @@ window.CaseScrollKit = (function () {
             el.classList.toggle('is-on', j === i);
           });
         }
-      }));
+      })));
     });
   }
 
@@ -638,12 +665,11 @@ window.CaseScrollKit = (function () {
       /* Chrome counted once: pin the leftover stage under --study-head.
          pinSpacing is the runway. pin: true — sticky CSS is not the hold.
          preventOverlaps stops the last chapter from sitting on the next. */
-      triggers.push(window.ScrollTrigger.create({
+      triggers.push(window.ScrollTrigger.create(stVars(scroller, {
         trigger: hold,
-        scroller: scroller,
         start: function () { return 'top ' + head() + 'px'; },
         end: function () {
-          return '+=' + Math.round(Math.max(scroller.clientHeight, 480) * endRatio(recipe));
+          return '+=' + Math.round(Math.max(viewH(scroller), 480) * endRatio(recipe));
         },
         pin: true,
         pinSpacing: true,
@@ -660,7 +686,7 @@ window.CaseScrollKit = (function () {
             el.classList.toggle('is-on', j === index);
           });
         }
-      }));
+      })));
     });
   }
 
@@ -670,9 +696,14 @@ window.CaseScrollKit = (function () {
       ? pages[idOrIndex]
       : world.querySelector('[data-film-beat="' + idOrIndex + '"]');
     if (!el) return;
-    var top = el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+    var top;
+    if (isView(scroller)) {
+      top = el.getBoundingClientRect().top + viewY(scroller);
+    } else {
+      top = el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+    }
     var offset = headPx(scroller, headerFn) - 8;
-    scroller.scrollTo(0, Math.max(0, top - offset));
+    scrollToY(scroller, Math.max(0, top - offset));
   }
 
   function bind(opts) {
@@ -684,6 +715,8 @@ window.CaseScrollKit = (function () {
     var mm = null;
     var triggers = [];
     var refreshTimers = [];
+
+    var normalized = false;
 
     function killLocal() {
       refreshTimers.forEach(function (id) { window.clearTimeout(id); });
@@ -723,6 +756,13 @@ window.CaseScrollKit = (function () {
     }
 
     gsap.registerPlugin(ScrollTrigger);
+    if (ScrollTrigger.normalizeScroll && !opts.forceStatic) {
+      var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      if (touch) {
+        ScrollTrigger.normalizeScroll(isView(scroller) ? true : { target: scroller, allowNestedScroll: true });
+        normalized = true;
+      }
+    }
     mm = gsap.matchMedia();
     mm.add(
       {
@@ -750,6 +790,10 @@ window.CaseScrollKit = (function () {
         if (mm) mm.revert();
         mm = null;
         killLocal();
+        if (normalized && ScrollTrigger && ScrollTrigger.normalizeScroll) {
+          ScrollTrigger.normalizeScroll(false);
+          normalized = false;
+        }
       },
       goTo: function (id) { goToBeat(scroller, world, opts.headerOffset, id); },
       pageCount: function () { return pages.length; }

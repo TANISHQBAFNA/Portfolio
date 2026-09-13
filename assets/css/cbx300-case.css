@@ -2,6 +2,25 @@
    Cream portfolio paper. Infoviz scroll grammar.
    No Pages rail. No cool-grey wireframe. No Multiverse glitch. */
 
+/* Window is the scroller. Nested .study + overflow-x:clip + html overflow
+   hidden was a Safari/iPad dead film: the page never panned, scrub never ran. */
+html.is-study-film,
+html.is-study-film body {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overscroll-behavior-y: contain;
+}
+html.is-study-film .study[data-template="cbx300"] {
+  position: relative !important;
+  inset: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  touch-action: pan-y;
+}
+
 .study[data-template="cbx300"] {
   --film-cream: var(--cream, #f4efe6);
   --film-paper: var(--paper, #efeae1);

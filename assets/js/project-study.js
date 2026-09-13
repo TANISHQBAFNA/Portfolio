@@ -103,6 +103,7 @@ window.ProjectStudy = (function () {
     function killMotion() {
       if (caseKit && caseKit.kill) caseKit.kill();
       caseKit = null;
+      html.classList.remove('is-study-film');
       triggers.forEach(function (t) {
         if (t && t.kill) t.kill();
       });
@@ -734,17 +735,18 @@ window.ProjectStudy = (function () {
       var beats = world.querySelectorAll('[data-film-beat]');
       setTotal(beats.length);
       setStep(0);
+      html.classList.add('is-study-film');
       if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
         ScrollTrigger.config({ ignoreMobileResize: true });
       }
       caseKit = window.CaseScrollKit.bind({
-        scroller: root,
+        scroller: null,
         world: world,
         headerOffset: headPx,
         onStep: setStep,
         startPage: pendingPage || '',
-        forceStatic: typeof gsap === 'undefined'
+        forceStatic: typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined'
       });
     }
 
@@ -1206,6 +1208,7 @@ window.ProjectStudy = (function () {
         setStep(0);
       }
       root.scrollTop = 0;
+      window.scrollTo(0, 0);
       Array.prototype.forEach.call(root.querySelectorAll('[data-study-kicker]'), function (el) {
         el.textContent = pad(index + 1);
       });

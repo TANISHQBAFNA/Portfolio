@@ -4072,7 +4072,7 @@ html.is-multiverse.is-print body.leaf-page .leaf__faq {
    ========================================================================== */
 
 html.is-study {
-  overflow-x: clip;
+  overflow-x: hidden;
   overflow-y: auto;
   height: auto;
 }
