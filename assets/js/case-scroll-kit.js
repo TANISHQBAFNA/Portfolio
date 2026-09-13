@@ -1015,12 +1015,14 @@ window.CaseScrollKit = (function () {
         },
         pin: true,
         pinSpacing: true,
-        scrub: 0.55,
+        /* Higher scrub lag = chapters play under trackpad instead of jumping to end. */
+        scrub: 1.1,
         animation: tl,
         invalidateOnRefresh: true,
         anticipatePin: 1,
-        preventOverlaps: true,
-        fastScrollEnd: true,
+        /* preventOverlaps + fastScrollEnd made fast Mac flicks skip the film. */
+        preventOverlaps: false,
+        fastScrollEnd: false,
         onToggle: function (self) {
           if (!self.isActive) return;
           if (opts.onStep) opts.onStep(index);
@@ -1099,8 +1101,15 @@ window.CaseScrollKit = (function () {
 
     gsap.registerPlugin(ScrollTrigger);
     if (ScrollTrigger.normalizeScroll && !opts.forceStatic) {
-      var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      if (touch) {
+      /* Coarse pointer only. Mac trackpads often report maxTouchPoints > 0;
+         normalizeScroll there can swallow wheel / make the film feel dead. */
+      var coarse = false;
+      try {
+        coarse = window.matchMedia('(pointer: coarse)').matches;
+      } catch (err) {
+        coarse = false;
+      }
+      if (coarse) {
         ScrollTrigger.normalizeScroll(isView(scroller) ? true : { target: scroller, allowNestedScroll: true });
         normalized = true;
       }

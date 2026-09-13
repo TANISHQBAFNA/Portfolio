@@ -18,6 +18,30 @@ window.ProjectStudy = (function () {
     return String(n).length < 2 ? '0' + n : String(n);
   }
 
+
+  function unlockFilmScroller(htmlEl) {
+    if (!htmlEl) return;
+    htmlEl.classList.add('is-study-film');
+    htmlEl.style.setProperty('overflow-x', 'hidden', 'important');
+    htmlEl.style.setProperty('overflow-y', 'scroll', 'important');
+    htmlEl.style.setProperty('height', 'auto', 'important');
+    htmlEl.style.setProperty('max-height', 'none', 'important');
+    document.body.style.setProperty('overflow-x', 'hidden', 'important');
+    document.body.style.setProperty('overflow-y', 'scroll', 'important');
+    document.body.style.setProperty('height', 'auto', 'important');
+    document.body.style.setProperty('max-height', 'none', 'important');
+    window.scrollTo(0, 0);
+  }
+
+  function clearFilmScroller(htmlEl) {
+    if (!htmlEl) return;
+    htmlEl.classList.remove('is-study-film');
+    ['overflow-x', 'overflow-y', 'height', 'max-height'].forEach(function (prop) {
+      htmlEl.style.removeProperty(prop);
+      document.body.style.removeProperty(prop);
+    });
+  }
+
   function create(options) {
     var root = options.root;
     var projects = options.projects || [];
@@ -104,7 +128,7 @@ window.ProjectStudy = (function () {
     function killMotion() {
       if (caseKit && caseKit.kill) caseKit.kill();
       caseKit = null;
-      html.classList.remove('is-study-film');
+      clearFilmScroller(html);
       triggers.forEach(function (t) {
         if (t && t.kill) t.kill();
       });
@@ -763,7 +787,7 @@ window.ProjectStudy = (function () {
       var beats = world.querySelectorAll('[data-film-beat]');
       setTotal(beats.length);
       setStep(0);
-      html.classList.add('is-study-film');
+      unlockFilmScroller(html);
       if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
         ScrollTrigger.config({ ignoreMobileResize: true });
