@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="1600" height="1000" role="img" aria-label="Placeholder mobile screens">
+  <rect width="800" height="500" fill="#e6dfd3"/>
+  <g fill="none" stroke="#1a1a1e" stroke-opacity=".24" stroke-width="1.6">
+    <rect x="96" y="60" width="180" height="380" rx="22"/>
+    <rect x="310" y="60" width="180" height="380" rx="22"/>
+    <rect x="524" y="60" width="180" height="380" rx="22"/>
+  </g>
+  <g fill="#1a1a1e" fill-opacity=".1">
+    <rect x="120" y="100" width="132" height="86" rx="3"/>
+    <rect x="334" y="100" width="132" height="150" rx="3"/>
+    <rect x="548" y="100" width="132" height="60" rx="3"/>
+  </g>
+  <rect x="120" y="330" width="132" height="40" rx="3" fill="#00a0a0" fill-opacity=".9"/>
+  <rect x="334" y="330" width="132" height="40" rx="3" fill="#1a1a1e" fill-opacity=".1"/>
+  <rect x="548" y="200" width="132" height="40" rx="3" fill="#00a0a0" fill-opacity=".55"/>
+  <g fill="#1a1a1e" fill-opacity=".18">
+    <rect x="120" y="210" width="110" height="9" rx="4"/><rect x="120" y="232" width="80" height="9" rx="4"/>
+    <rect x="334" y="274" width="110" height="9" rx="4"/><rect x="334" y="296" width="70" height="9" rx="4"/>
+    <rect x="548" y="264" width="110" height="9" rx="4"/><rect x="548" y="286" width="92" height="9" rx="4"/>
+  </g>
+</svg>

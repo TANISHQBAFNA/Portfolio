@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="1600" height="1000" role="img" aria-label="Placeholder diagram">
+  <rect width="800" height="500" fill="#e6dfd3"/>
+  <g fill="none" stroke="#1a1a1e" stroke-opacity=".2" stroke-width="1.4">
+    <circle cx="400" cy="250" r="150"/><circle cx="400" cy="250" r="96"/><circle cx="400" cy="250" r="46"/>
+  </g>
+  <g stroke="#1a1a1e" stroke-opacity=".16" stroke-width="1">
+    <path d="M400 40v420M190 250h420M252 102l296 296M548 102L252 398"/>
+  </g>
+  <circle cx="400" cy="250" r="22" fill="#00a0a0"/>
+  <g fill="#1a1a1e" fill-opacity=".3">
+    <circle cx="400" cy="100" r="7"/><circle cx="550" cy="250" r="7"/><circle cx="400" cy="400" r="7"/><circle cx="250" cy="250" r="7"/>
+  </g>
+  <g fill="#00a0a0" fill-opacity=".55"><circle cx="506" cy="144" r="5"/><circle cx="294" cy="356" r="5"/></g>
+  <rect x="48" y="440" width="200" height="10" rx="5" fill="#1a1a1e" fill-opacity=".16"/>
+</svg>

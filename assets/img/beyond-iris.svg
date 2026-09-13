@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" fill="none" aria-hidden="true">
+  <defs>
+    <radialGradient id="void" cx="50%" cy="48%" r="55%">
+      <stop offset="0%" stop-color="#f4efe6"/>
+      <stop offset="18%" stop-color="#00a0a0"/>
+      <stop offset="38%" stop-color="#ff003c" stop-opacity="0.85"/>
+      <stop offset="58%" stop-color="#3d7eff" stop-opacity="0.9"/>
+      <stop offset="78%" stop-color="#0a0a12"/>
+      <stop offset="100%" stop-color="#050508"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#fff8ef" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#00a0a0" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#050508" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rimMisreg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff003c"/>
+      <stop offset="50%" stop-color="#00a0a0"/>
+      <stop offset="100%" stop-color="#3d7eff"/>
+    </linearGradient>
+  </defs>
+  <!-- depth wash -->
+  <circle cx="400" cy="400" r="360" fill="url(#glow)" opacity="0.85"/>
+  <!-- outer print rings (motivated misregistration) -->
+  <circle cx="400" cy="400" r="310" stroke="#ff003c" stroke-opacity="0.35" stroke-width="3" fill="none"/>
+  <circle cx="403" cy="398" r="310" stroke="#3d7eff" stroke-opacity="0.3" stroke-width="3" fill="none"/>
+  <circle cx="400" cy="400" r="248" stroke="#00a0a0" stroke-opacity="0.55" stroke-width="2.5" stroke-dasharray="10 14" fill="none"/>
+  <circle cx="400" cy="400" r="186" stroke="#f4efe6" stroke-opacity="0.45" stroke-width="2" fill="none"/>
+  <circle cx="398" cy="402" r="186" stroke="#ff003c" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+  <!-- spiral suggestion -->
+  <path d="M400 400m-140 0a140 140 0 1 1 280 0a110 110 0 1 1-220 0a80 80 0 1 1 160 0a50 50 0 1 1-100 0" stroke="url(#rimMisreg)" stroke-width="2.2" stroke-opacity="0.65" fill="none"/>
+  <!-- iris core -->
+  <circle cx="400" cy="400" r="120" fill="url(#void)"/>
+  <circle cx="400" cy="392" r="42" fill="#f4efe6" fill-opacity="0.92"/>
+  <circle cx="400" cy="392" r="18" fill="#050508"/>
+</svg>
