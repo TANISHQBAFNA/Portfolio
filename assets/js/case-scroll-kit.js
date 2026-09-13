@@ -285,9 +285,26 @@ window.CaseScrollKit = (function () {
     captionAt(tl, caps, 0, t0);
   }
 
+  function irisStillEl(page) {
+    return q(page, '[data-iris-still]');
+  }
+
+  function bindIrisStill(page, tl, t0, origin) {
+    var still = irisStillEl(page);
+    if (!still) return;
+    window.gsap.set(still, {
+      scale: 0.94,
+      y: 18,
+      transformOrigin: origin || '50% 62%'
+    });
+    tl.to(still, { scale: 1.05, y: 0, duration: 0.65 }, t0);
+    tl.to(still, { scale: 1, duration: 0.4 }, t0 + 0.9);
+  }
+
   /* Freelancer: phone-frame focus scrub between get paid and pay. Crop/scale, not fade. */
   function bindPhone(page, tl) {
     var t0 = leadDecision(tl, page);
+    bindIrisStill(page, tl, t0, '50% 70%');
     var phone = q(page, '[data-phone-stage]');
     var inn = q(page, '[data-pay-face="in"]');
     var out = q(page, '[data-pay-face="out"]');
@@ -341,6 +358,7 @@ window.CaseScrollKit = (function () {
   /* Sole prop: available scale-up, then crop to beneficiary. */
   function bindMoneyCrop(page, tl) {
     var t0 = leadDecision(tl, page);
+    bindIrisStill(page, tl, t0, '50% 58%');
     var lead = q(page, '.film-balance.is-lead');
     var rest = qq(page, '.film-balance:not(.is-lead)');
     var bands = qq(page, '.film-balance .film-ui-band');
@@ -386,6 +404,7 @@ window.CaseScrollKit = (function () {
   /* ~10 people: door crop then split prepare || approve. NEVER fade prepare into approve. */
   function bindSplitDoor(page, tl) {
     var t0 = leadDecision(tl, page);
+    bindIrisStill(page, tl, t0, '42% 58%');
     var door = q(page, '[data-focus="door"]');
     var rest = qq(page, '[data-focus="nav"]');
     var prepare = q(page, '[data-pane="prepare"]');
@@ -462,6 +481,7 @@ window.CaseScrollKit = (function () {
   /* Mid-size: control-room pin, then matrix draw. */
   function bindControl(page, tl) {
     var t0 = leadDecision(tl, page);
+    bindIrisStill(page, tl, t0, '42% 58%');
     var waiting = q(page, '[data-waiting]');
     var rows = qq(page, '[data-waiting] .film-row');
     var cells = qq(page, '[data-shot="grid"] .film-cell');

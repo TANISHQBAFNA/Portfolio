@@ -1,6 +1,7 @@
 /**
  * CBX300 cream scroll film — Echo 8-beat Aisha story.
- * Designed placeholders stand in for Figma frames until exports land.
+ * Beats 1–4 proof: Tanishk clay cutouts at assets/img/cbx300/aisha-stage-0{1-4}-*.webp.
+ * Cover / devices / corporate / close still use designed placeholders until Figma exports.
  * Lisa Charlie is a demo brand. Aisha is a representative story, not a real interview.
  * No invented quotes or outcomes.
  */
@@ -17,7 +18,26 @@ window.Cbx300Case = (function () {
     demo: 'Lisa Charlie bank is a demo brand. Aisha is a representative example, not a real customer interview.',
     finding: 'A bank she does not outgrow.',
     volume: '259 web screens. 377 mobile screens. ~147 flows. One shared system.',
-    figma: 'Figma frames are placeholders until exports land. Designed slots stand in for product art.'
+    figma: 'Clay cutouts mark Aisha on the growth beats. Product frames stay designed placeholders until Figma exports land.'
+  };
+
+  var IRIS_STILL = {
+    freelancer: {
+      src: 'assets/img/cbx300/aisha-stage-01-freelancer.webp',
+      alt: 'Clay cutout of Aisha standing alone. Stage 01 freelancer. Aisha works alone.'
+    },
+    sole: {
+      src: 'assets/img/cbx300/aisha-stage-02-soleprop.webp',
+      alt: 'Clay cutout of Aisha standing alone. Stage 02 sole proprietor. One-person business.'
+    },
+    ten: {
+      src: 'assets/img/cbx300/aisha-stage-03-team10.webp',
+      alt: 'Clay cutouts of Aisha and three teammates. Stage 03 small office, about ten people.'
+    },
+    mid: {
+      src: 'assets/img/cbx300/aisha-stage-04-midsize.webp',
+      alt: 'Clay cutouts of Aisha and three teammates. Stage 04 mid-size. Growing company.'
+    }
   };
 
   var STAGES = [
@@ -176,7 +196,7 @@ window.Cbx300Case = (function () {
       captions: [
         'Freelancer through mid-size, same product. A bank she does not outgrow.',
         'Aisha is a representative story. Lisa Charlie is the demo brand, not a live client.',
-        'Figma frames are placeholders until exports land.'
+        'Clay cutouts mark the ladder. Product frames stay placeholders until Figma exports land.'
       ],
       next: [
         'Test payment, approval, and access journeys with real business users.',
@@ -241,6 +261,40 @@ window.Cbx300Case = (function () {
 
   function irisSlot(label) {
     return paperNote(label + ' · export pending');
+  }
+
+  function irisStill(key) {
+    var spec = IRIS_STILL[key];
+    var fig = el('figure', 'film-iris');
+    fig.setAttribute('data-iris-still', '');
+    var img = el('img', 'film-iris__img');
+    img.src = spec.src;
+    img.alt = spec.alt;
+    img.decoding = 'async';
+    img.setAttribute('width', '1600');
+    img.setAttribute('height', '900');
+    fig.appendChild(img);
+    return fig;
+  }
+
+  function withIris(key, board) {
+    var stage = el('div', 'film-iris-stage');
+    var fig = irisStill(key);
+    var img = fig.querySelector('img');
+    stage.appendChild(fig);
+    if (board) {
+      board.className += (board.className ? ' ' : '') + 'film-iris-ghost';
+      board.setAttribute('aria-hidden', 'true');
+      stage.appendChild(board);
+      if (img) {
+        img.addEventListener('error', function () {
+          fig.hidden = true;
+          board.classList.remove('film-iris-ghost');
+          board.removeAttribute('aria-hidden');
+        });
+      }
+    }
+    return stage;
   }
 
   function ladderStrip(complete) {
@@ -544,7 +598,6 @@ window.Cbx300Case = (function () {
     var claim = el('div', 'film-claim');
     claim.setAttribute('data-film-claim', '');
     claim.appendChild(el('h2', 'film-title film-title--hook', beat.title));
-    claim.appendChild(el('p', 'film-promise', META.promise));
     claim.appendChild(el('p', 'film-line', META.product));
     claim.appendChild(el('p', 'film-demo', META.demo));
     var chip = decisionChip(beat.decision);
@@ -594,17 +647,17 @@ window.Cbx300Case = (function () {
         stack.appendChild(shot('ladder', ladderStrip(false)));
         break;
       case 'freelancer':
-        stack.appendChild(shot('phone', phonePayBoard()));
+        stack.appendChild(shot('phone', withIris('freelancer', phonePayBoard())));
         break;
       case 'sole':
-        stack.appendChild(shot('balances', balanceBoard()));
+        stack.appendChild(shot('balances', withIris('sole', balanceBoard())));
         stack.appendChild(shot('handoff', handoffBoard()));
         break;
       case 'ten':
-        stack.appendChild(shot('split', splitDoorBoard()));
+        stack.appendChild(shot('split', withIris('ten', splitDoorBoard())));
         break;
       case 'mid':
-        stack.appendChild(shot('control', controlBoard()));
+        stack.appendChild(shot('control', withIris('mid', controlBoard())));
         break;
       case 'devices':
         stack.appendChild(shot('morph', morphBoard()));

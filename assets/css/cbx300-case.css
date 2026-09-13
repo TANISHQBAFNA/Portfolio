@@ -359,6 +359,43 @@ html.is-multiverse .study[data-template="cbx300"] .film-world [data-text]::after
   will-change: transform;
 }
 
+.film-iris-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+}
+
+.film-iris {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  display: flex;
+  background: var(--film-cream);
+  overflow: hidden;
+}
+
+.film-iris__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+}
+
+.film-iris-ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.film-iris-ghost .film-slot-note {
+  display: none;
+}
+
 .film-paper {
   background: var(--film-paper);
   border: 1px solid var(--film-line);
@@ -1527,7 +1564,7 @@ html.is-dark .film-nav__item.is-door {
   inset: 12px 12px 16px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 8px;
   padding: 18px 16px;
   background: var(--film-cream);
@@ -1537,7 +1574,7 @@ html.is-dark .film-nav__item.is-door {
 }
 
 .film-pay-face--out {
-  inset: 42% 12px 16px;
+  justify-content: flex-end;
 }
 
 .film-pay-face p {
@@ -1554,7 +1591,7 @@ html.is-dark .film-nav__item.is-door {
 
 .film-split-door {
   display: grid;
-  grid-template-columns: minmax(9rem, 0.42fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 12px;
   height: 100%;
   min-height: 0;
@@ -1563,8 +1600,15 @@ html.is-dark .film-nav__item.is-door {
 }
 
 .film-split-door .film-nav {
+  flex-direction: row;
+  flex-wrap: wrap;
   max-width: none;
-  padding: 4px 0;
+  height: auto;
+  padding: 0;
+}
+
+.film-split-door .film-nav__item {
+  flex: 1 1 6rem;
 }
 
 .film-split-panes {
@@ -1644,7 +1688,7 @@ html.is-dark .film-nav__item.is-door {
   flex-direction: column;
   gap: 8px;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   will-change: transform, clip-path;
 }
 
@@ -1728,6 +1772,7 @@ html.is-dark .film-nav__item.is-door {
 
   .film-split-door {
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   .film-jobs,
@@ -1886,9 +1931,14 @@ html.is-dark .film-nav__item.is-door {
   .film-split-pane,
   .film-waiting,
   .film-weight,
-  .film-ladder-strip {
+  .film-ladder-strip,
+  .film-iris {
     transform: none !important;
     opacity: 1 !important;
     clip-path: none !important;
+  }
+
+  .film-iris-ghost {
+    opacity: 0 !important;
   }
 }

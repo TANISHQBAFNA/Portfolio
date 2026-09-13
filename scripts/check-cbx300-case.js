@@ -282,9 +282,31 @@ check('Multiverse glitch is header-only', function () {
   assert.ok(study.indexOf('armGlitchTarget') !== -1, 'multiverse study mark must still arm hitch');
 });
 
-check('export path reserved, not required for this slice', function () {
+check('clay cutouts are the beat 1–4 proof stills', function () {
+  var stills = [
+    'assets/img/cbx300/aisha-stage-01-freelancer.webp',
+    'assets/img/cbx300/aisha-stage-02-soleprop.webp',
+    'assets/img/cbx300/aisha-stage-03-team10.webp',
+    'assets/img/cbx300/aisha-stage-04-midsize.webp'
+  ];
+  stills.forEach(function (rel) {
+    assert.ok(pages.indexOf(rel) !== -1, 'case js missing still ' + rel);
+    var abs = path.join(ROOT, rel);
+    if (!fs.existsSync(abs)) return;
+    var buf = fs.readFileSync(abs);
+    assert.ok(buf.length > 8000, rel + ' too small to be the clay board');
+    assert.ok(buf.slice(0, 4).toString() === 'RIFF', rel + ' is not a WebP (RIFF)');
+    assert.ok(buf.slice(8, 12).toString() === 'WEBP', rel + ' is not a WebP (WEBP)');
+  });
+  assert.ok(pages.indexOf('assets/img/aisha-growth/') === -1, 'case js still points at aisha-growth PNG slots');
+  assert.ok(kit.indexOf('function bindIrisStill') !== -1, 'kit missing still ken-burns');
+  assert.ok(css.indexOf('.film-iris') !== -1, 'css missing iris still stage');
+  assert.ok(pages.indexOf('withIris') !== -1, 'beats 1–4 not wrapped with withIris');
+});
+
+check('export path reserved for leftover Figma slots', function () {
   assert.ok(fs.existsSync(path.join(ROOT, 'assets/img/cbx300')), 'missing assets/img/cbx300 folder');
-  assert.ok(pages.indexOf('Designed placeholders') !== -1, 'missing placeholder lock comment');
+  assert.ok(pages.indexOf('designed placeholders') !== -1, 'missing placeholder lock comment');
 });
 
 console.log(passed + ' passed, ' + failed + ' failed');
