@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s06') !== -1, 'index.html missing cover cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s06') !== -1, 'multiverse missing cover cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s06') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s07') !== -1, 'index.html missing cover cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s07') !== -1, 'multiverse missing cover cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s07') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -108,6 +108,7 @@ check('Multiverse study uses ink/glitch blue, not cream paper', function () {
   assert.ok(css.indexOf('html.is-multiverse .study[data-template="cbx300"]') !== -1, 'missing Multiverse study skin');
   assert.ok(css.indexOf('#0e1018') !== -1, 'missing Multiverse ink');
   assert.ok(css.indexOf('#3de8f5') !== -1, 'missing Multiverse cyan');
+  assert.ok(css.indexOf('-webkit-text-fill-color: #f3eee4') !== -1, 'Multiverse cover kicker/word must beat home print fill');
   assert.ok(css.indexOf('html.is-light-home.is-dark .study[data-template="cbx300"]') !== -1, 'cream dark must not steal Multiverse ink');
 });
 

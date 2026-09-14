@@ -207,6 +207,31 @@ html.is-multiverse .cbx-cover .hero__word {
   color: var(--film-ink) !important;
 }
 
+/* Home Multiverse paints kicker/word with Ben-Day + print fill (#0e1018).
+   That fill disappears on the ink study. Solid type; RGB stays in glitch plates. */
+html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__kicker,
+html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__word,
+html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__accent {
+  background-image: none !important;
+  background-clip: border-box !important;
+  -webkit-background-clip: border-box !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-transform: none !important;
+}
+html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__kicker,
+html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__word,
+html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__kicker,
+html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__word {
+  color: #f3eee4 !important;
+  -webkit-text-fill-color: #f3eee4 !important;
+}
+html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__accent,
+html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__accent,
+html.is-multiverse.is-dark .study[data-template="cbx300"] .cbx-cover .hero__accent {
+  color: #3de8f5 !important;
+  -webkit-text-fill-color: #3de8f5 !important;
+}
+
 /* Cream stays still. Multiverse glitch plates live in landing-multiverse.css. */
 html.is-light-home .cbx-cover .glitch,
 html.is-light-home .study[data-template="cbx300"] .glitch {
