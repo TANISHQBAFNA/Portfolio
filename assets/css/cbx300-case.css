@@ -84,33 +84,39 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
 
 .cbx-cover {
   box-sizing: border-box;
+  position: relative;
   min-height: calc(100svh - var(--study-head, 72px));
   min-height: calc(100dvh - var(--study-head, 72px));
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: clamp(16px, 3vh, 36px) var(--film-gutter, 24px) clamp(28px, 5vh, 56px);
+  justify-content: stretch;
+  padding: clamp(10px, 2vh, 24px) var(--film-gutter, 24px) clamp(32px, 6vh, 64px);
 }
 
 .cbx-cover__inner {
   position: relative;
-  display: block;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
   width: 100%;
+  min-height: 0;
 }
 
 .cbx-cover__media {
   box-sizing: border-box;
   position: absolute;
   z-index: 2;
-  top: 54%;
+  top: 0;
   right: 0;
-  width: min(48vw, 36rem);
+  width: min(56vw, 42rem);
   aspect-ratio: 16 / 10;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateY(-50%);
+  transform: none;
   background: color-mix(in srgb, var(--film-paper, #efeae1) 62%, transparent);
   border: 1.5px dashed var(--film-line);
   border-radius: 0;
@@ -268,24 +274,24 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   }
 
   .cbx-cover {
-    justify-content: flex-end;
     padding-bottom: clamp(28px, 6vh, 48px);
   }
 
   .cbx-cover__media {
-    width: min(62vw, 16.5rem);
-    top: 58%;
+    top: 0;
+    right: 0;
+    width: min(72vw, 20rem);
   }
 }
 
 @media (max-height: 700px) and (min-width: 768px) {
   .cbx-cover {
-    padding-top: 12px;
-    padding-bottom: 28px;
+    padding-top: 8px;
+    padding-bottom: 24px;
   }
 
   .cbx-cover__media {
-    width: min(42vw, 28rem);
+    width: min(50vw, 34rem);
   }
 }
 

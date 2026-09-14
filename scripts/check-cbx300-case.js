@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s07') !== -1, 'index.html missing cover cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s07') !== -1, 'multiverse missing cover cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s07') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s08') !== -1, 'index.html missing cover cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s08') !== -1, 'multiverse missing cover cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s08') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -68,6 +68,9 @@ check('image sits to the right and overlaps type', function () {
   assert.ok(appendType !== -1 && appendMedia !== -1 && appendType < appendMedia, 'type first, media on top for overlap');
   assert.ok(css.indexOf('position: absolute') !== -1, 'media must leave the type flow');
   assert.ok(/right:\s*0/.test(css), 'media must sit on the right');
+  assert.ok(/top:\s*0/.test(css), 'media must sit in the top-right corner');
+  assert.ok(/justify-content:\s*flex-end/.test(css), 'type stack must sit bottom-left');
+  assert.ok(/min\(56vw,\s*42rem\)/.test(css), 'media must grow a bit past the 48vw frame');
   assert.ok(css.indexOf('z-index: 2') !== -1, 'media must paint over type');
   assert.ok(css.indexOf('aspect-ratio: 16 / 10') !== -1, 'media frame must be ~16:10');
   assert.ok(css.indexOf('dashed') !== -1, 'empty media must look intentional');
