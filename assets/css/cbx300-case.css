@@ -110,7 +110,7 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
   z-index: 2;
   top: 0;
   right: 0;
-  width: min(56vw, 42rem);
+  width: min(62vw, 46rem);
   aspect-ratio: 16 / 10;
   margin: 0;
   display: flex;
