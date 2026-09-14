@@ -1,18 +1,18 @@
-/* CBX300 opened-case film.
-   Cream portfolio paper. Infoviz scroll grammar.
-   No Pages rail. No cool-grey wireframe. No Multiverse glitch. */
+/* CBX300 Section 01 cover.
+   Cream home hero language, stacked media above larger type.
+   Same layout in cream and Multiverse. No film, no glitch theatre on the cover. */
 
-/* Window is the scroller. Nested .study + overflow-x:clip + html overflow
-   hidden was a Safari/iPad dead film: the page never panned, scrub never ran. */
-html.is-study-film,
-html.is-study-film body {
+/* Window is the scroller. html.is-study { overflow: hidden } without film
+   left the Arc/Safari study unable to pan. */
+html.is-study-page,
+html.is-study-page body {
   overflow-x: hidden !important;
   overflow-y: auto !important;
   height: auto !important;
   max-height: none !important;
   overscroll-behavior-y: contain;
 }
-html.is-study-film .study[data-template="cbx300"] {
+html.is-study-page .study[data-template="cbx300"] {
   position: relative !important;
   inset: auto !important;
   height: auto !important;
@@ -25,15 +25,16 @@ html.is-study-film .study[data-template="cbx300"] {
   --film-cream: var(--cream, #f4efe6);
   --film-paper: var(--paper, #efeae1);
   --film-paper-2: var(--paper-2, #e2dbcf);
-  --film-paper-3: var(--paper-3, #d5cdbf);
   --film-ink: var(--coffee, #1e1510);
   --film-muted: rgba(30, 21, 16, 0.62);
   --film-faint: rgba(30, 21, 16, 0.42);
-  --film-line: rgba(30, 21, 16, 0.1);
+  --film-line: rgba(30, 21, 16, 0.16);
   --film-teal: #00a0a0;
-  --film-deep: #00615f;
   --film-gutter: var(--gutter, 24px);
-  --film-ease: var(--ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  --cbx-shout: clamp(2.85rem, 10.8vw, 8.75rem);
+  --cbx-kicker: clamp(1.55rem, 3.8vw, 3.1rem);
+  --cbx-support: clamp(1.05rem, 2.55vw, 1.7rem);
+  --cbx-role: clamp(0.68rem, 0.95vw, 0.84rem);
   background: var(--film-cream);
   color: var(--film-ink);
 }
@@ -42,1247 +43,241 @@ html.is-dark .study[data-template="cbx300"] {
   --film-cream: #1e1510;
   --film-paper: #2a221c;
   --film-paper-2: #241c18;
-  --film-paper-3: #1a1411;
   --film-ink: #f4efe6;
   --film-muted: rgba(244, 239, 230, 0.62);
   --film-faint: rgba(244, 239, 230, 0.42);
-  --film-line: rgba(244, 239, 230, 0.12);
+  --film-line: rgba(244, 239, 230, 0.2);
   --film-teal: #56c6c6;
-  --film-deep: #56c6c6;
 }
 
 .study[data-template="cbx300"] .study__temps {
   display: none;
 }
 
-.study[data-template="cbx300"] .glitch,
-.study[data-template="cbx300"] [data-text]::before,
-.study[data-template="cbx300"] [data-text]::after {
-  animation: none !important;
-  text-shadow: none !important;
-}
-
-.film-world {
+.cbx-world {
   isolation: isolate;
   background: var(--film-cream, #f4efe6);
   color: var(--film-ink, #1e1510);
   padding-top: var(--study-head, 72px);
+  min-height: 100svh;
+  min-height: 100dvh;
 }
 
-.film-world[hidden] {
+.cbx-world[hidden] {
   display: none !important;
 }
 
-.film-beat {
-  position: relative;
-  color: inherit;
-}
-
-.film-hold {
-  position: relative;
-}
-
-.film-stage {
-  position: relative;
-  display: grid;
+.cbx-cover {
   box-sizing: border-box;
-  padding: var(--study-head, 72px) var(--film-gutter) 32px;
-  min-height: 100svh;
-}
-
-/* One leftover viewport. GSAP pin + pinSpacing is the runway.
-   Do not CSS-tall this hold (double spacer = dead film). */
-.film-beat[data-pin="true"] .film-hold {
-  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-}
-
-.film-beat[data-pin="true"] .film-stage {
-  position: relative;
-  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  max-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  padding: 20px var(--film-gutter) 22px;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: minmax(17rem, 0.88fr) minmax(0, 1.42fr);
-  grid-template-rows: minmax(0, 1fr) auto;
-  column-gap: clamp(28px, 4.2vw, 72px);
-  row-gap: 18px;
-  align-items: stretch;
-}
-
-.film-claim {
-  position: relative;
-  z-index: 2;
-  max-width: min(40rem, 100%);
-}
-
-.film-beat[data-pin="true"] .film-claim {
-  grid-column: 1;
-  grid-row: 1;
-  align-self: center;
-  max-width: none;
+  min-height: calc(100svh - var(--study-head, 72px));
+  min-height: calc(100dvh - var(--study-head, 72px));
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 0;
-  overflow: auto;
+  padding: clamp(16px, 3vh, 36px) var(--film-gutter, 24px) clamp(28px, 5vh, 56px);
 }
 
-.film-beat[data-pin="true"] .film-viz {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.film-beat[data-pin="true"] .film-caption-stack {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  align-self: end;
-}
-
-.film-num {
-  margin: 0 0 10px;
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 800;
-  font-size: 0.82rem;
-  letter-spacing: 0.12em;
-  color: var(--film-teal);
-}
-
-.film-title {
-  margin: 0;
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
-  font-size: clamp(1.7rem, 3.1vw, 2.55rem);
-  letter-spacing: -0.038em;
-  line-height: 1.12;
-  max-width: 16ch;
-}
-
-.film-title--hook {
-  font-size: clamp(2.2rem, 5.4vw, 4.5rem);
-  max-width: 11ch;
-  line-height: 1.05;
-  padding-bottom: 0.14em;
-}
-
-.film-promise {
-  margin: 18px 0 0;
-  max-width: 38ch;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-weight: 400;
-  font-size: clamp(1rem, 1.5vw, 1.14rem);
-  line-height: 1.5;
-  color: var(--film-muted);
-}
-
-.film-body {
-  margin: 16px 0 0;
-  max-width: 38ch;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-weight: 400;
-  font-size: clamp(0.95rem, 1.35vw, 1.06rem);
-  line-height: 1.5;
-  color: var(--film-muted);
-}
-
-.film-meta {
-  margin: 18px 0 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.78rem;
-  line-height: 1.45;
-  color: var(--film-faint);
-}
-
-.film-line {
-  margin: 16px 0 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.86rem;
-  color: var(--film-ink);
-}
-
-.film-demo {
-  margin: 8px 0 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.78rem;
-  color: var(--film-muted);
-}
-
-.film-ask {
-  margin: 22px 0 0;
-  max-width: 36ch;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.92rem;
-  line-height: 1.45;
-  color: var(--film-deep);
-}
-
-.film-decision {
-  margin: 16px 0 0;
-  max-width: 38ch;
-  padding: 0 0 0 12px;
-  border-left: 2px solid var(--film-teal);
+.cbx-cover__inner {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-}
-
-.film-decision__label,
-.film-decision__choice-label {
-  margin: 0;
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  color: var(--film-teal);
-}
-
-.film-decision__choice-label {
-  margin-top: 8px;
-  color: var(--film-deep);
-}
-
-.film-decision__finding,
-.film-decision__choice {
-  margin: 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.84rem;
-  line-height: 1.4;
-  color: var(--film-ink);
-}
-
-.film-decision__ruled {
-  margin: 8px 0 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.74rem;
-  line-height: 1.4;
-  color: var(--film-faint);
-}
-
-.film-viz {
-  position: relative;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.film-board {
-  position: relative;
+  align-items: flex-start;
+  gap: clamp(1.15rem, 2.6vh, 2.15rem);
   width: 100%;
-  height: 100%;
-  min-height: 220px;
-  transform-origin: 50% 50%;
-  overflow: hidden;
+  max-width: 72rem;
 }
 
-.film-shot-stack {
-  position: relative;
-  height: 100%;
-  min-height: 220px;
-  overflow: hidden;
-}
-
-.film-beat[data-recipe="ends"] .film-viz,
-.film-beat[data-recipe="ends"] .film-shot-stack,
-.film-beat[data-recipe="ends"] .film-board,
-.film-beat[data-recipe="ends"] .film-shot {
-  overflow: visible;
-}
-
-.film-beat[data-recipe="ends"] .film-claim {
-  z-index: 12;
-  isolation: isolate;
-}
-
-.film-shot-stack.is-stage > [data-shot] {
-  position: absolute;
-  inset: 0;
+.cbx-cover__media {
+  box-sizing: border-box;
   margin: 0;
-}
-
-.film-shot {
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  will-change: transform;
-}
-
-.film-paper {
-  background: var(--film-paper);
-  border: 1px solid var(--film-line);
-  box-shadow: 0 18px 44px rgba(30, 21, 16, 0.07);
-}
-
-.film-caption-stack {
-  position: relative;
-  z-index: 3;
-  min-height: 3.1em;
-  max-width: 54rem;
-  flex-shrink: 0;
-  background: var(--film-cream);
-}
-
-.film-caption {
-  margin: 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: clamp(0.98rem, 1.45vw, 1.12rem);
-  line-height: 1.45;
-  max-width: 52ch;
-  color: var(--film-ink);
-}
-
-/* Overlay stack for pin-scrub. Siblings start hidden; JS sequential autoAlpha
-   reveals one line after the outgoing line is gone. */
-.film-caption-stack [data-caption] + [data-caption] {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-}
-
-.film-beat.is-static .film-caption-stack [data-caption] + [data-caption] {
-  position: relative;
-  margin-top: 8px;
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Cover: leftover viewport under chrome, then pin-scrub scale-in. */
-.film-beat--cover .film-hold {
-  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-}
-
-.film-beat--cover .film-stage {
-  height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  min-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  max-height: var(--study-stage, calc(100svh - var(--study-head, 72px)));
-  padding: 20px var(--film-gutter) 22px;
-  overflow: hidden;
-  grid-template-rows: minmax(0, 1fr) auto;
-  grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
-  align-items: stretch;
-  gap: clamp(28px, 4vw, 72px);
-}
-
-.film-beat--cover .film-claim {
-  grid-column: 1;
-  grid-row: 1;
-  align-self: center;
-  max-width: none;
-}
-
-.film-beat--cover .film-viz {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  min-height: 0;
-}
-
-.film-beat--cover .film-caption-stack {
-  grid-column: 1;
-  grid-row: 2;
-  align-self: end;
-}
-
-.film-compose {
-  position: relative;
-  height: 100%;
-  min-height: 280px;
-}
-
-.film-device {
-  position: absolute;
-  background: var(--film-paper);
-  border: 1px solid var(--film-line);
-  overflow: hidden;
-}
-
-.film-device--web {
-  inset: 6% 10% 18% 0;
-  border-radius: 14px;
-  box-shadow: 0 22px 50px rgba(30, 21, 16, 0.08);
-}
-
-.film-device--phone {
-  right: 0;
-  bottom: 0;
-  width: 36%;
-  height: 64%;
-  border-radius: 22px;
-  background: var(--film-paper-2);
-  box-shadow: 0 16px 36px rgba(30, 21, 16, 0.1);
-}
-
-.film-device__bar {
-  height: 28px;
-  border-bottom: 1px solid var(--film-line);
+  width: min(100%, 56rem, calc(38vh * 16 / 10));
+  aspect-ratio: 16 / 10;
+  max-height: 38vh;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 12px;
-  background: var(--film-paper-2);
+  justify-content: center;
+  background: var(--film-paper, #efeae1);
+  border: 1.5px dashed var(--film-line);
+  border-radius: 0;
 }
 
-.film-device__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(30, 21, 16, 0.16);
-}
-
-html.is-dark .film-device__dot {
-  background: rgba(244, 239, 230, 0.18);
-}
-
-.film-device__url {
-  margin-left: 8px;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.68rem;
+.cbx-cover__media-label {
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--film-faint);
 }
 
-.film-device__phone-bar {
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.film-device__pill {
-  width: 42px;
-  height: 6px;
-  border-radius: 99px;
-  background: rgba(30, 21, 16, 0.14);
-}
-
-html.is-dark .film-device__pill {
-  background: rgba(244, 239, 230, 0.16);
-}
-
-.film-device__body {
-  padding: 16px 14px;
+.cbx-cover .cbx-cover__type,
+.cbx-cover .hero__type {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: calc(100% - 28px);
-  box-sizing: border-box;
+  align-items: flex-start;
+  gap: 0.55rem;
+  width: 100%;
+  max-width: 100%;
 }
 
-.film-ui-hero {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 12px 14px;
-  background: var(--film-cream);
-  border: 1px solid var(--film-line);
-  border-radius: 10px;
-}
-
-.film-ui-kicker {
+.cbx-cover .hero__role {
   margin: 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--film-teal);
-}
-
-.film-ui-empty {
-  margin: 18px 0 8px;
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.15rem;
-  letter-spacing: -0.03em;
-  color: var(--film-faint);
-}
-
-.film-ui-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  flex: 1;
-  min-height: 0;
-}
-
-.film-ui-card {
-  padding: 10px 10px 12px;
-  background: var(--film-cream);
-  border: 1px solid var(--film-line);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  justify-content: flex-end;
-}
-
-.film-ui-card strong {
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.82rem;
-  letter-spacing: -0.02em;
-}
-
-.film-ui-card span {
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.7rem;
-  color: var(--film-muted);
-}
-
-.film-ui-band {
-  display: block;
-  height: 8px;
-  width: 58%;
-  border-radius: 99px;
-  background: rgba(30, 21, 16, 0.08);
-}
-
-html.is-dark .film-ui-band {
-  background: rgba(244, 239, 230, 0.1);
-}
-
-.film-ui-band--lg { width: 78%; height: 14px; }
-.film-ui-band--sm { width: 36%; height: 6px; }
-.film-ui-band--teal {
-  width: 42%;
-  background: rgba(0, 160, 160, 0.32);
-}
-
-.film-ui-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.film-ui-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--film-line);
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.82rem;
-}
-
-.film-slot-note {
-  margin: 10px 14px 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.7rem;
-  color: var(--film-faint);
-}
-
-.film-quote {
-  margin: 18px 0 0;
-  padding-left: 14px;
-  max-width: 36ch;
-  border-left: 2px solid var(--film-teal);
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--cbx-role);
   font-weight: 500;
-  line-height: 1.45;
-  color: var(--film-ink);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--film-muted);
+  line-height: 1.3;
 }
 
-/* Ladder — 3D staircase. Camera walks rungs on desktop. */
-.film-ladder {
-  display: flex;
+.cbx-cover .hero__heading {
+  display: flex !important;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 18px;
-  height: 100%;
-  padding: 12px 4% 18px;
-  box-sizing: border-box;
-  overflow: visible;
-  perspective: 1500px;
-  perspective-origin: 50% 36%;
-}
-
-.film-ladder__world {
-  position: relative;
-  flex: 1 1 auto;
-  min-height: 280px;
-  transform-style: preserve-3d;
-  transform-origin: 50% 70%;
-}
-
-.film-ladder__row {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-
-.film-stage-card {
-  position: absolute;
-  left: 50%;
-  top: 18%;
-  width: min(42%, 268px);
-  min-height: 176px;
-  padding: clamp(16px, 2vw, 24px) clamp(14px, 1.6vw, 20px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 6px;
-  border-radius: 16px;
-  transform-origin: 50% 80%;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  box-shadow: 0 22px 48px rgba(30, 21, 16, 0.12);
-}
-
-.film-stage-card__num {
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: var(--film-teal);
-}
-
-.film-stage-card strong {
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(1rem, 1.6vw, 1.22rem);
-  letter-spacing: -0.034em;
-  line-height: 1.15;
-}
-
-.film-stage-card p {
+  align-items: flex-start;
+  gap: 0;
   margin: 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.82rem;
-  line-height: 1.4;
-  color: var(--film-muted);
-}
-
-.film-stage-card small,
-.film-stage-card span {
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.72rem;
-  color: var(--film-faint);
-}
-
-.film-ladder__bar {
-  position: relative;
-  height: 6px;
-  flex-shrink: 0;
-  background: rgba(0, 160, 160, 0.18);
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.film-ladder__fill {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, #7ec9c9, var(--film-teal));
-  transform-origin: 0% 50%;
-  transform: scaleX(0.2);
-}
-
-.film-ladder__words {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-shrink: 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  color: var(--film-faint);
-}
-
-.film-ladder__words em {
-  font-style: normal;
-  font-weight: 600;
-  color: var(--film-deep);
-}
-
-.film-beat.is-static .film-ladder,
-.film-beat.is-static .film-ladder__world {
-  perspective: none;
-  transform: none;
-}
-
-.film-beat.is-static .film-ladder__row {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
-  inset: auto;
-  min-height: 0;
-}
-
-.film-beat.is-static .film-stage-card {
-  position: relative;
-  left: auto;
-  top: auto;
-  width: auto;
-  min-height: 140px;
-  transform: none;
-}
-
-.film-pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(12px, 2vw, 24px);
-  height: 100%;
-  align-items: stretch;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.film-pair figure {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.film-pair figcaption {
-  margin-top: 10px;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.78rem;
-  color: var(--film-muted);
-}
-
-.film-screen {
-  flex: 1;
-  min-height: 180px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-radius: 12px;
-}
-
-/* Roles */
-.film-jobs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(12px, 2vw, 24px);
-  height: 100%;
-  align-items: stretch;
-  padding: 8px 4px;
-  box-sizing: border-box;
-}
-
-.film-job {
-  padding: clamp(16px, 2.2vw, 28px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 8px;
-  min-height: 200px;
-  border-radius: 14px;
-  transform-origin: 50% 60%;
-}
-
-.film-job__screen {
-  flex: 1;
-  min-height: 64px;
-  margin-bottom: 8px;
-  padding: 12px;
-  background: var(--film-cream);
-  border: 1px solid var(--film-line);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.film-job strong {
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(1.15rem, 1.9vw, 1.55rem);
-  letter-spacing: -0.03em;
-}
-
-.film-job p {
-  margin: 0;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.92rem;
-  line-height: 1.4;
-}
-
-.film-job small {
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  color: var(--film-teal);
-}
-
-/* Approvals door */
-.film-nav {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  height: 100%;
-  max-width: 22rem;
-  padding: 12px 8px;
-  overflow: visible;
-}
-
-.film-nav__item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.98rem;
-  border-radius: 12px;
-  transform-origin: 12% 50%;
-}
-
-.film-nav__item.is-door {
-  color: var(--film-cream, #f4efe6);
-  background: var(--film-ink);
-  border-color: transparent;
-}
-
-html.is-dark .film-nav__item.is-door {
-  color: var(--film-cream);
-}
-
-.film-nav__dot {
-  min-width: 1.6rem;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  color: var(--film-teal);
-}
-
-.film-batch {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  gap: 16px;
-  height: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.film-fail {
-  padding: 12px;
-  box-sizing: border-box;
-}
-
-.film-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.film-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.88rem;
-  border-radius: 10px;
-}
-
-.film-row.is-bad {
-  outline: 1px solid rgba(160, 40, 32, 0.45);
-  background: rgba(160, 40, 32, 0.06);
-}
-
-.film-action {
-  align-self: start;
-  padding: 10px 18px;
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 0.92rem;
-  background: var(--film-ink);
-  color: var(--film-cream);
-  border: 0;
-  border-radius: 10px;
-  transform-origin: 80% 50%;
-}
-
-/* Money */
-.film-balances {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  height: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.film-balance {
-  padding: 22px 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 6px;
-  border-radius: 12px;
-  transform-origin: 50% 50%;
-}
-
-.film-balance strong {
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.2rem;
-  letter-spacing: -0.03em;
-}
-
-.film-balance span {
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.82rem;
-  color: var(--film-muted);
-}
-
-/* Permissions */
-.film-grid {
-  display: grid;
-  grid-template-columns: 1.4fr repeat(5, minmax(0, 1fr));
-  gap: 6px;
-  height: 100%;
-  align-content: center;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.78rem;
-  padding: 22px 18px;
-  box-sizing: border-box;
-  border-radius: 12px;
-  overflow: visible;
-}
-
-.film-grid span {
-  padding: 10px 8px;
-  text-align: center;
-}
-
-.film-grid__head {
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 700;
-  color: var(--film-teal);
-}
-
-.film-grid__fn {
-  text-align: left;
-}
-
-.film-cell {
-  background: rgba(0, 160, 160, 0.18);
-  border-radius: 4px;
-}
-
-.film-cell.is-off {
-  background: transparent;
-  border: 1px dashed var(--film-line);
-}
-
-/* Grammar */
-.film-track-wrap {
-  overflow: hidden;
-  height: 100%;
-}
-
-.film-track {
-  display: flex;
-  height: 100%;
-  gap: clamp(16px, 3vw, 36px);
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.film-step {
-  flex: 0 0 100%;
-  width: 100%;
-  max-width: none;
-  padding: 28px 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 10px;
-  min-height: 220px;
-  border-radius: 14px;
-  box-sizing: border-box;
-}
-
-.film-step strong {
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  letter-spacing: -0.04em;
-}
-
-.film-step span {
-  font-family: "Outfit", system-ui, sans-serif;
-  color: var(--film-muted);
-}
-
-.film-empty {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  height: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.film-empty article {
-  padding: 18px 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 8px;
-  min-height: 160px;
-  border-radius: 12px;
-}
-
-.film-empty strong {
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.95rem;
-}
-
-.film-empty span {
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.78rem;
-  color: var(--film-muted);
-}
-
-/* Close / finding */
-.film-sheet {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  grid-template-rows: repeat(4, minmax(28px, 1fr));
-  gap: 6px;
-  height: 100%;
-  min-height: 200px;
-  padding: 8px;
-  box-sizing: border-box;
-  transform-origin: 50% 50%;
-}
-
-.film-sheet i {
-  display: block;
-  background: var(--film-paper);
-  border: 1px solid var(--film-line);
-  border-radius: 4px;
-  font-style: normal;
-}
-
-.film-sheet i:nth-child(3n) {
-  background: var(--film-paper-2);
-}
-
-.film-sheet i:nth-child(5n) {
-  background: rgba(0, 160, 160, 0.16);
-}
-
-.film-finding {
-  margin: 8px 0 0;
-  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(1.3rem, 2.6vw, 2rem);
-  letter-spacing: -0.03em;
-}
-
-.film-next {
-  margin: 18px 0 0;
   padding: 0;
-  list-style: none;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.9rem;
-  line-height: 1.55;
-  color: var(--film-muted);
-  max-width: 42ch;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  max-width: none !important;
+  color: var(--film-ink) !important;
 }
 
-.film-end {
-  margin-top: 24px;
+.cbx-cover .hero__kicker {
+  display: block;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif !important;
+  font-size: var(--cbx-kicker) !important;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--film-ink) !important;
+  margin: 0 0 0.28rem;
 }
 
-.film-world .study__end-btn {
-  justify-self: start;
+.cbx-cover .hero__display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  line-height: 0.88;
+  max-width: 100%;
 }
 
-@media (max-width: 960px) {
-  /* Still a pinned film. One column, overlay proofs. Not a dead stack. */
-  .film-beat[data-pin="true"] .film-stage,
-  .film-beat--cover .film-stage {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 16px var(--film-gutter) 16px;
+.cbx-cover .hero__accent,
+.cbx-cover .hero__word,
+html.is-light-home .cbx-cover .hero__accent,
+html.is-light-home .cbx-cover .hero__word,
+html.is-multiverse .cbx-cover .hero__accent,
+html.is-multiverse .cbx-cover .hero__word {
+  display: block;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif !important;
+  font-size: var(--cbx-shout) !important;
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+  font-style: normal !important;
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.cbx-cover .hero__accent,
+html.is-light-home .cbx-cover .hero__accent,
+html.is-multiverse .cbx-cover .hero__accent {
+  color: var(--film-teal, #00a0a0) !important;
+}
+
+.cbx-cover .hero__word,
+html.is-light-home .cbx-cover .hero__word,
+html.is-multiverse .cbx-cover .hero__word {
+  color: var(--film-ink) !important;
+}
+
+.cbx-cover .hero__support,
+html.is-light-home .cbx-cover .hero__support,
+html.is-multiverse .cbx-cover .hero__support {
+  max-width: min(38rem, 100%) !important;
+  margin: 0.7em 0 0;
+  padding-bottom: 0.1em;
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--cbx-support) !important;
+  line-height: 1.42 !important;
+  font-weight: 400;
+  color: var(--film-ink) !important;
+}
+
+/* Cover type stays still. Multiverse may keep study-chrome / curtain glitch. */
+.cbx-cover .glitch,
+.cbx-cover [data-text]::before,
+.cbx-cover [data-text]::after {
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+.cbx-rest[hidden],
+.cbx-stub[hidden] {
+  display: none !important;
+}
+
+.cbx-stub {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 767px) {
+  .study[data-template="cbx300"] {
+    --cbx-shout: clamp(2.55rem, 14vw, 4.15rem);
+    --cbx-kicker: clamp(1.35rem, 6.4vw, 1.85rem);
+    --cbx-support: clamp(1rem, 4.2vw, 1.2rem);
   }
 
-  .film-beat[data-pin="true"] .film-claim,
-  .film-beat[data-pin="true"] .film-viz,
-  .film-beat[data-pin="true"] .film-caption-stack,
-  .film-beat--cover .film-claim,
-  .film-beat--cover .film-viz,
-  .film-beat--cover .film-caption-stack {
-    grid-column: auto;
-    grid-row: auto;
-    width: 100%;
+  .cbx-cover {
+    justify-content: flex-end;
+    padding-bottom: clamp(28px, 6vh, 48px);
   }
 
-  .film-beat[data-pin="true"] .film-claim,
-  .film-beat--cover .film-claim {
-    flex: 0 1 auto;
-    max-height: 38%;
+  .cbx-cover__media {
+    width: min(100%, calc(28vh * 16 / 10));
+    max-height: 28vh;
   }
 
-  .film-beat[data-pin="true"] .film-viz,
-  .film-beat--cover .film-viz {
-    flex: 1 1 auto;
-    min-height: 0;
+  .cbx-cover .hero__role {
+    white-space: normal;
+    max-width: 18rem;
   }
 
-  .film-title {
-    max-width: 18ch;
-    font-size: clamp(1.35rem, 4.2vw, 2rem);
-  }
-
-  .film-body {
-    display: none;
-  }
-
-  .film-jobs,
-  .film-pair,
-  .film-balances,
-  .film-empty {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .film-jobs {
-    grid-template-columns: 1fr;
-  }
-
-  .film-grid {
-    font-size: 0.68rem;
-    gap: 4px;
-  }
-
-  .film-empty {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .film-sheet {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+  .cbx-cover .hero__accent,
+  .cbx-cover .hero__word {
+    white-space: nowrap;
   }
 }
 
-@media (max-width: 640px) {
-  .film-ladder {
-    perspective: none;
-    overflow: hidden;
+@media (max-height: 700px) and (min-width: 768px) {
+  .cbx-cover {
+    padding-top: 12px;
+    padding-bottom: 28px;
+    gap: 0;
   }
 
-  .film-ladder__world {
-    min-height: 0;
-    transform: none;
+  .cbx-cover__inner {
+    gap: 1rem;
   }
 
-  .film-ladder__row {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-    inset: auto;
-  }
-
-  .film-stage-card {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: auto;
-    min-height: 108px;
-  }
-
-  .film-pair,
-  .film-balances {
-    grid-template-columns: 1fr;
-  }
-
-  .film-compose {
-    min-height: 240px;
-  }
-
-  .film-grid {
-    grid-template-columns: 1fr repeat(5, minmax(0, 1fr));
-    overflow-x: auto;
+  .cbx-cover__media {
+    width: min(100%, calc(30vh * 16 / 10));
+    max-height: 30vh;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .film-beat[data-pin="true"] .film-hold,
-  .film-beat--cover .film-hold {
-    height: auto;
-    min-height: 0;
-  }
-
-  .film-beat[data-pin="true"] .film-stage,
-  .film-beat--cover .film-stage {
-    position: relative;
-    top: auto;
-    height: auto;
-    max-height: none;
-    min-height: auto;
-    overflow: visible;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .film-body {
-    display: block;
-  }
-
-  .film-shot-stack.is-stage > [data-shot] {
-    position: relative;
-    inset: auto;
-  }
-
-  .film-shot-stack [data-shot] + [data-shot] {
-    margin-top: 20px;
-  }
-
-  .film-caption-stack [data-caption] + [data-caption] {
-    position: relative;
-    margin-top: 6px;
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .film-ladder,
-  .film-ladder__world {
-    perspective: none;
-    transform: none;
-  }
-
-  .film-ladder__row {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 8px;
-    inset: auto;
-  }
-
-  .film-stage-card {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: auto;
-  }
-
-  .film-decision,
-  .film-decision__ruled,
-  .film-ask {
-    opacity: 1;
-  }
-
-  .film-board,
-  .film-job,
-  .film-stage-card,
-  .film-nav__item,
-  .film-track,
-  .film-sheet,
-  .film-device,
-  .film-cell,
-  .film-shot {
-    transform: none !important;
-    opacity: 1 !important;
-    clip-path: none !important;
+  .cbx-cover,
+  .cbx-cover * {
+    animation: none !important;
+    transition: none !important;
   }
 }

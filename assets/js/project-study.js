@@ -3,7 +3,7 @@
  * Window is the scroller. Pins stay sparse.
  *
  * Cut / Tunnel / Helix / Deck / Type — motion skins.
- * cbx300 — cream Infoviz scroll film (bank-calm, no glitch theatre).
+ * cbx300 — cream cover (Section 01). Page scroll, no film bind.
  */
 window.ProjectStudy = (function () {
   'use strict';
@@ -104,6 +104,7 @@ window.ProjectStudy = (function () {
       if (caseKit && caseKit.kill) caseKit.kill();
       caseKit = null;
       html.classList.remove('is-study-film');
+      html.classList.remove('is-study-page');
       triggers.forEach(function (t) {
         if (t && t.kill) t.kill();
       });
@@ -731,23 +732,13 @@ window.ProjectStudy = (function () {
 
     function bindCbx300() {
       var world = root.querySelector('[data-world="cbx300"]');
-      if (!world || !window.CaseScrollKit) return;
-      var beats = world.querySelectorAll('[data-film-beat]');
-      setTotal(beats.length);
+      if (!world) return;
+      var live = world.querySelectorAll('[data-cbx-live]');
+      setTotal(live.length || (caseMount && caseMount.pageCount ? caseMount.pageCount() : 1));
       setStep(0);
-      html.classList.add('is-study-film');
-      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger);
-        ScrollTrigger.config({ ignoreMobileResize: true });
-      }
-      caseKit = window.CaseScrollKit.bind({
-        scroller: null,
-        world: world,
-        headerOffset: headPx,
-        onStep: setStep,
-        startPage: pendingPage || '',
-        forceStatic: typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined'
-      });
+      html.classList.add('is-study-page');
+      window.scrollTo(0, 0);
+      if (root) root.scrollTop = 0;
     }
 
     function bindMotion() {
@@ -755,12 +746,6 @@ window.ProjectStudy = (function () {
       syncHead();
       if (template === 'cbx300') {
         bindCbx300();
-        afterLayout(function () {
-          if (window.ScrollTrigger) ScrollTrigger.refresh();
-        });
-        window.setTimeout(function () {
-          if (window.ScrollTrigger) ScrollTrigger.refresh();
-        }, 280);
         return;
       }
       if (reduceMotion.matches || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
@@ -1202,9 +1187,8 @@ window.ProjectStudy = (function () {
       caseMount = null;
       if (template === 'cbx300' && window.Cbx300Case) {
         caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
-        var caseWorld = root.querySelector('[data-world="cbx300"]');
-        var caseBeats = caseWorld ? caseWorld.querySelectorAll('[data-film-beat]') : [];
-        setTotal(caseBeats.length);
+        html.classList.add('is-study-page');
+        setTotal(caseMount && caseMount.pageCount ? caseMount.pageCount() : 1);
         setStep(0);
       }
       root.scrollTop = 0;
