@@ -1193,6 +1193,9 @@ window.ProjectStudy = (function () {
         html.classList.add('is-study-page');
         setTotal(caseMount && caseMount.pageCount ? caseMount.pageCount() : 1);
         setStep(0);
+        if (window.Cbx300Case.armGlitch) {
+          window.Cbx300Case.armGlitch(root.querySelector('[data-world="cbx300"]'));
+        }
       }
       root.scrollTop = 0;
       window.scrollTo(0, 0);

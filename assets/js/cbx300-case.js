@@ -111,7 +111,6 @@ window.Cbx300Case = (function () {
   function armGlitch(world, opts) {
     if (!isMultiverse()) return;
     var iris = window.IrisMotion;
-    if (!iris || !iris.armGlitchTarget) return;
     opts = opts || {};
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     var nodes = [];
@@ -132,12 +131,18 @@ window.Cbx300Case = (function () {
     nodes.forEach(function (node) {
       var text = liveText(node);
       if (!text) return;
-      iris.armGlitchTarget(node, text);
+      node.classList.add('glitch');
+      node.setAttribute('data-text', text);
+      node.setAttribute('data-latin', text);
+      if (iris && iris.armGlitchTarget) iris.armGlitchTarget(node, text);
       burstSafe(iris, node, reduce);
       if (node.getAttribute('data-cbx-glitch-hover')) return;
       node.setAttribute('data-cbx-glitch-hover', '1');
       node.addEventListener('mouseenter', function () {
-        iris.armGlitchTarget(node, liveText(node));
+        var next = liveText(node);
+        node.setAttribute('data-text', next);
+        node.setAttribute('data-latin', next);
+        if (iris && iris.armGlitchTarget) iris.armGlitchTarget(node, next);
         burstSafe(iris, node, reduce);
       });
     });
