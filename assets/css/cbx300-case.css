@@ -104,31 +104,50 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
   min-height: 0;
 }
 
-.cbx-cover__media {
+/* Same chrome as the work-rail cards: .work-card + .work-card__media.
+   Cream radius / Multiverse ink offset come from landing sheets. */
+.cbx-cover__media.work-card {
   box-sizing: border-box;
   position: absolute;
   z-index: 2;
   top: 0;
   right: 0;
-  width: min(62vw, 46rem);
-  aspect-ratio: 16 / 10;
-  margin: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: none;
-  background: color-mix(in srgb, var(--film-paper, #efeae1) 62%, transparent);
-  border: 1.5px dashed var(--film-line);
-  border-radius: 0;
+  flex-direction: column;
+  width: min(34vw, 26rem);
+  height: min(68vh, 34rem);
+  margin: 0;
   pointer-events: none;
 }
 
-.cbx-cover__media-label {
-  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.82rem;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  color: var(--film-faint);
+html.is-light-home .study[data-template="cbx300"] .cbx-cover__media.work-card {
+  padding: 14px 14px 16px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--cream, #f4efe6);
+  box-shadow: none;
+}
+
+.cbx-cover__media .work-card__media {
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  background: rgba(30, 21, 16, 0.06);
+}
+
+html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media .work-card__media {
+  border-radius: 0;
+}
+
+.cbx-cover__media .work-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
 }
 
 .cbx-cover .cbx-cover__type,
@@ -277,10 +296,11 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
     padding-bottom: clamp(28px, 6vh, 48px);
   }
 
-  .cbx-cover__media {
+  .cbx-cover__media.work-card {
     top: 0;
     right: 0;
-    width: min(72vw, 20rem);
+    width: min(48vw, 16.5rem);
+    height: min(42vh, 22rem);
   }
 }
 
@@ -290,8 +310,9 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
     padding-bottom: 24px;
   }
 
-  .cbx-cover__media {
-    width: min(50vw, 34rem);
+  .cbx-cover__media.work-card {
+    width: min(30vw, 22rem);
+    height: min(58vh, 26rem);
   }
 }
 

@@ -42,7 +42,13 @@ window.Cbx300Case = (function () {
     return node;
   }
 
-  function buildCover() {
+  function cardSrc(project) {
+    if (project && project.cardImage) return project.cardImage;
+    if (project && project.cover) return project.cover;
+    return 'assets/img/work/cin-work-sme.png';
+  }
+
+  function buildCover(project) {
     var glitch = isMultiverse();
     var section = el('section', 'cbx-cover');
     section.setAttribute('data-cbx-section', '01');
@@ -62,11 +68,18 @@ window.Cbx300Case = (function () {
     heading.appendChild(display);
     type.appendChild(heading);
 
-    var media = el('figure', 'cbx-cover__media');
-    media.setAttribute('aria-label', 'Image placeholder');
-    var label = el('span', 'cbx-cover__media-label', 'Image');
-    label.setAttribute('aria-hidden', 'true');
-    media.appendChild(label);
+    var media = el('figure', 'work-card cbx-cover__media');
+    media.setAttribute('data-tone', 'cream');
+    media.setAttribute('aria-label', 'SME Banking');
+    var shot = el('span', 'work-card__media');
+    var img = document.createElement('img');
+    img.className = 'work-card__img';
+    img.alt = '';
+    img.width = 720;
+    img.height = 900;
+    img.src = cardSrc(project);
+    shot.appendChild(img);
+    media.appendChild(shot);
 
     inner.appendChild(type);
     inner.appendChild(media);
@@ -153,7 +166,7 @@ window.Cbx300Case = (function () {
     world.innerHTML = '';
     world.classList.remove('film-world');
     world.classList.add('cbx-world');
-    world.appendChild(buildCover());
+    world.appendChild(buildCover(project));
     world.appendChild(buildStubs());
     armGlitch(world, { chrome: false });
     return {

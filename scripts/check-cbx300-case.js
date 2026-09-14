@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s09') !== -1, 'index.html missing cover cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s09') !== -1, 'multiverse missing cover cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s09') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s10') !== -1, 'index.html missing cover cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s10') !== -1, 'multiverse missing cover cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s10') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -61,20 +61,23 @@ check('Section 01 copy matches CEO lock', function () {
   assert.ok(pages.indexOf('hero__role') === -1, 'hero__role must be gone');
 });
 
-check('image sits to the right and overlaps type', function () {
+check('image sits in the project work-card frame', function () {
   var coverFn = pages.slice(pages.indexOf('function buildCover'), pages.indexOf('function buildStubs'));
   var appendType = coverFn.indexOf('inner.appendChild(type)');
   var appendMedia = coverFn.indexOf('inner.appendChild(media)');
-  assert.ok(appendType !== -1 && appendMedia !== -1 && appendType < appendMedia, 'type first, media on top for overlap');
+  assert.ok(appendType !== -1 && appendMedia !== -1 && appendType < appendMedia, 'type first, media on top');
+  assert.ok(coverFn.indexOf("work-card cbx-cover__media") !== -1, 'cover media must reuse .work-card');
+  assert.ok(coverFn.indexOf('work-card__media') !== -1, 'cover must use work-card inner media');
+  assert.ok(coverFn.indexOf('work-card__img') !== -1, 'cover must use the work-card image');
+  assert.ok(pages.indexOf('cin-work-sme.png') !== -1, 'cover must point at the SME work image');
   assert.ok(css.indexOf('position: absolute') !== -1, 'media must leave the type flow');
   assert.ok(/right:\s*0/.test(css), 'media must sit on the right');
   assert.ok(/top:\s*0/.test(css), 'media must sit in the top-right corner');
   assert.ok(/justify-content:\s*flex-end/.test(css), 'type stack must sit bottom-left');
-  assert.ok(/min\(62vw,\s*46rem\)/.test(css), 'media must grow a bit past the 48vw frame');
+  assert.ok(css.indexOf('border-radius: 22px') !== -1, 'cream cover must use the work-card 22px tile');
+  assert.ok(css.indexOf('border-radius: 14px') !== -1, 'cream cover must use the work-card 14px inner crop');
+  assert.ok(css.indexOf('dashed') === -1, 'dashed placeholder must be gone');
   assert.ok(css.indexOf('z-index: 2') !== -1, 'media must paint over type');
-  assert.ok(css.indexOf('aspect-ratio: 16 / 10') !== -1, 'media frame must be ~16:10');
-  assert.ok(css.indexOf('dashed') !== -1, 'empty media must look intentional');
-  assert.ok(css.indexOf('color-mix') !== -1, 'media fill must let type show through');
 });
 
 check('cover type is still a large home-parity shout', function () {
