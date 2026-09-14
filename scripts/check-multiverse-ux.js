@@ -287,16 +287,16 @@ check('cache queries bumped for My Work glitch skin', function () {
     'index-multiverse.html must bump landing-multiverse.js cache to mv10'
   );
   assert.ok(
-    /project-study\.js\?v=film14/.test(index),
-    'index.html must bump project-study.js cache to film14'
+    /project-study\.js\?v=iris3d/.test(index),
+    'index.html must bump project-study.js cache to iris3d'
   );
   assert.ok(
-    /landing\.css\?v=aeo33/.test(index),
-    'index.html must bump landing.css cache to aeo33 for shared chrome layout'
+    /landing\.css\?v=aeo35/.test(index),
+    'index.html must bump landing.css cache to aeo35 for shared chrome layout'
   );
   assert.ok(
-    /landing\.css\?v=aeo33/.test(mvIndex),
-    'index-multiverse.html must load shared landing.css (aeo33)'
+    /landing\.css\?v=aeo35/.test(mvIndex),
+    'index-multiverse.html must load shared landing.css (aeo35)'
   );
   assert.ok(
     /beyond-transition\.js\?v=bx20/.test(index),
@@ -422,15 +422,15 @@ check('Multiverse My Work has comic / RGB skin; cream does not', function () {
 
 check('both worlds load shared landing.css; Multiverse adds glitch sheet after', function () {
   assert.ok(
-    /landing\.css\?v=aeo33/.test(index),
+    /landing\.css\?v=aeo35/.test(index),
     'index.html must load shared landing.css'
   );
   assert.ok(
-    /landing\.css\?v=aeo33/.test(mvIndex),
+    /landing\.css\?v=aeo35/.test(mvIndex),
     'index-multiverse.html must load shared landing.css'
   );
   var mvLink = mvIndex.indexOf('landing-multiverse.css?v=mv13');
-  var layoutLink = mvIndex.indexOf('landing.css?v=aeo33');
+  var layoutLink = mvIndex.indexOf('landing.css?v=aeo35');
   assert.ok(layoutLink !== -1 && mvLink !== -1 && layoutLink < mvLink,
     'index-multiverse.html must load landing.css before landing-multiverse.css');
 });
