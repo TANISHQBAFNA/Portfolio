@@ -120,6 +120,19 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
   pointer-events: none;
 }
 
+html.is-light-home .study[data-template="cbx300"] .cbx-cover__media.work-card,
+html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media.work-card {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  z-index: 2;
+  width: min(34vw, 26rem);
+  height: min(68vh, 34rem);
+}
+
 html.is-light-home .study[data-template="cbx300"] .cbx-cover__media.work-card {
   padding: 14px 14px 16px;
   border-radius: 22px;
