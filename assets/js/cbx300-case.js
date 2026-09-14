@@ -89,10 +89,30 @@ window.Cbx300Case = (function () {
     return rest;
   }
 
-  function armGlitch(world) {
+  function liveText(node) {
+    return (node.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function burstSafe(iris, node, reduce) {
+    if (!iris || !iris.burstGlitch) return;
+    /* Letter-swap rewrites textContent. Nested chrome (01 / 01) must keep its spans. */
+    if (node.children && node.children.length) {
+      node.classList.remove('is-glitching', 'is-slam');
+      void node.offsetWidth;
+      node.classList.add('is-glitching', 'is-slam');
+      window.setTimeout(function () {
+        node.classList.remove('is-glitching', 'is-slam');
+      }, 720);
+      return;
+    }
+    iris.burstGlitch(node, reduce);
+  }
+
+  function armGlitch(world, opts) {
     if (!isMultiverse()) return;
     var iris = window.IrisMotion;
     if (!iris || !iris.armGlitchTarget) return;
+    opts = opts || {};
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     var nodes = [];
     if (world) {
@@ -100,22 +120,25 @@ window.Cbx300Case = (function () {
         nodes.push(node);
       });
     }
-    var studyRoot = document.querySelector('.study[data-template="cbx300"]');
-    if (studyRoot) {
-      Array.prototype.forEach.call(
-        studyRoot.querySelectorAll('.study__word, .study__close, .study__count'),
-        function (node) { nodes.push(node); }
-      );
+    if (opts.chrome !== false) {
+      var studyRoot = document.querySelector('.study[data-template="cbx300"]');
+      if (studyRoot) {
+        Array.prototype.forEach.call(
+          studyRoot.querySelectorAll('.study__word, .study__close, .study__count'),
+          function (node) { nodes.push(node); }
+        );
+      }
     }
     nodes.forEach(function (node) {
-      var text = (node.getAttribute('data-latin') || node.textContent || '').replace(/\s+/g, ' ').trim();
+      var text = liveText(node);
       if (!text) return;
       iris.armGlitchTarget(node, text);
-      if (iris.burstGlitch) iris.burstGlitch(node, reduce);
+      burstSafe(iris, node, reduce);
       if (node.getAttribute('data-cbx-glitch-hover')) return;
       node.setAttribute('data-cbx-glitch-hover', '1');
       node.addEventListener('mouseenter', function () {
-        iris.burstGlitch(node, reduce);
+        iris.armGlitchTarget(node, liveText(node));
+        burstSafe(iris, node, reduce);
       });
     });
   }
@@ -127,7 +150,7 @@ window.Cbx300Case = (function () {
     world.classList.add('cbx-world');
     world.appendChild(buildCover());
     world.appendChild(buildStubs());
-    armGlitch(world);
+    armGlitch(world, { chrome: false });
     return {
       project: project || null,
       pageCount: function () { return 1; }

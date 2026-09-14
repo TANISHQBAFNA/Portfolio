@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s04') !== -1, 'index.html missing cover cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s04') !== -1, 'multiverse missing cover cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s04') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s05') !== -1, 'index.html missing cover cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s05') !== -1, 'multiverse missing cover cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s05') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -95,6 +95,8 @@ check('cream stays calm; Multiverse glitches cover + chrome', function () {
   assert.ok(pages.indexOf("setAttribute('data-text'") !== -1, 'glitch plates need data-text');
   assert.ok(pages.indexOf('armGlitchTarget') !== -1, 'must arm IrisMotion glitch targets');
   assert.ok(pages.indexOf('.study__word') !== -1, 'study chrome word must glitch on Multiverse');
+  assert.ok(pages.indexOf("chrome: false") !== -1, 'mount must not glitch chrome before page count is set');
+  assert.ok(pages.indexOf('node.children') !== -1, 'must not letter-swap nested chrome count');
   assert.ok(css.indexOf('html.is-light-home .cbx-cover .glitch::before') !== -1, 'cream must kill cover glitch plates');
   assert.ok(!/@keyframes\s+.*glitch/i.test(css), 'do not fork glitch keyframes in cover css');
   assert.ok(mvCss.indexOf('html.is-multiverse .glitch.is-glitching') !== -1, 'Multiverse sheet missing glitch burst');
