@@ -116,6 +116,8 @@ html.is-dark .study[data-template="cbx300"] {
   gap: 0.55rem;
   width: 100%;
   max-width: 100%;
+  container-type: inline-size;
+  container-name: cbx-shout;
 }
 
 .cbx-cover .hero__role {
@@ -174,7 +176,7 @@ html.is-multiverse .cbx-cover .hero__accent,
 html.is-multiverse .cbx-cover .hero__word {
   display: block;
   font-family: "Syne", ui-sans-serif, system-ui, sans-serif !important;
-  font-size: var(--cbx-shout) !important;
+  font-size: min(var(--cbx-shout), calc(100cqi / 7.6)) !important;
   font-weight: 800;
   line-height: 0.88;
   letter-spacing: -0.055em;
@@ -229,10 +231,14 @@ html.is-multiverse .cbx-cover .hero__support {
   padding: 0;
 }
 
+.study[data-template="cbx300"] .study__count {
+  white-space: nowrap;
+}
+
 @media (max-width: 767px) {
   .study[data-template="cbx300"] {
-    --cbx-shout: clamp(2.55rem, 14vw, 4.15rem);
-    --cbx-kicker: clamp(1.35rem, 6.4vw, 1.85rem);
+    --cbx-shout: clamp(2.2rem, 12vw, 3.4rem);
+    --cbx-kicker: clamp(1.28rem, 6vw, 1.7rem);
     --cbx-support: clamp(1rem, 4.2vw, 1.2rem);
   }
 
@@ -249,11 +255,6 @@ html.is-multiverse .cbx-cover .hero__support {
   .cbx-cover .hero__role {
     white-space: normal;
     max-width: 18rem;
-  }
-
-  .cbx-cover .hero__accent,
-  .cbx-cover .hero__word {
-    white-space: nowrap;
   }
 }
 

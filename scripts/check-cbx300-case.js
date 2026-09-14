@@ -48,8 +48,8 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
   assert.ok(index.indexOf('cbx300-case.css') !== -1, 'index.html missing case css');
   assert.ok(index.indexOf('cbx300-case.js') !== -1, 'index.html missing case js');
-  assert.ok(index.indexOf('cbx300-case.css?v=s01') !== -1, 'index.html missing cover cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s01') !== -1, 'multiverse missing cover cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s02') !== -1, 'index.html missing cover cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s02') !== -1, 'multiverse missing cover cache-bust');
 });
 
 check('Section 01 copy matches cream cover lock', function () {
@@ -85,7 +85,7 @@ check('cover stacks image placeholder above home-parity type', function () {
 check('cover type is larger than cream home shout (8vw)', function () {
   assert.ok(css.indexOf('--cbx-shout:') !== -1, 'missing cover shout token');
   assert.ok(/10\.8vw/.test(css), 'cover shout must scale past home 8vw');
-  assert.ok(css.indexOf('var(--cbx-shout) !important') !== -1, 'cover shout must beat home hero !important');
+  assert.ok(/min\(var\(--cbx-shout\)/.test(css), 'cover shout must beat home hero !important');
   var homeShout = landingCss.indexOf('--shout: 8vw');
   assert.ok(homeShout !== -1, 'home shout baseline missing — cannot prove cover is larger');
 });
