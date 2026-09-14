@@ -48,12 +48,12 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
   assert.ok(index.indexOf('cbx300-case.css') !== -1, 'index.html missing case css');
   assert.ok(index.indexOf('cbx300-case.js') !== -1, 'index.html missing case js');
-  assert.ok(index.indexOf('cbx300-case.css?v=s02') !== -1, 'index.html missing cover cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s02') !== -1, 'multiverse missing cover cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s03') !== -1, 'index.html missing cover cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s03') !== -1, 'multiverse missing cover cache-bust');
 });
 
 check('Section 01 copy matches cream cover lock', function () {
-  assert.ok(pages.indexOf("role: 'Case study · CBX300'") !== -1, 'missing role line');
+  assert.ok(pages.indexOf('Case study · CBX300') === -1, 'Case study · CBX300 must be gone');
   assert.ok(pages.indexOf("kicker: 'SME'") !== -1, 'missing SME kicker');
   assert.ok(pages.indexOf("accent: 'BANKING'") !== -1, 'missing BANKING accent');
   assert.ok(pages.indexOf("word: 'GROWTH'") !== -1, 'missing GROWTH word');
@@ -69,11 +69,14 @@ check('cover stacks image placeholder above home-parity type', function () {
   var appendType = coverFn.indexOf('inner.appendChild(type)');
   assert.ok(mediaAt !== -1, 'missing cover media frame');
   assert.ok(typeAt !== -1, 'missing hero__type stack');
-  assert.ok(coverFn.indexOf("el('p', 'hero__role'") !== -1, 'missing hero__role');
+  assert.ok(coverFn.indexOf("el('p', 'hero__role'") === -1, 'hero__role must be gone');
   assert.ok(coverFn.indexOf("el('span', 'hero__kicker'") !== -1, 'missing hero__kicker');
   assert.ok(coverFn.indexOf("el('span', 'hero__accent'") !== -1, 'missing hero__accent');
   assert.ok(coverFn.indexOf("el('span', 'hero__word'") !== -1, 'missing hero__word');
   assert.ok(coverFn.indexOf("el('p', 'hero__support'") !== -1, 'missing hero__support');
+  var supportAt = coverFn.indexOf("el('p', 'hero__support'");
+  var headingAt = coverFn.indexOf("el('h1', 'hero__heading')");
+  assert.ok(supportAt !== -1 && headingAt !== -1 && supportAt < headingAt, 'hook must sit above SME / BANKING / GROWTH');
   assert.ok(mediaAt < typeAt, 'media must be created before type');
   assert.ok(appendMedia !== -1 && appendType !== -1 && appendMedia < appendType, 'media must append before type');
   assert.ok(coverFn.indexOf("'Image'") !== -1, 'missing Image empty-state label');

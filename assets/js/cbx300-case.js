@@ -8,7 +8,6 @@ window.Cbx300Case = (function () {
   'use strict';
 
   var META = {
-    role: 'Case study · CBX300',
     kicker: 'SME',
     accent: 'BANKING',
     word: 'GROWTH',
@@ -52,7 +51,7 @@ window.Cbx300Case = (function () {
     media.appendChild(label);
 
     var type = el('div', 'hero__type cbx-cover__type');
-    type.appendChild(el('p', 'hero__role', META.role));
+    type.appendChild(el('p', 'hero__support', supportLine(project)));
 
     var heading = el('h1', 'hero__heading');
     heading.id = 'cbx-cover-heading';
@@ -69,8 +68,6 @@ window.Cbx300Case = (function () {
     display.appendChild(word);
     heading.appendChild(display);
     type.appendChild(heading);
-
-    type.appendChild(el('p', 'hero__support', supportLine(project)));
 
     inner.appendChild(media);
     inner.appendChild(type);
