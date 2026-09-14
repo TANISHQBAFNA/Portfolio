@@ -1,6 +1,7 @@
 /**
  * CBX300 case study — Section 01 cover.
- * Cream home hero language, stacked: media frame above larger type.
+ * Home hero language: kicker → accent → word. Image overlaps type from the right.
+ * Cream stays calm. Multiverse uses glitch plates on chrome + cover type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
  */
@@ -8,10 +9,9 @@ window.Cbx300Case = (function () {
   'use strict';
 
   var META = {
-    kicker: 'SME',
-    accent: 'BANKING',
-    word: 'GROWTH',
-    hook: 'Banking that grows with the business.'
+    kicker: 'Banking that',
+    accent: 'Grows with',
+    word: 'the Business'
   };
 
   var STUBS = [
@@ -24,6 +24,10 @@ window.Cbx300Case = (function () {
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
 
+  function isMultiverse() {
+    return document.documentElement.classList.contains('is-multiverse');
+  }
+
   function el(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -31,12 +35,15 @@ window.Cbx300Case = (function () {
     return node;
   }
 
-  function supportLine(project) {
-    if (project && project.hook) return project.hook;
-    return META.hook;
+  function shout(tag, className, text, glitch) {
+    var node = el(tag, glitch ? className + ' glitch' : className, text);
+    node.setAttribute('data-latin', text);
+    if (glitch) node.setAttribute('data-text', text);
+    return node;
   }
 
-  function buildCover(project) {
+  function buildCover() {
+    var glitch = isMultiverse();
     var section = el('section', 'cbx-cover');
     section.setAttribute('data-cbx-section', '01');
     section.setAttribute('data-cbx-live', '');
@@ -44,33 +51,25 @@ window.Cbx300Case = (function () {
 
     var inner = el('div', 'cbx-cover__inner');
 
+    var type = el('div', 'hero__type cbx-cover__type');
+    var heading = el('h1', 'hero__heading');
+    heading.id = 'cbx-cover-heading';
+    heading.appendChild(shout('span', 'hero__kicker', META.kicker, glitch));
+
+    var display = el('span', 'hero__display');
+    display.appendChild(shout('span', 'hero__accent', META.accent, glitch));
+    display.appendChild(shout('span', 'hero__word', META.word, glitch));
+    heading.appendChild(display);
+    type.appendChild(heading);
+
     var media = el('figure', 'cbx-cover__media');
     media.setAttribute('aria-label', 'Image placeholder');
     var label = el('span', 'cbx-cover__media-label', 'Image');
     label.setAttribute('aria-hidden', 'true');
     media.appendChild(label);
 
-    var type = el('div', 'hero__type cbx-cover__type');
-    type.appendChild(el('p', 'hero__support', supportLine(project)));
-
-    var heading = el('h1', 'hero__heading');
-    heading.id = 'cbx-cover-heading';
-    var kicker = el('span', 'hero__kicker', META.kicker);
-    kicker.setAttribute('data-latin', META.kicker);
-    heading.appendChild(kicker);
-
-    var display = el('span', 'hero__display');
-    var accent = el('span', 'hero__accent', META.accent);
-    accent.setAttribute('data-latin', META.accent);
-    var word = el('span', 'hero__word', META.word);
-    word.setAttribute('data-latin', META.word);
-    display.appendChild(accent);
-    display.appendChild(word);
-    heading.appendChild(display);
-    type.appendChild(heading);
-
-    inner.appendChild(media);
     inner.appendChild(type);
+    inner.appendChild(media);
     section.appendChild(inner);
     return section;
   }
@@ -90,13 +89,45 @@ window.Cbx300Case = (function () {
     return rest;
   }
 
+  function armGlitch(world) {
+    if (!isMultiverse()) return;
+    var iris = window.IrisMotion;
+    if (!iris || !iris.armGlitchTarget) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var nodes = [];
+    if (world) {
+      Array.prototype.forEach.call(world.querySelectorAll('.glitch'), function (node) {
+        nodes.push(node);
+      });
+    }
+    var studyRoot = document.querySelector('.study[data-template="cbx300"]');
+    if (studyRoot) {
+      Array.prototype.forEach.call(
+        studyRoot.querySelectorAll('.study__word, .study__close, .study__count'),
+        function (node) { nodes.push(node); }
+      );
+    }
+    nodes.forEach(function (node) {
+      var text = (node.getAttribute('data-latin') || node.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      iris.armGlitchTarget(node, text);
+      if (iris.burstGlitch) iris.burstGlitch(node, reduce);
+      if (node.getAttribute('data-cbx-glitch-hover')) return;
+      node.setAttribute('data-cbx-glitch-hover', '1');
+      node.addEventListener('mouseenter', function () {
+        iris.burstGlitch(node, reduce);
+      });
+    });
+  }
+
   function mount(world, project) {
     if (!world) return null;
     world.innerHTML = '';
     world.classList.remove('film-world');
     world.classList.add('cbx-world');
-    world.appendChild(buildCover(project));
+    world.appendChild(buildCover());
     world.appendChild(buildStubs());
+    armGlitch(world);
     return {
       project: project || null,
       pageCount: function () { return 1; }
@@ -105,6 +136,7 @@ window.Cbx300Case = (function () {
 
   return {
     mount: mount,
+    armGlitch: armGlitch,
     META: META,
     STUBS: STUBS
   };

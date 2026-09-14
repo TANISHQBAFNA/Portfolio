@@ -1,6 +1,6 @@
 /* CBX300 Section 01 cover.
-   Cream home hero language, stacked media above larger type.
-   Same layout in cream and Multiverse. No film, no glitch theatre on the cover. */
+   Home hero language. Image overlaps type from the right.
+   Cream stays calm. Multiverse uses ink + glitch plates. */
 
 /* Window is the scroller. html.is-study { overflow: hidden } without film
    left the Arc/Safari study unable to pan. */
@@ -24,29 +24,45 @@ html.is-study-page .study[data-template="cbx300"] {
 .study[data-template="cbx300"] {
   --film-cream: var(--cream, #f4efe6);
   --film-paper: var(--paper, #efeae1);
-  --film-paper-2: var(--paper-2, #e2dbcf);
   --film-ink: var(--coffee, #1e1510);
   --film-muted: rgba(30, 21, 16, 0.62);
   --film-faint: rgba(30, 21, 16, 0.42);
   --film-line: rgba(30, 21, 16, 0.16);
   --film-teal: #00a0a0;
   --film-gutter: var(--gutter, 24px);
-  --cbx-shout: clamp(2.85rem, 10.8vw, 8.75rem);
-  --cbx-kicker: clamp(1.55rem, 3.8vw, 3.1rem);
-  --cbx-support: clamp(1.05rem, 2.55vw, 1.7rem);
+  --cbx-shout: clamp(2.55rem, 8.4vw, 7.25rem);
+  --cbx-kicker: clamp(1.45rem, 3.4vw, 2.85rem);
   background: var(--film-cream);
   color: var(--film-ink);
 }
 
-html.is-dark .study[data-template="cbx300"] {
+html.is-light-home.is-dark .study[data-template="cbx300"] {
   --film-cream: #1e1510;
   --film-paper: #2a221c;
-  --film-paper-2: #241c18;
   --film-ink: #f4efe6;
   --film-muted: rgba(244, 239, 230, 0.62);
   --film-faint: rgba(244, 239, 230, 0.42);
   --film-line: rgba(244, 239, 230, 0.2);
   --film-teal: #56c6c6;
+}
+
+/* Multiverse study is always the ink/glitch world, not cream paper. */
+html.is-multiverse .study[data-template="cbx300"] {
+  --film-cream: #0e1018;
+  --film-paper: #161822;
+  --film-ink: #f3eee4;
+  --film-muted: rgba(243, 238, 228, 0.68);
+  --film-faint: rgba(243, 238, 228, 0.48);
+  --film-line: rgba(61, 232, 245, 0.32);
+  --film-teal: #3de8f5;
+  background: #0e1018;
+  color: #f3eee4;
+}
+html.is-multiverse .study[data-template="cbx300"] .study__chrome {
+  background: #0e1018;
+}
+html.is-multiverse .study[data-template="cbx300"] .study__count {
+  color: #3de8f5;
 }
 
 .study[data-template="cbx300"] .study__temps {
@@ -77,26 +93,28 @@ html.is-dark .study[data-template="cbx300"] {
 }
 
 .cbx-cover__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: clamp(1.15rem, 2.6vh, 2.15rem);
+  position: relative;
+  display: block;
   width: 100%;
-  max-width: 72rem;
 }
 
 .cbx-cover__media {
   box-sizing: border-box;
-  margin: 0;
-  width: min(100%, 56rem, calc(38vh * 16 / 10));
+  position: absolute;
+  z-index: 2;
+  top: 54%;
+  right: 0;
+  width: min(48vw, 36rem);
   aspect-ratio: 16 / 10;
-  max-height: 38vh;
+  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--film-paper, #efeae1);
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--film-paper, #efeae1) 62%, transparent);
   border: 1.5px dashed var(--film-line);
   border-radius: 0;
+  pointer-events: none;
 }
 
 .cbx-cover__media-label {
@@ -109,12 +127,14 @@ html.is-dark .study[data-template="cbx300"] {
 
 .cbx-cover .cbx-cover__type,
 .cbx-cover .hero__type {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.55rem;
+  gap: 0.2rem;
   width: 100%;
-  max-width: 100%;
+  max-width: none;
   container-type: inline-size;
   container-name: cbx-shout;
 }
@@ -138,13 +158,13 @@ html.is-dark .study[data-template="cbx300"] {
 .cbx-cover .hero__kicker {
   display: block;
   font-family: "Syne", ui-sans-serif, system-ui, sans-serif !important;
-  font-size: var(--cbx-kicker) !important;
+  font-size: min(var(--cbx-kicker), calc(100cqi / 12.4)) !important;
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  text-transform: none !important;
   color: var(--film-ink) !important;
-  margin: 0 0 0.28rem;
+  margin: 0 0 0.12rem;
 }
 
 .cbx-cover .hero__display {
@@ -164,14 +184,14 @@ html.is-multiverse .cbx-cover .hero__accent,
 html.is-multiverse .cbx-cover .hero__word {
   display: block;
   font-family: "Syne", ui-sans-serif, system-ui, sans-serif !important;
-  font-size: min(var(--cbx-shout), calc(100cqi / 7.6)) !important;
+  font-size: min(var(--cbx-shout), calc(100cqi / 11.6)) !important;
   font-weight: 800;
-  line-height: 0.88;
-  letter-spacing: -0.055em;
-  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-transform: none !important;
   font-style: normal !important;
   width: max-content;
-  max-width: 100%;
+  max-width: none;
   white-space: nowrap;
 }
 
@@ -187,25 +207,18 @@ html.is-multiverse .cbx-cover .hero__word {
   color: var(--film-ink) !important;
 }
 
-.cbx-cover .hero__support,
-html.is-light-home .cbx-cover .hero__support,
-html.is-multiverse .cbx-cover .hero__support {
-  max-width: min(38rem, 100%) !important;
-  margin: 0 0 0.35em;
-  padding-bottom: 0;
-  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  font-size: var(--cbx-support) !important;
-  line-height: 1.42 !important;
-  font-weight: 400;
-  color: var(--film-ink) !important;
-}
-
-/* Cover type stays still. Multiverse may keep study-chrome / curtain glitch. */
-.cbx-cover .glitch,
-.cbx-cover [data-text]::before,
-.cbx-cover [data-text]::after {
-  animation: none !important;
+/* Cream stays still. Multiverse glitch plates live in landing-multiverse.css. */
+html.is-light-home .cbx-cover .glitch,
+html.is-light-home .study[data-template="cbx300"] .glitch {
   text-shadow: none !important;
+}
+html.is-light-home .cbx-cover .glitch::before,
+html.is-light-home .cbx-cover .glitch::after,
+html.is-light-home .study[data-template="cbx300"] .glitch::before,
+html.is-light-home .study[data-template="cbx300"] .glitch::after {
+  content: none !important;
+  animation: none !important;
+  display: none !important;
 }
 
 .cbx-rest[hidden],
@@ -225,9 +238,8 @@ html.is-multiverse .cbx-cover .hero__support {
 
 @media (max-width: 767px) {
   .study[data-template="cbx300"] {
-    --cbx-shout: clamp(2.2rem, 12vw, 3.4rem);
-    --cbx-kicker: clamp(1.28rem, 6vw, 1.7rem);
-    --cbx-support: clamp(1rem, 4.2vw, 1.2rem);
+    --cbx-shout: clamp(1.85rem, 9.6vw, 2.6rem);
+    --cbx-kicker: clamp(1.15rem, 5.4vw, 1.45rem);
   }
 
   .cbx-cover {
@@ -236,12 +248,8 @@ html.is-multiverse .cbx-cover .hero__support {
   }
 
   .cbx-cover__media {
-    width: min(100%, calc(28vh * 16 / 10));
-    max-height: 28vh;
-  }
-
-  .cbx-cover .hero__support {
-    max-width: 20rem !important;
+    width: min(62vw, 16.5rem);
+    top: 58%;
   }
 }
 
@@ -249,16 +257,10 @@ html.is-multiverse .cbx-cover .hero__support {
   .cbx-cover {
     padding-top: 12px;
     padding-bottom: 28px;
-    gap: 0;
-  }
-
-  .cbx-cover__inner {
-    gap: 1rem;
   }
 
   .cbx-cover__media {
-    width: min(100%, calc(30vh * 16 / 10));
-    max-height: 30vh;
+    width: min(42vw, 28rem);
   }
 }
 

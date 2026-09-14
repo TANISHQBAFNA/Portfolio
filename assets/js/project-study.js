@@ -3,7 +3,7 @@
  * Window is the scroller. Pins stay sparse.
  *
  * Cut / Tunnel / Helix / Deck / Type — motion skins.
- * cbx300 — cream cover (Section 01). Page scroll, no film bind.
+ * cbx300 — cream / Multiverse Section 01 cover. Page scroll, no film bind.
  */
 window.ProjectStudy = (function () {
   'use strict';
@@ -739,6 +739,9 @@ window.ProjectStudy = (function () {
       html.classList.add('is-study-page');
       window.scrollTo(0, 0);
       if (root) root.scrollTop = 0;
+      if (window.Cbx300Case && window.Cbx300Case.armGlitch) {
+        window.Cbx300Case.armGlitch(world);
+      }
     }
 
     function bindMotion() {
