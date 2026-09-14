@@ -5559,3 +5559,32 @@ html.is-multiverse .work-cta:focus-visible {
   color: #f4efe6 !important;
   -webkit-text-fill-color: #f4efe6;
 }
+
+/* Iris film scroll unlock — must sit at end of landing.css because this file
+   is injected after cbx300-case.css and was re-locking overflow:hidden.
+   One scroller (html only). Body visible — dual overflow:scroll breaks Arc. */
+html.is-study-film,
+html.is-study.is-study-film {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overscroll-behavior-y: contain;
+}
+html.is-study-film body,
+html.is-study.is-study-film body {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+html.is-study-film .study[data-template="cbx300"],
+html.is-study.is-study-film .study[data-template="cbx300"] {
+  position: relative !important;
+  inset: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  touch-action: pan-y;
+}

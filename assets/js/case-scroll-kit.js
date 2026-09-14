@@ -16,14 +16,14 @@ window.CaseScrollKit = (function () {
   'use strict';
 
   var END_RATIO = {
-    cover: 1.5,
-    ends: 4.8,
-    jobs: 2.7,
-    door: 2.55,
-    money: 2.6,
-    verbs: 2.8,
-    ending: 3.15,
-    finding: 2.0
+    kenburns: 2.15,
+    phone: 2.35,
+    moneyCrop: 2.55,
+    splitDoor: 2.85,
+    control: 2.65,
+    morph: 2.55,
+    splitWeight: 2.45,
+    finding: 2.05
   };
 
   function reduceQuery() {
@@ -47,7 +47,15 @@ window.CaseScrollKit = (function () {
   }
 
   function viewH(scroller) {
-    if (isView(scroller)) return window.innerHeight || 800;
+    if (isView(scroller)) {
+      if (window.layoutViewport && typeof window.layoutViewport.height === 'function') {
+        return window.layoutViewport.height() || 800;
+      }
+      if (window.visualViewport && window.visualViewport.height) {
+        return window.visualViewport.height;
+      }
+      return window.innerHeight || 800;
+    }
     return scroller.clientHeight || 800;
   }
 
@@ -112,7 +120,7 @@ window.CaseScrollKit = (function () {
   function resetPage(page) {
     pinStage(page, false);
     page.classList.remove('is-static');
-    qq(page, '[data-film-stage], [data-film-hold], .film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-decision], [data-film-ruled], [data-film-track], .film-sheet, .film-sheet i, .film-action, .film-ladder, .film-ladder__world, .film-ladder__row, .film-ladder__fill, .film-cell, .film-grid__head, .film-balance, .film-job__screen, .film-device, .film-ui-band, .film-empty article, .film-step').forEach(function (el) {
+    qq(page, '[data-film-stage], [data-film-hold], .film-board, [data-focus], [data-shot], [data-caption], [data-film-ask], [data-film-decision], [data-film-ruled], [data-ladder-strip], .film-ladder-strip__row, .film-rung, .film-ladder__fill, .film-phone-stage, .film-pay-face, .film-balance, .film-confirm, .film-handoff__msg, .film-split-door, .film-split-panes, .film-split-pane, .film-nav__item, .film-row, .film-action, .film-waiting, .film-control, .film-cell, .film-grid__head, .film-morph, .film-device, .film-weight, .film-weight-split, .film-finding-stage').forEach(function (el) {
       window.gsap.set(el, { clearProps: CLEAR });
     });
   }
@@ -124,7 +132,7 @@ window.CaseScrollKit = (function () {
       qq(page, '[data-caption], [data-film-ask], [data-film-decision], [data-film-ruled]').forEach(function (cap) {
         window.gsap.set(cap, { autoAlpha: 1, y: 0, clearProps: 'visibility' });
       });
-      qq(page, '[data-focus], [data-shot], .film-board, [data-film-track], .film-sheet, .film-sheet i, .film-cell, .film-device, .film-empty article, .film-step, .film-ladder__row, .film-ladder__world, .film-ladder__fill').forEach(function (el) {
+      qq(page, '[data-focus], [data-shot], .film-board, .film-rung, .film-pay-face, .film-balance, .film-split-pane, .film-cell, .film-device, .film-weight, .film-waiting, .film-confirm, .film-nav__item').forEach(function (el) {
         window.gsap.set(el, {
           autoAlpha: 1, scale: 1, scaleX: 1, scaleY: 1,
           x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0,
@@ -247,207 +255,164 @@ window.CaseScrollKit = (function () {
     }
   }
 
-  function bindCover(page, tl) {
-    var web = q(page, '.film-device--web');
-    var phone = q(page, '.film-device--phone');
-    var caps = captions(page);
-    if (caps.length) setCaption(caps, 0);
-    if (web) {
-      tl.fromTo(web, {
-        scale: 0.88,
-        y: 42,
-        transformOrigin: '48% 62%'
-      }, {
-        scale: 1,
-        y: 0,
-        duration: 1.15
-      }, 0.2);
-    }
-    if (phone) {
-      tl.fromTo(phone, {
-        scale: 0.78,
-        x: 56,
-        y: 32,
-        transformOrigin: '85% 90%'
-      }, {
-        scale: 1,
-        x: 0,
-        y: 0,
-        duration: 1.1
-      }, 0.38);
-    }
-  }
-
-  /* 3D ladder: camera walks the rungs. Distance on Z/Y/rotationY, not opacity. */
-  function rungPose(i, focus) {
-    var d = i - focus;
-    var abs = d < 0 ? -d : d;
-    return {
-      x: d * 186,
-      y: 4 + d * 58,
-      z: d === 0 ? 90 : -abs * 140,
-      rotationY: d * -22,
-      rotationX: 12 + abs * 5,
-      scale: abs === 0 ? 1.12 : Math.max(0.68, 0.9 - abs * 0.1),
-      autoAlpha: abs === 0 ? 1 : abs === 1 ? 0.88 : abs === 2 ? 0.48 : 0.14
-    };
-  }
-
-  function placeRungs(tl, items, focus, at) {
-    items.forEach(function (el, i) {
-      var pose = rungPose(i, focus);
-      tl.set(el, { zIndex: i === focus ? 32 : 22 - Math.abs(i - focus) }, at);
-      tl.to(el, {
-        x: pose.x,
-        y: pose.y,
-        z: pose.z,
-        rotationY: pose.rotationY,
-        rotationX: pose.rotationX,
-        scale: pose.scale,
-        autoAlpha: pose.autoAlpha,
-        duration: 0.62
-      }, at);
-    });
-  }
-
-  function bindEnds(page, tl) {
+  /* Cover: title already pinned in claim. Ladder strip ken-burns across rungs. */
+  function bindKenBurns(page, tl) {
     var t0 = leadDecision(tl, page);
-    var items = focusEls(page);
-    var world = q(page, '[data-ladder-world]');
+    var strip = q(page, '[data-ladder-strip]');
+    var row = q(page, '.film-ladder-strip__row');
+    var rungs = qq(page, '.film-rung');
     var fill = q(page, '[data-ladder-fill]');
     var caps = captions(page);
-    var shotEls = shots(page);
-    var n = items.length;
-    var ask = askEl(page);
-    var threeD = window.matchMedia('(min-width: 641px)').matches;
-    var step = threeD ? 0.7 : 0.45;
     if (caps.length) setCaption(caps, 0);
-    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
-    if (!n) return;
-
-    if (fill) window.gsap.set(fill, { scaleX: 1 / n, transformOrigin: '0% 50%' });
-
-    if (threeD) {
-      if (world) window.gsap.set(world, { rotationY: -12, rotationX: 14, z: 0, force3D: true, transformPerspective: 1500 });
-      window.gsap.set(q(page, '.film-ladder__row') || items[0].parentNode, { transformStyle: 'preserve-3d', force3D: true });
-      items.forEach(function (el, i) {
-        var pose = rungPose(i, 0);
-        window.gsap.set(el, {
-          xPercent: -50,
-          x: pose.x,
-          y: pose.y,
-          z: pose.z,
-          rotationY: pose.rotationY,
-          rotationX: pose.rotationX,
-          scale: pose.scale,
-          autoAlpha: pose.autoAlpha,
-          transformOrigin: '50% 80%',
-          force3D: true,
-          zIndex: i === 0 ? 32 : 22 - i
-        });
-      });
-      items.forEach(function (_el, i) {
-        var at = t0 + i * step;
-        placeRungs(tl, items, i, at);
-        if (world) {
-          tl.to(world, {
-            rotationY: -12 + i * 4.5,
-            rotationX: 14 - i * 1.6,
-            z: i * 20,
-            duration: 0.62
-          }, at);
-        }
-        if (fill) tl.to(fill, { scaleX: (i + 1) / n, duration: 0.62 }, at);
-        captionAt(tl, caps, Math.min(i, caps.length - 1), at);
-      });
-    } else {
-      window.gsap.set(items, { scale: 0.9, y: 10, transformOrigin: '50% 80%' });
-      items.forEach(function (_el, i) {
-        var at = t0 + i * step;
-        items.forEach(function (card, j) {
-          var on = i === j;
-          tl.to(card, {
-            scale: on ? 1.06 : 0.9,
-            y: on ? -8 : 8,
-            autoAlpha: on ? 1 : 0.5,
-            duration: 0.4
-          }, at);
-        });
-        if (fill) tl.to(fill, { scaleX: (i + 1) / n, duration: 0.4 }, at);
-        captionAt(tl, caps, Math.min(i, caps.length - 1), at);
-      });
+    if (strip) {
+      window.gsap.set(strip, { scale: 1.22, xPercent: -10, transformOrigin: '8% 50%' });
     }
-
-    var tWalk = t0 + n * step;
-    if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], {
-        autoAlpha: 1, x: 0, y: 0, scale: 1, xPercent: 0,
-        clipPath: 'inset(0% 0% 0% 0%)'
-      });
-      window.gsap.set(shotEls.slice(1), {
-        autoAlpha: 0,
-        clipPath: 'inset(100% 0% 0% 0%)'
-      });
-      cropIn(tl, shotEls[0], shotEls[1], tWalk + 0.15);
-      captionAt(tl, caps, Math.min(n, caps.length - 1), tWalk + 0.15);
-      askAt(tl, page, tWalk + 0.55);
-    } else {
-      askAt(tl, page, tWalk);
+    if (row) window.gsap.set(row, { xPercent: 0 });
+    if (rungs.length) window.gsap.set(rungs, { scale: 0.92, y: 12, transformOrigin: '50% 80%' });
+    if (fill) window.gsap.set(fill, { scaleX: 0.18, transformOrigin: '0% 50%' });
+    if (strip) {
+      tl.to(strip, { scale: 1.1, xPercent: -4, duration: 0.85 }, t0);
     }
+    rungs.forEach(function (el, i) {
+      var at = t0 + i * 0.28;
+      tl.to(el, { scale: 1.06, y: -6, duration: 0.32 }, at);
+      if (i > 0) tl.to(rungs[i - 1], { scale: 1, y: 0, duration: 0.28 }, at);
+      if (fill) tl.to(fill, { scaleX: (i + 1) / Math.max(rungs.length, 1), duration: 0.32 }, at);
+    });
+    var tEnd = t0 + Math.max(rungs.length, 1) * 0.28 + 0.2;
+    if (strip) tl.to(strip, { scale: 1, xPercent: 0, duration: 0.7 }, tEnd);
+    tl.to(rungs, { scale: 1, y: 0, duration: 0.4 }, tEnd);
+    captionAt(tl, caps, 0, t0);
   }
 
-  function bindJobs(page, tl) {
+  function irisStillEl(page) {
+    return q(page, '[data-iris-still]');
+  }
+
+  function bindIrisStill(page, tl, t0, origin) {
+    var still = irisStillEl(page);
+    if (!still) return;
+    window.gsap.set(still, {
+      scale: 0.94,
+      y: 18,
+      transformOrigin: origin || '50% 62%'
+    });
+    tl.to(still, { scale: 1.05, y: 0, duration: 0.65 }, t0);
+    tl.to(still, { scale: 1, duration: 0.4 }, t0 + 0.9);
+  }
+
+  /* Freelancer: phone-frame focus scrub between get paid and pay. Crop/scale, not fade. */
+  function bindPhone(page, tl) {
     var t0 = leadDecision(tl, page);
-    var items = focusEls(page);
+    bindIrisStill(page, tl, t0, '50% 70%');
+    var phone = q(page, '[data-phone-stage]');
+    var inn = q(page, '[data-pay-face="in"]');
+    var out = q(page, '[data-pay-face="out"]');
     var caps = captions(page);
     var ask = askEl(page);
-    var screens = qq(page, '.film-job__screen');
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
-
-    window.gsap.set(items, { scale: 0.78, y: 48, x: 0, transformOrigin: '50% 70%' });
-    items.forEach(function (el, i) {
-      tl.to(el, { scale: 1, y: 0, duration: 0.4 }, t0 + i * 0.16);
-    });
-
-    var tCycle = t0 + 0.7;
-    items.forEach(function (el, i) {
-      var at = tCycle + i * 0.7;
-      items.forEach(function (card, j) {
-        var on = i === j;
-        tl.to(card, {
-          scale: on ? 1.14 : 0.86,
-          y: on ? -18 : 16,
-          x: on ? 0 : (j - i) * 8,
-          duration: 0.5
-        }, at);
+    if (phone) {
+      window.gsap.set(phone, { scale: 0.9, y: 28, transformOrigin: '50% 80%' });
+      tl.to(phone, { scale: 1.04, y: 0, duration: 0.55 }, t0);
+    }
+    if (inn) {
+      window.gsap.set(inn, {
+        autoAlpha: 1,
+        scale: 1,
+        clipPath: 'inset(0% 0% 0% 0%)',
+        transformOrigin: '50% 20%'
       });
-      screens.forEach(function (screen, j) {
-        var phone = items[j] && items[j].getAttribute('data-focus') === 'approver';
-        var on = i === j;
-        tl.to(screen, {
-          scaleX: on && phone ? 0.62 : 1,
-          scaleY: on && phone ? 1.12 : 1,
-          transformOrigin: '50% 0%',
-          duration: 0.5
-        }, at);
+    }
+    if (out) {
+      window.gsap.set(out, {
+        autoAlpha: 1,
+        scale: 1.08,
+        clipPath: 'inset(72% 0% 0% 0%)',
+        transformOrigin: '50% 80%'
       });
-      captionAt(tl, caps, Math.min(i, caps.length - 1), at);
-    });
-
-    var tBack = tCycle + items.length * 0.7;
-    tl.to(items, { scale: 1, y: 0, x: 0, duration: 0.45 }, tBack);
-    tl.to(screens, { scaleX: 1, scaleY: 1, duration: 0.45 }, tBack);
-    captionAt(tl, caps, 0, tBack);
-    askAt(tl, page, tBack + 0.2);
+    }
+    captionAt(tl, caps, 0, t0);
+    var tCrop = t0 + 0.7;
+    if (inn) {
+      tl.to(inn, {
+        clipPath: 'inset(0% 0% 58% 0%)',
+        scale: 1.1,
+        y: -12,
+        duration: 0.65
+      }, tCrop);
+    }
+    if (out) {
+      tl.to(out, {
+        clipPath: 'inset(0% 0% 0% 0%)',
+        scale: 1,
+        y: 0,
+        duration: 0.65
+      }, tCrop);
+    }
+    captionAt(tl, caps, 1, tCrop);
+    if (phone) tl.to(phone, { scale: 1, duration: 0.35 }, tCrop + 0.65);
+    askAt(tl, page, tCrop + 0.75);
   }
 
-  function bindDoor(page, tl) {
+  /* Sole prop: available scale-up, then crop to beneficiary. */
+  function bindMoneyCrop(page, tl) {
     var t0 = leadDecision(tl, page);
+    bindIrisStill(page, tl, t0, '50% 58%');
+    var lead = q(page, '.film-balance.is-lead');
+    var rest = qq(page, '.film-balance:not(.is-lead)');
+    var bands = qq(page, '.film-balance .film-ui-band');
+    var shotEls = shots(page);
+    var confirm = q(page, '.film-confirm');
+    var msg = q(page, '.film-handoff__msg');
+    var caps = captions(page);
+    var ask = askEl(page);
+    var ruled = q(page, '[data-film-ruled]');
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+    captionAt(tl, caps, 0, t0);
+    if (lead) {
+      window.gsap.set(lead, { scale: 0.92, y: 16, transformOrigin: '50% 40%' });
+      if (bands[0]) window.gsap.set(bands[0], { scaleX: 0.22, transformOrigin: '0% 50%' });
+      tl.to(lead, { scale: 1.14, y: -10, duration: 0.55 }, t0);
+      if (bands[0]) tl.to(bands[0], { scaleX: 1, duration: 0.55 }, t0);
+    }
+    if (rest.length) {
+      window.gsap.set(rest, { scale: 0.88, y: 14 });
+      rest.forEach(function (el, i) {
+        tl.to(el, { scale: 1, y: 0, duration: 0.28 }, t0 + 0.45 + i * 0.12);
+      });
+    }
+    if (shotEls.length > 1) {
+      window.gsap.set(shotEls[0], { autoAlpha: 1, clipPath: 'inset(0% 0% 0% 0%)', scale: 1 });
+      cropIn(tl, shotEls[0], shotEls[1], t0 + 1.15);
+      captionAt(tl, caps, 1, t0 + 1.2);
+    }
+    if (confirm) {
+      window.gsap.set(confirm, { scale: 0.94, y: 18 });
+      tl.to(confirm, { scale: 1, y: 0, duration: 0.4 }, t0 + 1.45);
+    }
+    if (msg) {
+      window.gsap.set(msg, { scale: 0.96, y: 10 });
+      tl.to(msg, { scale: 1.02, y: 0, duration: 0.3 }, t0 + 1.7);
+      tl.to(msg, { scale: 1, duration: 0.18 }, t0 + 2.0);
+    }
+    if (ruled) tl.to(ruled, { autoAlpha: 1, duration: 0.3 }, t0 + 1.8);
+    askAt(tl, page, t0 + 2.05);
+  }
+
+  /* ~10 people: door crop then split prepare || approve. NEVER fade prepare into approve. */
+  function bindSplitDoor(page, tl) {
+    var t0 = leadDecision(tl, page);
+    bindIrisStill(page, tl, t0, '42% 58%');
     var door = q(page, '[data-focus="door"]');
     var rest = qq(page, '[data-focus="nav"]');
+    var prepare = q(page, '[data-pane="prepare"]');
+    var approve = q(page, '[data-pane="approve"]');
+    var panes = q(page, '[data-split-panes]');
     var action = q(page, '.film-action');
-    var shotEls = shots(page);
+    var bad = qq(page, '.film-row.is-bad');
+    var ok = qq(page, '.film-split-pane--approve .film-row:not(.is-bad)');
     var caps = captions(page);
     var ask = askEl(page);
     var ruled = q(page, '[data-film-ruled]');
@@ -456,215 +421,269 @@ window.CaseScrollKit = (function () {
 
     if (door) {
       window.gsap.set(door, { scale: 1, x: 0, transformOrigin: '12% 50%' });
-      tl.to(door, { scale: 1.1, x: 6, y: -4, duration: 0.7 }, t0);
-      if (rest.length) {
-        tl.to(rest, { scale: 0.94, x: -10, y: 6, duration: 0.7 }, t0);
-      }
-      captionAt(tl, caps, Math.min(1, caps.length - 1), t0);
+      tl.to(door, { scale: 1.14, x: 8, y: -6, duration: 0.7 }, t0);
     }
+    if (rest.length) tl.to(rest, { scale: 0.92, x: -8, y: 8, duration: 0.7 }, t0);
+    captionAt(tl, caps, 0, t0);
 
-    if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, xPercent: 0, scale: 1, clipPath: 'inset(0% 0% 0% 0%)' });
-      wipeSplit(tl, shotEls[0], shotEls[1], t0 + 0.85);
-      if (action) {
-        window.gsap.set(action, { scale: 1, transformOrigin: '80% 50%' });
-        tl.to(action, { scale: 1.08, y: -6, duration: 0.35 }, t0 + 1.25);
-        tl.to(action, { scale: 1, y: 0, duration: 0.28 }, t0 + 1.6);
-      }
-      captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 0.85);
-      if (ruled) tl.to(ruled, { autoAlpha: 1, y: 0, duration: 0.4 }, t0 + 1.15);
-      askAt(tl, page, t0 + 1.55);
-    } else {
-      askAt(tl, page, t0 + 0.9);
-    }
-  }
-
-  function bindMoney(page, tl) {
-    var t0 = leadDecision(tl, page);
-    var bad = qq(page, '.film-row.is-bad');
-    var ok = qq(page, '.film-row:not(.is-bad)');
-    var fail = q(page, '[data-shot="fail"] .film-board') || q(page, '.film-fail');
-    var shotEls = shots(page);
-    var balances = qq(page, '.film-balance');
-    var bands = qq(page, '.film-balance .film-ui-band');
-    var caps = captions(page);
-    var ask = askEl(page);
-    if (caps.length) setCaption(caps, 0);
-    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
-
-    if (fail) {
-      window.gsap.set(fail, { scale: 1, transformOrigin: '50% 18%' });
-      tl.to(fail, { scale: 1.16, y: -12, duration: 0.55 }, t0);
-    }
-    if (ok.length) tl.to(ok, { scale: 0.92, y: 10, duration: 0.45 }, t0);
-    if (bad.length) tl.to(bad, { scale: 1.08, y: -8, duration: 0.5 }, t0);
-    captionAt(tl, caps, Math.min(1, caps.length - 1), t0);
-
-    if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, xPercent: 0, scale: 1, clipPath: 'inset(0% 0% 0% 0%)' });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, xPercent: 28, scale: 1, clipPath: 'inset(0% 0% 0% 100%)' });
-      tl.to(shotEls[0], {
-        xPercent: -24,
-        scale: 0.92,
-        clipPath: 'inset(0% 40% 0% 0%)',
-        duration: 0.5
-      }, t0 + 0.75);
-      tl.fromTo(shotEls[1], {
+    if (prepare) {
+      window.gsap.set(prepare, {
         autoAlpha: 1,
-        xPercent: 28,
-        clipPath: 'inset(0% 0% 0% 100%)'
-      }, {
         xPercent: 0,
-        clipPath: 'inset(0% 0% 0% 0%)',
-        duration: 0.55,
-        immediateRender: false
-      }, t0 + 0.75);
-      tl.to(shotEls[0], { autoAlpha: 0, duration: 0.2 }, t0 + 1.2);
-      captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 0.85);
-      if (balances.length) {
-        window.gsap.set(balances, { scale: 0.86, y: 18 });
-        window.gsap.set(bands, { scaleX: 0.18, transformOrigin: '0% 50%' });
-        balances.forEach(function (el, i) {
-          var at = t0 + 1.35 + i * 0.22;
-          tl.to(el, { scale: 1.06, y: -6, duration: 0.22 }, at);
-          if (bands[i]) tl.to(bands[i], { scaleX: 1, duration: 0.22 }, at);
-          tl.to(el, { scale: 1, y: 0, duration: 0.16 }, at + 0.22);
-        });
-      }
-      askAt(tl, page, t0 + 2.2);
-    } else {
-      askAt(tl, page, t0 + 0.8);
+        clipPath: 'inset(0% 0% 0% 0%)'
+      });
     }
+    if (approve) {
+      window.gsap.set(approve, {
+        autoAlpha: 1,
+        xPercent: 18,
+        clipPath: 'inset(0% 0% 0% 92%)'
+      });
+    }
+
+    var tSplit = t0 + 0.85;
+    if (prepare) {
+      tl.to(prepare, {
+        clipPath: 'inset(0% 6% 0% 0%)',
+        xPercent: -4,
+        scale: 1,
+        duration: 0.7
+      }, tSplit);
+    }
+    if (approve) {
+      tl.to(approve, {
+        clipPath: 'inset(0% 0% 0% 0%)',
+        xPercent: 0,
+        scale: 1,
+        duration: 0.7
+      }, tSplit);
+    }
+    if (panes) {
+      window.gsap.set(panes, { scale: 1, transformOrigin: '50% 50%' });
+      tl.to(panes, { scale: 1.02, duration: 0.35 }, tSplit);
+      tl.to(panes, { scale: 1, duration: 0.3 }, tSplit + 0.4);
+    }
+    captionAt(tl, caps, 1, tSplit);
+
+    var tFail = tSplit + 0.75;
+    if (bad.length) tl.to(bad, { scale: 1.08, y: -6, duration: 0.4 }, tFail);
+    if (ok.length) tl.to(ok, { scale: 0.96, y: 4, duration: 0.35 }, tFail);
+    if (action) {
+      window.gsap.set(action, { scale: 1, transformOrigin: '80% 50%' });
+      tl.to(action, { scale: 1.08, y: -4, duration: 0.3 }, tFail);
+      tl.to(action, { scale: 1, y: 0, duration: 0.22 }, tFail + 0.32);
+    }
+    captionAt(tl, caps, 2, tFail);
+    if (ruled) tl.to(ruled, { autoAlpha: 1, y: 0, duration: 0.3 }, tFail + 0.2);
+    askAt(tl, page, tFail + 0.45);
   }
 
-  function bindVerbs(page, tl) {
+  /* Mid-size: control-room pin, then matrix draw. */
+  function bindControl(page, tl) {
     var t0 = leadDecision(tl, page);
+    bindIrisStill(page, tl, t0, '42% 58%');
+    var waiting = q(page, '[data-waiting]');
+    var rows = qq(page, '[data-waiting] .film-row');
     var cells = qq(page, '[data-shot="grid"] .film-cell');
     var heads = qq(page, '[data-shot="grid"] .film-grid__head');
-    var shotEls = shots(page);
+    var grid = q(page, '.film-grid');
     var caps = captions(page);
     var ask = askEl(page);
     var ruled = q(page, '[data-film-ruled]');
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
 
+    if (waiting) {
+      window.gsap.set(waiting, { scale: 0.94, y: 18, transformOrigin: '50% 20%' });
+      tl.to(waiting, { scale: 1.06, y: -8, duration: 0.55 }, t0);
+    }
+    if (rows.length) {
+      window.gsap.set(rows, { x: 16, scale: 0.96 });
+      rows.forEach(function (row, i) {
+        tl.to(row, { x: 0, scale: 1, duration: 0.28 }, t0 + 0.2 + i * 0.16);
+      });
+    }
+    captionAt(tl, caps, 0, t0);
+
+    var tGrid = t0 + 0.95;
+    if (waiting) tl.to(waiting, { scale: 1, y: 0, duration: 0.35 }, tGrid);
+    if (grid) {
+      window.gsap.set(grid, { y: 20, scale: 0.96, transformOrigin: '50% 100%' });
+      tl.to(grid, { y: 0, scale: 1, duration: 0.4 }, tGrid);
+    }
+    if (heads.length) {
+      window.gsap.set(heads, { y: 10, scale: 0.92 });
+      tl.to(heads, { y: 0, scale: 1, duration: 0.3 }, tGrid);
+    }
     if (cells.length) {
       window.gsap.set(cells, { scaleY: 0, transformOrigin: '50% 100%' });
-      window.gsap.set(heads, { y: 10, scale: 0.92 });
-      tl.to(heads, { y: 0, scale: 1, duration: 0.35 }, t0);
-      tl.to(cells, { scaleY: 1, duration: 0.28, stagger: 0.045 }, t0 + 0.12);
-      captionAt(tl, caps, Math.min(1, caps.length - 1), t0);
+      tl.to(cells, { scaleY: 1, duration: 0.28, stagger: 0.045 }, tGrid + 0.12);
     }
-
-    if (shotEls.length > 1) {
-      window.gsap.set(shotEls[0], { autoAlpha: 1, scale: 1, transformOrigin: '50% 50%', clipPath: 'inset(0% 0% 0% 0%)' });
-      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 0.92, clipPath: 'inset(100% 0% 0% 0%)' });
-      cropIn(tl, shotEls[0], shotEls[1], t0 + 1.35);
-      captionAt(tl, caps, Math.min(2, caps.length - 1), t0 + 1.45);
-      if (ruled) tl.to(ruled, { autoAlpha: 1, duration: 0.35 }, t0 + 1.6);
-      askAt(tl, page, t0 + 1.95);
-    } else {
-      askAt(tl, page, t0 + 0.9);
-    }
+    captionAt(tl, caps, 1, tGrid);
+    if (ruled) tl.to(ruled, { autoAlpha: 1, duration: 0.3 }, tGrid + 0.5);
+    askAt(tl, page, tGrid + 0.7);
   }
 
-  function bindEnding(page, tl, scroller) {
+  /* Mobile: web ↔ phone morph of the same approval task. */
+  function bindMorph(page, tl) {
     var t0 = leadDecision(tl, page);
-    var track = q(page, '[data-film-track]');
-    var steps = qq(page, '.film-step');
-    var empties = qq(page, '.film-empty article');
-    var shotEls = shots(page);
+    var stage = q(page, '[data-morph-stage]');
+    var web = q(page, '[data-morph="web"]');
+    var phone = q(page, '[data-morph="phone"]');
     var caps = captions(page);
     var ask = askEl(page);
     if (caps.length) setCaption(caps, 0);
     if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
 
-    if (track && steps.length) {
-      var wrap = track.parentNode;
-      function sizeSteps() {
-        var w = wrap ? wrap.clientWidth : 0;
-        if (!w) return 0;
-        steps.forEach(function (step) {
-          step.style.flex = '0 0 ' + w + 'px';
-          step.style.width = w + 'px';
-        });
-        return w;
-      }
-      sizeSteps();
-      window.gsap.set(track, { x: 0 });
-      window.gsap.set(steps, { scale: 0.94, y: 14 });
-      tl.to(steps[0], { scale: 1, y: 0, duration: 0.35 }, t0);
-      steps.forEach(function (step, i) {
-        var at = t0 + i * 0.9;
-        if (i > 0) {
-          tl.to(track, {
-            x: function () { return -Math.round(sizeSteps() * i); },
-            duration: 0.45
-          }, at);
-          tl.to(steps[i - 1], { scale: 0.92, y: 10, duration: 0.35 }, at);
-          tl.to(step, { scale: 1, y: 0, duration: 0.4 }, at);
-        }
-        captionAt(tl, caps, Math.min(i, caps.length - 1), at);
+    if (web) {
+      window.gsap.set(web, {
+        autoAlpha: 1,
+        scale: 0.92,
+        xPercent: 0,
+        clipPath: 'inset(0% 0% 0% 0%)',
+        transformOrigin: '18% 50%'
+      });
+      tl.to(web, { scale: 1, duration: 0.45 }, t0);
+    }
+    if (phone) {
+      window.gsap.set(phone, {
+        autoAlpha: 1,
+        scale: 0.72,
+        xPercent: 28,
+        clipPath: 'inset(0% 0% 0% 70%)',
+        transformOrigin: '85% 90%'
       });
     }
+    captionAt(tl, caps, 0, t0);
 
-    var tFan = t0 + Math.max(1, steps.length) * 0.85;
-    if (shotEls.length > 1) {
-      window.gsap.set(shotEls[1], { autoAlpha: 0, scale: 1, y: 0, clipPath: 'inset(100% 0% 0% 0%)' });
-      cropIn(tl, shotEls[0], shotEls[1], tFan);
-      if (empties.length) {
-        window.gsap.set(empties, { scale: 0.7, y: 28, rotation: 0 });
-        tl.to(empties, {
-          scale: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.08
-        }, tFan + 0.4);
-      }
-      captionAt(tl, caps, Math.min(3, caps.length - 1), tFan);
-      askAt(tl, page, tFan + 0.7);
-    } else {
-      askAt(tl, page, tFan);
+    var tMorph = t0 + 0.7;
+    if (web) {
+      tl.to(web, {
+        scale: 0.86,
+        xPercent: -8,
+        clipPath: 'inset(0% 38% 0% 0%)',
+        duration: 0.75
+      }, tMorph);
     }
+    if (phone) {
+      tl.to(phone, {
+        scale: 1.04,
+        xPercent: 0,
+        clipPath: 'inset(0% 0% 0% 0%)',
+        duration: 0.75
+      }, tMorph);
+    }
+    captionAt(tl, caps, 1, tMorph);
+    if (stage) {
+      window.gsap.set(stage, { scale: 1 });
+      tl.to(stage, { scale: 1.02, duration: 0.3 }, tMorph + 0.5);
+      tl.to(stage, { scale: 1, duration: 0.25 }, tMorph + 0.8);
+    }
+    if (phone) tl.to(phone, { scale: 1, duration: 0.3 }, tMorph + 0.75);
+    askAt(tl, page, tMorph + 0.9);
   }
 
+  /* vs corporate: light vs heavy split-compare scrub. */
+  function bindSplitWeight(page, tl) {
+    var t0 = leadDecision(tl, page);
+    var light = q(page, '[data-weight="light"]');
+    var heavy = q(page, '[data-weight="heavy"]');
+    var caps = captions(page);
+    var ask = askEl(page);
+    if (caps.length) setCaption(caps, 0);
+    if (ask) window.gsap.set(ask, { autoAlpha: 0, y: 8 });
+
+    if (light) {
+      window.gsap.set(light, {
+        autoAlpha: 1,
+        scale: 1.08,
+        xPercent: 0,
+        clipPath: 'inset(0% 0% 0% 0%)',
+        transformOrigin: '50% 20%'
+      });
+    }
+    if (heavy) {
+      window.gsap.set(heavy, {
+        autoAlpha: 1,
+        scale: 0.88,
+        xPercent: 10,
+        clipPath: 'inset(0% 0% 0% 42%)',
+        transformOrigin: '100% 20%'
+      });
+    }
+    captionAt(tl, caps, 0, t0);
+
+    var tHeavy = t0 + 0.85;
+    if (light) {
+      tl.to(light, {
+        scale: 0.9,
+        xPercent: -6,
+        clipPath: 'inset(0% 8% 0% 0%)',
+        duration: 0.7
+      }, tHeavy);
+    }
+    if (heavy) {
+      tl.to(heavy, {
+        scale: 1.06,
+        xPercent: 0,
+        clipPath: 'inset(0% 0% 0% 0%)',
+        duration: 0.7
+      }, tHeavy);
+    }
+    captionAt(tl, caps, 1, tHeavy);
+
+    var tEven = tHeavy + 0.75;
+    if (light) tl.to(light, { scale: 1, xPercent: 0, clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5 }, tEven);
+    if (heavy) tl.to(heavy, { scale: 1, xPercent: 0, clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5 }, tEven);
+    askAt(tl, page, tEven + 0.2);
+  }
+
+  /* Close: finding pin, ladder complete. */
   function bindFinding(page, tl) {
-    var sheet = q(page, '.film-sheet');
-    var tiles = qq(page, '.film-sheet i');
+    var strip = q(page, '[data-ladder-strip]');
+    var rungs = qq(page, '.film-rung');
+    var fill = q(page, '[data-ladder-fill]');
     var caps = captions(page);
     if (caps.length) setCaption(caps, 0);
-    if (!sheet) return;
-    window.gsap.set(sheet, { scale: 1.16, transformOrigin: '30% 32%' });
-    if (tiles.length) window.gsap.set(tiles, { scale: 0.55, transformOrigin: '50% 50%' });
-    tl.to(sheet, { scale: 1.06, transformOrigin: '58% 46%', duration: 1.05 }, 0);
-    if (tiles.length) {
-      tl.to(tiles, { scale: 1, duration: 0.55, stagger: { each: 0.018, from: 'center' } }, 0.15);
+    if (strip) {
+      window.gsap.set(strip, { scale: 1.16, transformOrigin: '20% 40%' });
+      tl.to(strip, { scale: 1.04, transformOrigin: '55% 48%', duration: 1.0 }, 0);
     }
-    captionAt(tl, caps, Math.min(1, caps.length - 1), 0.2);
-    tl.to(sheet, { scale: 1, transformOrigin: '50% 50%', duration: 0.9 }, 1.1);
-    captionAt(tl, caps, 0, 1.15);
+    if (rungs.length) {
+      window.gsap.set(rungs, { scale: 0.86, y: 16 });
+      tl.to(rungs, { scale: 1, y: 0, duration: 0.45, stagger: 0.08 }, 0.12);
+    }
+    if (fill) {
+      window.gsap.set(fill, { scaleX: 0.2, transformOrigin: '0% 50%' });
+      tl.to(fill, { scaleX: 1, duration: 0.9 }, 0.15);
+    }
+    captionAt(tl, caps, 0, 0.2);
+    if (strip) tl.to(strip, { scale: 1, transformOrigin: '50% 50%', duration: 0.8 }, 1.05);
+    captionAt(tl, caps, Math.min(1, caps.length - 1), 1.1);
   }
 
   function recipeFor(name) {
     switch (name) {
-      case 'cover':
-        return bindCover;
-      case 'ends':
-        return bindEnds;
-      case 'jobs':
-        return bindJobs;
-      case 'door':
-        return bindDoor;
-      case 'money':
-        return bindMoney;
-      case 'verbs':
-        return bindVerbs;
-      case 'ending':
-        return bindEnding;
+      case 'kenburns':
+        return bindKenBurns;
+      case 'phone':
+        return bindPhone;
+      case 'moneyCrop':
+        return bindMoneyCrop;
+      case 'splitDoor':
+        return bindSplitDoor;
+      case 'control':
+        return bindControl;
+      case 'morph':
+        return bindMorph;
+      case 'splitWeight':
+        return bindSplitWeight;
       case 'finding':
         return bindFinding;
-      default:
-        return bindEnds;
+      default: {
+        var unknown = name;
+        return unknown ? bindKenBurns : bindKenBurns;
+      }
     }
   }
 
@@ -679,7 +698,7 @@ window.CaseScrollKit = (function () {
 
     pages.forEach(function (page) {
       var pinWanted = page.getAttribute('data-pin') !== 'false';
-      var recipe = page.getAttribute('data-recipe') || 'ends';
+      var recipe = page.getAttribute('data-recipe') || 'kenburns';
       var fn = recipeFor(recipe);
       var hold = q(page, '[data-film-hold]') || page;
       var caps = captions(page);
@@ -721,12 +740,14 @@ window.CaseScrollKit = (function () {
         },
         pin: true,
         pinSpacing: true,
-        scrub: 0.55,
+        /* Higher scrub lag = chapters play under trackpad instead of jumping to end. */
+        scrub: 1.1,
         animation: tl,
         invalidateOnRefresh: true,
         anticipatePin: 1,
-        preventOverlaps: true,
-        fastScrollEnd: true,
+        /* preventOverlaps + fastScrollEnd made fast Mac flicks skip the film. */
+        preventOverlaps: false,
+        fastScrollEnd: false,
         onToggle: function (self) {
           if (!self.isActive) return;
           if (opts.onStep) opts.onStep(index);
@@ -805,8 +826,15 @@ window.CaseScrollKit = (function () {
 
     gsap.registerPlugin(ScrollTrigger);
     if (ScrollTrigger.normalizeScroll && !opts.forceStatic) {
-      var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      if (touch) {
+      /* Coarse pointer only. Mac trackpads often report maxTouchPoints > 0;
+         normalizeScroll there can swallow wheel / make the film feel dead. */
+      var coarse = false;
+      try {
+        coarse = window.matchMedia('(pointer: coarse)').matches;
+      } catch (err) {
+        coarse = false;
+      }
+      if (coarse) {
         ScrollTrigger.normalizeScroll(isView(scroller) ? true : { target: scroller, allowNestedScroll: true });
         normalized = true;
       }
