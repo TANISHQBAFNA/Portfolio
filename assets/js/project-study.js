@@ -3,7 +3,8 @@
  * Window is the scroller. Pins stay sparse.
  *
  * Cut / Tunnel / Helix / Deck / Type — motion skins.
- * cbx300 — cream / Multiverse Section 01 cover. Page scroll, no film bind.
+ * cbx300 — cream / Multiverse cover + Aisha growth track.
+ * Window is the scroller. Section 02 pins, then unlocks. No CaseScrollKit film.
  */
 window.ProjectStudy = (function () {
   'use strict';
@@ -103,6 +104,8 @@ window.ProjectStudy = (function () {
     function killMotion() {
       if (caseKit && caseKit.kill) caseKit.kill();
       caseKit = null;
+      if (caseMount && caseMount.kill) caseMount.kill();
+      else if (window.Cbx300Case && window.Cbx300Case.kill) window.Cbx300Case.kill();
       html.classList.remove('is-study-film');
       html.classList.remove('is-study-page');
       triggers.forEach(function (t) {
@@ -180,7 +183,9 @@ window.ProjectStudy = (function () {
 
     function syncHead() {
       var head = headPx();
-      var stage = Math.max(240, Math.round(root.clientHeight || window.innerHeight) - head);
+      var vv = window.visualViewport;
+      var win = (vv && vv.height) ? vv.height : (window.innerHeight || 800);
+      var stage = Math.max(240, Math.round(win) - head);
       root.style.setProperty('--study-head', head + 'px');
       root.style.setProperty('--study-stage', stage + 'px');
     }
@@ -734,7 +739,7 @@ window.ProjectStudy = (function () {
       var world = root.querySelector('[data-world="cbx300"]');
       if (!world) return;
       var live = world.querySelectorAll('[data-cbx-live]');
-      setTotal(live.length || (caseMount && caseMount.pageCount ? caseMount.pageCount() : 1));
+      setTotal(live.length || (caseMount && caseMount.pageCount ? caseMount.pageCount() : 2));
       setStep(0);
       html.classList.add('is-study-page');
       window.scrollTo(0, 0);
@@ -742,6 +747,9 @@ window.ProjectStudy = (function () {
       if (window.Cbx300Case && window.Cbx300Case.armGlitch) {
         window.Cbx300Case.armGlitch(world);
       }
+      var bindOpts = { onStep: setStep, headerOffset: headPx };
+      if (caseMount && caseMount.bind) caseMount.bind(bindOpts);
+      else if (window.Cbx300Case && window.Cbx300Case.bind) window.Cbx300Case.bind(world, bindOpts);
     }
 
     function bindMotion() {
@@ -1191,7 +1199,7 @@ window.ProjectStudy = (function () {
       if (template === 'cbx300' && window.Cbx300Case) {
         caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
         html.classList.add('is-study-page');
-        setTotal(caseMount && caseMount.pageCount ? caseMount.pageCount() : 1);
+        setTotal(caseMount && caseMount.pageCount ? caseMount.pageCount() : 2);
         setStep(0);
         if (window.Cbx300Case.armGlitch) {
           window.Cbx300Case.armGlitch(root.querySelector('[data-world="cbx300"]'));
@@ -1286,6 +1294,7 @@ window.ProjectStudy = (function () {
       },
       slideCount: function () {
         if (caseKit && caseKit.pageCount) return caseKit.pageCount();
+        if (caseMount && caseMount.pageCount) return caseMount.pageCount();
         return visibleScenes().length;
       }
     };

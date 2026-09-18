@@ -1,5 +1,6 @@
-/* CBX300 Section 01 cover.
+/* CBX300 Section 01 cover + Section 02 Aisha growth track.
    Home hero language. Image overlaps type from the right.
+   After cover: pin leftover pane, scrub Aisha stages left → right.
    Cream stays calm. Multiverse uses ink + glitch plates. */
 
 /* Window is the scroller. html.is-study { overflow: hidden } without film
@@ -299,6 +300,198 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   white-space: nowrap;
 }
 
+/* Section 02 — leftover pane under chrome, not device screen. */
+.cbx-growth {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  height: calc(100svh - var(--study-head, 72px));
+  height: calc(100dvh - var(--study-head, 72px));
+  overflow: hidden;
+  background: var(--film-cream, #f4efe6);
+}
+
+.cbx-growth__track {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  height: 100%;
+  will-change: transform;
+}
+
+.cbx-growth__panel {
+  box-sizing: border-box;
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.42fr) minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 56px);
+  align-items: stretch;
+  padding: clamp(12px, 2.4vh, 28px) var(--film-gutter, 24px) clamp(20px, 4vh, 40px);
+}
+
+.cbx-growth__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 0.45rem;
+  min-width: 0;
+  padding-bottom: clamp(4px, 1.5vh, 18px);
+}
+
+.cbx-growth__index {
+  margin: 0 0 0.15rem;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--film-teal, #00a0a0);
+}
+
+.cbx-growth__stage {
+  margin: 0;
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(2rem, 5.4vw, 4.4rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+  color: var(--film-ink, #1e1510);
+  max-width: 14ch;
+}
+
+.cbx-growth__caption {
+  margin: 0.35rem 0 0;
+  max-width: 22ch;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: clamp(0.98rem, 1.35vw, 1.2rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--film-muted, rgba(30, 21, 16, 0.62));
+}
+
+.cbx-growth__cutout {
+  position: relative;
+  display: block;
+  margin: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #f3eee6;
+}
+
+.cbx-growth__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 72%;
+  display: block;
+}
+
+.cbx-growth__cutout--mini .cbx-growth__img {
+  object-position: 50% 70%;
+}
+
+.cbx-growth__cutout.is-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed var(--film-line, rgba(30, 21, 16, 0.16));
+  background: var(--film-paper, #efeae1);
+  border-radius: 18px;
+}
+
+.cbx-growth__ph {
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--film-faint, rgba(30, 21, 16, 0.42));
+}
+
+.cbx-growth__panel--land {
+  grid-template-columns: minmax(16rem, 0.46fr) minmax(0, 1fr);
+}
+
+.cbx-growth__strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+  height: 100%;
+}
+
+.cbx-growth__cutout--mini {
+  border-radius: 16px;
+}
+
+.cbx-growth.is-static {
+  height: auto;
+  overflow: visible;
+}
+
+.cbx-growth.is-static .cbx-growth__track {
+  flex-direction: column;
+  will-change: auto;
+  transform: none !important;
+}
+
+.cbx-growth.is-static .cbx-growth__panel {
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: calc(100svh - var(--study-head, 72px));
+  min-height: calc(100dvh - var(--study-head, 72px));
+}
+
+html.is-light-home .study[data-template="cbx300"] .cbx-growth .glitch,
+html.is-light-home .study[data-template="cbx300"] .cbx-growth .glitch::before,
+html.is-light-home .study[data-template="cbx300"] .cbx-growth .glitch::after {
+  text-shadow: none !important;
+}
+
+html.is-light-home .study[data-template="cbx300"] .cbx-growth .glitch::before,
+html.is-light-home .study[data-template="cbx300"] .cbx-growth .glitch::after {
+  content: none !important;
+  animation: none !important;
+  display: none !important;
+}
+
+html.is-multiverse .study[data-template="cbx300"] .cbx-growth__stage {
+  color: #f3eee4;
+}
+
+html.is-multiverse .study[data-template="cbx300"] .cbx-growth__index {
+  color: #3de8f5;
+}
+
+html.is-multiverse .study[data-template="cbx300"] .cbx-growth__caption {
+  color: rgba(243, 238, 228, 0.68);
+}
+
+html.is-multiverse .study[data-template="cbx300"] .cbx-growth__cutout {
+  border-radius: 0;
+  background: #f3eee4;
+  border: 3px solid #0e1018;
+  box-shadow: 6px 6px 0 #3de8f5, 9px 9px 0 #0e1018;
+}
+
+html.is-multiverse .study[data-template="cbx300"] .cbx-growth__cutout.is-empty {
+  background: #161822;
+  border-style: dashed;
+  border-color: rgba(61, 232, 245, 0.45);
+  box-shadow: none;
+}
+
+html.is-multiverse .study[data-template="cbx300"] .cbx-growth__ph {
+  color: rgba(61, 232, 245, 0.7);
+}
+
 @media (max-width: 767px) {
   .study[data-template="cbx300"] {
     --cbx-shout: clamp(1.85rem, 9.6vw, 2.6rem);
@@ -315,6 +508,36 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
     width: min(48vw, 16.5rem);
     height: min(42vh, 22rem);
   }
+
+  .cbx-growth__panel,
+  .cbx-growth__panel--land {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 14px;
+    padding: 10px 20px 18px;
+  }
+
+  .cbx-growth__copy {
+    justify-content: flex-start;
+    padding-bottom: 0;
+  }
+
+  .cbx-growth__stage {
+    font-size: clamp(1.7rem, 8vw, 2.35rem);
+    max-width: none;
+  }
+
+  .cbx-growth__caption {
+    max-width: 28ch;
+  }
+
+  .cbx-growth__strip {
+    gap: 8px;
+  }
+
+  .cbx-growth__cutout--mini {
+    border-radius: 12px;
+  }
 }
 
 @media (max-height: 700px) and (min-width: 768px) {
@@ -327,12 +550,29 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
     width: min(30vw, 22rem);
     height: min(58vh, 26rem);
   }
+
+  .cbx-growth__stage {
+    font-size: clamp(1.7rem, 4.2vw, 2.8rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cbx-cover,
-  .cbx-cover * {
+  .cbx-cover *,
+  .cbx-growth,
+  .cbx-growth * {
     animation: none !important;
     transition: none !important;
+  }
+
+  .cbx-growth,
+  .cbx-growth.is-static {
+    height: auto;
+    overflow: visible;
+  }
+
+  .cbx-growth__track {
+    flex-direction: column;
+    transform: none !important;
   }
 }

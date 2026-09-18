@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * Guards CBX300 Section 01 cover: type left, overlapping image right.
+ * Guards CBX300 Section 01 cover + Section 02 Aisha growth track.
  * Same markup for cream + Multiverse. Glitch only on Multiverse.
  */
 var fs = require('fs');
@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s11') !== -1, 'index.html missing cover cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s11') !== -1, 'multiverse missing cover cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s11') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s20') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s20') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s20') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -62,7 +62,7 @@ check('Section 01 copy matches CEO lock', function () {
 });
 
 check('image sits in the project work-card frame', function () {
-  var coverFn = pages.slice(pages.indexOf('function buildCover'), pages.indexOf('function buildStubs'));
+  var coverFn = pages.slice(pages.indexOf('function buildCover'), pages.indexOf('function cutout'));
   var appendType = coverFn.indexOf('inner.appendChild(type)');
   var appendMedia = coverFn.indexOf('inner.appendChild(media)');
   assert.ok(appendType !== -1 && appendMedia !== -1 && appendType < appendMedia, 'type first, media on top');
@@ -70,13 +70,14 @@ check('image sits in the project work-card frame', function () {
   assert.ok(coverFn.indexOf('work-card__media') !== -1, 'cover must use work-card inner media');
   assert.ok(coverFn.indexOf('work-card__img') !== -1, 'cover must use the work-card image');
   assert.ok(pages.indexOf('cin-work-sme.png') !== -1, 'cover must point at the SME work image');
-  assert.ok(css.indexOf('position: absolute') !== -1, 'media must leave the type flow');
+  assert.ok(css.indexOf('.cbx-cover__media.work-card') !== -1, 'cover media must leave the type flow');
   assert.ok(/right:\s*0/.test(css), 'media must sit on the right');
   assert.ok(/top:\s*0/.test(css), 'media must sit in the top-right corner');
   assert.ok(/justify-content:\s*flex-end/.test(css), 'type stack must sit bottom-left');
   assert.ok(css.indexOf('border-radius: 22px') !== -1, 'cream cover must use the work-card 22px tile');
   assert.ok(css.indexOf('border-radius: 14px') !== -1, 'cream cover must use the work-card 14px inner crop');
-  assert.ok(css.indexOf('dashed') === -1, 'dashed placeholder must be gone');
+  var coverCss = css.slice(0, css.indexOf('.cbx-growth'));
+  assert.ok(coverCss.indexOf('dashed') === -1, 'dashed placeholder must stay off the cover');
   assert.ok(css.indexOf('z-index: 2') !== -1, 'media must paint over type');
 });
 
@@ -87,13 +88,35 @@ check('cover type is still a large home-parity shout', function () {
   assert.ok(homeShout !== -1, 'home shout baseline missing');
 });
 
-check('later sections are stubs, film grammar is not this PR', function () {
-  assert.ok(pages.indexOf('rest.hidden = true') !== -1, 'stubs must be hidden');
-  ['ladder', 'roles', 'approvals', 'money', 'permissions', 'grammar', 'scale'].forEach(function (id) {
+check('Section 02 is Aisha growth, not the old 8-beat film', function () {
+  assert.ok(pages.indexOf("data-cbx-growth") !== -1, 'missing growth track');
+  assert.ok(pages.indexOf("id: 'freelancer'") !== -1, 'missing freelancer panel');
+  assert.ok(pages.indexOf("label: 'Freelancer'") !== -1, 'missing Freelancer label');
+  assert.ok(pages.indexOf("label: 'Sole prop'") !== -1, 'missing Sole prop label');
+  assert.ok(pages.indexOf("label: '~10 people'") !== -1, 'missing ~10 people label');
+  assert.ok(pages.indexOf("label: 'Mid-size'") !== -1, 'missing Mid-size label');
+  assert.ok(pages.indexOf("label: 'Same app, every level'") !== -1, 'missing landing panel');
+  assert.ok(pages.indexOf('outgrow') !== -1, 'missing outgrow landing line');
+  assert.ok(pages.indexOf('data-film-beat') === -1, 'film beats leaked');
+  assert.ok(pages.indexOf('film-decision') === -1, 'Decision chips leaked');
+  assert.ok(pages.indexOf('maker-checker') === -1, 'maker-checker leaked');
+  assert.ok(study.indexOf('CaseScrollKit.bind') === -1, 'cbx300 still binds film scroll kit');
+  assert.ok(study.indexOf('Cbx300Case.bind') !== -1, 'study must bind growth ScrollTrigger after intro');
+  assert.ok(pages.indexOf('pin: true') !== -1, 'growth must pin');
+  assert.ok(pages.indexOf('pinSpacing: true') !== -1, 'pinSpacing must unlock later stubs');
+  assert.ok(pages.indexOf('visualViewport') !== -1, 'pane height must use visualViewport');
+  assert.ok(pages.indexOf('ignoreMobileResize') !== -1, 'iOS URL-bar must not rebuild the pin');
+  assert.ok(pages.indexOf('THREE') === -1 && pages.indexOf('three.js') === -1, 'Three.js is off-limits');
+});
+
+check('later sections stay stubs after growth', function () {
+  assert.ok(pages.indexOf('rest.hidden = true') !== -1, 'stubs must stay hidden');
+  ['roles', 'approvals', 'money', 'permissions', 'grammar', 'scale'].forEach(function (id) {
     assert.ok(pages.indexOf("id: '" + id + "'") !== -1, 'missing stub id ' + id);
   });
-  assert.ok(pages.indexOf('data-film-beat') === -1, 'film beats leaked');
-  assert.ok(study.indexOf('CaseScrollKit.bind') === -1, 'cbx300 still binds film scroll kit');
+  assert.ok(pages.indexOf("id: 'ladder'") === -1, 'ladder stub must be the live growth track');
+  assert.ok(pages.indexOf("data-cbx-section', '01'") !== -1, 'cover is 01');
+  assert.ok(pages.indexOf("data-cbx-section', '02'") !== -1, 'growth is 02');
 });
 
 check('cream stays calm; Multiverse glitches cover + chrome', function () {
@@ -118,10 +141,12 @@ check('Multiverse study uses ink/glitch blue, not cream paper', function () {
   assert.ok(css.indexOf('html.is-light-home.is-dark .study[data-template="cbx300"]') !== -1, 'cream dark must not steal Multiverse ink');
 });
 
-check('cream and Multiverse share one cover layout', function () {
+check('cream and Multiverse share one cover + growth layout', function () {
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'cream index missing world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'multiverse missing world');
   assert.ok(css.indexOf('html.is-multiverse .cbx-cover .hero__word') !== -1, 'multiverse must reuse cover type');
+  assert.ok(css.indexOf('.cbx-growth__track') !== -1, 'missing growth track css');
+  assert.ok(css.indexOf('.cbx-growth.is-static') !== -1, 'reduced-motion must stack');
 });
 
 check('study page scroll unlocks; close control still present', function () {
@@ -130,7 +155,7 @@ check('study page scroll unlocks; close control still present', function () {
   assert.ok(mvIndex.indexOf('data-study-close') !== -1, 'multiverse missing close control');
 });
 
-check('no invented NPS/outcomes; Echo avoid-list stays off the cover', function () {
+check('no invented NPS/outcomes; Echo avoid-list stays off the page', function () {
   assert.ok(!/\bNPS\b/.test(pages), 'invented NPS');
   assert.ok(!/maker-checker/i.test(pages), 'maker-checker on page');
   assert.ok(!/\bseamless\b/i.test(pages), 'seamless on page');
