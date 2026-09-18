@@ -186,15 +186,13 @@ window.Cbx300Case = (function () {
     article.appendChild(copy);
 
     if (stage.land) {
-      var strip = el('div', 'cbx-growth__strip');
-      GROWTH.forEach(function (item) {
-        if (!item.src) return;
-        strip.appendChild(cutout(item.src, item.alt, 'cbx-growth__cutout cbx-growth__cutout--mini'));
+      var trail = el('p', 'cbx-growth__trail');
+      ['Freelancer', 'Sole prop', '~10 people', 'Mid-size'].forEach(function (name, i) {
+        if (i) trail.appendChild(el('span', 'cbx-growth__trail-sep', '→'));
+        trail.appendChild(el('span', 'cbx-growth__trail-item', name));
       });
-      if (!strip.childNodes.length) {
-        strip.appendChild(cutout('', '', 'cbx-growth__cutout is-empty'));
-      }
-      article.appendChild(strip);
+      copy.appendChild(trail);
+      article.appendChild(cutout('', '', 'cbx-growth__cutout is-empty'));
     } else {
       article.appendChild(cutout(stage.src, stage.alt));
     }
@@ -403,16 +401,15 @@ window.Cbx300Case = (function () {
     gsap.set(track, { x: 0 });
     markPanel(panels, 0);
 
-    var tween = gsap.to(track, {
-      x: function () { return -travelX(pin, track); },
-      ease: 'none',
+    var tween = gsap.timeline({
+      defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: pin,
         start: function () { return 'top ' + headPx(headerFn) + 'px'; },
         end: function () {
           sizePane(pin, headerFn);
           var run = travelX(pin, track);
-          var hold = Math.round(paneH(headerFn) * 0.28);
+          var hold = Math.round(paneH(headerFn) * 0.22);
           return '+=' + Math.round(run + hold);
         },
         pin: true,
@@ -434,6 +431,11 @@ window.Cbx300Case = (function () {
         }
       }
     });
+    tween.to(track, {
+      x: function () { return -travelX(pin, track); },
+      duration: 1
+    });
+    tween.to({}, { duration: 0.18 });
     motion.tween = tween;
     if (tween.scrollTrigger) motion.triggers.push(tween.scrollTrigger);
 
