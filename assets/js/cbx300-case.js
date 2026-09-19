@@ -25,30 +25,17 @@ window.Cbx300Case = (function () {
     },
     {
       id: 'sole',
-      label: 'Sole prop',
-      caption: 'First formal steps. Still mostly her.',
+      label: 'Sole proprietor',
+      caption: 'First hire. Two people, one business.',
       src: 'assets/img/aisha-growth/02-sole-prop.png',
-      alt: 'Clay cutout of Aisha as a sole proprietor.'
-    },
-    {
-      id: 'ten',
-      label: '~10 people',
-      caption: 'A team shows up. Roles and approvals appear.',
-      src: 'assets/img/aisha-growth/03-small-company.png',
-      alt: 'Clay cutout of Aisha with a team of about ten.'
+      alt: 'Clay cutout of Aisha and her first teammate as a sole proprietor.'
     },
     {
       id: 'mid',
       label: 'Mid-size',
-      caption: 'Scale. More people, more control.',
-      src: 'assets/img/aisha-growth/04-midsize.png',
-      alt: 'Clay cutout of Aisha with a mid-size company.'
-    },
-    {
-      id: 'same',
-      label: 'Same app, every level',
-      caption: 'The product adapts. She doesn\u2019t outgrow it.',
-      land: true
+      caption: 'The whole team. Same banking, more control.',
+      src: 'assets/img/aisha-growth/03-midsize.png',
+      alt: 'Clay cutout of Aisha with her full mid-size team.'
     }
   ];
 
