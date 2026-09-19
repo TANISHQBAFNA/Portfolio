@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s21') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s33') !== -1, 'index.html missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s21') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s21') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s33') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -117,6 +117,16 @@ check('later sections stay stubs after growth', function () {
   assert.ok(pages.indexOf("id: 'ladder'") === -1, 'ladder stub must be the live growth track');
   assert.ok(pages.indexOf("data-cbx-section', '01'") !== -1, 'cover is 01');
   assert.ok(pages.indexOf("data-cbx-section', '02'") !== -1, 'growth is 02');
+});
+
+check('Section 02 growth field is coffee; cover stays cream', function () {
+  var coverCss = css.slice(0, css.indexOf('.cbx-growth {'));
+  var growthCss = css.slice(css.indexOf('.cbx-growth {'));
+  assert.ok(coverCss.indexOf('background: var(--film-cream)') !== -1, 'cover world must stay cream');
+  assert.ok(growthCss.indexOf('background: var(--coffee, #1E1510)') !== -1, 'growth pane must be coffee #1E1510');
+  assert.ok(growthCss.indexOf('html.is-light-home .study[data-template="cbx300"] .cbx-growth') !== -1, 'cream home growth must stay coffee');
+  assert.ok(growthCss.indexOf('background: #2a211c') !== -1, 'cutout wells must be coffee, not cream plates');
+  assert.ok(landingCss.indexOf('--projects-panel: var(--coffee)') !== -1, 'growth must match landing projects rail coffee');
 });
 
 check('cream stays calm; Multiverse glitches cover + chrome', function () {

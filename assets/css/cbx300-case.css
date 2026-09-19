@@ -5,6 +5,10 @@
 
 /* Window is the scroller. html.is-study { overflow: hidden } without film
    left the Arc/Safari study unable to pan. */
+/* Beat landing.css html.is-study { overflow:hidden !important; height:100% }.
+   Without this, cover is a dead end — window cannot pan into Section 02. */
+html.is-study.is-study-page,
+html.is-study.is-study-page body,
 html.is-study-page,
 html.is-study-page body {
   overflow-x: hidden !important;
@@ -13,6 +17,7 @@ html.is-study-page body {
   max-height: none !important;
   overscroll-behavior-y: contain;
 }
+html.is-study.is-study-page .study[data-template="cbx300"],
 html.is-study-page .study[data-template="cbx300"] {
   position: relative !important;
   inset: auto !important;
@@ -308,7 +313,9 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   height: calc(100svh - var(--study-head, 72px));
   height: calc(100dvh - var(--study-head, 72px));
   overflow: hidden;
-  background: var(--film-cream, #f4efe6);
+  /* Match landing projects rail coffee — cover stays cream above. */
+  background: var(--coffee, #1E1510);
+  color: var(--cream, #f4efe6);
 }
 
 .cbx-growth__track {
@@ -352,7 +359,7 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--film-teal, #00a0a0);
+  color: #5ecfcf;
 }
 
 .cbx-growth__stage {
@@ -362,7 +369,7 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 0.94;
-  color: var(--film-ink, #1e1510);
+  color: var(--cream, #f4efe6);
   max-width: 12ch;
   overflow-wrap: break-word;
   hyphens: none;
@@ -376,7 +383,7 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   font-weight: 400;
   line-height: 1.35;
   letter-spacing: -0.01em;
-  color: var(--film-muted, rgba(30, 21, 16, 0.62));
+  color: rgba(244, 239, 230, 0.72);
 }
 
 .cbx-growth__trail {
@@ -391,7 +398,7 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.45;
-  color: var(--film-faint, rgba(30, 21, 16, 0.42));
+  color: rgba(244, 239, 230, 0.48);
 }
 
 .cbx-growth__panel[data-cbx-panel="ten"] .cbx-growth__cutout,
@@ -411,15 +418,25 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   height: 100%;
   overflow: hidden;
   border-radius: 22px;
-  background: #f3eee6;
+  /* Soft coffee well so transparent clay sits clean — not a cream plate. */
+  background: #2a211c;
+  box-shadow: inset 0 0 0 1px rgba(244, 239, 230, 0.06);
 }
 
 .cbx-growth__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: 62% 70%;
+  object-fit: contain;
+  object-position: center bottom;
   display: block;
+  padding: clamp(4px, 1vh, 12px) clamp(6px, 1vw, 16px) 0;
+  box-sizing: border-box;
+}
+.cbx-growth__panel[data-cbx-panel="freelancer"] .cbx-growth__img,
+.cbx-growth__panel[data-cbx-panel="sole"] .cbx-growth__img {
+  padding: clamp(2px, 0.6vh, 8px) clamp(4px, 0.8vw, 12px) 0;
+  object-fit: contain;
+  object-position: center 85%;
 }
 
 .cbx-growth__panel[data-cbx-panel="ten"] .cbx-growth__img,
@@ -435,8 +452,8 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px dashed var(--film-line, rgba(30, 21, 16, 0.16));
-  background: var(--film-paper, #efeae1);
+  border: 1.5px dashed rgba(244, 239, 230, 0.18);
+  background: #241c18;
   border-radius: 18px;
 }
 
@@ -449,7 +466,7 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   font-size: 0.82rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--film-faint, rgba(30, 21, 16, 0.42));
+  color: rgba(244, 239, 230, 0.4);
 }
 
 .cbx-growth__panel--land {
@@ -619,4 +636,19 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-growth__ph {
     flex-direction: column;
     transform: none !important;
   }
+}
+
+
+/* Growth field stays coffee on cream home; Multiverse keeps ink well. */
+html.is-multiverse .study[data-template="cbx300"] .cbx-growth {
+  background: #0e1018;
+  color: #f3eee4;
+}
+html.is-multiverse .study[data-template="cbx300"] .cbx-growth__cutout {
+  background: #161822;
+  box-shadow: inset 0 0 0 1px rgba(61, 232, 245, 0.12);
+}
+html.is-cream-home .study[data-template="cbx300"] .cbx-growth,
+html.is-light-home .study[data-template="cbx300"] .cbx-growth {
+  background: #1E1510;
 }
