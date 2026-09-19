@@ -27,6 +27,18 @@ html.is-study-page .study[data-template="cbx300"] {
   touch-action: pan-y;
 }
 
+/* CBX study: chrome is absolute on `.study`, so window scroll carries it
+   off with the cover. Landing `.study__chrome { position: fixed }` would pin it. */
+html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome,
+html.is-study-page .study[data-template="cbx300"] .study__chrome {
+  position: absolute !important;
+  top: 3px;
+  left: 0;
+  right: 0;
+  z-index: 21;
+  background: transparent;
+}
+
 .study[data-template="cbx300"] {
   --film-cream: var(--cream, #f4efe6);
   --film-paper: var(--paper, #efeae1);
@@ -318,6 +330,12 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   color: var(--cream, #f4efe6);
 }
 
+html.is-study-page .study[data-template="cbx300"] .cbx-growth {
+  /* Chrome has left with the cover. Growth fills the window, no head gap. */
+  height: 100svh;
+  height: 100dvh;
+}
+
 .cbx-growth__frame {
   box-sizing: border-box;
   display: grid;
@@ -400,21 +418,24 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   position: relative;
   min-height: 0;
   height: 100%;
-  border-radius: 22px;
-  background: #2a211c;
-  box-shadow: inset 0 0 0 1px rgba(244, 239, 230, 0.06);
-  overflow: hidden;
+  /* No card/plate — cast sits directly on the coffee field. */
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .cbx-growth__cast {
-  position: absolute;
-  inset: 0;
+  position: relative;
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-end;
   justify-content: center;
   gap: clamp(4px, 1.2vw, 18px);
-  padding: clamp(8px, 1.6vh, 20px) clamp(10px, 2vw, 28px) 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -422,7 +443,7 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   position: relative;
   margin: 0;
   flex: 0 1 auto;
-  height: 86%;
+  height: 92%;
   max-width: 28%;
   display: flex;
   align-items: flex-end;
@@ -468,8 +489,8 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-growth {
 }
 
 html.is-multiverse .study[data-template="cbx300"] .cbx-growth__well {
-  background: #161822;
-  box-shadow: inset 0 0 0 1px rgba(61, 232, 245, 0.12);
+  background: transparent;
+  box-shadow: none;
 }
 
 html.is-cream-home .study[data-template="cbx300"] .cbx-growth,

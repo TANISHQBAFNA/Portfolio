@@ -119,8 +119,9 @@ window.Cbx300Case = (function () {
     return Math.round(chrome.getBoundingClientRect().bottom);
   }
 
-  function paneH(headerFn) {
-    return Math.max(280, Math.round(viewH() - headPx(headerFn)));
+  function paneH() {
+    /* Study chrome scrolls away with the cover, so the pin is full window. */
+    return Math.max(280, Math.round(viewH()));
   }
 
   function buildCover(project) {
@@ -361,9 +362,9 @@ window.Cbx300Case = (function () {
     }
   }
 
-  function sizePane(pin, headerFn) {
-    if (!pin) return paneH(headerFn);
-    var h = paneH(headerFn);
+  function sizePane(pin) {
+    if (!pin) return paneH();
+    var h = paneH();
     pin.style.height = h + 'px';
     return h;
   }
@@ -415,7 +416,7 @@ window.Cbx300Case = (function () {
     }
 
     pin.classList.remove('is-static');
-    sizePane(pin, headerFn);
+    sizePane(pin);
 
     beats.forEach(function (beat, i) {
       gsap.set(beat, { opacity: i === 0 ? 1 : 0 });
@@ -433,10 +434,10 @@ window.Cbx300Case = (function () {
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: pin,
-        start: function () { return 'top ' + headPx(headerFn) + 'px'; },
+        start: 'top top',
         end: function () {
-          sizePane(pin, headerFn);
-          return '+=' + Math.round(paneH(headerFn) * 2.35);
+          sizePane(pin);
+          return '+=' + Math.round(paneH() * 2.35);
         },
         pin: true,
         pinSpacing: true,
@@ -445,7 +446,7 @@ window.Cbx300Case = (function () {
         anticipatePin: 1,
         fastScrollEnd: true,
         refreshPriority: 1,
-        onRefresh: function () { sizePane(pin, headerFn); },
+        onRefresh: function () { sizePane(pin); },
         onToggle: function (self) {
           if (self.isActive && onStep) onStep(1);
         },

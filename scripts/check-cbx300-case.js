@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s35') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s37') !== -1, 'index.html missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s21') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s35') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s37') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -130,7 +130,21 @@ check('Section 02 growth field is coffee; cover stays cream', function () {
   assert.ok(coverCss.indexOf('background: var(--film-cream)') !== -1, 'cover world must stay cream');
   assert.ok(growthCss.indexOf('background: var(--coffee, #1E1510)') !== -1, 'growth pane must be coffee #1E1510');
   assert.ok(growthCss.indexOf('html.is-light-home .study[data-template="cbx300"] .cbx-growth') !== -1, 'cream home growth must stay coffee');
-  assert.ok(growthCss.indexOf('background: #2a211c') !== -1, 'cutout wells must be coffee, not cream plates');
+  var wellCss = css.slice(css.indexOf('.cbx-growth__well {'), css.indexOf('.cbx-growth__cast {'));
+  assert.ok(wellCss.indexOf('background: transparent') !== -1, 'cast well must not be a boxed plate');
+  assert.ok(wellCss.indexOf('border-radius: 0') !== -1, 'well must drop the rounded plate');
+  assert.ok(wellCss.indexOf('box-shadow: none') !== -1, 'well must drop the inset plate ring');
+  assert.ok(wellCss.indexOf('overflow: visible') !== -1, 'well must not clip the cast');
+  assert.ok(wellCss.indexOf('#2a211c') === -1, 'coffee plate fill must be gone');
+  var castCss = css.slice(css.indexOf('.cbx-growth__cast {'), css.indexOf('.cbx-growth__person {'));
+  assert.ok(castCss.indexOf('position: relative') !== -1, 'cast must sit in flow on the coffee field');
+  assert.ok(castCss.indexOf('position: absolute') === -1, 'cast must not be an inset plate');
+  assert.ok(css.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__well') !== -1, 'missing Multiverse well');
+  var mvWell = css.slice(
+    css.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__well'),
+    css.indexOf('html.is-cream-home .study[data-template="cbx300"] .cbx-growth')
+  );
+  assert.ok(mvWell.indexOf('background: transparent') !== -1, 'Multiverse well must not be a boxed plate');
   assert.ok(landingCss.indexOf('--projects-panel: var(--coffee)') !== -1, 'growth must match landing projects rail coffee');
 });
 
@@ -168,6 +182,13 @@ check('study page scroll unlocks; close control still present', function () {
   assert.ok(css.indexOf('html.is-study-page') !== -1, 'missing window-scroll page css');
   assert.ok(index.indexOf('data-study-close') !== -1, 'index missing close control');
   assert.ok(mvIndex.indexOf('data-study-close') !== -1, 'multiverse missing close control');
+  var chromeSel = 'html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome';
+  var chromeAt = css.indexOf(chromeSel);
+  assert.ok(chromeAt !== -1, 'missing CBX chrome scroll-away selector');
+  var chromeRule = css.slice(chromeAt, chromeAt + 280);
+  assert.ok(/position:\s*absolute\s*!important/.test(chromeRule), 'CBX study chrome must be absolute so it leaves with the cover');
+  assert.ok(!/position:\s*fixed/.test(chromeRule), 'CBX study chrome must not stay fixed');
+  assert.ok(pages.indexOf("start: 'top top'") !== -1, 'growth pin must start at the window top after chrome leaves');
 });
 
 check('no invented NPS/outcomes; Echo avoid-list stays off the page', function () {
