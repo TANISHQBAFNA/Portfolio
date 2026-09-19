@@ -19,17 +19,53 @@ window.Cbx300Case = (function () {
     {
       id: 'freelancer',
       label: 'Freelancer',
-      caption: 'Aisha works alone. Money in, money out.'
+      stamp: [
+        'Solo cash is easy to lose',
+        'One place to pay & get paid',
+        'Mobile pay / get paid'
+      ],
+      need: '“Did that invoice land?”',
+      fact: 'Pay and get paid on her phone.'
     },
     {
       id: 'sole',
       label: 'Sole proprietor',
-      caption: 'First hire. Two people, one business.'
+      stamp: [
+        'Two people touch money',
+        'Split prepare vs approve',
+        'Approvals door + beneficiary'
+      ],
+      need: '“Can I pay this supplier today?”',
+      fact: 'Available balance leads; hire prepares, she approves.'
     },
     {
       id: 'mid',
       label: 'Mid-size',
-      caption: 'The whole team. Same banking, more control.'
+      stamp: [
+        'Approvals pile across roles',
+        'Waiting-on-me + permissions',
+        'Queue + verb-based access'
+      ],
+      need: '“Who still owes me a yes?”',
+      fact: 'Waiting-on-me list; permissions by what people can do.'
+    }
+  ];
+
+  var GHOSTS = [
+    {
+      id: 'freelancer',
+      devices: [{ kind: 'phone', lines: ['Pay & get paid'] }]
+    },
+    {
+      id: 'sole',
+      devices: [
+        { kind: 'phone', lines: ['Available balance'] },
+        { kind: 'desktop', lines: ['Beneficiary'] }
+      ]
+    },
+    {
+      id: 'mid',
+      devices: [{ kind: 'desktop', lines: ['Waiting-on-me', 'Permissions'] }]
     }
   ];
 
@@ -180,14 +216,52 @@ window.Cbx300Case = (function () {
     return figure;
   }
 
+  function stampList(parts) {
+    var list = el('ul', 'cbx-growth__stamp');
+    list.setAttribute('aria-label', 'Finding, choice, UI proof');
+    (parts || []).forEach(function (text) {
+      list.appendChild(el('li', 'cbx-growth__chip', text));
+    });
+    return list;
+  }
+
   function beatCopy(beat, index, glitch) {
     var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
     beatEl.setAttribute('data-cbx-beat', beat.id);
     beatEl.setAttribute('data-beat-index', String(index));
+    beatEl.appendChild(stampList(beat.stamp));
     beatEl.appendChild(el('p', 'cbx-growth__index', pad(index + 1)));
     beatEl.appendChild(shout('h2', 'cbx-growth__stage', beat.label, glitch));
-    beatEl.appendChild(el('p', 'cbx-growth__caption', beat.caption));
+    beatEl.appendChild(el('p', 'cbx-growth__need', beat.need));
+    beatEl.appendChild(el('p', 'cbx-growth__fact', beat.fact));
     return beatEl;
+  }
+
+  function ghostDevice(kind, lines) {
+    var device = el('div', 'cbx-ghost cbx-ghost--' + kind);
+    var screen = el('div', 'cbx-ghost__screen');
+    (lines || []).forEach(function (line) {
+      screen.appendChild(el('p', 'cbx-ghost__line', line));
+    });
+    device.appendChild(screen);
+    return device;
+  }
+
+  function buildGhosts() {
+    var wrap = el('div', 'cbx-growth__ghosts');
+    wrap.setAttribute('data-cbx-ghosts', '');
+    wrap.setAttribute('aria-hidden', 'true');
+    GHOSTS.forEach(function (spec, i) {
+      var ghost = el('div', 'cbx-growth__ghost' + (i === 0 ? ' is-on' : ''));
+      ghost.setAttribute('data-cbx-ghost', spec.id);
+      var row = el('div', 'cbx-ghost-row');
+      spec.devices.forEach(function (device) {
+        row.appendChild(ghostDevice(device.kind, device.lines));
+      });
+      ghost.appendChild(row);
+      wrap.appendChild(ghost);
+    });
+    return wrap;
   }
 
   function buildGrowth() {
@@ -211,6 +285,7 @@ window.Cbx300Case = (function () {
     stage.appendChild(copy);
 
     var well = el('div', 'cbx-growth__well');
+    well.appendChild(buildGhosts());
     var cast = el('div', 'cbx-growth__cast');
     cast.setAttribute('data-cbx-cast', '');
     PEOPLE.forEach(function (person) {
@@ -320,13 +395,17 @@ window.Cbx300Case = (function () {
       motion.pin.style.height = '';
       if (gsap) {
         Array.prototype.forEach.call(
-          motion.pin.querySelectorAll('[data-cbx-person], [data-cbx-beat]'),
+          motion.pin.querySelectorAll('[data-cbx-person], [data-cbx-beat], [data-cbx-ghost]'),
           function (node) { gsap.set(node, { clearProps: 'opacity,transform,y,filter' }); }
         );
       }
       Array.prototype.forEach.call(
         motion.pin.querySelectorAll('[data-cbx-beat]'),
         function (beat, i) { beat.classList.toggle('is-on', i === 0); }
+      );
+      Array.prototype.forEach.call(
+        motion.pin.querySelectorAll('[data-cbx-ghost]'),
+        function (ghost, i) { ghost.classList.toggle('is-on', i === 0); }
       );
     }
     motion.pin = null;
@@ -388,6 +467,7 @@ window.Cbx300Case = (function () {
     var gsap = window.gsap;
     var beats = pin.querySelectorAll('[data-cbx-beat]');
     var people = pin.querySelectorAll('[data-cbx-person]');
+    var ghosts = pin.querySelectorAll('[data-cbx-ghost]');
     Array.prototype.forEach.call(beats, function (beat, i) {
       var last = i === beats.length - 1;
       beat.classList.toggle('is-on', last);
@@ -395,6 +475,11 @@ window.Cbx300Case = (function () {
     });
     Array.prototype.forEach.call(people, function (person) {
       if (gsap) gsap.set(person, { opacity: 1, y: 0 });
+    });
+    Array.prototype.forEach.call(ghosts, function (ghost, i) {
+      var last = i === ghosts.length - 1;
+      ghost.classList.toggle('is-on', last);
+      if (gsap) gsap.set(ghost, { opacity: last ? 1 : 0 });
     });
   }
 
@@ -406,6 +491,7 @@ window.Cbx300Case = (function () {
     var cover = world.querySelector('[data-cbx-section="01"]');
     var beats = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-beat]')) : [];
     var people = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-person]')) : [];
+    var ghosts = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-ghost]')) : [];
     var onStep = opts.onStep;
     var headerFn = opts.headerOffset;
 
@@ -429,6 +515,10 @@ window.Cbx300Case = (function () {
         y: from === 0 ? 0 : 28
       });
     });
+    ghosts.forEach(function (ghost, i) {
+      gsap.set(ghost, { opacity: i === 0 ? 1 : 0 });
+      ghost.classList.toggle('is-on', i === 0);
+    });
 
     var tl = gsap.timeline({
       defaults: { ease: 'none' },
@@ -451,7 +541,9 @@ window.Cbx300Case = (function () {
           if (self.isActive && onStep) onStep(1);
         },
         onUpdate: function (self) {
-          markBeat(beats, beatIndexFromProgress(self.progress));
+          var index = beatIndexFromProgress(self.progress);
+          markBeat(beats, index);
+          markBeat(ghosts, index);
         }
       }
     });
@@ -459,6 +551,10 @@ window.Cbx300Case = (function () {
     if (beats[0] && beats[1]) {
       tl.to(beats[0], { opacity: 0, duration: 0.22 }, 0.28);
       tl.to(beats[1], { opacity: 1, duration: 0.22 }, 0.28);
+    }
+    if (ghosts[0] && ghosts[1]) {
+      tl.to(ghosts[0], { opacity: 0, duration: 0.22 }, 0.28);
+      tl.to(ghosts[1], { opacity: 1, duration: 0.22 }, 0.28);
     }
     people.forEach(function (person) {
       var from = parseInt(person.getAttribute('data-from'), 10) || 0;
@@ -470,6 +566,10 @@ window.Cbx300Case = (function () {
     if (beats[1] && beats[2]) {
       tl.to(beats[1], { opacity: 0, duration: 0.22 }, 0.62);
       tl.to(beats[2], { opacity: 1, duration: 0.22 }, 0.62);
+    }
+    if (ghosts[1] && ghosts[2]) {
+      tl.to(ghosts[1], { opacity: 0, duration: 0.22 }, 0.62);
+      tl.to(ghosts[2], { opacity: 1, duration: 0.22 }, 0.62);
     }
     people.forEach(function (person) {
       var from = parseInt(person.getAttribute('data-from'), 10) || 0;
@@ -586,6 +686,7 @@ window.Cbx300Case = (function () {
     armGlitch: armGlitch,
     META: META,
     BEATS: BEATS,
+    GHOSTS: GHOSTS,
     PEOPLE: PEOPLE,
     STUBS: STUBS
   };
