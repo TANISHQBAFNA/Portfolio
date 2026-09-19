@@ -514,8 +514,9 @@ html.is-study-page .study[data-template="cbx300"] .cbx-growth {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: clamp(12px, 3.2vh, 36px) clamp(10px, 2.4vw, 36px) 0 0;
   opacity: 0;
 }
 
