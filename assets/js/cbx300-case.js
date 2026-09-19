@@ -1,7 +1,7 @@
 /**
- * CBX300 case study — Section 01 cover + Section 02 Aisha growth track.
+ * CBX300 case study — Section 01 cover + Section 02 Aisha growth morph.
  * Cover: kicker → accent → word. Image overlaps type from the right.
- * Growth: vertical scroll into a pinned horizontal scrub. Aisha only.
+ * Growth: one pinned coffee frame. People join; copy crossfades. No sideways slide.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
@@ -15,29 +15,51 @@ window.Cbx300Case = (function () {
     word: 'the Business'
   };
 
-  var GROWTH = [
+  var BEATS = [
     {
       id: 'freelancer',
       label: 'Freelancer',
-      caption: 'Aisha works alone. Money in, money out.',
-      src: 'assets/img/aisha-growth/01-freelancer.png',
-      alt: 'Clay cutout of Aisha as a freelancer.'
+      caption: 'Aisha works alone. Money in, money out.'
     },
     {
       id: 'sole',
       label: 'Sole proprietor',
-      caption: 'First hire. Two people, one business.',
-      src: 'assets/img/aisha-growth/02-sole-prop.png',
-      alt: 'Clay cutout of Aisha and her first teammate as a sole proprietor.'
+      caption: 'First hire. Two people, one business.'
     },
     {
       id: 'mid',
       label: 'Mid-size',
-      caption: 'The whole team. Same banking, more control.',
-      src: 'assets/img/aisha-growth/03-midsize.png',
-      alt: 'Clay cutout of Aisha with her full mid-size team.'
+      caption: 'The whole team. Same banking, more control.'
     }
   ];
+
+  var PEOPLE = [
+    {
+      id: 'aisha',
+      src: 'assets/img/aisha-growth/people/aisha.png',
+      alt: 'Clay cutout of Aisha.',
+      from: 0
+    },
+    {
+      id: 'mate-1',
+      src: 'assets/img/aisha-growth/people/teammate-01.png',
+      alt: 'Clay cutout of Aisha first teammate.',
+      from: 1
+    },
+    {
+      id: 'mate-2',
+      src: 'assets/img/aisha-growth/people/teammate-02.png',
+      alt: 'Clay cutout of a teammate with a laptop.',
+      from: 2
+    },
+    {
+      id: 'mate-3',
+      src: 'assets/img/aisha-growth/people/teammate-03.png',
+      alt: 'Clay cutout of a teammate with coffee.',
+      from: 2
+    }
+  ];
+
 
   var STUBS = [
     { id: 'roles', num: '03', title: 'I designed for roles, not one user.' },
@@ -140,50 +162,31 @@ window.Cbx300Case = (function () {
     return section;
   }
 
-  function cutout(src, alt, className) {
-    var figure = el('figure', className || 'cbx-growth__cutout');
-    if (!src) {
-      figure.classList.add('is-empty');
-      figure.appendChild(el('span', 'cbx-growth__ph', 'Image'));
-      return figure;
-    }
+  function personFig(person) {
+    var figure = el('figure', 'cbx-growth__person');
+    figure.setAttribute('data-cbx-person', person.id);
+    figure.setAttribute('data-from', String(person.from));
     var img = document.createElement('img');
-    img.className = 'cbx-growth__img';
-    img.alt = alt || '';
-    img.src = src;
+    img.className = 'cbx-growth__person-img';
+    img.alt = person.alt || '';
+    img.src = person.src;
+    img.decoding = 'async';
     img.addEventListener('error', function () {
       figure.classList.add('is-empty');
       img.remove();
-      if (!figure.querySelector('.cbx-growth__ph')) {
-        figure.appendChild(el('span', 'cbx-growth__ph', 'Image'));
-      }
     });
     figure.appendChild(img);
     return figure;
   }
 
-  function buildPanel(stage, index, glitch) {
-    var article = el('article', 'cbx-growth__panel' + (stage.land ? ' cbx-growth__panel--land' : ''));
-    article.setAttribute('data-cbx-panel', stage.id);
-
-    var copy = el('div', 'cbx-growth__copy');
-    copy.appendChild(el('p', 'cbx-growth__index', pad(index + 1)));
-    copy.appendChild(shout('h2', 'cbx-growth__stage', stage.label, glitch));
-    copy.appendChild(el('p', 'cbx-growth__caption', stage.caption));
-    article.appendChild(copy);
-
-    if (stage.land) {
-      var trail = el('p', 'cbx-growth__trail');
-      ['Freelancer', 'Sole prop', '~10 people', 'Mid-size'].forEach(function (name, i) {
-        if (i) trail.appendChild(el('span', 'cbx-growth__trail-sep', '→'));
-        trail.appendChild(el('span', 'cbx-growth__trail-item', name));
-      });
-      copy.appendChild(trail);
-      article.appendChild(cutout('', '', 'cbx-growth__cutout is-empty'));
-    } else {
-      article.appendChild(cutout(stage.src, stage.alt));
-    }
-    return article;
+  function beatCopy(beat, index, glitch) {
+    var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
+    beatEl.setAttribute('data-cbx-beat', beat.id);
+    beatEl.setAttribute('data-beat-index', String(index));
+    beatEl.appendChild(el('p', 'cbx-growth__index', pad(index + 1)));
+    beatEl.appendChild(shout('h2', 'cbx-growth__stage', beat.label, glitch));
+    beatEl.appendChild(el('p', 'cbx-growth__caption', beat.caption));
+    return beatEl;
   }
 
   function buildGrowth() {
@@ -194,12 +197,28 @@ window.Cbx300Case = (function () {
     section.setAttribute('data-cbx-growth', '');
     section.setAttribute('aria-label', 'Aisha grows. The app follows.');
 
-    var track = el('div', 'cbx-growth__track');
-    track.setAttribute('data-cbx-growth-track', '');
-    GROWTH.forEach(function (stage, i) {
-      track.appendChild(buildPanel(stage, i, glitch));
+    var stage = el('div', 'cbx-growth__frame');
+    stage.setAttribute('data-cbx-growth-frame', '');
+
+    var copy = el('div', 'cbx-growth__copy');
+    var beats = el('div', 'cbx-growth__beats');
+    beats.setAttribute('data-cbx-beats', '');
+    BEATS.forEach(function (beat, i) {
+      beats.appendChild(beatCopy(beat, i, glitch));
     });
-    section.appendChild(track);
+    copy.appendChild(beats);
+    stage.appendChild(copy);
+
+    var well = el('div', 'cbx-growth__well');
+    var cast = el('div', 'cbx-growth__cast');
+    cast.setAttribute('data-cbx-cast', '');
+    PEOPLE.forEach(function (person) {
+      cast.appendChild(personFig(person));
+    });
+    well.appendChild(cast);
+    stage.appendChild(well);
+
+    section.appendChild(stage);
     return section;
   }
 
@@ -298,11 +317,15 @@ window.Cbx300Case = (function () {
     if (motion.pin) {
       motion.pin.classList.remove('is-static');
       motion.pin.style.height = '';
-      var track = motion.pin.querySelector('[data-cbx-growth-track]');
-      if (track && gsap) gsap.set(track, { clearProps: 'transform,x' });
+      if (gsap) {
+        Array.prototype.forEach.call(
+          motion.pin.querySelectorAll('[data-cbx-person], [data-cbx-beat]'),
+          function (node) { gsap.set(node, { clearProps: 'opacity,transform,y,filter' }); }
+        );
+      }
       Array.prototype.forEach.call(
-        motion.pin.querySelectorAll('[data-cbx-panel]'),
-        function (panel) { panel.classList.remove('is-on'); }
+        motion.pin.querySelectorAll('[data-cbx-beat]'),
+        function (beat, i) { beat.classList.toggle('is-on', i === 0); }
       );
     }
     motion.pin = null;
@@ -312,30 +335,6 @@ window.Cbx300Case = (function () {
     }
   }
 
-  function sizePane(pin, headerFn) {
-    if (!pin) return paneH(headerFn);
-    var h = paneH(headerFn);
-    pin.style.height = h + 'px';
-    return h;
-  }
-
-  function markPanel(panels, index) {
-    panels.forEach(function (panel, i) {
-      panel.classList.toggle('is-on', i === index);
-    });
-  }
-
-  function setupStatic(pin) {
-    if (!pin) return;
-    pin.classList.add('is-static');
-    pin.style.height = '';
-    var track = pin.querySelector('[data-cbx-growth-track]');
-    if (track && window.gsap) window.gsap.set(track, { x: 0, clearProps: 'transform' });
-    var panels = pin.querySelectorAll('[data-cbx-panel]');
-    Array.prototype.forEach.call(panels, function (panel) {
-      panel.classList.add('is-on');
-    });
-  }
 
   function watchSteps(cover, pin, onStep) {
     var ScrollTrigger = window.ScrollTrigger;
@@ -362,46 +361,86 @@ window.Cbx300Case = (function () {
     }
   }
 
-  function travelX(pin, track) {
-    if (!pin || !track) return 0;
-    return Math.max(0, track.scrollWidth - pin.clientWidth);
+  function sizePane(pin, headerFn) {
+    if (!pin) return paneH(headerFn);
+    var h = paneH(headerFn);
+    pin.style.height = h + 'px';
+    return h;
+  }
+
+  function beatIndexFromProgress(progress) {
+    var n = BEATS.length;
+    if (n <= 1) return 0;
+    return Math.min(n - 1, Math.max(0, Math.round(progress * (n - 1))));
+  }
+
+  function markBeat(beats, index) {
+    beats.forEach(function (beat, i) {
+      beat.classList.toggle('is-on', i === index);
+    });
+  }
+
+  function setupStatic(pin) {
+    if (!pin) return;
+    pin.classList.add('is-static');
+    pin.style.height = '';
+    var gsap = window.gsap;
+    var beats = pin.querySelectorAll('[data-cbx-beat]');
+    var people = pin.querySelectorAll('[data-cbx-person]');
+    Array.prototype.forEach.call(beats, function (beat, i) {
+      var last = i === beats.length - 1;
+      beat.classList.toggle('is-on', last);
+      if (gsap) gsap.set(beat, { opacity: last ? 1 : 0 });
+    });
+    Array.prototype.forEach.call(people, function (person) {
+      if (gsap) gsap.set(person, { opacity: 1, y: 0 });
+    });
   }
 
   function bindCinematic(world, opts) {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     var pin = world.querySelector('[data-cbx-growth]');
-    var track = pin && pin.querySelector('[data-cbx-growth-track]');
+    var stage = pin && pin.querySelector('[data-cbx-growth-frame]');
     var cover = world.querySelector('[data-cbx-section="01"]');
-    var panels = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-panel]')) : [];
+    var beats = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-beat]')) : [];
+    var people = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-person]')) : [];
     var onStep = opts.onStep;
     var headerFn = opts.headerOffset;
 
     motion.pin = pin;
-    if (!pin || !track) {
+    if (!pin || !stage) {
       watchSteps(cover, pin, onStep);
       return;
     }
 
     pin.classList.remove('is-static');
     sizePane(pin, headerFn);
-    gsap.set(track, { x: 0 });
-    markPanel(panels, 0);
 
-    var tween = gsap.timeline({
+    beats.forEach(function (beat, i) {
+      gsap.set(beat, { opacity: i === 0 ? 1 : 0 });
+      beat.classList.toggle('is-on', i === 0);
+    });
+    people.forEach(function (person) {
+      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
+      gsap.set(person, {
+        opacity: from === 0 ? 1 : 0,
+        y: from === 0 ? 0 : 28
+      });
+    });
+
+    var tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: pin,
         start: function () { return 'top ' + headPx(headerFn) + 'px'; },
         end: function () {
           sizePane(pin, headerFn);
-          var run = travelX(pin, track);
-          var hold = Math.round(paneH(headerFn) * 0.22);
-          return '+=' + Math.round(run + hold);
+          return '+=' + Math.round(paneH(headerFn) * 2.35);
         },
         pin: true,
         pinSpacing: true,
-        scrub: 0.6,
+        scrub: 0.65,
         invalidateOnRefresh: true,
         anticipatePin: 1,
         fastScrollEnd: true,
@@ -411,20 +450,36 @@ window.Cbx300Case = (function () {
           if (self.isActive && onStep) onStep(1);
         },
         onUpdate: function (self) {
-          if (!panels.length) return;
-          var n = panels.length;
-          var i = Math.min(n - 1, Math.max(0, Math.round(self.progress * (n - 1))));
-          markPanel(panels, i);
+          markBeat(beats, beatIndexFromProgress(self.progress));
         }
       }
     });
-    tween.to(track, {
-      x: function () { return -travelX(pin, track); },
-      duration: 1
+
+    if (beats[0] && beats[1]) {
+      tl.to(beats[0], { opacity: 0, duration: 0.22 }, 0.28);
+      tl.to(beats[1], { opacity: 1, duration: 0.22 }, 0.28);
+    }
+    people.forEach(function (person) {
+      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
+      if (from === 1) {
+        tl.to(person, { opacity: 1, y: 0, duration: 0.28 }, 0.26);
+      }
     });
-    tween.to({}, { duration: 0.18 });
-    motion.tween = tween;
-    if (tween.scrollTrigger) motion.triggers.push(tween.scrollTrigger);
+
+    if (beats[1] && beats[2]) {
+      tl.to(beats[1], { opacity: 0, duration: 0.22 }, 0.62);
+      tl.to(beats[2], { opacity: 1, duration: 0.22 }, 0.62);
+    }
+    people.forEach(function (person) {
+      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
+      if (from === 2) {
+        tl.to(person, { opacity: 1, y: 0, duration: 0.3 }, 0.6);
+      }
+    });
+
+    tl.to({}, { duration: 0.12 });
+    motion.tween = tl;
+    if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
 
     if (cover) {
       motion.triggers.push(ScrollTrigger.create({
@@ -529,7 +584,8 @@ window.Cbx300Case = (function () {
     kill: kill,
     armGlitch: armGlitch,
     META: META,
-    GROWTH: GROWTH,
+    BEATS: BEATS,
+    PEOPLE: PEOPLE,
     STUBS: STUBS
   };
 })();

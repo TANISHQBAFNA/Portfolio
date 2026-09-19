@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s34') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s35') !== -1, 'index.html missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s21') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s34') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s35') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -90,18 +90,18 @@ check('cover type is still a large home-parity shout', function () {
 
 check('Section 02 is Aisha growth, not the old 8-beat film', function () {
   assert.ok(pages.indexOf("data-cbx-growth") !== -1, 'missing growth track');
-  assert.ok(pages.indexOf("id: 'freelancer'") !== -1, 'missing freelancer panel');
-  assert.ok(pages.indexOf("id: 'sole'") !== -1, 'missing sole panel');
-  assert.ok(pages.indexOf("id: 'mid'") !== -1, 'missing mid-size panel');
+  assert.ok(pages.indexOf("var BEATS") !== -1, 'missing BEATS morph model');
+  assert.ok(pages.indexOf("var PEOPLE") !== -1, 'missing PEOPLE cast layers');
+  assert.ok(pages.indexOf("id: 'freelancer'") !== -1, 'missing freelancer beat');
+  assert.ok(pages.indexOf("id: 'sole'") !== -1, 'missing sole beat');
+  assert.ok(pages.indexOf("id: 'mid'") !== -1, 'missing mid-size beat');
   assert.ok(pages.indexOf("id: 'ten'") === -1, '~10 people stage must be removed');
-  assert.ok(pages.indexOf("label: 'Freelancer'") !== -1, 'missing Freelancer label');
-  assert.ok(pages.indexOf("label: 'Sole proprietor'") !== -1, 'missing Sole proprietor label');
-  assert.ok(pages.indexOf("label: 'Mid-size'") !== -1, 'missing Mid-size label');
-  assert.ok(pages.indexOf('01-freelancer.png') !== -1, 'missing freelancer still');
-  assert.ok(pages.indexOf('02-sole-prop.png') !== -1, 'missing sole still');
-  assert.ok(pages.indexOf('03-midsize.png') !== -1, 'missing mid-size still');
-  assert.ok(pages.indexOf('03-small-company.png') === -1, 'old small-company still must go');
-  assert.ok(pages.indexOf('04-midsize.png') === -1, 'old 04-midsize still must go');
+  assert.ok(pages.indexOf('data-cbx-growth-track') === -1, 'horizontal track must be gone');
+  assert.ok(pages.indexOf('travelX') === -1, 'horizontal travel helper must be gone');
+  assert.ok(pages.indexOf("x: function") === -1, 'no sideways scrub');
+  assert.ok(pages.indexOf('people/aisha.png') !== -1, 'missing Aisha person layer');
+  assert.ok(pages.indexOf('people/teammate-01.png') !== -1, 'missing first teammate layer');
+  assert.ok(pages.indexOf('cbx-growth__cast') !== -1, 'missing cast well markup');
   assert.ok(pages.indexOf('data-film-beat') === -1, 'film beats leaked');
   assert.ok(pages.indexOf('film-decision') === -1, 'Decision chips leaked');
   assert.ok(pages.indexOf('maker-checker') === -1, 'maker-checker leaked');
@@ -160,8 +160,8 @@ check('cream and Multiverse share one cover + growth layout', function () {
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'cream index missing world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'multiverse missing world');
   assert.ok(css.indexOf('html.is-multiverse .cbx-cover .hero__word') !== -1, 'multiverse must reuse cover type');
-  assert.ok(css.indexOf('.cbx-growth__track') !== -1, 'missing growth track css');
-  assert.ok(css.indexOf('.cbx-growth.is-static') !== -1, 'reduced-motion must stack');
+  assert.ok(css.indexOf('.cbx-growth__frame') !== -1, 'missing growth frame css');
+  assert.ok(css.indexOf('.cbx-growth.is-static') !== -1, 'reduced-motion must show full cast');
 });
 
 check('study page scroll unlocks; close control still present', function () {
