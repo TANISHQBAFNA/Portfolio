@@ -41,7 +41,7 @@ html.is-study-page .study[data-template="cbx300"] .study__chrome {
 }
 html.is-study-page .study[data-template="cbx300"] .study__chrome.is-away {
   pointer-events: none !important;
-  visibility: hidden;
+  visibility: hidden !important;
 }
 
 .study[data-template="cbx300"] {

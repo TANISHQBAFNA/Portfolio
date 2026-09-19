@@ -170,16 +170,24 @@ window.Cbx300Case = (function () {
     return document.querySelector('.study[data-template="cbx300"] .study__chrome');
   }
 
+  function growthPinActive() {
+    return !!(motion.tween && motion.tween.scrollTrigger && motion.tween.scrollTrigger.isActive);
+  }
+
   function showChromeLive(chrome) {
+    var gsap = window.gsap;
     if (!chrome) return;
     chrome.classList.remove('is-away');
     chrome.removeAttribute('aria-hidden');
+    if (gsap) gsap.set(chrome, { visibility: 'visible', pointerEvents: 'auto' });
   }
 
   function hideChromeAway(chrome) {
+    var gsap = window.gsap;
     if (!chrome) return;
     chrome.classList.add('is-away');
     chrome.setAttribute('aria-hidden', 'true');
+    if (gsap) gsap.set(chrome, { visibility: 'hidden', pointerEvents: 'none' });
   }
 
   function restChrome() {
@@ -216,6 +224,7 @@ window.Cbx300Case = (function () {
           gsap.set(chrome, { opacity: 0, y: -16 });
         },
         onEnterBack: function () {
+          if (growthPinActive()) return;
           showChromeLive(chrome);
           gsap.set(chrome, { opacity: 1, y: 0 });
         }
@@ -235,9 +244,11 @@ window.Cbx300Case = (function () {
         scrub: 1.3,
         invalidateOnRefresh: true,
         onLeave: function () { hideChromeAway(chrome); },
-        onEnterBack: function () { showChromeLive(chrome); },
+        onEnterBack: function () {
+          if (!growthPinActive()) showChromeLive(chrome);
+        },
         onUpdate: function (self) {
-          if (self.progress >= 0.98) hideChromeAway(chrome);
+          if (self.progress >= 0.98 || growthPinActive()) hideChromeAway(chrome);
           else showChromeLive(chrome);
         }
       }
