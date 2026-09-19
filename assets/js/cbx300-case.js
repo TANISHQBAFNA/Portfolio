@@ -114,6 +114,7 @@ window.Cbx300Case = (function () {
   var motion = {
     triggers: [],
     tween: null,
+    chromeTween: null,
     refreshTimers: [],
     normalized: false,
     pin: null
@@ -161,8 +162,86 @@ window.Cbx300Case = (function () {
   }
 
   function paneH() {
-    /* Study chrome scrolls away with the cover, so the pin is full window. */
+    /* Study chrome fades off the cover, so the pin is full window. */
     return Math.max(280, Math.round(viewH()));
+  }
+
+  function studyChrome() {
+    return document.querySelector('.study[data-template="cbx300"] .study__chrome');
+  }
+
+  function showChromeLive(chrome) {
+    if (!chrome) return;
+    chrome.classList.remove('is-away');
+    chrome.removeAttribute('aria-hidden');
+  }
+
+  function hideChromeAway(chrome) {
+    if (!chrome) return;
+    chrome.classList.add('is-away');
+    chrome.setAttribute('aria-hidden', 'true');
+  }
+
+  function restChrome() {
+    var chrome = studyChrome();
+    var gsap = window.gsap;
+    if (!chrome) return;
+    showChromeLive(chrome);
+    if (gsap) {
+      gsap.set(chrome, { clearProps: 'opacity,visibility,pointerEvents,transform,y' });
+    } else {
+      chrome.style.opacity = '';
+      chrome.style.visibility = '';
+      chrome.style.pointerEvents = '';
+      chrome.style.transform = '';
+    }
+  }
+
+  function linkChromeToCover(cover) {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    var chrome = studyChrome();
+    if (!chrome || !cover || !gsap || !ScrollTrigger) return;
+
+    showChromeLive(chrome);
+    gsap.set(chrome, { opacity: 1, y: 0, visibility: 'visible' });
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      motion.triggers.push(ScrollTrigger.create({
+        trigger: cover,
+        start: 'top top',
+        end: 'bottom top',
+        onLeave: function () {
+          hideChromeAway(chrome);
+          gsap.set(chrome, { opacity: 0, y: -16 });
+        },
+        onEnterBack: function () {
+          showChromeLive(chrome);
+          gsap.set(chrome, { opacity: 1, y: 0 });
+        }
+      }));
+      return;
+    }
+
+    motion.chromeTween = gsap.to(chrome, {
+      opacity: 0,
+      y: -16,
+      ease: 'none',
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: cover,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1.3,
+        invalidateOnRefresh: true,
+        onLeave: function () { hideChromeAway(chrome); },
+        onEnterBack: function () { showChromeLive(chrome); },
+        onUpdate: function (self) {
+          if (self.progress >= 0.98) hideChromeAway(chrome);
+          else showChromeLive(chrome);
+        }
+      }
+    });
   }
 
   function buildCover(project) {
@@ -387,6 +466,11 @@ window.Cbx300Case = (function () {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     clearTimers();
+    if (motion.chromeTween && motion.chromeTween.scrollTrigger && motion.chromeTween.scrollTrigger.kill) {
+      motion.chromeTween.scrollTrigger.kill();
+    }
+    if (motion.chromeTween && motion.chromeTween.kill) motion.chromeTween.kill();
+    motion.chromeTween = null;
     if (motion.tween && motion.tween.scrollTrigger && motion.tween.scrollTrigger.kill) {
       motion.tween.scrollTrigger.kill();
     }
@@ -396,6 +480,7 @@ window.Cbx300Case = (function () {
       if (t && t.kill) t.kill();
     });
     motion.triggers = [];
+    restChrome();
     if (motion.pin) {
       motion.pin.classList.remove('is-static');
       motion.pin.style.height = '';
@@ -504,6 +589,7 @@ window.Cbx300Case = (function () {
     motion.pin = pin;
     if (!pin || !stage) {
       watchSteps(cover, pin, onStep);
+      linkChromeToCover(cover);
       return;
     }
 
@@ -544,7 +630,10 @@ window.Cbx300Case = (function () {
         refreshPriority: 1,
         onRefresh: function () { sizePane(pin); },
         onToggle: function (self) {
-          if (self.isActive && onStep) onStep(1);
+          if (self.isActive) {
+            hideChromeAway(studyChrome());
+            if (onStep) onStep(1);
+          }
         },
         onUpdate: function (self) {
           var index = beatIndexFromProgress(self.progress);
@@ -598,6 +687,7 @@ window.Cbx300Case = (function () {
         }
       }));
     }
+    linkChromeToCover(cover);
   }
 
   function refreshSoon() {
@@ -644,7 +734,10 @@ window.Cbx300Case = (function () {
 
     if (!gsap || !ScrollTrigger || reduce.matches) {
       setupStatic(pin);
-      if (ScrollTrigger) watchSteps(cover, pin, opts.onStep);
+      if (ScrollTrigger) {
+        watchSteps(cover, pin, opts.onStep);
+        if (gsap) linkChromeToCover(cover);
+      }
       return;
     }
 
@@ -690,6 +783,7 @@ window.Cbx300Case = (function () {
     bind: bind,
     kill: kill,
     armGlitch: armGlitch,
+    linkChromeToCover: linkChromeToCover,
     META: META,
     BEATS: BEATS,
     SPINE: SPINE,

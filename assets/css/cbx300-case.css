@@ -27,16 +27,21 @@ html.is-study-page .study[data-template="cbx300"] {
   touch-action: pan-y;
 }
 
-/* CBX study: chrome is absolute on `.study`, so window scroll carries it
-   off with the cover. Landing `.study__chrome { position: fixed }` would pin it. */
+/* CBX study: chrome stays overlayed on the cover, then soft-scrubs out
+   as Section 01 leaves. Landing `.study__chrome { position: fixed }` is
+   the overlay. JS fades opacity + y. `.is-away` keeps it gone on growth. */
 html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome,
 html.is-study-page .study[data-template="cbx300"] .study__chrome {
-  position: absolute !important;
+  position: fixed !important;
   top: 3px;
   left: 0;
   right: 0;
   z-index: 21;
   background: transparent;
+}
+html.is-study-page .study[data-template="cbx300"] .study__chrome.is-away {
+  pointer-events: none !important;
+  visibility: hidden;
 }
 
 .study[data-template="cbx300"] {

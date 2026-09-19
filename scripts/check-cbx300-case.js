@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s39') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s40') !== -1, 'index.html missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s21') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s39') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s40') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -178,16 +178,21 @@ check('cream and Multiverse share one cover + growth layout', function () {
   assert.ok(css.indexOf('.cbx-growth.is-static') !== -1, 'reduced-motion must show full cast');
 });
 
-check('study page scroll unlocks; close control still present', function () {
+check('study page scroll unlocks; chrome fades off the cover', function () {
   assert.ok(css.indexOf('html.is-study-page') !== -1, 'missing window-scroll page css');
   assert.ok(index.indexOf('data-study-close') !== -1, 'index missing close control');
   assert.ok(mvIndex.indexOf('data-study-close') !== -1, 'multiverse missing close control');
   var chromeSel = 'html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome';
   var chromeAt = css.indexOf(chromeSel);
-  assert.ok(chromeAt !== -1, 'missing CBX chrome scroll-away selector');
-  var chromeRule = css.slice(chromeAt, chromeAt + 280);
-  assert.ok(/position:\s*absolute\s*!important/.test(chromeRule), 'CBX study chrome must be absolute so it leaves with the cover');
-  assert.ok(!/position:\s*fixed/.test(chromeRule), 'CBX study chrome must not stay fixed');
+  assert.ok(chromeAt !== -1, 'missing CBX chrome selector');
+  var chromeRule = css.slice(chromeAt, chromeAt + 420);
+  assert.ok(/position:\s*fixed\s*!important/.test(chromeRule), 'chrome overlays the cover so it can fade out, not ride the document');
+  assert.ok(css.indexOf('.study__chrome.is-away') !== -1, 'missing chrome away lock');
+  assert.ok(pages.indexOf('function linkChromeToCover') !== -1, 'missing cover chrome scrub');
+  assert.ok(pages.indexOf("end: 'bottom top'") !== -1, 'chrome scrub must end as cover leaves');
+  assert.ok(pages.indexOf('scrub: 1.3') !== -1, 'chrome scrub must be a soft 1.2–1.4');
+  assert.ok(pages.indexOf("clearProps: 'opacity,visibility,pointerEvents,transform,y'") !== -1, 'close must restore chrome');
+  assert.ok(pages.indexOf("setAttribute('aria-hidden', 'true')") !== -1, 'gone chrome must be aria-hidden');
   assert.ok(pages.indexOf("start: 'top top'") !== -1, 'growth pin must start at the window top after chrome leaves');
 });
 
