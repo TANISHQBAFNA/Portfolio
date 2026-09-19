@@ -359,6 +359,7 @@ html.is-study-page .study[data-template="cbx300"] .cbx-growth {
 
 .cbx-growth__spine {
   display: inline-block;
+  align-self: flex-start;
   margin: 0 0 0.7rem;
   padding: 0.16rem 0.52rem;
   border-radius: 999px;
