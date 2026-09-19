@@ -47,9 +47,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s38') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s39') !== -1, 'index.html missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s21') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s38') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s39') !== -1, 'index.html missing study cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -195,36 +195,40 @@ check('no invented NPS/outcomes; Echo avoid-list stays off the page', function (
   assert.ok(!/\bNPS\b/.test(pages), 'invented NPS');
   assert.ok(!/maker-checker/i.test(pages), 'maker-checker on page');
   assert.ok(!/\bseamless\b/i.test(pages), 'seamless on page');
+  assert.ok(!/\bentitlements\b/i.test(pages), 'entitlements on page');
   assert.ok(!/\bintuitive\b/i.test(pages), 'intuitive on page');
 });
 
-check('light proof: stamp + need/fact + ghost on the three beats', function () {
+check('light proof: Echo LIGHT pack verbatim on the three beats', function () {
   assert.ok(pages.indexOf('cbx-growth__stamp') !== -1, 'missing decision stamp markup');
   assert.ok(pages.indexOf('cbx-growth__need') !== -1, 'missing need line');
   assert.ok(pages.indexOf('cbx-growth__fact') !== -1, 'missing fact line');
   assert.ok(pages.indexOf('data-cbx-ghost') !== -1, 'missing UI ghost');
-  assert.ok(pages.indexOf('Solo cash is easy to lose') !== -1, 'freelancer stamp finding');
-  assert.ok(pages.indexOf('One place to pay & get paid') !== -1, 'freelancer stamp choice');
-  assert.ok(pages.indexOf('Mobile pay / get paid') !== -1, 'freelancer stamp UI');
-  assert.ok(pages.indexOf('“Did that invoice land?”') !== -1, 'freelancer need');
-  assert.ok(pages.indexOf('Pay and get paid on her phone.') !== -1, 'freelancer fact');
-  assert.ok(pages.indexOf('Two people touch money') !== -1, 'sole stamp finding');
-  assert.ok(pages.indexOf('Split prepare vs approve') !== -1, 'sole stamp choice');
-  assert.ok(pages.indexOf('Approvals door + beneficiary') !== -1, 'sole stamp UI');
-  assert.ok(pages.indexOf('“Can I pay this supplier today?”') !== -1, 'sole need');
-  assert.ok(pages.indexOf('Available balance leads; hire prepares, she approves.') !== -1, 'sole fact');
-  assert.ok(pages.indexOf('Approvals pile across roles') !== -1, 'mid stamp finding');
-  assert.ok(pages.indexOf('Waiting-on-me + permissions') !== -1, 'mid stamp choice');
-  assert.ok(pages.indexOf('Queue + verb-based access') !== -1, 'mid stamp UI');
-  assert.ok(pages.indexOf('“Who still owes me a yes?”') !== -1, 'mid need');
-  assert.ok(pages.indexOf('Waiting-on-me list; permissions by what people can do.') !== -1, 'mid fact');
-  assert.ok(pages.indexOf('Pay & get paid') !== -1, 'freelancer ghost label');
-  assert.ok(pages.indexOf('Available balance') !== -1, 'sole ghost balance');
-  assert.ok(pages.indexOf('Beneficiary') !== -1, 'sole ghost beneficiary');
-  assert.ok(pages.indexOf("'Waiting-on-me'") !== -1, 'mid ghost waiting line');
-  assert.ok(pages.indexOf("'Permissions'") !== -1, 'mid ghost permissions');
+  assert.ok(pages.indexOf('Same bank. Grows with her.') !== -1, 'missing spine chip');
+  assert.ok(pages.indexOf('One person does everything') !== -1, 'freelancer stamp finding');
+  assert.ok(pages.indexOf('Phone-complete basics') !== -1, 'freelancer stamp choice');
+  assert.ok(pages.indexOf('Pay / get paid') !== -1, 'freelancer stamp UI');
+  assert.ok(pages.indexOf('“Did I get paid? Can I pay?”') !== -1, 'freelancer need');
+  assert.ok(pages.indexOf('Phone shows pay and cash') !== -1, 'freelancer fact');
+  assert.ok(pages.indexOf('Pay · Get paid') !== -1, 'freelancer ghost label');
+  assert.ok(pages.indexOf('One balance number lies') !== -1, 'sole stamp finding');
+  assert.ok(pages.indexOf('Available leads; handoff safe') !== -1, 'sole stamp choice');
+  assert.ok(pages.indexOf('Four balances + beneficiary') !== -1, 'sole stamp UI');
+  assert.ok(pages.indexOf('“How much can I safely spend?”') !== -1, 'sole need');
+  assert.ok(pages.indexOf('Available is largest; helper appears') !== -1, 'sole fact');
+  assert.ok(pages.indexOf('Available · Add beneficiary') !== -1, 'sole ghost label');
+  assert.ok(pages.indexOf('Approving is the job') !== -1, 'mid stamp finding');
+  assert.ok(pages.indexOf('Own door; rows stay visible') !== -1, 'mid stamp choice');
+  assert.ok(pages.indexOf('Approvals + who can act') !== -1, 'mid stamp UI');
+  assert.ok(pages.indexOf('“Who’s waiting on me?”') !== -1, 'mid need');
+  assert.ok(pages.indexOf('Queue and limits show up') !== -1, 'mid fact');
+  assert.ok(pages.indexOf('Approvals · Permissions') !== -1, 'mid ghost label');
+  assert.ok(pages.indexOf('Did that invoice land') === -1, 'old freelancer need leaked');
+  assert.ok(pages.indexOf('Solo cash is easy to lose') === -1, 'old freelancer stamp leaked');
+  assert.ok(pages.indexOf('Who still owes me a yes') === -1, 'old mid need leaked');
   assert.ok(css.indexOf('opacity: 0.26') !== -1, 'ghost must stay a light 20–30% pass');
   assert.ok(css.indexOf('.cbx-growth__chip') !== -1, 'stamp chips missing');
+  assert.ok(css.indexOf('.cbx-growth__spine') !== -1, 'spine chip css missing');
   assert.ok(css.indexOf('.cbx-ghost--phone') !== -1, 'phone ghost missing');
   assert.ok(css.indexOf('.cbx-ghost--desktop') !== -1, 'desktop ghost missing');
   assert.ok(pages.indexOf('travelX') === -1, 'proof pass must not bring back sideways travel');

@@ -20,52 +20,57 @@ window.Cbx300Case = (function () {
       id: 'freelancer',
       label: 'Freelancer',
       stamp: [
-        'Solo cash is easy to lose',
-        'One place to pay & get paid',
-        'Mobile pay / get paid'
+        'One person does everything',
+        'Phone-complete basics',
+        'Pay / get paid'
       ],
-      need: '“Did that invoice land?”',
-      fact: 'Pay and get paid on her phone.'
+      need: '“Did I get paid? Can I pay?”',
+      fact: 'Phone shows pay and cash'
     },
     {
       id: 'sole',
       label: 'Sole proprietor',
       stamp: [
-        'Two people touch money',
-        'Split prepare vs approve',
-        'Approvals door + beneficiary'
+        'One balance number lies',
+        'Available leads; handoff safe',
+        'Four balances + beneficiary'
       ],
-      need: '“Can I pay this supplier today?”',
-      fact: 'Available balance leads; hire prepares, she approves.'
+      need: '“How much can I safely spend?”',
+      fact: 'Available is largest; helper appears'
     },
     {
       id: 'mid',
       label: 'Mid-size',
       stamp: [
-        'Approvals pile across roles',
-        'Waiting-on-me + permissions',
-        'Queue + verb-based access'
+        'Approving is the job',
+        'Own door; rows stay visible',
+        'Approvals + who can act'
       ],
-      need: '“Who still owes me a yes?”',
-      fact: 'Waiting-on-me list; permissions by what people can do.'
+      need: '“Who’s waiting on me?”',
+      fact: 'Queue and limits show up'
     }
   ];
+
+  var SPINE = 'Same bank. Grows with her.';
 
   var GHOSTS = [
     {
       id: 'freelancer',
-      devices: [{ kind: 'phone', lines: ['Pay & get paid'] }]
+      label: 'Pay · Get paid',
+      devices: [{ kind: 'phone', lines: ['Pay · Get paid'] }]
     },
     {
       id: 'sole',
+      label: 'Available · Add beneficiary',
       devices: [
-        { kind: 'phone', lines: ['Available balance'] },
-        { kind: 'desktop', lines: ['Beneficiary'] }
+        { kind: 'phone', lines: ['Available'] },
+        { kind: 'desktop', lines: ['Add beneficiary'] }
       ]
     },
     {
       id: 'mid',
-      devices: [{ kind: 'desktop', lines: ['Waiting-on-me', 'Permissions'] }]
+      label: 'Approvals · Permissions',
+      devices: [{ kind: 'desktop', lines: ['Approvals · Permissions'] }]
     }
   ];
 
@@ -276,6 +281,7 @@ window.Cbx300Case = (function () {
     stage.setAttribute('data-cbx-growth-frame', '');
 
     var copy = el('div', 'cbx-growth__copy');
+    copy.appendChild(el('p', 'cbx-growth__spine', SPINE));
     var beats = el('div', 'cbx-growth__beats');
     beats.setAttribute('data-cbx-beats', '');
     BEATS.forEach(function (beat, i) {
@@ -686,6 +692,7 @@ window.Cbx300Case = (function () {
     armGlitch: armGlitch,
     META: META,
     BEATS: BEATS,
+    SPINE: SPINE,
     GHOSTS: GHOSTS,
     PEOPLE: PEOPLE,
     STUBS: STUBS
