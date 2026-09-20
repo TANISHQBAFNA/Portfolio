@@ -160,7 +160,7 @@ window.Cbx300Case = (function () {
     var html = document.documentElement;
     var rise = 1 - Math.max(0, Math.min(1, p));
     html.style.setProperty('--cbx-rise', rise.toFixed(4));
-    html.style.setProperty('--cbx-panel-flush', panelFlushFromRise(rise).toFixed(4));
+    html.style.setProperty('--panel-flush', panelFlushFromRise(rise).toFixed(4));
     html.classList.toggle('is-cbx-growth-in', p > 0.08);
   }
 
@@ -168,7 +168,7 @@ window.Cbx300Case = (function () {
     var html = document.documentElement;
     html.classList.remove('is-cbx-growth-in');
     html.style.removeProperty('--cbx-rise');
-    html.style.removeProperty('--cbx-panel-flush');
+    html.style.removeProperty('--panel-flush');
     motion.riseState.p = 0;
   }
 

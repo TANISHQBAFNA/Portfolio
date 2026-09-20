@@ -1,7 +1,7 @@
 /* CBX300 Section 01 cover + Section 02 Aisha growth track.
    Home hero language. Image overlaps type from the right.
    Cover + study chrome stay parked. Coffee panel rises over them
-   with --cbx-rise / --cbx-panel-flush, same family as landing
+   with --cbx-rise / --panel-flush, same family as landing
    --rise / --panel-flush / is-projects-in.
    Then pin and morph Aisha stages. No sideways slide.
    Cream stays calm. Multiverse uses ink + glitch plates. */
@@ -32,7 +32,7 @@ html.is-study-page .study[data-template="cbx300"] {
 
 html.is-study-page {
   --cbx-rise: 1;
-  --cbx-panel-flush: 0;
+  --panel-flush: 0;
 }
 
 /* Cover + chrome stay the under-layer (parked, no fade). Growth is z-index
@@ -340,7 +340,7 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
 /* Section 02 — landing-rail curtain, then pinned morph.
    --cbx-rise: 1 is fully below; 0 covers the parked cover + chrome.
    Corners use the landing projects formula: rounded while rising,
-   --cbx-panel-flush 1 / radius 0 when docked at the top. */
+   --panel-flush 1 / radius 0 when docked at the top. */
 .cbx-growth {
   box-sizing: border-box;
   position: fixed;
@@ -353,7 +353,7 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   background: var(--coffee, #1E1510);
   color: var(--cream, #f4efe6);
   --panel-radius: clamp(24px, 2.8vw, 36px);
-  border-radius: calc(var(--panel-radius) * (1 - var(--cbx-panel-flush, 0)));
+  border-radius: calc(var(--panel-radius) * (1 - var(--panel-flush, 0)));
   transform: translate3d(0, calc(var(--cbx-rise, 1) * 100%), 0);
   will-change: transform;
   pointer-events: none;
