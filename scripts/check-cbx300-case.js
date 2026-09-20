@@ -49,9 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s45') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s45') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s25') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s46') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s46') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s46') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s46') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -198,6 +199,8 @@ check('study page scroll unlocks; coffee panel curtains over parked chrome', fun
   assert.ok(pages.indexOf("end: 'bottom top'") === -1, 'chrome must not scrub out as cover leaves');
   assert.ok(pages.indexOf('function applyCbxRise') !== -1, 'missing landing-style rise handle');
   assert.ok(pages.indexOf('--cbx-rise') !== -1, 'missing --cbx-rise write');
+  assert.ok(pages.indexOf("setProperty('--panel-flush'") !== -1, 'applyCbxRise must write landing --panel-flush');
+  assert.ok(pages.indexOf('--cbx-panel-flush') === -1, 'do not invent a second flush token');
   assert.ok(pages.indexOf('is-cbx-growth-in') !== -1, 'missing growth-in class');
   assert.ok(css.indexOf('--cbx-rise') !== -1, 'missing --cbx-rise transform');
   assert.ok(css.indexOf('z-index: 40') !== -1, 'growth must sit above cover/header like the landing rail');
@@ -208,12 +211,44 @@ check('study page scroll unlocks; coffee panel curtains over parked chrome', fun
   assert.ok(css.indexOf('html.is-cbx-growth-in') !== -1, 'missing growth-in pointer-events');
 });
 
+check('coffee panel radius matches landing projects rail family', function () {
+  var landingFamily = '--panel-radius: clamp(24px, 2.8vw, 36px)';
+  var landingFormula = 'border-radius: calc(var(--panel-radius) * (1 - var(--panel-flush, 0)));';
+  assert.ok(landingCss.indexOf(landingFamily) !== -1, 'landing cream panel-radius family missing');
+  assert.ok(landingCss.indexOf(landingFormula) !== -1, 'landing rail flush radius formula missing');
+  assert.ok(mvCss.indexOf(landingFormula) !== -1 || mvCss.indexOf('1 - var(--panel-flush, 0)') !== -1,
+    'multiverse rail must share the flush radius formula');
+  var growthAt = css.indexOf('.cbx-growth {');
+  var frameAt = css.indexOf('.cbx-growth__frame {');
+  assert.ok(growthAt !== -1 && frameAt > growthAt, '.cbx-growth rule missing');
+  var growthCss = css.slice(growthAt, frameAt);
+  assert.ok(growthCss.indexOf(landingFamily) !== -1, '.cbx-growth must set landing --panel-radius');
+  assert.ok(growthCss.indexOf(landingFormula) !== -1, '.cbx-growth must reuse landing panel-radius * (1 - panel-flush)');
+  assert.ok(growthCss.indexOf('--cbx-panel-flush') === -1, '.cbx-growth must not invent a second flush token');
+  assert.ok(css.indexOf('--cbx-panel-flush') === -1, 'css must not invent --cbx-panel-flush');
+  assert.ok(growthCss.indexOf('border-radius: 0') === -1, 'rising growth must not hardcode a square radius');
+  var staticAt = css.indexOf('.cbx-growth.is-static {');
+  var staticBeatAt = css.indexOf('.cbx-growth.is-static .cbx-growth__beat {');
+  assert.ok(staticAt !== -1 && staticBeatAt > staticAt, 'static growth rule missing');
+  var staticCss = css.slice(staticAt, staticBeatAt);
+  assert.ok(staticCss.indexOf('border-radius: 0') !== -1, 'flush/static growth must square to radius 0');
+  assert.ok(pages.indexOf('function panelFlushFromRise') !== -1, 'missing landing panelFlushFromRise analog');
+  assert.ok(pages.indexOf('rise <= 0') !== -1, 'flush must be 1 when rise is 0 (pinned to top)');
+  assert.ok(pages.indexOf('rise >= 0.05') !== -1, 'flush must stay 0 while still rising');
+  assert.ok(css.indexOf('--panel-flush: 0') !== -1, 'html must default flush 0 (rounded while below)');
+  assert.ok(pages.indexOf("setProperty('--panel-flush'") !== -1, 'applyCbxRise must write landing --panel-flush');
+  assert.ok(pages.indexOf("removeProperty('--panel-flush')") !== -1, 'restRise must clear --panel-flush');
+});
+
 check('no invented NPS/outcomes; Echo avoid-list stays off the page', function () {
   assert.ok(!/\bNPS\b/.test(pages), 'invented NPS');
   assert.ok(!/maker-checker/i.test(pages), 'maker-checker on page');
   assert.ok(!/\bseamless\b/i.test(pages), 'seamless on page');
   assert.ok(!/\bentitlements\b/i.test(pages), 'entitlements on page');
   assert.ok(!/\bintuitive\b/i.test(pages), 'intuitive on page');
+  assert.ok(pages.indexOf('“Did the money land') === -1, 'fake quotes around freelancer need');
+  assert.ok(pages.indexOf('“How much can I safely spend') === -1, 'fake quotes around sole need');
+  assert.ok(pages.indexOf('“Who’s waiting') === -1, 'fake quotes around mid need');
 });
 
 check('light proof: Echo caption pack and job ghosts', function () {
@@ -225,21 +260,21 @@ check('light proof: Echo caption pack and job ghosts', function () {
   assert.ok(pages.indexOf('Pressure changes. The bank grows with her.') !== -1, 'missing spine chip');
   assert.ok(pages.indexOf('Finding: She needs cash in today') !== -1, 'freelancer stamp finding');
   assert.ok(pages.indexOf('Choice: Get paid and pay on phone') !== -1, 'freelancer stamp choice');
-  assert.ok(pages.indexOf('“Did the money land — can I pay?”') !== -1, 'freelancer need');
+  assert.ok(pages.indexOf("need: 'Did the money land — can I pay?'") !== -1, 'freelancer need');
   assert.ok(pages.indexOf('Phone shows pay and cash in') !== -1, 'freelancer fact');
   assert.ok(pages.indexOf("job: 'pay'") !== -1, 'freelancer ghost job');
   assert.ok(pages.indexOf("'Receive'") !== -1, 'pay home missing Receive');
   assert.ok(pages.indexOf("'Pay'") !== -1, 'pay home missing Pay');
   assert.ok(pages.indexOf('Finding: One balance number would lie') !== -1, 'sole stamp finding');
   assert.ok(pages.indexOf('Choice: Put available first on the card') !== -1, 'sole stamp choice');
-  assert.ok(pages.indexOf('“How much can I safely spend today?”') !== -1, 'sole need');
+  assert.ok(pages.indexOf("need: 'How much can I safely spend today?'") !== -1, 'sole need');
   assert.ok(pages.indexOf('Available leads; other balances sit beside') !== -1, 'sole fact');
   assert.ok(pages.indexOf("job: 'balance'") !== -1, 'sole ghost job');
   assert.ok(pages.indexOf("'Available'") !== -1, 'balance ghost missing Available');
   assert.ok(pages.indexOf('12,480.00') !== -1, 'balance ghost missing available hero');
   assert.ok(pages.indexOf('Finding: Approving is now the daily job') !== -1, 'mid stamp finding');
   assert.ok(pages.indexOf('Choice: Own door; keep every row visible') !== -1, 'mid stamp choice');
-  assert.ok(pages.indexOf('“Who’s waiting — can I clear this safely?”') !== -1, 'mid need');
+  assert.ok(pages.indexOf("need: 'Who’s waiting — can I clear this safely?'") !== -1, 'mid need');
   assert.ok(pages.indexOf('Approvals door; Approve (n) shows each line') !== -1, 'mid fact');
   assert.ok(pages.indexOf("job: 'approvals'") !== -1, 'mid ghost job');
   assert.ok(pages.indexOf('Waiting on me') !== -1, 'approvals ghost missing waiting-on-me');

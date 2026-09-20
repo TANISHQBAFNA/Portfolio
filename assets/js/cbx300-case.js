@@ -1,8 +1,9 @@
 /**
  * CBX300 case study — Section 01 cover + Section 02 Aisha growth morph.
  * Cover: kicker → accent → word. Image overlaps type from the right.
- * Growth: coffee panel curtains over the parked cover + chrome (--cbx-rise),
- * then one pinned frame morphs. People join; copy crossfades. No sideways slide.
+ * Growth: coffee panel curtains over the parked cover + chrome
+ * (--cbx-rise / --panel-flush, same family as landing --rise /
+ * --panel-flush / is-projects-in), then one pinned frame morphs.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
@@ -24,7 +25,7 @@ window.Cbx300Case = (function () {
         'Finding: She needs cash in today',
         'Choice: Get paid and pay on phone'
       ],
-      need: '“Did the money land — can I pay?”',
+      need: 'Did the money land — can I pay?',
       fact: 'Phone shows pay and cash in'
     },
     {
@@ -34,7 +35,7 @@ window.Cbx300Case = (function () {
         'Finding: One balance number would lie',
         'Choice: Put available first on the card'
       ],
-      need: '“How much can I safely spend today?”',
+      need: 'How much can I safely spend today?',
       fact: 'Available leads; other balances sit beside'
     },
     {
@@ -44,7 +45,7 @@ window.Cbx300Case = (function () {
         'Finding: Approving is now the daily job',
         'Choice: Own door; keep every row visible'
       ],
-      need: '“Who’s waiting — can I clear this safely?”',
+      need: 'Who’s waiting — can I clear this safely?',
       fact: 'Approvals door; Approve (n) shows each line'
     }
   ];
@@ -149,10 +150,17 @@ window.Cbx300Case = (function () {
     return document.querySelector('.study[data-template="cbx300"] .study__chrome');
   }
 
+  function panelFlushFromRise(rise) {
+    if (rise <= 0) return 1;
+    if (rise >= 0.05) return 0;
+    return 1 - rise / 0.05;
+  }
+
   function applyCbxRise(p) {
     var html = document.documentElement;
     var rise = 1 - Math.max(0, Math.min(1, p));
     html.style.setProperty('--cbx-rise', rise.toFixed(4));
+    html.style.setProperty('--cbx-panel-flush', panelFlushFromRise(rise).toFixed(4));
     html.classList.toggle('is-cbx-growth-in', p > 0.08);
   }
 
@@ -160,6 +168,7 @@ window.Cbx300Case = (function () {
     var html = document.documentElement;
     html.classList.remove('is-cbx-growth-in');
     html.style.removeProperty('--cbx-rise');
+    html.style.removeProperty('--cbx-panel-flush');
     motion.riseState.p = 0;
   }
 
