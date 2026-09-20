@@ -20,6 +20,8 @@ var mvIndex = read('index-multiverse.html');
 var pages = read('assets/js/cbx300-case.js');
 var study = read('assets/js/project-study.js');
 var landing = read('assets/js/landing.js');
+var mvLanding = read('assets/js/landing-multiverse.js');
+var rail = read('assets/js/project-rail.js');
 var css = read('assets/css/cbx300-case.css');
 var landingCss = read('assets/css/landing.css');
 var mvCss = read('assets/css/landing-multiverse.css');
@@ -241,6 +243,41 @@ check('light proof: Echo LIGHT pack verbatim on the three beats', function () {
   assert.ok(css.indexOf('.cbx-ghost--desktop') !== -1, 'desktop ghost missing');
   assert.ok(pages.indexOf('travelX') === -1, 'proof pass must not bring back sideways travel');
   assert.ok(pages.indexOf('film-decision') === -1, 'old film decision chips must stay gone');
+});
+
+check('rail wheel yields to open study so CBX300 window-scroll can pin-scrub', function () {
+  var start = rail.indexOf('function onWheel');
+  var end = rail.indexOf('/* ── input: keyboard');
+  assert.ok(start !== -1 && end > start, 'onWheel missing');
+  var onWheel = rail.slice(start, end);
+  var studyGuard = onWheel.indexOf("classList.contains('is-study')");
+  var pageGuard = onWheel.indexOf("classList.contains('is-study-page')");
+  var prevent = onWheel.indexOf('event.preventDefault');
+  assert.ok(studyGuard !== -1, 'onWheel must early-return when html.is-study');
+  assert.ok(pageGuard !== -1, 'onWheel must early-return when html.is-study-page');
+  assert.ok(prevent !== -1, 'onWheel still preventDefaults rail gestures');
+  assert.ok(studyGuard < prevent, 'is-study guard must run before preventDefault');
+  assert.ok(pageGuard < prevent, 'is-study-page guard must run before preventDefault');
+  assert.ok(onWheel.indexOf('rail.lock') === -1, 'do not lock the rail from onWheel');
+  assert.ok(index.indexOf('project-rail.js?v=hz98') !== -1, 'index.html must bump rail cache');
+  assert.ok(mvIndex.indexOf('project-rail.js?v=hz98') !== -1, 'index-multiverse.html must bump rail cache');
+});
+
+check('landing idle wheel does not steal study scroll', function () {
+  var creamReset = landing.slice(landing.indexOf("['pointerdown'"));
+  creamReset = creamReset.slice(0, creamReset.indexOf('armReset();') + 12);
+  assert.ok(creamReset.indexOf("'wheel'") !== -1, 'cream idle reset listens to wheel');
+  assert.ok(creamReset.indexOf('passive: true') !== -1, 'cream idle wheel must stay passive');
+  assert.ok(creamReset.indexOf('preventDefault') === -1, 'cream idle wheel must not preventDefault');
+  var mvReset = mvLanding.slice(mvLanding.indexOf("['pointerdown'"));
+  mvReset = mvReset.slice(0, mvReset.indexOf('armReset();') + 12);
+  assert.ok(mvReset.indexOf("'wheel'") !== -1, 'multiverse idle reset listens to wheel');
+  assert.ok(mvReset.indexOf('passive: true') !== -1, 'multiverse idle wheel must stay passive');
+  assert.ok(mvReset.indexOf('preventDefault') === -1, 'multiverse idle wheel must not preventDefault');
+  assert.ok(landing.indexOf('onOpen') !== -1 && /onOpen:[\s\S]{0,400}rail\.lock\(/.test(landing) === false,
+    'cream study onOpen must not rail.lock (ArrowDown would steal CBX300 window scroll)');
+  assert.ok(mvLanding.indexOf('onOpen') !== -1 && /onOpen:[\s\S]{0,400}rail\.lock\(/.test(mvLanding) === false,
+    'multiverse study onOpen must not rail.lock');
 });
 
 console.log(passed + ' passed, ' + failed + ' failed');

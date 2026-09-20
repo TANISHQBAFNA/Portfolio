@@ -162,6 +162,9 @@ window.ProjectRail = (function () {
 
     function onWheel(event) {
       if (locked) return;   // the board owns wheel while a project is open
+      // Study is on the window scroller (CBX300 pin-scrub). Leave native wheel.
+      if (document.documentElement.classList.contains('is-study') ||
+          document.documentElement.classList.contains('is-study-page')) return;
       if (!isManaged() || event.ctrlKey) return;   // ctrl+wheel is browser zoom
       var rise = parseFloat(document.documentElement.style.getPropertyValue('--rise') || '1');
       if (document.documentElement.classList.contains('is-home-scroll') && rise > 0.01) {
