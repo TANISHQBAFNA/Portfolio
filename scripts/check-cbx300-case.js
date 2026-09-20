@@ -237,6 +237,7 @@ check('coffee panel radius matches landing projects rail family', function () {
   assert.ok(pages.indexOf('rise >= 0.05') !== -1, 'flush must stay 0 while still rising');
   assert.ok(css.indexOf('--panel-flush: 0') !== -1, 'html must default flush 0 (rounded while below)');
   assert.ok(pages.indexOf("setProperty('--panel-flush'") !== -1, 'applyCbxRise must write landing --panel-flush');
+  assert.ok(pages.indexOf("pane.style.setProperty('--panel-flush'") !== -1, 'flush token must live on the coffee pane, not html');
   assert.ok(pages.indexOf("removeProperty('--panel-flush')") !== -1, 'restRise must clear --panel-flush');
 });
 
