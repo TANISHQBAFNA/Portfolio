@@ -50,9 +50,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
   assert.ok(index.indexOf('cbx300-case.css?v=s50') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s49') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s50') !== -1, 'index.html missing growth js cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.css?v=s50') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s49') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s50') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -340,6 +340,7 @@ check('ghost job, copy, and cast lock to the same beat index', function () {
   assert.ok(pages.indexOf('applyBeat(beats, ghosts, people, beatIndexFromProgress(morphP))') !== -1,
     'onUpdate must drive copy + ghost + cast from one morph index');
   assert.ok(pages.indexOf("pane.setAttribute('data-cbx-live-beat'") !== -1, 'live beat index must be readable');
+  assert.ok(pages.indexOf("setAttribute('data-cbx-live-beat', '0')") !== -1, 'growth must start on freelancer beat');
   assert.ok(pages.indexOf('Math.floor(progress * n)') !== -1, 'beats must split the morph into equal floors');
   assert.ok(pages.indexOf('tl.to(ghosts') === -1, 'ghosts must not fade on a delayed timeline');
   assert.ok(pages.indexOf('tl.to(beats') === -1, 'copy must not fade on a delayed timeline');

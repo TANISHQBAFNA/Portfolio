@@ -366,6 +366,7 @@ window.Cbx300Case = (function () {
     section.setAttribute('data-cbx-section', '02');
     section.setAttribute('data-cbx-live', '');
     section.setAttribute('data-cbx-growth', '');
+    section.setAttribute('data-cbx-live-beat', '0');
     section.setAttribute('aria-label', 'Aisha grows. The app follows.');
 
     var stage = el('div', 'cbx-growth__frame');
