@@ -21,38 +21,35 @@ window.Cbx300Case = (function () {
       id: 'freelancer',
       label: 'Freelancer',
       stamp: [
-        'Finding: Paid late, chased invoices.',
-        'Choice: Pay & get paid on phone.',
-        'UI: Home = receive + pay.'
+        'Finding: She needs cash in today',
+        'Choice: Get paid and pay on phone'
       ],
-      need: '“When does my money actually land?”',
-      fact: 'Mobile pay-in and pay-out as one job.'
+      need: '“Did the money land — can I pay?”',
+      fact: 'Phone shows pay and cash in'
     },
     {
       id: 'sole',
       label: 'Sole proprietor',
       stamp: [
-        'Finding: One balance number lies.',
-        'Choice: Lead with available.',
-        'UI: Available hero; holds sit back.'
+        'Finding: One balance number would lie',
+        'Choice: Put available first on the card'
       ],
-      need: '“What can I spend today?”',
-      fact: 'Available leads; pending never wears the crown.'
+      need: '“How much can I safely spend today?”',
+      fact: 'Available leads; other balances sit beside'
     },
     {
       id: 'mid',
       label: 'Mid-size',
       stamp: [
-        'Finding: Approvals become a pile.',
-        'Choice: Prepare ∥ approve, split.',
-        'UI: Waiting-on-me door.'
+        'Finding: Approving is now the daily job',
+        'Choice: Own door; keep every row visible'
       ],
-      need: '“What needs me before payroll?”',
-      fact: 'One queue for her decisions — not everyone’s noise.'
+      need: '“Who’s waiting — can I clear this safely?”',
+      fact: 'Approvals door; Approve (n) shows each line'
     }
   ];
 
-  var SPINE = 'Same bank. Grows with her.';
+  var SPINE = 'Pressure changes. The bank grows with her.';
 
   var GHOSTS = [
     { id: 'freelancer', job: 'pay' },
@@ -240,7 +237,7 @@ window.Cbx300Case = (function () {
 
   function stampList(parts) {
     var list = el('ul', 'cbx-growth__stamp');
-    list.setAttribute('aria-label', 'Finding, choice, UI proof');
+    list.setAttribute('aria-label', 'Finding and choice');
     (parts || []).forEach(function (text) {
       var item = el('li', 'cbx-growth__chip');
       var colon = text.indexOf(': ');
