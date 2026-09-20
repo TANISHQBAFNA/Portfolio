@@ -1,0 +1,22 @@
+{
+  "name": "tanishq-portfolio",
+  "private": true,
+  "description": "Static multi-page portfolio for tanishqbafna.com. Vite is a local toolchain; production can still ship the repo root.",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build-static.js",
+    "preview": "vite preview",
+    "check": "node scripts/check-multiverse-ux.js && node scripts/check-cbx300-case.js && node scripts/test-iris-motion-gate.js && node scripts/check-toolchain.js",
+    "test": "npm run check",
+    "vendor:gsap": "node scripts/sync-gsap-vendor.js"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "dependencies": {
+    "gsap": "3.15.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0"
+  }
+}

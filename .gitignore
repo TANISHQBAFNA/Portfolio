@@ -2,3 +2,5 @@
 .tmp-verify/
 .claude/
 node_modules/
+dist/
+.vite/
