@@ -1,7 +1,8 @@
 /**
  * CBX300 case study — Section 01 cover + Section 02 Aisha growth morph.
  * Cover: kicker → accent → word. Image overlaps type from the right.
- * Growth: one pinned coffee frame. People join; copy crossfades. No sideways slide.
+ * Growth: coffee panel curtains over the parked cover + chrome (--cbx-rise),
+ * then one pinned frame morphs. People join; copy crossfades. No sideways slide.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
@@ -114,11 +115,15 @@ window.Cbx300Case = (function () {
   var motion = {
     triggers: [],
     tween: null,
-    chromeTween: null,
+    riseState: { p: 0 },
     refreshTimers: [],
     normalized: false,
-    pin: null
+    pin: null,
+    stage: null
   };
+
+  var RISE_DUR = 1;
+  var MORPH_VH = 2.35;
 
   function isMultiverse() {
     return document.documentElement.classList.contains('is-multiverse');
@@ -154,15 +159,7 @@ window.Cbx300Case = (function () {
     return window.innerHeight || 800;
   }
 
-  function headPx(headerFn) {
-    if (typeof headerFn === 'function') return headerFn();
-    var chrome = document.querySelector('.study[data-template="cbx300"] .study__chrome');
-    if (!chrome) return 72;
-    return Math.round(chrome.getBoundingClientRect().bottom);
-  }
-
   function paneH() {
-    /* Study chrome fades off the cover, so the pin is full window. */
     return Math.max(280, Math.round(viewH()));
   }
 
@@ -170,31 +167,26 @@ window.Cbx300Case = (function () {
     return document.querySelector('.study[data-template="cbx300"] .study__chrome');
   }
 
-  function growthPinActive() {
-    return !!(motion.tween && motion.tween.scrollTrigger && motion.tween.scrollTrigger.isActive);
+  function applyCbxRise(p) {
+    var html = document.documentElement;
+    var rise = 1 - Math.max(0, Math.min(1, p));
+    html.style.setProperty('--cbx-rise', rise.toFixed(4));
+    html.classList.toggle('is-cbx-growth-in', p > 0.08);
   }
 
-  function showChromeLive(chrome) {
-    var gsap = window.gsap;
-    if (!chrome) return;
-    chrome.classList.remove('is-away');
-    chrome.removeAttribute('aria-hidden');
-    if (gsap) gsap.set(chrome, { visibility: 'visible', pointerEvents: 'auto' });
-  }
-
-  function hideChromeAway(chrome) {
-    var gsap = window.gsap;
-    if (!chrome) return;
-    chrome.classList.add('is-away');
-    chrome.setAttribute('aria-hidden', 'true');
-    if (gsap) gsap.set(chrome, { visibility: 'hidden', pointerEvents: 'none' });
+  function restRise() {
+    var html = document.documentElement;
+    html.classList.remove('is-cbx-growth-in');
+    html.style.removeProperty('--cbx-rise');
+    motion.riseState.p = 0;
   }
 
   function restChrome() {
     var chrome = studyChrome();
     var gsap = window.gsap;
     if (!chrome) return;
-    showChromeLive(chrome);
+    chrome.classList.remove('is-away');
+    chrome.removeAttribute('aria-hidden');
     if (gsap) {
       gsap.set(chrome, { clearProps: 'opacity,visibility,pointerEvents,transform,y' });
     } else {
@@ -203,56 +195,6 @@ window.Cbx300Case = (function () {
       chrome.style.pointerEvents = '';
       chrome.style.transform = '';
     }
-  }
-
-  function linkChromeToCover(cover) {
-    var gsap = window.gsap;
-    var ScrollTrigger = window.ScrollTrigger;
-    var chrome = studyChrome();
-    if (!chrome || !cover || !gsap || !ScrollTrigger) return;
-
-    showChromeLive(chrome);
-    gsap.set(chrome, { opacity: 1, y: 0, visibility: 'visible' });
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      motion.triggers.push(ScrollTrigger.create({
-        trigger: cover,
-        start: 'top top',
-        end: 'bottom top',
-        onLeave: function () {
-          hideChromeAway(chrome);
-          gsap.set(chrome, { opacity: 0, y: -16 });
-        },
-        onEnterBack: function () {
-          if (growthPinActive()) return;
-          showChromeLive(chrome);
-          gsap.set(chrome, { opacity: 1, y: 0 });
-        }
-      }));
-      return;
-    }
-
-    motion.chromeTween = gsap.to(chrome, {
-      opacity: 0,
-      y: -16,
-      ease: 'none',
-      immediateRender: false,
-      scrollTrigger: {
-        trigger: cover,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1.3,
-        invalidateOnRefresh: true,
-        onLeave: function () { hideChromeAway(chrome); },
-        onEnterBack: function () {
-          if (!growthPinActive()) showChromeLive(chrome);
-        },
-        onUpdate: function (self) {
-          if (self.progress >= 0.98 || growthPinActive()) hideChromeAway(chrome);
-          else showChromeLive(chrome);
-        }
-      }
-    });
   }
 
   function buildCover(project) {
@@ -477,11 +419,6 @@ window.Cbx300Case = (function () {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     clearTimers();
-    if (motion.chromeTween && motion.chromeTween.scrollTrigger && motion.chromeTween.scrollTrigger.kill) {
-      motion.chromeTween.scrollTrigger.kill();
-    }
-    if (motion.chromeTween && motion.chromeTween.kill) motion.chromeTween.kill();
-    motion.chromeTween = null;
     if (motion.tween && motion.tween.scrollTrigger && motion.tween.scrollTrigger.kill) {
       motion.tween.scrollTrigger.kill();
     }
@@ -492,6 +429,11 @@ window.Cbx300Case = (function () {
     });
     motion.triggers = [];
     restChrome();
+    restRise();
+    if (motion.stage) {
+      motion.stage.style.height = '';
+    }
+    motion.stage = null;
     if (motion.pin) {
       motion.pin.classList.remove('is-static');
       motion.pin.style.height = '';
@@ -543,10 +485,10 @@ window.Cbx300Case = (function () {
     }
   }
 
-  function sizePane(pin) {
-    if (!pin) return paneH();
+  function sizePane(stage) {
+    if (!stage) return paneH();
     var h = paneH();
-    pin.style.height = h + 'px';
+    stage.style.height = h + 'px';
     return h;
   }
 
@@ -588,24 +530,25 @@ window.Cbx300Case = (function () {
   function bindCinematic(world, opts) {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
+    var stage = world.querySelector('[data-cbx-stage]');
     var pin = world.querySelector('[data-cbx-growth]');
-    var stage = pin && pin.querySelector('[data-cbx-growth-frame]');
     var cover = world.querySelector('[data-cbx-section="01"]');
     var beats = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-beat]')) : [];
     var people = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-person]')) : [];
     var ghosts = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-ghost]')) : [];
     var onStep = opts.onStep;
-    var headerFn = opts.headerOffset;
 
     motion.pin = pin;
+    motion.stage = stage;
     if (!pin || !stage) {
       watchSteps(cover, pin, onStep);
-      linkChromeToCover(cover);
+      applyCbxRise(0);
       return;
     }
 
     pin.classList.remove('is-static');
-    sizePane(pin);
+    sizePane(stage);
+    applyCbxRise(0);
 
     beats.forEach(function (beat, i) {
       gsap.set(beat, { opacity: i === 0 ? 1 : 0 });
@@ -623,14 +566,16 @@ window.Cbx300Case = (function () {
       ghost.classList.toggle('is-on', i === 0);
     });
 
+    motion.riseState.p = 0;
+
     var tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: pin,
+        trigger: stage,
         start: 'top top',
         end: function () {
-          sizePane(pin);
-          return '+=' + Math.round(paneH() * 2.35);
+          sizePane(stage);
+          return '+=' + Math.round(paneH() * (RISE_DUR + MORPH_VH));
         },
         pin: true,
         pinSpacing: true,
@@ -639,66 +584,67 @@ window.Cbx300Case = (function () {
         anticipatePin: 1,
         fastScrollEnd: true,
         refreshPriority: 1,
-        onRefresh: function () { sizePane(pin); },
+        onRefresh: function () { sizePane(stage); },
         onToggle: function (self) {
-          if (self.isActive) {
-            hideChromeAway(studyChrome());
-            if (onStep) onStep(1);
+          if (self.isActive && onStep) {
+            onStep(motion.riseState.p > 0.08 ? 1 : 0);
           }
         },
         onUpdate: function (self) {
-          var index = beatIndexFromProgress(self.progress);
+          var dur = tl.duration() || 1;
+          var morphStart = RISE_DUR / dur;
+          var morphP = 0;
+          if (self.progress > morphStart) {
+            morphP = (self.progress - morphStart) / Math.max(0.0001, 1 - morphStart);
+          }
+          var index = beatIndexFromProgress(morphP);
           markBeat(beats, index);
           markBeat(ghosts, index);
+          if (onStep) onStep(motion.riseState.p > 0.92 ? 1 : 0);
         }
       }
     });
 
+    tl.to(motion.riseState, {
+      p: 1,
+      duration: RISE_DUR,
+      ease: 'none',
+      onUpdate: function () { applyCbxRise(motion.riseState.p); }
+    }, 0);
+
     if (beats[0] && beats[1]) {
-      tl.to(beats[0], { opacity: 0, duration: 0.22 }, 0.28);
-      tl.to(beats[1], { opacity: 1, duration: 0.22 }, 0.28);
+      tl.to(beats[0], { opacity: 0, duration: 0.22 }, RISE_DUR + 0.28);
+      tl.to(beats[1], { opacity: 1, duration: 0.22 }, RISE_DUR + 0.28);
     }
     if (ghosts[0] && ghosts[1]) {
-      tl.to(ghosts[0], { opacity: 0, duration: 0.22 }, 0.28);
-      tl.to(ghosts[1], { opacity: 1, duration: 0.22 }, 0.28);
+      tl.to(ghosts[0], { opacity: 0, duration: 0.22 }, RISE_DUR + 0.28);
+      tl.to(ghosts[1], { opacity: 1, duration: 0.22 }, RISE_DUR + 0.28);
     }
     people.forEach(function (person) {
       var from = parseInt(person.getAttribute('data-from'), 10) || 0;
       if (from === 1) {
-        tl.to(person, { opacity: 1, y: 0, duration: 0.28 }, 0.26);
+        tl.to(person, { opacity: 1, y: 0, duration: 0.28 }, RISE_DUR + 0.26);
       }
     });
 
     if (beats[1] && beats[2]) {
-      tl.to(beats[1], { opacity: 0, duration: 0.22 }, 0.62);
-      tl.to(beats[2], { opacity: 1, duration: 0.22 }, 0.62);
+      tl.to(beats[1], { opacity: 0, duration: 0.22 }, RISE_DUR + 0.62);
+      tl.to(beats[2], { opacity: 1, duration: 0.22 }, RISE_DUR + 0.62);
     }
     if (ghosts[1] && ghosts[2]) {
-      tl.to(ghosts[1], { opacity: 0, duration: 0.22 }, 0.62);
-      tl.to(ghosts[2], { opacity: 1, duration: 0.22 }, 0.62);
+      tl.to(ghosts[1], { opacity: 0, duration: 0.22 }, RISE_DUR + 0.62);
+      tl.to(ghosts[2], { opacity: 1, duration: 0.22 }, RISE_DUR + 0.62);
     }
     people.forEach(function (person) {
       var from = parseInt(person.getAttribute('data-from'), 10) || 0;
       if (from === 2) {
-        tl.to(person, { opacity: 1, y: 0, duration: 0.3 }, 0.6);
+        tl.to(person, { opacity: 1, y: 0, duration: 0.3 }, RISE_DUR + 0.6);
       }
     });
 
     tl.to({}, { duration: 0.12 });
     motion.tween = tl;
     if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
-
-    if (cover) {
-      motion.triggers.push(ScrollTrigger.create({
-        trigger: cover,
-        start: 'top 80%',
-        end: function () { return 'bottom ' + headPx(headerFn) + 'px'; },
-        onToggle: function (self) {
-          if (self.isActive && onStep) onStep(0);
-        }
-      }));
-    }
-    linkChromeToCover(cover);
   }
 
   function refreshSoon() {
@@ -745,9 +691,9 @@ window.Cbx300Case = (function () {
 
     if (!gsap || !ScrollTrigger || reduce.matches) {
       setupStatic(pin);
+      restRise();
       if (ScrollTrigger) {
         watchSteps(cover, pin, opts.onStep);
-        if (gsap) linkChromeToCover(cover);
       }
       return;
     }
@@ -777,7 +723,10 @@ window.Cbx300Case = (function () {
     world.innerHTML = '';
     world.classList.remove('film-world');
     world.classList.add('cbx-world');
-    world.appendChild(buildCover(project));
+    var stage = el('div', 'cbx-stage');
+    stage.setAttribute('data-cbx-stage', '');
+    stage.appendChild(buildCover(project));
+    world.appendChild(stage);
     world.appendChild(buildGrowth());
     world.appendChild(buildStubs());
     armGlitch(world, { chrome: false });
@@ -794,7 +743,7 @@ window.Cbx300Case = (function () {
     bind: bind,
     kill: kill,
     armGlitch: armGlitch,
-    linkChromeToCover: linkChromeToCover,
+    applyCbxRise: applyCbxRise,
     META: META,
     BEATS: BEATS,
     SPINE: SPINE,

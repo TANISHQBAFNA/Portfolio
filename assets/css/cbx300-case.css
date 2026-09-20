@@ -1,6 +1,8 @@
 /* CBX300 Section 01 cover + Section 02 Aisha growth track.
    Home hero language. Image overlaps type from the right.
-   After cover: pin leftover pane, scrub Aisha stages left → right.
+   Cover + study chrome stay parked. Coffee panel rises over them
+   with --cbx-rise, same family as landing --rise / is-projects-in.
+   Then pin and morph Aisha stages. No sideways slide.
    Cream stays calm. Multiverse uses ink + glitch plates. */
 
 /* Window is the scroller. html.is-study { overflow: hidden } without film
@@ -27,9 +29,12 @@ html.is-study-page .study[data-template="cbx300"] {
   touch-action: pan-y;
 }
 
-/* CBX study: chrome stays overlayed on the cover, then soft-scrubs out
-   as Section 01 leaves. Landing `.study__chrome { position: fixed }` is
-   the overlay. JS fades opacity + y. `.is-away` keeps it gone on growth. */
+html.is-study-page {
+  --cbx-rise: 1;
+}
+
+/* Cover + chrome stay the under-layer (parked, no fade). Growth is z-index
+   40, same band as the landing projects rail, so it curtains over the header. */
 html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome,
 html.is-study-page .study[data-template="cbx300"] .study__chrome {
   position: fixed !important;
@@ -38,10 +43,8 @@ html.is-study-page .study[data-template="cbx300"] .study__chrome {
   right: 0;
   z-index: 21;
   background: transparent;
-}
-html.is-study-page .study[data-template="cbx300"] .study__chrome.is-away {
-  pointer-events: none !important;
-  visibility: hidden !important;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .study[data-template="cbx300"] {
@@ -93,12 +96,19 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
 }
 
 .cbx-world {
-  isolation: isolate;
   background: var(--film-cream, #f4efe6);
   color: var(--film-ink, #1e1510);
-  padding-top: var(--study-head, 72px);
   min-height: 100svh;
   min-height: 100dvh;
+}
+
+/* Parked hero equivalent. Cover lives here; growth overlays as a sibling. */
+.cbx-stage {
+  position: relative;
+  isolation: isolate;
+  height: 100svh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .cbx-world[hidden] {
@@ -107,13 +117,15 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
 
 .cbx-cover {
   box-sizing: border-box;
-  position: relative;
-  min-height: calc(100svh - var(--study-head, 72px));
-  min-height: calc(100dvh - var(--study-head, 72px));
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  min-height: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: stretch;
-  padding: clamp(10px, 2vh, 24px) var(--film-gutter, 24px) clamp(32px, 6vh, 64px);
+  padding: calc(var(--study-head, 72px) + clamp(10px, 2vh, 24px)) var(--film-gutter, 24px) clamp(32px, 6vh, 64px);
 }
 
 .cbx-cover__inner {
@@ -323,22 +335,32 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
 }
 
 
-/* Section 02 — pinned morph: people join, copy crossfades. No sideways slide. */
+/* Section 02 — landing-rail curtain, then pinned morph.
+   --cbx-rise: 1 is fully below; 0 covers the parked cover + chrome. */
 .cbx-growth {
   box-sizing: border-box;
-  position: relative;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
   width: 100%;
-  height: calc(100svh - var(--study-head, 72px));
-  height: calc(100dvh - var(--study-head, 72px));
+  height: 100svh;
+  height: 100dvh;
   overflow: hidden;
   background: var(--coffee, #1E1510);
   color: var(--cream, #f4efe6);
+  transform: translate3d(0, calc(var(--cbx-rise, 1) * 100%), 0);
+  will-change: transform;
+  pointer-events: none;
+  visibility: visible;
 }
 
 html.is-study-page .study[data-template="cbx300"] .cbx-growth {
-  /* Chrome has left with the cover. Growth fills the window, no head gap. */
   height: 100svh;
   height: 100dvh;
+}
+
+html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
+  pointer-events: auto;
 }
 
 .cbx-growth__frame {
@@ -601,6 +623,18 @@ html.is-study-page .study[data-template="cbx300"] .cbx-growth {
   letter-spacing: 0.01em;
   line-height: 1.2;
   color: rgba(244, 239, 230, 0.92);
+}
+
+.cbx-growth.is-static {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  transform: none;
+  will-change: auto;
+  pointer-events: auto;
+  height: auto;
+  min-height: 100svh;
+  min-height: 100dvh;
 }
 
 .cbx-growth.is-static .cbx-growth__beat {

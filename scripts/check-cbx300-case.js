@@ -49,9 +49,11 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s41') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s21') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(index.indexOf('project-study.js?v=s41') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s42') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s22') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
+  assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
+  assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
 });
 
 check('Section 01 copy matches CEO lock', function () {
@@ -180,7 +182,7 @@ check('cream and Multiverse share one cover + growth layout', function () {
   assert.ok(css.indexOf('.cbx-growth.is-static') !== -1, 'reduced-motion must show full cast');
 });
 
-check('study page scroll unlocks; chrome fades off the cover', function () {
+check('study page scroll unlocks; coffee panel curtains over parked chrome', function () {
   assert.ok(css.indexOf('html.is-study-page') !== -1, 'missing window-scroll page css');
   assert.ok(index.indexOf('data-study-close') !== -1, 'index missing close control');
   assert.ok(mvIndex.indexOf('data-study-close') !== -1, 'multiverse missing close control');
@@ -188,17 +190,21 @@ check('study page scroll unlocks; chrome fades off the cover', function () {
   var chromeAt = css.indexOf(chromeSel);
   assert.ok(chromeAt !== -1, 'missing CBX chrome selector');
   var chromeRule = css.slice(chromeAt, chromeAt + 420);
-  assert.ok(/position:\s*fixed\s*!important/.test(chromeRule), 'chrome overlays the cover so it can fade out, not ride the document');
-  assert.ok(css.indexOf('.study__chrome.is-away') !== -1, 'missing chrome away lock');
-  assert.ok(/visibility:\s*hidden\s*!important/.test(css), 'away chrome must hide even if GSAP set visibility inline');
-  assert.ok(pages.indexOf('function linkChromeToCover') !== -1, 'missing cover chrome scrub');
-  assert.ok(pages.indexOf("end: 'bottom top'") !== -1, 'chrome scrub must end as cover leaves');
-  assert.ok(pages.indexOf('scrub: 1.3') !== -1, 'chrome scrub must be a soft 1.2–1.4');
+  assert.ok(/position:\s*fixed\s*!important/.test(chromeRule), 'chrome stays parked on the cover');
+  assert.ok(/z-index:\s*21/.test(chromeRule), 'chrome stays under the coffee panel');
+  assert.ok(css.indexOf('.study__chrome.is-away') === -1, 'chrome must not fade away as the growth entry');
+  assert.ok(pages.indexOf('function linkChromeToCover') === -1, 'cover chrome scrub must be gone');
+  assert.ok(pages.indexOf("end: 'bottom top'") === -1, 'chrome must not scrub out as cover leaves');
+  assert.ok(pages.indexOf('function applyCbxRise') !== -1, 'missing landing-style rise handle');
+  assert.ok(pages.indexOf('--cbx-rise') !== -1, 'missing --cbx-rise write');
+  assert.ok(pages.indexOf('is-cbx-growth-in') !== -1, 'missing growth-in class');
+  assert.ok(css.indexOf('--cbx-rise') !== -1, 'missing --cbx-rise transform');
+  assert.ok(css.indexOf('z-index: 40') !== -1, 'growth must sit above cover/header like the landing rail');
   assert.ok(pages.indexOf("clearProps: 'opacity,visibility,pointerEvents,transform,y'") !== -1, 'close must restore chrome');
-  assert.ok(pages.indexOf("setAttribute('aria-hidden', 'true')") !== -1, 'gone chrome must be aria-hidden');
-  assert.ok(pages.indexOf('function growthPinActive') !== -1, 'chrome must stay gone while growth is pinned');
-  assert.ok(pages.indexOf("visibility: 'hidden'") !== -1, 'hide must set GSAP visibility hidden');
-  assert.ok(pages.indexOf("start: 'top top'") !== -1, 'growth pin must start at the window top after chrome leaves');
+  assert.ok(pages.indexOf("start: 'top top'") !== -1, 'cover stage must pin at the window top');
+  assert.ok(pages.indexOf('data-cbx-stage') !== -1, 'missing parked cover stage');
+  assert.ok(pages.indexOf('RISE_DUR') !== -1, 'curtain must occupy its own scrub span before morph');
+  assert.ok(css.indexOf('html.is-cbx-growth-in') !== -1, 'missing growth-in pointer-events');
 });
 
 check('no invented NPS/outcomes; Echo avoid-list stays off the page', function () {
@@ -259,8 +265,8 @@ check('rail wheel yields to open study so CBX300 window-scroll can pin-scrub', f
   assert.ok(studyGuard < prevent, 'is-study guard must run before preventDefault');
   assert.ok(pageGuard < prevent, 'is-study-page guard must run before preventDefault');
   assert.ok(onWheel.indexOf('rail.lock') === -1, 'do not lock the rail from onWheel');
-  assert.ok(index.indexOf('project-rail.js?v=hz98') !== -1, 'index.html must bump rail cache');
-  assert.ok(mvIndex.indexOf('project-rail.js?v=hz98') !== -1, 'index-multiverse.html must bump rail cache');
+  assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html must bump rail cache');
+  assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'index-multiverse.html must bump rail cache');
 });
 
 check('landing idle wheel does not steal study scroll', function () {
