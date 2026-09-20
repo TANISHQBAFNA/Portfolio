@@ -156,19 +156,28 @@ window.Cbx300Case = (function () {
     return 1 - rise / 0.05;
   }
 
+  function growthPane() {
+    return motion.pin || document.querySelector('[data-cbx-growth]');
+  }
+
   function applyCbxRise(p) {
     var html = document.documentElement;
     var rise = 1 - Math.max(0, Math.min(1, p));
+    var flush = panelFlushFromRise(rise).toFixed(4);
+    var pane = growthPane();
     html.style.setProperty('--cbx-rise', rise.toFixed(4));
-    html.style.setProperty('--panel-flush', panelFlushFromRise(rise).toFixed(4));
+    /* Write --panel-flush on the coffee pane, not html. Landing already
+       owns html --panel-flush for the projects rail (flush 1 after open). */
+    if (pane) pane.style.setProperty('--panel-flush', flush);
     html.classList.toggle('is-cbx-growth-in', p > 0.08);
   }
 
   function restRise() {
     var html = document.documentElement;
+    var pane = growthPane();
     html.classList.remove('is-cbx-growth-in');
     html.style.removeProperty('--cbx-rise');
-    html.style.removeProperty('--panel-flush');
+    if (pane) pane.style.removeProperty('--panel-flush');
     motion.riseState.p = 0;
   }
 
@@ -276,27 +285,44 @@ window.Cbx300Case = (function () {
   function ghostScreen(job) {
     var screen = el('div', 'cbx-ghost__screen cbx-ghost__screen--' + job);
     if (job === 'pay') {
-      screen.appendChild(el('p', 'cbx-ghost__eyebrow', 'Home'));
+      var cash = el('div', 'cbx-ghost__cash');
+      cash.appendChild(el('p', 'cbx-ghost__eyebrow', 'In today'));
+      cash.appendChild(el('p', 'cbx-ghost__money', '4,200.00'));
+      screen.appendChild(cash);
       var actions = el('div', 'cbx-ghost__actions');
-      actions.appendChild(el('span', 'cbx-ghost__btn', 'Receive'));
-      actions.appendChild(el('span', 'cbx-ghost__btn', 'Pay'));
+      actions.appendChild(el('span', 'cbx-ghost__btn cbx-ghost__btn--payin', 'Get paid'));
+      actions.appendChild(el('span', 'cbx-ghost__btn cbx-ghost__btn--payout', 'Pay'));
       screen.appendChild(actions);
       return screen;
     }
     if (job === 'balance') {
-      screen.appendChild(el('p', 'cbx-ghost__eyebrow', 'Available'));
-      screen.appendChild(el('p', 'cbx-ghost__hero', '12,480.00'));
+      var lead = el('div', 'cbx-ghost__lead');
+      lead.appendChild(el('p', 'cbx-ghost__eyebrow', 'Available'));
+      lead.appendChild(el('p', 'cbx-ghost__hero', '12,480.00'));
+      screen.appendChild(lead);
       var subs = el('div', 'cbx-ghost__subs');
+      subs.appendChild(el('p', 'cbx-ghost__sub', 'Ledger  13,850.00'));
       subs.appendChild(el('p', 'cbx-ghost__sub', 'Hold  320.00'));
       subs.appendChild(el('p', 'cbx-ghost__sub', 'Pending  1,050.00'));
       screen.appendChild(subs);
       return screen;
     }
     if (job === 'approvals') {
-      screen.appendChild(el('p', 'cbx-ghost__eyebrow', 'Waiting on me'));
+      screen.appendChild(el('p', 'cbx-ghost__kicker', 'Waiting on me'));
+      var head = el('div', 'cbx-ghost__doorhead');
+      head.appendChild(el('p', 'cbx-ghost__eyebrow', 'Approvals'));
+      head.appendChild(el('span', 'cbx-ghost__approve', 'Approve (3)'));
+      screen.appendChild(head);
       var queue = el('div', 'cbx-ghost__queue');
-      ['Payroll', 'Supplier', 'Card limit'].forEach(function (row) {
-        queue.appendChild(el('p', 'cbx-ghost__row', row));
+      [
+        { name: 'Payroll', amt: '42,000.00' },
+        { name: 'Supplier', amt: '8,400.00' },
+        { name: 'Card limit', amt: '2,000.00' }
+      ].forEach(function (row) {
+        var line = el('p', 'cbx-ghost__row');
+        line.appendChild(el('span', 'cbx-ghost__row-name', row.name));
+        line.appendChild(el('span', 'cbx-ghost__row-amt', row.amt));
+        queue.appendChild(line);
       });
       screen.appendChild(queue);
       return screen;
@@ -304,8 +330,15 @@ window.Cbx300Case = (function () {
     return screen;
   }
 
+  function ghostShape(job) {
+    if (job === 'pay') return 'phone';
+    if (job === 'balance') return 'card';
+    if (job === 'approvals') return 'door';
+    return 'phone';
+  }
+
   function ghostDevice(job) {
-    var device = el('div', 'cbx-ghost cbx-ghost--phone cbx-ghost--' + job);
+    var device = el('div', 'cbx-ghost cbx-ghost--' + ghostShape(job) + ' cbx-ghost--' + job);
     device.appendChild(ghostScreen(job));
     return device;
   }
