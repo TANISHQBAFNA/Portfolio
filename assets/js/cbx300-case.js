@@ -1,7 +1,10 @@
 /**
- * CBX300 case study — Section 01 cover.
- * Home hero language: kicker → accent → word. Image overlaps type from the right.
- * Cream stays calm. Multiverse uses glitch plates on chrome + cover type.
+ * CBX300 case study — Section 01 cover + Section 02 Aisha growth morph.
+ * Cover: kicker → accent → word. Image overlaps type from the right.
+ * Growth: coffee panel curtains over the parked cover + chrome
+ * (--cbx-rise / --panel-flush, same family as landing --rise /
+ * --panel-flush / is-projects-in), then one pinned frame morphs.
+ * Cream stays calm. Multiverse uses glitch plates on chrome + type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
  */
@@ -14,8 +17,76 @@ window.Cbx300Case = (function () {
     word: 'the Business'
   };
 
+  var BEATS = [
+    {
+      id: 'freelancer',
+      label: 'Freelancer',
+      stamp: [
+        'Finding: She needs cash in today',
+        'Choice: Get paid and pay on phone'
+      ],
+      need: 'Did the money land — can I pay?',
+      fact: 'Phone shows pay and cash in'
+    },
+    {
+      id: 'sole',
+      label: 'Sole proprietor',
+      stamp: [
+        'Finding: One balance number would lie',
+        'Choice: Put available first on the card'
+      ],
+      need: 'How much can I safely spend today?',
+      fact: 'Available leads; other balances sit beside'
+    },
+    {
+      id: 'mid',
+      label: 'Mid-size',
+      stamp: [
+        'Finding: Approving is now the daily job',
+        'Choice: Own door; keep every row visible'
+      ],
+      need: 'Who’s waiting — can I clear this safely?',
+      fact: 'Approvals door; Approve (n) shows each line'
+    }
+  ];
+
+  var SPINE = 'Pressure changes. The bank grows with her.';
+
+  var GHOSTS = [
+    { id: 'freelancer', job: 'pay' },
+    { id: 'sole', job: 'balance' },
+    { id: 'mid', job: 'approvals' }
+  ];
+
+  var PEOPLE = [
+    {
+      id: 'aisha',
+      src: 'assets/img/aisha-growth/people/aisha.png',
+      alt: 'Clay cutout of Aisha.',
+      from: 0
+    },
+    {
+      id: 'mate-1',
+      src: 'assets/img/aisha-growth/people/teammate-01.png',
+      alt: 'Clay cutout of Aisha first teammate.',
+      from: 1
+    },
+    {
+      id: 'mate-2',
+      src: 'assets/img/aisha-growth/people/teammate-02.png',
+      alt: 'Clay cutout of a teammate with a laptop.',
+      from: 2
+    },
+    {
+      id: 'mate-3',
+      src: 'assets/img/aisha-growth/people/teammate-03.png',
+      alt: 'Clay cutout of a teammate with coffee.',
+      from: 2
+    }
+  ];
+
+
   var STUBS = [
-    { id: 'ladder', num: '02', title: 'Meet Aisha.' },
     { id: 'roles', num: '03', title: 'I designed for roles, not one user.' },
     { id: 'approvals', num: '04', title: 'My team can prepare. I need to approve.' },
     { id: 'money', num: '05', title: 'Can I afford to pay this supplier today?' },
@@ -23,6 +94,19 @@ window.Cbx300Case = (function () {
     { id: 'grammar', num: '07', title: 'Same goal. Different moment.' },
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
+
+  var motion = {
+    triggers: [],
+    tween: null,
+    riseState: { p: 0 },
+    refreshTimers: [],
+    normalized: false,
+    pin: null,
+    stage: null
+  };
+
+  var RISE_DUR = 1;
+  var MORPH_VH = 2.35;
 
   function isMultiverse() {
     return document.documentElement.classList.contains('is-multiverse');
@@ -46,6 +130,71 @@ window.Cbx300Case = (function () {
     if (project && project.cardImage) return project.cardImage;
     if (project && project.cover) return project.cover;
     return 'assets/img/work/cin-work-sme.png';
+  }
+
+  function pad(n) {
+    return String(n).length < 2 ? '0' + n : String(n);
+  }
+
+  function viewH() {
+    var vv = window.visualViewport;
+    if (vv && vv.height) return vv.height;
+    return window.innerHeight || 800;
+  }
+
+  function paneH() {
+    return Math.max(280, Math.round(viewH()));
+  }
+
+  function studyChrome() {
+    return document.querySelector('.study[data-template="cbx300"] .study__chrome');
+  }
+
+  function panelFlushFromRise(rise) {
+    if (rise <= 0) return 1;
+    if (rise >= 0.05) return 0;
+    return 1 - rise / 0.05;
+  }
+
+  function growthPane() {
+    return motion.pin || document.querySelector('[data-cbx-growth]');
+  }
+
+  function applyCbxRise(p) {
+    var html = document.documentElement;
+    var rise = 1 - Math.max(0, Math.min(1, p));
+    var flush = panelFlushFromRise(rise).toFixed(4);
+    var pane = growthPane();
+    html.style.setProperty('--cbx-rise', rise.toFixed(4));
+    /* Write --panel-flush on the coffee pane, not html. Landing already
+       owns html --panel-flush for the projects rail (flush 1 after open). */
+    if (pane) pane.style.setProperty('--panel-flush', flush);
+    html.classList.toggle('is-cbx-growth-in', p > 0.08);
+  }
+
+  function restRise() {
+    var html = document.documentElement;
+    var pane = growthPane();
+    html.classList.remove('is-cbx-growth-in');
+    html.style.removeProperty('--cbx-rise');
+    if (pane) pane.style.removeProperty('--panel-flush');
+    motion.riseState.p = 0;
+  }
+
+  function restChrome() {
+    var chrome = studyChrome();
+    var gsap = window.gsap;
+    if (!chrome) return;
+    chrome.classList.remove('is-away');
+    chrome.removeAttribute('aria-hidden');
+    if (gsap) {
+      gsap.set(chrome, { clearProps: 'opacity,visibility,pointerEvents,transform,y' });
+    } else {
+      chrome.style.opacity = '';
+      chrome.style.visibility = '';
+      chrome.style.pointerEvents = '';
+      chrome.style.transform = '';
+    }
   }
 
   function buildCover(project) {
@@ -87,6 +236,165 @@ window.Cbx300Case = (function () {
     return section;
   }
 
+  function personFig(person) {
+    var figure = el('figure', 'cbx-growth__person');
+    figure.setAttribute('data-cbx-person', person.id);
+    figure.setAttribute('data-from', String(person.from));
+    if ((person.from || 0) === 0) figure.classList.add('is-in');
+    var img = document.createElement('img');
+    img.className = 'cbx-growth__person-img';
+    img.alt = person.alt || '';
+    img.src = person.src;
+    img.decoding = 'async';
+    img.addEventListener('error', function () {
+      figure.classList.add('is-empty');
+      img.remove();
+    });
+    figure.appendChild(img);
+    return figure;
+  }
+
+  function stampList(parts) {
+    var list = el('ul', 'cbx-growth__stamp');
+    list.setAttribute('aria-label', 'Finding and choice');
+    (parts || []).forEach(function (text) {
+      var item = el('li', 'cbx-growth__chip');
+      var colon = text.indexOf(': ');
+      if (colon !== -1) {
+        item.appendChild(el('span', 'cbx-growth__chip-k', text.slice(0, colon)));
+        item.appendChild(el('span', 'cbx-growth__chip-v', text.slice(colon + 2)));
+      } else {
+        item.textContent = text;
+      }
+      list.appendChild(item);
+    });
+    return list;
+  }
+
+  function beatCopy(beat, index, glitch) {
+    var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
+    beatEl.setAttribute('data-cbx-beat', beat.id);
+    beatEl.setAttribute('data-beat-index', String(index));
+    beatEl.appendChild(el('p', 'cbx-growth__index', pad(index + 1)));
+    beatEl.appendChild(shout('h2', 'cbx-growth__stage', beat.label, glitch));
+    beatEl.appendChild(stampList(beat.stamp));
+    beatEl.appendChild(el('p', 'cbx-growth__need', beat.need));
+    beatEl.appendChild(el('p', 'cbx-growth__fact', beat.fact));
+    return beatEl;
+  }
+
+  function ghostScreen(job) {
+    var screen = el('div', 'cbx-ghost__screen cbx-ghost__screen--' + job);
+    if (job === 'pay') {
+      var cash = el('div', 'cbx-ghost__cash');
+      cash.appendChild(el('p', 'cbx-ghost__eyebrow', 'In today'));
+      cash.appendChild(el('p', 'cbx-ghost__money', '4,200.00'));
+      screen.appendChild(cash);
+      var actions = el('div', 'cbx-ghost__actions');
+      actions.appendChild(el('span', 'cbx-ghost__btn cbx-ghost__btn--payin', 'Get paid'));
+      actions.appendChild(el('span', 'cbx-ghost__btn cbx-ghost__btn--payout', 'Pay'));
+      screen.appendChild(actions);
+      return screen;
+    }
+    if (job === 'balance') {
+      var lead = el('div', 'cbx-ghost__lead');
+      lead.appendChild(el('p', 'cbx-ghost__eyebrow', 'Available'));
+      lead.appendChild(el('p', 'cbx-ghost__hero', '12,480.00'));
+      screen.appendChild(lead);
+      var subs = el('div', 'cbx-ghost__subs');
+      subs.appendChild(el('p', 'cbx-ghost__sub', 'Ledger  13,850.00'));
+      subs.appendChild(el('p', 'cbx-ghost__sub', 'Hold  320.00'));
+      subs.appendChild(el('p', 'cbx-ghost__sub', 'Pending  1,050.00'));
+      screen.appendChild(subs);
+      return screen;
+    }
+    if (job === 'approvals') {
+      screen.appendChild(el('p', 'cbx-ghost__kicker', 'Waiting on me'));
+      var head = el('div', 'cbx-ghost__doorhead');
+      head.appendChild(el('p', 'cbx-ghost__eyebrow', 'Approvals'));
+      head.appendChild(el('span', 'cbx-ghost__approve', 'Approve (3)'));
+      screen.appendChild(head);
+      var queue = el('div', 'cbx-ghost__queue');
+      [
+        { name: 'Payroll', amt: '42,000.00' },
+        { name: 'Supplier', amt: '8,400.00' },
+        { name: 'Card limit', amt: '2,000.00' }
+      ].forEach(function (row) {
+        var line = el('p', 'cbx-ghost__row');
+        line.appendChild(el('span', 'cbx-ghost__row-name', row.name));
+        line.appendChild(el('span', 'cbx-ghost__row-amt', row.amt));
+        queue.appendChild(line);
+      });
+      screen.appendChild(queue);
+      return screen;
+    }
+    return screen;
+  }
+
+  function ghostShape(job) {
+    if (job === 'pay') return 'phone';
+    if (job === 'balance') return 'card';
+    if (job === 'approvals') return 'door';
+    return 'phone';
+  }
+
+  function ghostDevice(job) {
+    var device = el('div', 'cbx-ghost cbx-ghost--' + ghostShape(job) + ' cbx-ghost--' + job);
+    device.appendChild(ghostScreen(job));
+    return device;
+  }
+
+  function buildGhosts() {
+    var wrap = el('div', 'cbx-growth__ghosts');
+    wrap.setAttribute('data-cbx-ghosts', '');
+    wrap.setAttribute('aria-hidden', 'true');
+    GHOSTS.forEach(function (spec, i) {
+      var ghost = el('div', 'cbx-growth__ghost' + (i === 0 ? ' is-on' : ''));
+      ghost.setAttribute('data-cbx-ghost', spec.id);
+      ghost.setAttribute('data-cbx-job', spec.job);
+      var row = el('div', 'cbx-ghost-row');
+      row.appendChild(ghostDevice(spec.job));
+      ghost.appendChild(row);
+      wrap.appendChild(ghost);
+    });
+    return wrap;
+  }
+
+  function buildGrowth() {
+    var glitch = isMultiverse();
+    var section = el('section', 'cbx-growth');
+    section.setAttribute('data-cbx-section', '02');
+    section.setAttribute('data-cbx-live', '');
+    section.setAttribute('data-cbx-growth', '');
+    section.setAttribute('aria-label', 'Aisha grows. The app follows.');
+
+    var stage = el('div', 'cbx-growth__frame');
+    stage.setAttribute('data-cbx-growth-frame', '');
+
+    var copy = el('div', 'cbx-growth__copy');
+    copy.appendChild(el('p', 'cbx-growth__spine', SPINE));
+    var beats = el('div', 'cbx-growth__beats');
+    beats.setAttribute('data-cbx-beats', '');
+    BEATS.forEach(function (beat, i) {
+      beats.appendChild(beatCopy(beat, i, glitch));
+    });
+    copy.appendChild(beats);
+    stage.appendChild(copy);
+
+    var well = el('div', 'cbx-growth__well');
+    well.appendChild(buildGhosts());
+    var cast = el('div', 'cbx-growth__cast');
+    cast.setAttribute('data-cbx-cast', '');
+    PEOPLE.forEach(function (person) {
+      cast.appendChild(personFig(person));
+    });
+    well.appendChild(cast);
+    stage.appendChild(well);
+
+    section.appendChild(stage);
+    return section;
+  }
+
   function buildStubs() {
     var rest = el('div', 'cbx-rest');
     rest.setAttribute('data-cbx-rest', '');
@@ -108,7 +416,7 @@ window.Cbx300Case = (function () {
 
   function burstSafe(iris, node, reduce) {
     if (!iris || !iris.burstGlitch) return;
-    /* Letter-swap rewrites textContent. Nested chrome (01 / 01) must keep its spans. */
+    /* Letter-swap rewrites textContent. Nested chrome (01 / 02) must keep its spans. */
     if (node.children && node.children.length) {
       node.classList.remove('is-glitching', 'is-slam');
       void node.offsetWidth;
@@ -161,24 +469,302 @@ window.Cbx300Case = (function () {
     });
   }
 
+  function clearTimers() {
+    motion.refreshTimers.forEach(function (id) { window.clearTimeout(id); });
+    motion.refreshTimers = [];
+  }
+
+  function kill() {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    clearTimers();
+    if (motion.tween && motion.tween.scrollTrigger && motion.tween.scrollTrigger.kill) {
+      motion.tween.scrollTrigger.kill();
+    }
+    if (motion.tween && motion.tween.kill) motion.tween.kill();
+    motion.tween = null;
+    motion.triggers.forEach(function (t) {
+      if (t && t.kill) t.kill();
+    });
+    motion.triggers = [];
+    restChrome();
+    restRise();
+    if (motion.stage) {
+      motion.stage.style.height = '';
+    }
+    motion.stage = null;
+    if (motion.pin) {
+      motion.pin.classList.remove('is-static');
+      motion.pin.style.height = '';
+      if (gsap) {
+        Array.prototype.forEach.call(
+          motion.pin.querySelectorAll('[data-cbx-person], [data-cbx-beat], [data-cbx-ghost]'),
+          function (node) { gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' }); }
+        );
+      }
+      applyBeat(
+        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-beat]')),
+        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-ghost]')),
+        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-person]')),
+        0
+      );
+    }
+    motion.pin = null;
+    if (motion.normalized && ScrollTrigger && ScrollTrigger.normalizeScroll) {
+      ScrollTrigger.normalizeScroll(false);
+      motion.normalized = false;
+    }
+  }
+
+
+  function watchSteps(cover, pin, onStep) {
+    var ScrollTrigger = window.ScrollTrigger;
+    if (!ScrollTrigger) return;
+    if (cover) {
+      motion.triggers.push(ScrollTrigger.create({
+        trigger: cover,
+        start: 'top 70%',
+        end: 'bottom 45%',
+        onToggle: function (self) {
+          if (self.isActive && onStep) onStep(0);
+        }
+      }));
+    }
+    if (pin) {
+      motion.triggers.push(ScrollTrigger.create({
+        trigger: pin,
+        start: 'top 70%',
+        end: 'bottom 25%',
+        onToggle: function (self) {
+          if (self.isActive && onStep) onStep(1);
+        }
+      }));
+    }
+  }
+
+  function sizePane(stage) {
+    if (!stage) return paneH();
+    var h = paneH();
+    stage.style.height = h + 'px';
+    return h;
+  }
+
+  function beatIndexFromProgress(progress) {
+    var n = BEATS.length;
+    if (n <= 1) return 0;
+    if (progress >= 1) return n - 1;
+    return Math.min(n - 1, Math.max(0, Math.floor(progress * n)));
+  }
+
+  function applyBeat(beats, ghosts, people, index) {
+    beats.forEach(function (beat, i) {
+      beat.classList.toggle('is-on', i === index);
+    });
+    ghosts.forEach(function (ghost, i) {
+      ghost.classList.toggle('is-on', i === index);
+    });
+    people.forEach(function (person) {
+      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
+      person.classList.toggle('is-in', from <= index);
+    });
+    var host = beats[0] || ghosts[0] || people[0];
+    if (host && host.closest) {
+      var pane = host.closest('[data-cbx-growth]');
+      if (pane) pane.setAttribute('data-cbx-live-beat', String(index));
+    }
+  }
+
+  function setupStatic(pin) {
+    if (!pin) return;
+    pin.classList.add('is-static');
+    pin.style.height = '';
+    var beats = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-beat]'));
+    var people = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-person]'));
+    var ghosts = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-ghost]'));
+    applyBeat(beats, ghosts, people, Math.max(0, beats.length - 1));
+  }
+
+  function bindCinematic(world, opts) {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    var stage = world.querySelector('[data-cbx-stage]');
+    var pin = world.querySelector('[data-cbx-growth]');
+    var cover = world.querySelector('[data-cbx-section="01"]');
+    var beats = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-beat]')) : [];
+    var people = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-person]')) : [];
+    var ghosts = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-ghost]')) : [];
+    var onStep = opts.onStep;
+
+    motion.pin = pin;
+    motion.stage = stage;
+    if (!pin || !stage) {
+      watchSteps(cover, pin, onStep);
+      applyCbxRise(0);
+      return;
+    }
+
+    pin.classList.remove('is-static');
+    sizePane(stage);
+    applyCbxRise(0);
+
+    beats.concat(ghosts, people).forEach(function (node) {
+      gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' });
+    });
+    applyBeat(beats, ghosts, people, 0);
+
+    motion.riseState.p = 0;
+
+    var tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: stage,
+        start: 'top top',
+        end: function () {
+          sizePane(stage);
+          return '+=' + Math.round(paneH() * (RISE_DUR + MORPH_VH));
+        },
+        pin: true,
+        pinSpacing: true,
+        scrub: 0.65,
+        invalidateOnRefresh: true,
+        anticipatePin: 1,
+        fastScrollEnd: true,
+        refreshPriority: 1,
+        onRefresh: function () { sizePane(stage); },
+        onToggle: function (self) {
+          if (self.isActive && onStep) {
+            onStep(motion.riseState.p > 0.08 ? 1 : 0);
+          }
+        },
+        onUpdate: function (self) {
+          var dur = tl.duration() || 1;
+          var morphStart = RISE_DUR / dur;
+          var morphP = 0;
+          if (self.progress > morphStart) {
+            morphP = (self.progress - morphStart) / Math.max(0.0001, 1 - morphStart);
+          }
+          applyBeat(beats, ghosts, people, beatIndexFromProgress(morphP));
+          if (onStep) onStep(motion.riseState.p > 0.92 ? 1 : 0);
+        }
+      }
+    });
+
+    tl.to(motion.riseState, {
+      p: 1,
+      duration: RISE_DUR,
+      ease: 'none',
+      onUpdate: function () { applyCbxRise(motion.riseState.p); }
+    }, 0);
+
+    tl.to({}, { duration: MORPH_VH });
+    motion.tween = tl;
+    if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
+  }
+
+  function refreshSoon() {
+    var ScrollTrigger = window.ScrollTrigger;
+    if (!ScrollTrigger) return;
+    ScrollTrigger.refresh();
+    motion.refreshTimers.push(window.setTimeout(function () { ScrollTrigger.refresh(); }, 160));
+    motion.refreshTimers.push(window.setTimeout(function () { ScrollTrigger.refresh(); }, 520));
+  }
+
+  function whenImages(pin, fn) {
+    if (!pin) {
+      fn();
+      return;
+    }
+    var imgs = pin.querySelectorAll('img');
+    var left = imgs.length;
+    if (!left) {
+      fn();
+      return;
+    }
+    var done = function () {
+      left -= 1;
+      if (left <= 0) fn();
+    };
+    Array.prototype.forEach.call(imgs, function (img) {
+      if (img.complete) done();
+      else {
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      }
+    });
+  }
+
+  function bind(world, opts) {
+    kill();
+    if (!world) return;
+    opts = opts || {};
+    var pin = world.querySelector('[data-cbx-growth]');
+    var cover = world.querySelector('[data-cbx-section="01"]');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+
+    if (!gsap || !ScrollTrigger || reduce.matches) {
+      setupStatic(pin);
+      restRise();
+      if (ScrollTrigger) {
+        watchSteps(cover, pin, opts.onStep);
+      }
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
+    var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (touch && ScrollTrigger.normalizeScroll) {
+      ScrollTrigger.normalizeScroll(true);
+      motion.normalized = true;
+    }
+
+    bindCinematic(world, opts);
+    whenImages(pin, refreshSoon);
+  }
+
+  function liveCount(world) {
+    if (!world) return 2;
+    var n = world.querySelectorAll('[data-cbx-live]').length;
+    return n || 2;
+  }
+
   function mount(world, project) {
     if (!world) return null;
+    kill();
     world.innerHTML = '';
     world.classList.remove('film-world');
     world.classList.add('cbx-world');
-    world.appendChild(buildCover(project));
+    var stage = el('div', 'cbx-stage');
+    stage.setAttribute('data-cbx-stage', '');
+    stage.appendChild(buildCover(project));
+    world.appendChild(stage);
+    world.appendChild(buildGrowth());
     world.appendChild(buildStubs());
     armGlitch(world, { chrome: false });
     return {
       project: project || null,
-      pageCount: function () { return 1; }
+      pageCount: function () { return liveCount(world); },
+      bind: function (opts) { bind(world, opts || {}); },
+      kill: kill
     };
   }
 
   return {
     mount: mount,
+    bind: bind,
+    kill: kill,
     armGlitch: armGlitch,
+    applyCbxRise: applyCbxRise,
+    applyBeat: applyBeat,
+    beatIndexFromProgress: beatIndexFromProgress,
     META: META,
+    BEATS: BEATS,
+    SPINE: SPINE,
+    GHOSTS: GHOSTS,
+    PEOPLE: PEOPLE,
     STUBS: STUBS
   };
 })();
