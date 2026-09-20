@@ -632,12 +632,12 @@ window.Cbx300Case = (function () {
     }, 0);
 
     if (beats[0] && beats[1]) {
-      tl.to(beats[0], { opacity: 0, duration: 0.22 }, RISE_DUR + 0.28);
-      tl.to(beats[1], { opacity: 1, duration: 0.22 }, RISE_DUR + 0.28);
+      tl.to(beats[0], { opacity: 0, duration: 0.12 }, RISE_DUR + 0.28);
+      tl.to(beats[1], { opacity: 1, duration: 0.16 }, RISE_DUR + 0.36);
     }
     if (ghosts[0] && ghosts[1]) {
-      tl.to(ghosts[0], { opacity: 0, duration: 0.22 }, RISE_DUR + 0.28);
-      tl.to(ghosts[1], { opacity: 1, duration: 0.22 }, RISE_DUR + 0.28);
+      tl.to(ghosts[0], { opacity: 0, duration: 0.12 }, RISE_DUR + 0.28);
+      tl.to(ghosts[1], { opacity: 1, duration: 0.16 }, RISE_DUR + 0.36);
     }
     people.forEach(function (person) {
       var from = parseInt(person.getAttribute('data-from'), 10) || 0;
@@ -647,12 +647,12 @@ window.Cbx300Case = (function () {
     });
 
     if (beats[1] && beats[2]) {
-      tl.to(beats[1], { opacity: 0, duration: 0.22 }, RISE_DUR + 0.62);
-      tl.to(beats[2], { opacity: 1, duration: 0.22 }, RISE_DUR + 0.62);
+      tl.to(beats[1], { opacity: 0, duration: 0.12 }, RISE_DUR + 0.62);
+      tl.to(beats[2], { opacity: 1, duration: 0.16 }, RISE_DUR + 0.7);
     }
     if (ghosts[1] && ghosts[2]) {
-      tl.to(ghosts[1], { opacity: 0, duration: 0.22 }, RISE_DUR + 0.62);
-      tl.to(ghosts[2], { opacity: 1, duration: 0.22 }, RISE_DUR + 0.62);
+      tl.to(ghosts[1], { opacity: 0, duration: 0.12 }, RISE_DUR + 0.62);
+      tl.to(ghosts[2], { opacity: 1, duration: 0.16 }, RISE_DUR + 0.7);
     }
     people.forEach(function (person) {
       var from = parseInt(person.getAttribute('data-from'), 10) || 0;
