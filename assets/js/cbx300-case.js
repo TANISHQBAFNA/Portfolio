@@ -275,8 +275,7 @@ window.Cbx300Case = (function () {
     var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
     beatEl.setAttribute('data-cbx-beat', beat.id);
     beatEl.setAttribute('data-beat-index', String(index));
-    beatEl.appendChild(el('p', 'cbx-growth__index', pad(index + 1)));
-    beatEl.appendChild(shout('h2', 'cbx-growth__stage', beat.label, glitch));
+    beatEl.appendChild(shout('h2', 'cbx-growth__stage', pad(index + 1) + ' · ' + beat.label, glitch));
     beatEl.appendChild(stampList(beat.stamp));
     beatEl.appendChild(el('p', 'cbx-growth__need', beat.need));
     beatEl.appendChild(el('p', 'cbx-growth__fact', beat.fact));
@@ -299,7 +298,9 @@ window.Cbx300Case = (function () {
     if (job === 'balance') {
       var lead = el('div', 'cbx-ghost__lead');
       lead.appendChild(el('p', 'cbx-ghost__eyebrow', 'Available'));
-      lead.appendChild(el('p', 'cbx-ghost__hero', '12,480.00'));
+      var hero = el('p', 'cbx-ghost__hero', '12,480.00');
+      hero.setAttribute('data-cbx-money', '');
+      lead.appendChild(hero);
       screen.appendChild(lead);
       var subs = el('div', 'cbx-ghost__subs');
       subs.appendChild(el('p', 'cbx-ghost__sub', 'Ledger  13,850.00'));
@@ -547,6 +548,8 @@ window.Cbx300Case = (function () {
     if (!stage) return paneH();
     var h = paneH();
     stage.style.height = h + 'px';
+    var pin = motion.pin || document.querySelector('[data-cbx-growth]');
+    fitMoney(pin);
     return h;
   }
 
@@ -555,6 +558,32 @@ window.Cbx300Case = (function () {
     if (n <= 1) return 0;
     if (progress >= 1) return n - 1;
     return Math.min(n - 1, Math.max(0, Math.floor(progress * n)));
+  }
+
+  function fitMoney(root) {
+    if (!root) return;
+    Array.prototype.forEach.call(
+      root.querySelectorAll('.cbx-ghost__hero, .cbx-ghost__money'),
+      function (node) {
+        var wrap = node.closest('.cbx-ghost');
+        if (!wrap) return;
+        node.style.fontSize = '';
+        var cs = window.getComputedStyle(wrap);
+        var pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+        var max = wrap.clientWidth - pad;
+        if (max <= 0) {
+          max = wrap.getBoundingClientRect().width - pad;
+        }
+        if (max <= 8) return;
+        var size = parseFloat(window.getComputedStyle(node).fontSize) || 20;
+        var guard = 0;
+        while (node.scrollWidth > max + 0.5 && size > 13 && guard < 32) {
+          size -= 0.5;
+          node.style.fontSize = size + 'px';
+          guard += 1;
+        }
+      }
+    );
   }
 
   function applyBeat(beats, ghosts, people, index) {
@@ -572,6 +601,7 @@ window.Cbx300Case = (function () {
     if (host && host.closest) {
       var pane = host.closest('[data-cbx-growth]');
       if (pane) pane.setAttribute('data-cbx-live-beat', String(index));
+      fitMoney(pane || host);
     }
   }
 
@@ -744,6 +774,7 @@ window.Cbx300Case = (function () {
     world.appendChild(stage);
     world.appendChild(buildGrowth());
     world.appendChild(buildStubs());
+    fitMoney(world);
     armGlitch(world, { chrome: false });
     return {
       project: project || null,
