@@ -713,10 +713,10 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 }
 
 .cbx-ghost__screen--balance {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: 1rem;
-  align-items: end;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .cbx-ghost__lead {
@@ -737,8 +737,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 
 .cbx-ghost__subs {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-flow: row wrap;
+  align-items: stretch;
   gap: 6px;
 }
 
@@ -928,14 +928,6 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
   }
   .cbx-ghost__hero {
     font-size: clamp(1.85rem, 8vw, 2.6rem);
-  }
-  .cbx-ghost__screen--balance {
-    grid-template-columns: 1fr;
-    row-gap: 10px;
-  }
-  .cbx-ghost__subs {
-    flex-direction: row;
-    flex-wrap: wrap;
   }
 }
 
