@@ -21,58 +21,43 @@ window.Cbx300Case = (function () {
       id: 'freelancer',
       label: 'Freelancer',
       stamp: [
-        'One person does everything',
-        'Phone-complete basics',
-        'Pay / get paid'
+        'Finding: Paid late, chased invoices.',
+        'Choice: Pay & get paid on phone.',
+        'UI: Home = receive + pay.'
       ],
-      need: '“Did I get paid? Can I pay?”',
-      fact: 'Phone shows pay and cash'
+      need: '“When does my money actually land?”',
+      fact: 'Mobile pay-in and pay-out as one job.'
     },
     {
       id: 'sole',
       label: 'Sole proprietor',
       stamp: [
-        'One balance number lies',
-        'Available leads; handoff safe',
-        'Four balances + beneficiary'
+        'Finding: One balance number lies.',
+        'Choice: Lead with available.',
+        'UI: Available hero; holds sit back.'
       ],
-      need: '“How much can I safely spend?”',
-      fact: 'Available is largest; helper appears'
+      need: '“What can I spend today?”',
+      fact: 'Available leads; pending never wears the crown.'
     },
     {
       id: 'mid',
       label: 'Mid-size',
       stamp: [
-        'Approving is the job',
-        'Own door; rows stay visible',
-        'Approvals + who can act'
+        'Finding: Approvals become a pile.',
+        'Choice: Prepare ∥ approve, split.',
+        'UI: Waiting-on-me door.'
       ],
-      need: '“Who’s waiting on me?”',
-      fact: 'Queue and limits show up'
+      need: '“What needs me before payroll?”',
+      fact: 'One queue for her decisions — not everyone’s noise.'
     }
   ];
 
   var SPINE = 'Same bank. Grows with her.';
 
   var GHOSTS = [
-    {
-      id: 'freelancer',
-      label: 'Pay · Get paid',
-      devices: [{ kind: 'phone', lines: ['Pay · Get paid'] }]
-    },
-    {
-      id: 'sole',
-      label: 'Available · Add beneficiary',
-      devices: [
-        { kind: 'phone', lines: ['Available'] },
-        { kind: 'desktop', lines: ['Add beneficiary'] }
-      ]
-    },
-    {
-      id: 'mid',
-      label: 'Approvals · Permissions',
-      devices: [{ kind: 'desktop', lines: ['Approvals · Permissions'] }]
-    }
+    { id: 'freelancer', job: 'pay' },
+    { id: 'sole', job: 'balance' },
+    { id: 'mid', job: 'approvals' }
   ];
 
   var PEOPLE = [
@@ -257,7 +242,15 @@ window.Cbx300Case = (function () {
     var list = el('ul', 'cbx-growth__stamp');
     list.setAttribute('aria-label', 'Finding, choice, UI proof');
     (parts || []).forEach(function (text) {
-      list.appendChild(el('li', 'cbx-growth__chip', text));
+      var item = el('li', 'cbx-growth__chip');
+      var colon = text.indexOf(': ');
+      if (colon !== -1) {
+        item.appendChild(el('span', 'cbx-growth__chip-k', text.slice(0, colon)));
+        item.appendChild(el('span', 'cbx-growth__chip-v', text.slice(colon + 2)));
+      } else {
+        item.textContent = text;
+      }
+      list.appendChild(item);
     });
     return list;
   }
@@ -274,13 +267,40 @@ window.Cbx300Case = (function () {
     return beatEl;
   }
 
-  function ghostDevice(kind, lines) {
-    var device = el('div', 'cbx-ghost cbx-ghost--' + kind);
-    var screen = el('div', 'cbx-ghost__screen');
-    (lines || []).forEach(function (line) {
-      screen.appendChild(el('p', 'cbx-ghost__line', line));
-    });
-    device.appendChild(screen);
+  function ghostScreen(job) {
+    var screen = el('div', 'cbx-ghost__screen cbx-ghost__screen--' + job);
+    if (job === 'pay') {
+      screen.appendChild(el('p', 'cbx-ghost__eyebrow', 'Home'));
+      var actions = el('div', 'cbx-ghost__actions');
+      actions.appendChild(el('span', 'cbx-ghost__btn', 'Receive'));
+      actions.appendChild(el('span', 'cbx-ghost__btn', 'Pay'));
+      screen.appendChild(actions);
+      return screen;
+    }
+    if (job === 'balance') {
+      screen.appendChild(el('p', 'cbx-ghost__eyebrow', 'Available'));
+      screen.appendChild(el('p', 'cbx-ghost__hero', '12,480.00'));
+      var subs = el('div', 'cbx-ghost__subs');
+      subs.appendChild(el('p', 'cbx-ghost__sub', 'Hold  320.00'));
+      subs.appendChild(el('p', 'cbx-ghost__sub', 'Pending  1,050.00'));
+      screen.appendChild(subs);
+      return screen;
+    }
+    if (job === 'approvals') {
+      screen.appendChild(el('p', 'cbx-ghost__eyebrow', 'Waiting on me'));
+      var queue = el('div', 'cbx-ghost__queue');
+      ['Payroll', 'Supplier', 'Card limit'].forEach(function (row) {
+        queue.appendChild(el('p', 'cbx-ghost__row', row));
+      });
+      screen.appendChild(queue);
+      return screen;
+    }
+    return screen;
+  }
+
+  function ghostDevice(job) {
+    var device = el('div', 'cbx-ghost cbx-ghost--phone cbx-ghost--' + job);
+    device.appendChild(ghostScreen(job));
     return device;
   }
 
@@ -291,10 +311,9 @@ window.Cbx300Case = (function () {
     GHOSTS.forEach(function (spec, i) {
       var ghost = el('div', 'cbx-growth__ghost' + (i === 0 ? ' is-on' : ''));
       ghost.setAttribute('data-cbx-ghost', spec.id);
+      ghost.setAttribute('data-cbx-job', spec.job);
       var row = el('div', 'cbx-ghost-row');
-      spec.devices.forEach(function (device) {
-        row.appendChild(ghostDevice(device.kind, device.lines));
-      });
+      row.appendChild(ghostDevice(spec.job));
       ghost.appendChild(row);
       wrap.appendChild(ghost);
     });
