@@ -49,10 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s49') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s48') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s49') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s48') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s50') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s49') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s50') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s49') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -333,6 +333,45 @@ check('light proof: Echo caption pack and job ghosts', function () {
   assert.ok(!/box-shadow:\s*[^;]*0 0/.test(css.slice(css.indexOf('.cbx-ghost'))), 'no glow on ghost');
   assert.ok(pages.indexOf('travelX') === -1, 'proof pass must not bring back sideways travel');
   assert.ok(pages.indexOf('film-decision') === -1, 'old film decision chips must stay gone');
+});
+
+check('ghost job, copy, and cast lock to the same beat index', function () {
+  assert.ok(pages.indexOf('function applyBeat') !== -1, 'missing applyBeat');
+  assert.ok(pages.indexOf('applyBeat(beats, ghosts, people, beatIndexFromProgress(morphP))') !== -1,
+    'onUpdate must drive copy + ghost + cast from one morph index');
+  assert.ok(pages.indexOf("pane.setAttribute('data-cbx-live-beat'") !== -1, 'live beat index must be readable');
+  assert.ok(pages.indexOf('Math.floor(progress * n)') !== -1, 'beats must split the morph into equal floors');
+  assert.ok(pages.indexOf('tl.to(ghosts') === -1, 'ghosts must not fade on a delayed timeline');
+  assert.ok(pages.indexOf('tl.to(beats') === -1, 'copy must not fade on a delayed timeline');
+  assert.ok(pages.indexOf('function markBeat') === -1, 'do not keep a second beat marker');
+  assert.ok(pages.indexOf('tl.to({}, { duration: MORPH_VH })') !== -1, 'morph runway must keep pin duration');
+  assert.ok(pages.indexOf('from <= index') !== -1, 'cast must enter from the live beat, not all-on');
+  assert.ok(pages.indexOf("figure.classList.add('is-in')") !== -1, 'freelancer must start in');
+  var beatFn = pages.slice(pages.indexOf('function beatCopy'), pages.indexOf('function ghostScreen'));
+  var stageAt = beatFn.indexOf("cbx-growth__stage");
+  var stampAt = beatFn.indexOf('stampList');
+  var needAt = beatFn.indexOf("cbx-growth__need");
+  assert.ok(stageAt !== -1 && stampAt !== -1 && needAt !== -1 && stageAt < stampAt && stampAt < needAt,
+    'Finding/Choice stamps must sit above the need line');
+  var ghostsBlock = pages.slice(pages.indexOf('var GHOSTS'), pages.indexOf('var PEOPLE'));
+  assert.ok(/id: 'freelancer'[\s\S]*job: 'pay'/.test(ghostsBlock), 'freelancer ghost is pay');
+  assert.ok(/id: 'sole'[\s\S]*job: 'balance'/.test(ghostsBlock), 'sole ghost is balance');
+  assert.ok(/id: 'mid'[\s\S]*job: 'approvals'/.test(ghostsBlock), 'mid ghost is approvals');
+  var ghostCss = css.slice(css.indexOf('.cbx-growth__ghost {'), css.indexOf('.cbx-ghost-row {'));
+  assert.ok(ghostCss.indexOf('visibility: hidden') !== -1, 'off-beat ghosts must leave the text tree');
+  assert.ok(css.indexOf('.cbx-growth__ghost.is-on') !== -1, 'on-beat ghost must be a class, not a leftover opacity');
+  var onGhost = css.slice(css.indexOf('.cbx-growth__ghost.is-on {'), css.indexOf('.cbx-growth__ghost[data-cbx-job="pay"]'));
+  assert.ok(onGhost.indexOf('opacity: 1') !== -1, 'active ghost must paint');
+  assert.ok(onGhost.indexOf('visibility: visible') !== -1, 'active ghost must be in the text tree');
+  var beatOn = css.slice(css.indexOf('.cbx-growth__beat.is-on {'), css.indexOf('.cbx-growth__stamp {'));
+  assert.ok(beatOn.indexOf('opacity: 1') !== -1, 'active copy must be fully on, not a muddy 0.5');
+  assert.ok(beatOn.indexOf('visibility: visible') !== -1, 'active copy must be the only readable beat');
+  assert.ok(css.indexOf('.cbx-growth__person.is-in') !== -1, 'cast in-play class missing');
+  assert.ok(css.indexOf('.cbx-growth__person[data-from="0"]') !== -1, 'freelancer must be the default body');
+  var personCss = css.slice(css.indexOf('.cbx-growth__person {'), css.indexOf('.cbx-growth__person.is-in'));
+  assert.ok(personCss.indexOf('opacity: 0') !== -1, 'teammates must start hidden');
+  assert.ok(personCss.indexOf('visibility: hidden') !== -1, 'teammates must not occupy the well before their beat');
+  assert.ok(css.indexOf('rgba(244, 239, 230, 0.5)') !== -1, 'stamp values must stay quieter than the need line');
 });
 
 check('rail wheel yields to open study so CBX300 window-scroll can pin-scrub', function () {

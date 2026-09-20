@@ -240,6 +240,7 @@ window.Cbx300Case = (function () {
     var figure = el('figure', 'cbx-growth__person');
     figure.setAttribute('data-cbx-person', person.id);
     figure.setAttribute('data-from', String(person.from));
+    if ((person.from || 0) === 0) figure.classList.add('is-in');
     var img = document.createElement('img');
     img.className = 'cbx-growth__person-img';
     img.alt = person.alt || '';
@@ -274,9 +275,9 @@ window.Cbx300Case = (function () {
     var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
     beatEl.setAttribute('data-cbx-beat', beat.id);
     beatEl.setAttribute('data-beat-index', String(index));
-    beatEl.appendChild(stampList(beat.stamp));
     beatEl.appendChild(el('p', 'cbx-growth__index', pad(index + 1)));
     beatEl.appendChild(shout('h2', 'cbx-growth__stage', beat.label, glitch));
+    beatEl.appendChild(stampList(beat.stamp));
     beatEl.appendChild(el('p', 'cbx-growth__need', beat.need));
     beatEl.appendChild(el('p', 'cbx-growth__fact', beat.fact));
     return beatEl;
@@ -498,16 +499,14 @@ window.Cbx300Case = (function () {
       if (gsap) {
         Array.prototype.forEach.call(
           motion.pin.querySelectorAll('[data-cbx-person], [data-cbx-beat], [data-cbx-ghost]'),
-          function (node) { gsap.set(node, { clearProps: 'opacity,transform,y,filter' }); }
+          function (node) { gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' }); }
         );
       }
-      Array.prototype.forEach.call(
-        motion.pin.querySelectorAll('[data-cbx-beat]'),
-        function (beat, i) { beat.classList.toggle('is-on', i === 0); }
-      );
-      Array.prototype.forEach.call(
-        motion.pin.querySelectorAll('[data-cbx-ghost]'),
-        function (ghost, i) { ghost.classList.toggle('is-on', i === 0); }
+      applyBeat(
+        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-beat]')),
+        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-ghost]')),
+        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-person]')),
+        0
       );
     }
     motion.pin = null;
@@ -553,36 +552,36 @@ window.Cbx300Case = (function () {
   function beatIndexFromProgress(progress) {
     var n = BEATS.length;
     if (n <= 1) return 0;
-    return Math.min(n - 1, Math.max(0, Math.round(progress * (n - 1))));
+    if (progress >= 1) return n - 1;
+    return Math.min(n - 1, Math.max(0, Math.floor(progress * n)));
   }
 
-  function markBeat(beats, index) {
+  function applyBeat(beats, ghosts, people, index) {
     beats.forEach(function (beat, i) {
       beat.classList.toggle('is-on', i === index);
     });
+    ghosts.forEach(function (ghost, i) {
+      ghost.classList.toggle('is-on', i === index);
+    });
+    people.forEach(function (person) {
+      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
+      person.classList.toggle('is-in', from <= index);
+    });
+    var host = beats[0] || ghosts[0] || people[0];
+    if (host && host.closest) {
+      var pane = host.closest('[data-cbx-growth]');
+      if (pane) pane.setAttribute('data-cbx-live-beat', String(index));
+    }
   }
 
   function setupStatic(pin) {
     if (!pin) return;
     pin.classList.add('is-static');
     pin.style.height = '';
-    var gsap = window.gsap;
-    var beats = pin.querySelectorAll('[data-cbx-beat]');
-    var people = pin.querySelectorAll('[data-cbx-person]');
-    var ghosts = pin.querySelectorAll('[data-cbx-ghost]');
-    Array.prototype.forEach.call(beats, function (beat, i) {
-      var last = i === beats.length - 1;
-      beat.classList.toggle('is-on', last);
-      if (gsap) gsap.set(beat, { opacity: last ? 1 : 0 });
-    });
-    Array.prototype.forEach.call(people, function (person) {
-      if (gsap) gsap.set(person, { opacity: 1, y: 0 });
-    });
-    Array.prototype.forEach.call(ghosts, function (ghost, i) {
-      var last = i === ghosts.length - 1;
-      ghost.classList.toggle('is-on', last);
-      if (gsap) gsap.set(ghost, { opacity: last ? 1 : 0 });
-    });
+    var beats = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-beat]'));
+    var people = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-person]'));
+    var ghosts = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-ghost]'));
+    applyBeat(beats, ghosts, people, Math.max(0, beats.length - 1));
   }
 
   function bindCinematic(world, opts) {
@@ -608,21 +607,10 @@ window.Cbx300Case = (function () {
     sizePane(stage);
     applyCbxRise(0);
 
-    beats.forEach(function (beat, i) {
-      gsap.set(beat, { opacity: i === 0 ? 1 : 0 });
-      beat.classList.toggle('is-on', i === 0);
+    beats.concat(ghosts, people).forEach(function (node) {
+      gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' });
     });
-    people.forEach(function (person) {
-      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
-      gsap.set(person, {
-        opacity: from === 0 ? 1 : 0,
-        y: from === 0 ? 0 : 28
-      });
-    });
-    ghosts.forEach(function (ghost, i) {
-      gsap.set(ghost, { opacity: i === 0 ? 1 : 0 });
-      ghost.classList.toggle('is-on', i === 0);
-    });
+    applyBeat(beats, ghosts, people, 0);
 
     motion.riseState.p = 0;
 
@@ -655,9 +643,7 @@ window.Cbx300Case = (function () {
           if (self.progress > morphStart) {
             morphP = (self.progress - morphStart) / Math.max(0.0001, 1 - morphStart);
           }
-          var index = beatIndexFromProgress(morphP);
-          markBeat(beats, index);
-          markBeat(ghosts, index);
+          applyBeat(beats, ghosts, people, beatIndexFromProgress(morphP));
           if (onStep) onStep(motion.riseState.p > 0.92 ? 1 : 0);
         }
       }
@@ -670,37 +656,7 @@ window.Cbx300Case = (function () {
       onUpdate: function () { applyCbxRise(motion.riseState.p); }
     }, 0);
 
-    if (beats[0] && beats[1]) {
-      tl.to(beats[0], { opacity: 0, duration: 0.12 }, RISE_DUR + 0.28);
-      tl.to(beats[1], { opacity: 1, duration: 0.16 }, RISE_DUR + 0.36);
-    }
-    if (ghosts[0] && ghosts[1]) {
-      tl.to(ghosts[0], { opacity: 0, duration: 0.12 }, RISE_DUR + 0.28);
-      tl.to(ghosts[1], { opacity: 1, duration: 0.16 }, RISE_DUR + 0.36);
-    }
-    people.forEach(function (person) {
-      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
-      if (from === 1) {
-        tl.to(person, { opacity: 1, y: 0, duration: 0.28 }, RISE_DUR + 0.26);
-      }
-    });
-
-    if (beats[1] && beats[2]) {
-      tl.to(beats[1], { opacity: 0, duration: 0.12 }, RISE_DUR + 0.62);
-      tl.to(beats[2], { opacity: 1, duration: 0.16 }, RISE_DUR + 0.7);
-    }
-    if (ghosts[1] && ghosts[2]) {
-      tl.to(ghosts[1], { opacity: 0, duration: 0.12 }, RISE_DUR + 0.62);
-      tl.to(ghosts[2], { opacity: 1, duration: 0.16 }, RISE_DUR + 0.7);
-    }
-    people.forEach(function (person) {
-      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
-      if (from === 2) {
-        tl.to(person, { opacity: 1, y: 0, duration: 0.3 }, RISE_DUR + 0.6);
-      }
-    });
-
-    tl.to({}, { duration: 0.12 });
+    tl.to({}, { duration: MORPH_VH });
     motion.tween = tl;
     if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
   }
@@ -802,6 +758,8 @@ window.Cbx300Case = (function () {
     kill: kill,
     armGlitch: armGlitch,
     applyCbxRise: applyCbxRise,
+    applyBeat: applyBeat,
+    beatIndexFromProgress: beatIndexFromProgress,
     META: META,
     BEATS: BEATS,
     SPINE: SPINE,
