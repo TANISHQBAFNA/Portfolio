@@ -49,9 +49,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s52') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s53') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s51') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s52') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s53') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s51') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
@@ -324,13 +324,16 @@ check('light proof: Echo caption pack and job ghosts', function () {
   assert.ok(growthCss.indexOf('#5ecfcf') === -1, 'growth must drop neon teal stamps');
   var stageCss = css.slice(css.indexOf('.cbx-growth__stage {'), css.indexOf('.cbx-growth__need {'));
   assert.ok(stageCss.indexOf('Outfit') !== -1, 'stage must be product sans');
-  assert.ok(stageCss.indexOf('0.72rem') !== -1, 'stage must stay small 01 · label, not a billboard');
+  assert.ok(stageCss.indexOf('0.875rem') !== -1, 'stage must stay small 01 · label, not a billboard');
+  assert.ok(stageCss.indexOf('0.78') !== -1, 'stage cream must stay readable on coffee');
   var needCss = css.slice(css.indexOf('.cbx-growth__need {'), css.indexOf('.cbx-growth__fact {'));
   assert.ok(needCss.indexOf('Outfit') !== -1, 'need line must be product sans');
-  assert.ok(needCss.indexOf('1.28rem') !== -1, 'need line is the hero sentence');
+  assert.ok(needCss.indexOf('1.375rem') !== -1, 'need line is the hero sentence');
+  assert.ok(needCss.indexOf('1.625rem') !== -1, 'need must not become a billboard');
   var chipK = css.slice(css.indexOf('.cbx-growth__chip-k {'), css.indexOf('.cbx-growth__chip-v {'));
   assert.ok(chipK.indexOf('207') === -1, 'FINDING/CHOICE must not shout teal');
   assert.ok(chipK.indexOf('244, 239, 230') !== -1, 'FINDING/CHOICE must be cream/coffee muted');
+  assert.ok(chipK.indexOf('0.55') !== -1, 'FINDING/CHOICE labels must stay visible');
   var heroCss = css.slice(css.indexOf('.cbx-ghost__hero {'), css.indexOf('.cbx-ghost__subs {'));
   assert.ok(heroCss.indexOf('Outfit') !== -1, 'Available amount must be product sans');
   assert.ok(heroCss.indexOf('2.4rem') === -1, 'Available must not be oversized display');
@@ -401,7 +404,66 @@ check('ghost job, copy, and cast lock to the same beat index', function () {
   assert.ok(personCss.indexOf('opacity: 0') !== -1, 'teammates must start hidden');
   assert.ok(personCss.indexOf('visibility: hidden') !== -1, 'teammates must not occupy the well before their beat');
   assert.ok(personCss.indexOf('opacity 260ms ease') !== -1, 'cast must fade in with the beat, not pop at opacity 1');
-  assert.ok(css.indexOf('rgba(244, 239, 230, 0.48)') !== -1, 'stamp values must stay quieter than the need line');
+  assert.ok(css.indexOf('rgba(244, 239, 230, 0.9)') !== -1, 'stamp values must read at a glance, still under need');
+});
+
+check('copy column is a tight left stack with readable cream hierarchy', function () {
+  var copyCss = css.slice(css.indexOf('.cbx-growth__copy {'), css.indexOf('.cbx-growth__spine {'));
+  assert.ok(copyCss.indexOf('justify-content: flex-start') !== -1, 'copy must pin to the proof top, not float at the bottom');
+  assert.ok(copyCss.indexOf('align-self: start') !== -1, 'copy column must not stretch into dead air');
+  assert.ok(copyCss.indexOf('max-width: 22.5rem') !== -1, 'copy must stay a tight column');
+  var frameCss = css.slice(css.indexOf('.cbx-growth__frame {'), css.indexOf('.cbx-growth__copy {'));
+  assert.ok(frameCss.indexOf('minmax(16.5rem, 22.5rem)') !== -1, 'desktop copy column must share a defined grid with the proof');
+  var spineCss = css.slice(css.indexOf('.cbx-growth__spine {'), css.indexOf('.cbx-growth__beats {'));
+  assert.ok(spineCss.indexOf('margin: 0 0 8px') !== -1, 'spine chip must tuck onto the beat stack');
+  var beatsCss = css.slice(css.indexOf('.cbx-growth__beats {'), css.indexOf('.cbx-growth__beat {'));
+  assert.ok(beatsCss.indexOf('display: grid') !== -1, 'beats must overlay without a fake min-height band');
+  assert.ok(css.indexOf('min-height: 16.5rem') === -1, 'empty 16.5rem band between chip and stage must be gone');
+  assert.ok(css.indexOf('min-height: 16rem') === -1, 'mobile must not reintroduce the empty beat well');
+  var beatOff = css.slice(css.indexOf('.cbx-growth__beat {'), css.indexOf('.cbx-growth__beat.is-on {'));
+  assert.ok(beatOff.indexOf('grid-area: 1 / 1') !== -1, 'beats must share one cell so the chip sits on the stack');
+  assert.ok(beatOff.indexOf('position: absolute') === -1, 'beats must not bottom-pin inside an empty well');
+  var stampCss = css.slice(css.indexOf('.cbx-growth__stamp {'), css.indexOf('.cbx-growth__chip {'));
+  assert.ok(stampCss.indexOf('gap: 8px') !== -1, 'finding/choice rows must use 8px rhythm');
+  assert.ok(stampCss.indexOf('margin: 12px 0 0') !== -1, 'stamp must sit 12px under stage');
+  var chipCss = css.slice(css.indexOf('.cbx-growth__chip {'), css.indexOf('.cbx-growth__chip-k {'));
+  assert.ok(chipCss.indexOf('grid-template-columns: 5.25rem minmax(0, 1fr)') !== -1, 'FINDING/CHOICE must share one label column');
+  var chipV = css.slice(css.indexOf('.cbx-growth__chip-v {'), css.indexOf('.cbx-growth__stage {'));
+  assert.ok(chipV.indexOf('0.9375rem') !== -1, 'finding/choice values must be body size');
+  var factCss = css.slice(css.indexOf('.cbx-growth__fact {'), css.indexOf('.cbx-growth__well {'));
+  assert.ok(factCss.indexOf('font-size: 0.875rem') !== -1, 'fact must stay secondary to need');
+  assert.ok(factCss.indexOf('0.65') !== -1, 'fact opacity must stay quiet');
+  var needCss = css.slice(css.indexOf('.cbx-growth__need {'), css.indexOf('.cbx-growth__fact {'));
+  assert.ok(needCss.indexOf('margin: 16px 0 0') !== -1, 'need must use 16px after the meta grid');
+  var coffee = [30, 21, 16];
+  var cream = [244, 239, 230];
+  function srgbToLin(c) {
+    var x = c / 255;
+    return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+  }
+  function lum(rgb) {
+    return 0.2126 * srgbToLin(rgb[0]) + 0.7152 * srgbToLin(rgb[1]) + 0.0722 * srgbToLin(rgb[2]);
+  }
+  function blend(fg, bg, a) {
+    return [fg[0] * a + bg[0] * (1 - a), fg[1] * a + bg[1] * (1 - a), fg[2] * a + bg[2] * (1 - a)];
+  }
+  function contrast(fg, bg) {
+    var hi = Math.max(lum(fg), lum(bg));
+    var lo = Math.min(lum(fg), lum(bg));
+    return (hi + 0.05) / (lo + 0.05);
+  }
+  var labelC = contrast(blend(cream, coffee, 0.55), coffee);
+  var valueC = contrast(blend(cream, coffee, 0.9), coffee);
+  var stageC = contrast(blend(cream, coffee, 0.78), coffee);
+  var factC = contrast(blend(cream, coffee, 0.65), coffee);
+  var needC = contrast(cream, coffee);
+  assert.ok(labelC >= 4.5, 'FINDING/CHOICE labels fail AA on coffee (' + labelC.toFixed(2) + ')');
+  assert.ok(valueC >= 7, 'FINDING/CHOICE values must read at a glance (' + valueC.toFixed(2) + ')');
+  assert.ok(stageC >= 7, 'stage cream must be readable on coffee (' + stageC.toFixed(2) + ')');
+  assert.ok(factC >= 4.5, 'fact must stay AA-ish on coffee (' + factC.toFixed(2) + ')');
+  assert.ok(needC >= 12, 'need must be the loudest cream on coffee (' + needC.toFixed(2) + ')');
+  assert.ok(needC > valueC && valueC > stageC && stageC > factC && factC > labelC,
+    'hierarchy must be need > values > stage > fact > labels');
 });
 
 check('rail wheel yields to open study so CBX300 window-scroll can pin-scrub', function () {
