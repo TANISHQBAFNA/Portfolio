@@ -49,9 +49,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s50') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s51') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s50') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s50') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s51') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s50') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
@@ -367,12 +367,18 @@ check('ghost job, copy, and cast lock to the same beat index', function () {
   var beatOn = css.slice(css.indexOf('.cbx-growth__beat.is-on {'), css.indexOf('.cbx-growth__stamp {'));
   assert.ok(beatOn.indexOf('opacity: 1') !== -1, 'active copy must be fully on, not a muddy 0.5');
   assert.ok(beatOn.indexOf('visibility: visible') !== -1, 'active copy must be the only readable beat');
+  assert.ok(beatOn.indexOf('150ms linear 90ms') !== -1, 'incoming copy must wait until outgoing has faded');
+  var beatOff = css.slice(css.indexOf('.cbx-growth__beat {'), css.indexOf('.cbx-growth__beat.is-on {'));
+  assert.ok(beatOff.indexOf('opacity 90ms linear') !== -1, 'outgoing copy must fade out first');
+  var ghostOn = css.slice(css.indexOf('.cbx-growth__ghost.is-on {'), css.indexOf('.cbx-growth__ghost[data-cbx-job="pay"]'));
+  assert.ok(ghostOn.indexOf('150ms linear 90ms') !== -1, 'incoming ghost must wait until outgoing has faded');
   assert.ok(css.indexOf('.cbx-growth__person.is-in') !== -1, 'cast in-play class missing');
   assert.ok(css.indexOf('.cbx-growth__person[data-from="0"]') !== -1, 'freelancer must be the default body');
   var personCss = css.slice(css.indexOf('.cbx-growth__person {'), css.indexOf('.cbx-growth__person.is-in'));
   assert.ok(personCss.indexOf('opacity: 0') !== -1, 'teammates must start hidden');
   assert.ok(personCss.indexOf('visibility: hidden') !== -1, 'teammates must not occupy the well before their beat');
-  assert.ok(css.indexOf('rgba(244, 239, 230, 0.5)') !== -1, 'stamp values must stay quieter than the need line');
+  assert.ok(personCss.indexOf('opacity 260ms ease') !== -1, 'cast must fade in with the beat, not pop at opacity 1');
+  assert.ok(css.indexOf('rgba(244, 239, 230, 0.48)') !== -1, 'stamp values must stay quieter than the need line');
 });
 
 check('rail wheel yields to open study so CBX300 window-scroll can pin-scrub', function () {

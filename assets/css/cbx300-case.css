@@ -420,23 +420,25 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.38rem;
+  gap: 0.22rem;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  transition: opacity 90ms linear, visibility 0s linear 90ms;
 }
 
 .cbx-growth__beat.is-on {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+  transition: opacity 150ms linear 90ms, visibility 0s linear 0s;
 }
 
 .cbx-growth__stamp {
   display: flex;
   flex-direction: column;
-  gap: 0.04rem;
-  margin: 0.12rem 0 0.08rem;
+  gap: 0.02rem;
+  margin: 0.62rem 0 0;
   padding: 0;
   max-width: 38ch;
   list-style: none;
@@ -450,25 +452,25 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   padding: 0;
   background: transparent;
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   font-weight: 400;
   letter-spacing: 0.01em;
-  line-height: 1.28;
+  line-height: 1.25;
 }
 
 .cbx-growth__chip-k {
   flex: 0 0 4.4rem;
-  color: rgba(94, 207, 207, 0.58);
-  font-size: 0.5rem;
+  color: rgba(94, 207, 207, 0.55);
+  font-size: 0.48rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   line-height: 1.4;
 }
 
 .cbx-growth__chip-v {
   min-width: 0;
-  color: rgba(244, 239, 230, 0.5);
+  color: rgba(244, 239, 230, 0.48);
   font-weight: 400;
 }
 
@@ -496,13 +498,13 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 }
 
 .cbx-growth__need {
-  margin: 0.35rem 0 0;
+  margin: 0.22rem 0 0;
   max-width: 28ch;
   font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(1.02rem, 1.7vw, 1.28rem);
+  font-size: clamp(1.08rem, 1.85vw, 1.38rem);
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.18;
+  line-height: 1.16;
   color: var(--cream, #f4efe6);
 }
 
@@ -558,6 +560,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   visibility: hidden;
   pointer-events: none;
   will-change: transform, opacity;
+  transition: opacity 260ms ease;
 }
 
 .cbx-growth__person.is-in,
@@ -604,12 +607,14 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  transition: opacity 90ms linear, visibility 0s linear 90ms;
 }
 
 .cbx-growth__ghost.is-on {
   opacity: 1;
   visibility: visible;
   z-index: 1;
+  transition: opacity 150ms linear 90ms, visibility 0s linear 0s;
 }
 
 .cbx-growth__ghost[data-cbx-job="pay"] {
@@ -887,6 +892,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   opacity: 1 !important;
   visibility: visible !important;
   margin-bottom: 1.25rem;
+  transition: none !important;
 }
 
 .cbx-growth.is-static .cbx-growth__beats {
@@ -901,11 +907,13 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   width: auto;
   max-width: 28%;
   overflow: visible;
+  transition: none !important;
 }
 
 .cbx-growth.is-static .cbx-growth__ghost {
   opacity: 0 !important;
   visibility: hidden !important;
+  transition: none !important;
 }
 
 .cbx-growth.is-static .cbx-growth__ghost:last-child {
@@ -948,7 +956,8 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
   .cbx-growth__well {
     min-height: 48svh;
   }
-  .cbx-growth__person {
+  .cbx-growth__person.is-in,
+  .cbx-growth__person[data-from="0"] {
     height: 92%;
     max-width: 30%;
   }
