@@ -17,40 +17,32 @@ window.Cbx300Case = (function () {
     word: 'the Business'
   };
 
+  /* Iris casual pack until Echo replies. Meet-a-friend, not FINDING/CHOICE stamps. */
+  var INTRO = 'Hi — meet Aisha. She runs her freelance work on SME Banking.';
+
   var BEATS = [
     {
       id: 'freelancer',
       label: 'Freelancer',
-      stamp: [
-        'Finding: She needs cash in today',
-        'Choice: Get paid and pay on phone'
-      ],
-      need: 'Did the money land — can I pay?',
-      fact: 'Phone shows pay and cash in'
+      hard: 'She’s freelancing and needs money to move today.',
+      change: 'So the home screen is get paid and pay.',
+      need: 'Did the money land — can I pay?'
     },
     {
       id: 'sole',
       label: 'Sole proprietor',
-      stamp: [
-        'Finding: One balance number would lie',
-        'Choice: Put available first on the card'
-      ],
-      need: 'How much can I safely spend today?',
-      fact: 'Available leads; other balances sit beside'
+      hard: 'One balance number used to lie to her.',
+      change: 'Available goes first on the card.',
+      need: 'How much can I safely spend today?'
     },
     {
       id: 'mid',
       label: 'Mid-size',
-      stamp: [
-        'Finding: Approving is now the daily job',
-        'Choice: Own door; keep every row visible'
-      ],
-      need: 'Who’s waiting — can I clear this safely?',
-      fact: 'Approvals door; Approve (n) shows each line'
+      hard: 'Approving stuff is basically her day now.',
+      change: 'She gets her own door, every row still visible.',
+      need: 'Who’s waiting — can I clear this safely?'
     }
   ];
-
-  var SPINE = 'Pressure changes. The bank grows with her.';
 
   var GHOSTS = [
     { id: 'freelancer', job: 'pay' },
@@ -105,7 +97,9 @@ window.Cbx300Case = (function () {
     stage: null
   };
 
-  var RISE_DUR = 1;
+  /* Rise is a slight wheel/trackpad nudge, not a full-viewport scrub.
+     Morph still owns the long pin after the sheet is flush-top. */
+  var RISE_DUR = 0.16;
   var MORPH_VH = 2.35;
 
   function isMultiverse() {
@@ -254,31 +248,14 @@ window.Cbx300Case = (function () {
     return figure;
   }
 
-  function stampList(parts) {
-    var list = el('ul', 'cbx-growth__stamp');
-    list.setAttribute('aria-label', 'Finding and choice');
-    (parts || []).forEach(function (text) {
-      var item = el('li', 'cbx-growth__chip');
-      var colon = text.indexOf(': ');
-      if (colon !== -1) {
-        item.appendChild(el('span', 'cbx-growth__chip-k', text.slice(0, colon)));
-        item.appendChild(el('span', 'cbx-growth__chip-v', text.slice(colon + 2)));
-      } else {
-        item.textContent = text;
-      }
-      list.appendChild(item);
-    });
-    return list;
-  }
-
   function beatCopy(beat, index, glitch) {
     var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
     beatEl.setAttribute('data-cbx-beat', beat.id);
     beatEl.setAttribute('data-beat-index', String(index));
     beatEl.appendChild(shout('h2', 'cbx-growth__stage', pad(index + 1) + ' · ' + beat.label, glitch));
-    beatEl.appendChild(stampList(beat.stamp));
+    beatEl.appendChild(el('p', 'cbx-growth__hard', beat.hard));
+    beatEl.appendChild(el('p', 'cbx-growth__change', beat.change));
     beatEl.appendChild(el('p', 'cbx-growth__need', beat.need));
-    beatEl.appendChild(el('p', 'cbx-growth__fact', beat.fact));
     return beatEl;
   }
 
@@ -368,13 +345,13 @@ window.Cbx300Case = (function () {
     section.setAttribute('data-cbx-live', '');
     section.setAttribute('data-cbx-growth', '');
     section.setAttribute('data-cbx-live-beat', '0');
-    section.setAttribute('aria-label', 'Aisha grows. The app follows.');
+    section.setAttribute('aria-label', 'Hi, meet Aisha.');
 
     var stage = el('div', 'cbx-growth__frame');
     stage.setAttribute('data-cbx-growth-frame', '');
 
     var copy = el('div', 'cbx-growth__copy');
-    copy.appendChild(el('p', 'cbx-growth__spine', SPINE));
+    copy.appendChild(shout('p', 'cbx-growth__intro', INTRO, glitch));
     var beats = el('div', 'cbx-growth__beats');
     beats.setAttribute('data-cbx-beats', '');
     BEATS.forEach(function (beat, i) {
@@ -656,7 +633,7 @@ window.Cbx300Case = (function () {
         },
         pin: true,
         pinSpacing: true,
-        scrub: 0.65,
+        scrub: 0.28,
         invalidateOnRefresh: true,
         anticipatePin: 1,
         fastScrollEnd: true,
@@ -683,7 +660,7 @@ window.Cbx300Case = (function () {
     tl.to(motion.riseState, {
       p: 1,
       duration: RISE_DUR,
-      ease: 'none',
+      ease: 'power2.out',
       onUpdate: function () { applyCbxRise(motion.riseState.p); }
     }, 0);
 
@@ -794,7 +771,7 @@ window.Cbx300Case = (function () {
     beatIndexFromProgress: beatIndexFromProgress,
     META: META,
     BEATS: BEATS,
-    SPINE: SPINE,
+    INTRO: INTRO,
     GHOSTS: GHOSTS,
     PEOPLE: PEOPLE,
     STUBS: STUBS

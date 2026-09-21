@@ -395,19 +395,16 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   padding: 0;
 }
 
-.cbx-growth__spine {
-  display: inline-block;
-  align-self: flex-start;
-  margin: 0 0 8px;
-  padding: 0.16rem 0.52rem;
-  border-radius: 999px;
-  background: rgba(244, 239, 230, 0.1);
-  color: rgba(244, 239, 230, 0.7);
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  line-height: 1.3;
+.cbx-growth__intro {
+  margin: 0 0 12px;
+  max-width: 32ch;
+  font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.012em;
+  line-height: 1.4;
+  color: rgba(244, 239, 230, 0.86);
 }
 
 .cbx-growth__beats {
@@ -439,63 +436,40 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   transition: opacity 150ms linear 90ms, visibility 0s linear 0s;
 }
 
-.cbx-growth__stamp {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 12px 0 0;
-  padding: 0;
-  width: 100%;
-  max-width: none;
-  list-style: none;
-}
-
-.cbx-growth__chip {
-  display: grid;
-  grid-template-columns: 5.25rem minmax(0, 1fr);
-  column-gap: 12px;
-  align-items: baseline;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 1.3;
-}
-
-.cbx-growth__chip-k {
-  color: rgba(244, 239, 230, 0.55);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  line-height: 1.35;
-}
-
-.cbx-growth__chip-v {
-  min-width: 0;
-  color: rgba(244, 239, 230, 0.9);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-}
-
 .cbx-growth__stage {
   margin: 0;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   line-height: 1.3;
   font-stretch: normal;
   color: rgba(244, 239, 230, 0.78);
   max-width: none;
   overflow-wrap: normal;
   hyphens: none;
+}
+
+.cbx-growth__hard {
+  margin: 12px 0 0;
+  max-width: 28ch;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  color: rgba(244, 239, 230, 0.9);
+}
+
+.cbx-growth__change {
+  margin: 8px 0 0;
+  max-width: 28ch;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  color: rgba(244, 239, 230, 0.9);
 }
 
 .cbx-growth__need {
@@ -507,17 +481,6 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: var(--cream, #f4efe6);
-}
-
-.cbx-growth__fact {
-  margin: 12px 0 0;
-  max-width: 34ch;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  color: rgba(244, 239, 230, 0.65);
 }
 
 .cbx-growth__well {
