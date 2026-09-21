@@ -396,16 +396,16 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 .cbx-growth__cast {
   position: absolute;
   z-index: 1;
-  left: 10%;
-  right: 10%;
+  left: 12%;
+  right: 12%;
   top: 4%;
-  bottom: 0;
+  bottom: 5%;
   height: auto;
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-end;
   justify-content: center;
-  gap: clamp(2px, 0.8vw, 12px);
+  gap: 0;
   margin: 0;
   padding: 0;
   background: transparent;
@@ -436,7 +436,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 .cbx-growth__person[data-from="0"] {
   flex: 0 1 auto;
   width: auto;
-  max-width: 22%;
+  max-width: 20%;
+  margin: 0 -6px;
   overflow: hidden;
   opacity: 1;
   visibility: visible;
@@ -444,8 +445,9 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 }
 
 .cbx-growth__person[data-cbx-person="aisha"] {
-  max-width: 36%;
+  max-width: 32%;
   z-index: 2;
+  margin: 0 -4px;
 }
 
 .cbx-growth__person[data-cbx-person="mate-1"] {
@@ -478,18 +480,18 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   z-index: 3;
   left: 50%;
   bottom: 5%;
-  width: min(78%, 54rem);
+  width: min(86%, 58rem);
   transform: translateX(-50%);
   overflow: visible;
   transition: width 280ms ease;
 }
 
 .cbx-growth[data-cbx-live-beat="1"] .cbx-growth__desk {
-  width: min(84%, 60rem);
+  width: min(90%, 64rem);
 }
 
 .cbx-growth[data-cbx-live-beat="2"] .cbx-growth__desk {
-  width: min(90%, 68rem);
+  width: min(94%, 72rem);
 }
 
 .cbx-growth__top {
@@ -500,28 +502,27 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   border-radius: 2px 2px 0 0;
   background-color: #8a6244;
   background-image:
-    linear-gradient(122deg, rgba(255, 214, 162, 0.22) 0%, rgba(255, 200, 140, 0.06) 16%, transparent 40%),
-    radial-gradient(ellipse 88% 78% at 48% 32%, transparent 42%, rgba(42, 22, 12, 0.42) 100%),
+    linear-gradient(118deg, rgba(255, 214, 162, 0.26) 0%, rgba(255, 196, 140, 0.08) 20%, transparent 46%),
+    radial-gradient(ellipse 92% 78% at 46% 28%, transparent 38%, rgba(36, 18, 10, 0.48) 100%),
     repeating-linear-gradient(
-      90.8deg,
-      rgba(58, 32, 18, 0.16) 0 1px,
-      transparent 1px 9px,
-      rgba(176, 122, 76, 0.1) 10px 11px,
-      transparent 11px 19px
+      91.4deg,
+      rgba(62, 34, 18, 0.07) 0 1px,
+      transparent 1px 13px,
+      rgba(176, 124, 78, 0.05) 14px 15px,
+      transparent 15px 27px
     ),
     repeating-linear-gradient(
-      88.4deg,
-      #6e4a2e 0px,
-      #7a5336 4px,
-      #8a6244 9px,
-      #9a7050 13px,
-      #7e5738 18px,
-      #6a442a 22px,
-      #8d6644 28px
-    );
+      88.8deg,
+      rgba(90, 52, 30, 0.05) 0px,
+      transparent 2px,
+      transparent 8px,
+      rgba(138, 98, 68, 0.06) 9px,
+      transparent 12px
+    ),
+    linear-gradient(180deg, #9a7050 0%, #8a6244 38%, #7a5336 72%, #6e4a2e 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 224, 186, 0.24),
-    inset 0 -14px 22px rgba(28, 14, 8, 0.32);
+    inset 0 1px 0 rgba(255, 224, 186, 0.28),
+    inset 0 -16px 24px rgba(28, 14, 8, 0.38);
 }
 
 .cbx-growth__top::before {
@@ -531,20 +532,20 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   z-index: 1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(255, 220, 170, 0.1), transparent 22%),
-    radial-gradient(ellipse 90% 80% at 50% 40%, transparent 52%, rgba(30, 16, 8, 0.26) 100%);
+    linear-gradient(180deg, rgba(255, 224, 180, 0.12), transparent 18%),
+    radial-gradient(ellipse 80% 70% at 50% 42%, transparent 48%, rgba(24, 12, 6, 0.32) 100%);
 }
 
 .cbx-growth__lip {
   position: relative;
   z-index: 8;
-  height: 12px;
+  height: 14px;
   margin-top: -1px;
   background:
-    linear-gradient(180deg, #d2b089 0%, #a07048 14%, #6a442c 48%, #3d281c 100%);
+    linear-gradient(180deg, #e0c49a 0%, #b88858 10%, #7a5030 42%, #4a301c 78%, #2e1c12 100%);
   box-shadow:
-    0 2px 0 #2a1810,
-    0 10px 18px rgba(0, 0, 0, 0.38);
+    0 2px 0 #1e120c,
+    0 12px 20px rgba(0, 0, 0, 0.42);
 }
 
 .cbx-growth__apron {
@@ -1514,10 +1515,10 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
 
 @media (max-width: 820px) {
   .cbx-growth__cast {
-    left: 2%;
-    right: 2%;
+    left: 4%;
+    right: 4%;
     top: 2%;
-    bottom: 0;
+    bottom: 3%;
     height: auto;
   }
   .cbx-growth__desk,
