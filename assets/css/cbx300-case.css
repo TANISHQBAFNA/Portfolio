@@ -397,8 +397,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   z-index: 2;
   left: 8%;
   right: 8%;
-  bottom: 42%;
-  height: 52%;
+  bottom: 18%;
+  height: 72%;
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-end;
@@ -484,13 +484,13 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   background-image:
     linear-gradient(180deg, rgba(30, 21, 16, 0.2) 0%, transparent 30%),
     repeating-linear-gradient(
-      90deg,
+      92deg,
       #7a5336 0px,
-      #8d6644 4px,
-      #a07850 8px,
-      #7e5738 12px,
-      #6e4a2e 16px,
-      #8a6244 22px
+      #8d6644 5px,
+      #a07850 10px,
+      #7e5738 15px,
+      #6e4a2e 20px,
+      #8a6244 28px
     );
   box-shadow:
     0 22px 48px rgba(0, 0, 0, 0.5),
@@ -523,7 +523,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 
 .cbx-growth__close {
   margin: 0;
-  max-width: 22ch;
+  flex: 0 1 auto;
+  max-width: 28ch;
   text-align: right;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 0.75rem;
@@ -757,15 +758,35 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 }
 
 .cbx-growth__prop--chair {
-  left: -7%;
-  bottom: -18%;
-  width: 86px;
-  height: 120px;
+  left: -5%;
+  bottom: -22%;
+  width: 72px;
+  height: 118px;
   z-index: 1;
-  background:
-    linear-gradient(#4a3224, #4a3224) 18px 0 / 50px 14px no-repeat,
-    linear-gradient(#5a3c28, #5a3c28) 28px 14px / 30px 88px no-repeat,
-    linear-gradient(#3d281c, #3d281c) 8px 100px / 70px 12px no-repeat;
+  background: none;
+}
+
+.cbx-growth__prop--chair::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 0;
+  width: 38px;
+  height: 78px;
+  border-radius: 10px 10px 4px 4px;
+  background: #4a3224;
+  box-shadow: inset 0 0 0 3px #3d281c;
+}
+
+.cbx-growth__prop--chair::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  bottom: 12px;
+  width: 52px;
+  height: 12px;
+  border-radius: 4px;
+  background: #3d281c;
 }
 
 .cbx-growth__devices {
@@ -851,12 +872,12 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: -14px;
-  width: 54px;
-  height: 14px;
-  margin-left: -27px;
+  bottom: -10px;
+  width: 34px;
+  height: 10px;
+  margin-left: -17px;
   background: #231c18;
-  clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%);
+  clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%);
 }
 
 .cbx-device--laptop {
@@ -1181,8 +1202,8 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
   .cbx-growth__cast {
     left: 4%;
     right: 4%;
-    bottom: 48%;
-    height: 38%;
+    bottom: 22%;
+    height: 58%;
   }
   .cbx-growth__desk,
   .cbx-growth[data-cbx-live-beat="1"] .cbx-growth__desk,
