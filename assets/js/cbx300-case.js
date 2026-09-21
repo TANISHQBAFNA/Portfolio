@@ -1,9 +1,11 @@
 /**
- * CBX300 case study — Section 01 cover + Section 02 Aisha growth morph.
+ * CBX300 case study — Section 01 cover + Section 02 Aisha desk montage.
  * Cover: kicker → accent → word. Image overlaps type from the right.
  * Growth: coffee panel curtains over the parked cover + chrome
  * (--cbx-rise / --panel-flush, same family as landing --rise /
- * --panel-flush / is-projects-in), then one pinned frame morphs.
+ * --panel-flush / is-projects-in), then one pinned desk densifies.
+ * App sits on the desk as a physical object (phone → propped tablet → laptop).
+ * Captions are sticky notes + a desk-apron lower third — not a left essay column.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
@@ -53,7 +55,7 @@ window.Cbx300Case = (function () {
     }
   ];
 
-  var GHOSTS = [
+  var DEVICES = [
     { id: 'freelancer', job: 'pay' },
     { id: 'sole', job: 'balance' },
     { id: 'mid', job: 'approvals' }
@@ -86,6 +88,16 @@ window.Cbx300Case = (function () {
     }
   ];
 
+  var PROPS = [
+    { id: 'mug', from: 0 },
+    { id: 'sticky', from: 0 },
+    { id: 'invoice', from: 0 },
+    { id: 'receipts', from: 1 },
+    { id: 'mug2', from: 1 },
+    { id: 'papers', from: 1 },
+    { id: 'mug3', from: 2 },
+    { id: 'chair', from: 2 }
+  ];
 
   var STUBS = [
     { id: 'roles', num: '03', title: 'I designed for roles, not one user.' },
@@ -257,68 +269,77 @@ window.Cbx300Case = (function () {
     return figure;
   }
 
-  function talkBlock(label, text, valueClass) {
-    var block = el('div', 'cbx-growth__talk');
-    block.appendChild(el('p', 'cbx-growth__k', label));
-    block.appendChild(el('p', valueClass, text));
-    return block;
+  function propNode(spec) {
+    var node = el('div', 'cbx-growth__prop cbx-growth__prop--' + spec.id);
+    node.setAttribute('data-cbx-prop', spec.id);
+    node.setAttribute('data-from', String(spec.from));
+    if ((spec.from || 0) === 0) node.classList.add('is-in');
+    node.setAttribute('aria-hidden', 'true');
+    return node;
+  }
+
+  function talkNote(kind, label, text, valueClass) {
+    var note = el('div', 'cbx-growth__note cbx-growth__note--' + kind);
+    note.appendChild(el('p', 'cbx-growth__k', label));
+    note.appendChild(el('p', valueClass, text));
+    return note;
   }
 
   function beatCopy(beat, index, glitch) {
     var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
     beatEl.setAttribute('data-cbx-beat', beat.id);
     beatEl.setAttribute('data-beat-index', String(index));
-    beatEl.appendChild(shout('h2', 'cbx-growth__stage', pad(index + 1) + ' · ' + beat.label, glitch));
-    beatEl.appendChild(el('p', 'cbx-growth__meet', beat.meet));
-    beatEl.appendChild(talkBlock(HARD_K, beat.hard, 'cbx-growth__hard'));
-    beatEl.appendChild(talkBlock(CHANGE_K, beat.change, 'cbx-growth__change'));
-    beatEl.appendChild(el('p', 'cbx-growth__need', beat.need));
-    beatEl.appendChild(el('p', 'cbx-growth__fact', beat.fact));
+    beatEl.appendChild(shout('p', 'cbx-growth__stage', pad(index + 1) + ' · ' + beat.label, glitch));
+    var meet = el('div', 'cbx-growth__note cbx-growth__note--meet');
+    meet.appendChild(el('p', 'cbx-growth__meet', beat.meet));
+    beatEl.appendChild(meet);
+    beatEl.appendChild(talkNote('hard', HARD_K, beat.hard, 'cbx-growth__hard'));
+    beatEl.appendChild(talkNote('did', CHANGE_K, beat.change, 'cbx-growth__change'));
     return beatEl;
   }
 
-  function ghostScreen(job) {
-    var screen = el('div', 'cbx-ghost__screen cbx-ghost__screen--' + job);
+  function productScreen(job) {
+    var screen = el('div', 'cbx-device__screen cbx-device__screen--' + job);
     if (job === 'pay') {
-      var cash = el('div', 'cbx-ghost__cash');
-      cash.appendChild(el('p', 'cbx-ghost__eyebrow', 'In today'));
-      cash.appendChild(el('p', 'cbx-ghost__money', '4,200.00'));
+      var cash = el('div', 'cbx-device__cash');
+      cash.appendChild(el('p', 'cbx-device__eyebrow', 'In today'));
+      cash.appendChild(el('p', 'cbx-device__money', '4,200.00'));
       screen.appendChild(cash);
-      var actions = el('div', 'cbx-ghost__actions');
-      actions.appendChild(el('span', 'cbx-ghost__btn cbx-ghost__btn--payin', 'Get paid'));
-      actions.appendChild(el('span', 'cbx-ghost__btn cbx-ghost__btn--payout', 'Pay'));
+      var actions = el('div', 'cbx-device__actions');
+      actions.appendChild(el('span', 'cbx-device__btn cbx-device__btn--payin', 'Get paid'));
+      actions.appendChild(el('span', 'cbx-device__btn cbx-device__btn--payout', 'Pay'));
       screen.appendChild(actions);
       return screen;
     }
     if (job === 'balance') {
-      var lead = el('div', 'cbx-ghost__lead');
-      lead.appendChild(el('p', 'cbx-ghost__eyebrow', 'Available'));
-      var hero = el('p', 'cbx-ghost__hero', '12,480.00');
+      var lead = el('div', 'cbx-device__lead');
+      lead.appendChild(el('p', 'cbx-device__eyebrow', 'Available'));
+      var hero = el('p', 'cbx-device__hero', '12,480.00');
       hero.setAttribute('data-cbx-money', '');
       lead.appendChild(hero);
       screen.appendChild(lead);
-      var subs = el('div', 'cbx-ghost__subs');
-      subs.appendChild(el('p', 'cbx-ghost__sub', 'Ledger  13,850.00'));
-      subs.appendChild(el('p', 'cbx-ghost__sub', 'Hold  320.00'));
-      subs.appendChild(el('p', 'cbx-ghost__sub', 'Pending  1,050.00'));
+      var subs = el('div', 'cbx-device__subs');
+      subs.appendChild(el('p', 'cbx-device__sub', 'Ledger  13,850.00'));
+      subs.appendChild(el('p', 'cbx-device__sub', 'Hold  320.00'));
+      subs.appendChild(el('p', 'cbx-device__sub', 'Pending  1,050.00'));
       screen.appendChild(subs);
       return screen;
     }
     if (job === 'approvals') {
-      screen.appendChild(el('p', 'cbx-ghost__kicker', 'Waiting on me'));
-      var head = el('div', 'cbx-ghost__doorhead');
-      head.appendChild(el('p', 'cbx-ghost__eyebrow', 'Approvals'));
-      head.appendChild(el('span', 'cbx-ghost__approve', 'Approve (3)'));
+      screen.appendChild(el('p', 'cbx-device__kicker', 'Waiting on me'));
+      var head = el('div', 'cbx-device__doorhead');
+      head.appendChild(el('p', 'cbx-device__eyebrow', 'Approvals'));
+      head.appendChild(el('span', 'cbx-device__approve', 'Approve (3)'));
       screen.appendChild(head);
-      var queue = el('div', 'cbx-ghost__queue');
+      var queue = el('div', 'cbx-device__queue');
       [
         { name: 'Payroll', amt: '42,000.00' },
         { name: 'Supplier', amt: '8,400.00' },
         { name: 'Card limit', amt: '2,000.00' }
       ].forEach(function (row) {
-        var line = el('p', 'cbx-ghost__row');
-        line.appendChild(el('span', 'cbx-ghost__row-name', row.name));
-        line.appendChild(el('span', 'cbx-ghost__row-amt', row.amt));
+        var line = el('p', 'cbx-device__row');
+        line.appendChild(el('span', 'cbx-device__row-name', row.name));
+        line.appendChild(el('span', 'cbx-device__row-amt', row.amt));
         queue.appendChild(line);
       });
       screen.appendChild(queue);
@@ -327,31 +348,37 @@ window.Cbx300Case = (function () {
     return screen;
   }
 
-  function ghostShape(job) {
+  function deviceShape(job) {
     if (job === 'pay') return 'phone';
-    if (job === 'balance') return 'card';
-    if (job === 'approvals') return 'door';
+    if (job === 'balance') return 'tablet';
+    if (job === 'approvals') return 'laptop';
     return 'phone';
   }
 
-  function ghostDevice(job) {
-    var device = el('div', 'cbx-ghost cbx-ghost--' + ghostShape(job) + ' cbx-ghost--' + job);
-    device.appendChild(ghostScreen(job));
-    return device;
+  function deviceShell(job) {
+    var shape = deviceShape(job);
+    var shell = el('div', 'cbx-device cbx-device--' + shape + ' cbx-device--' + job);
+    if (shape === 'laptop') {
+      var lid = el('div', 'cbx-device__lid');
+      lid.appendChild(productScreen(job));
+      shell.appendChild(lid);
+      shell.appendChild(el('div', 'cbx-device__base'));
+      return shell;
+    }
+    shell.appendChild(productScreen(job));
+    return shell;
   }
 
-  function buildGhosts() {
-    var wrap = el('div', 'cbx-growth__ghosts');
-    wrap.setAttribute('data-cbx-ghosts', '');
+  function buildDevices() {
+    var wrap = el('div', 'cbx-growth__devices');
+    wrap.setAttribute('data-cbx-devices', '');
     wrap.setAttribute('aria-hidden', 'true');
-    GHOSTS.forEach(function (spec, i) {
-      var ghost = el('div', 'cbx-growth__ghost' + (i === 0 ? ' is-on' : ''));
-      ghost.setAttribute('data-cbx-ghost', spec.id);
-      ghost.setAttribute('data-cbx-job', spec.job);
-      var row = el('div', 'cbx-ghost-row');
-      row.appendChild(ghostDevice(spec.job));
-      ghost.appendChild(row);
-      wrap.appendChild(ghost);
+    DEVICES.forEach(function (spec, i) {
+      var slot = el('div', 'cbx-growth__device' + (i === 0 ? ' is-on' : ''));
+      slot.setAttribute('data-cbx-device', spec.id);
+      slot.setAttribute('data-cbx-job', spec.job);
+      slot.appendChild(deviceShell(spec.job));
+      wrap.appendChild(slot);
     });
     return wrap;
   }
@@ -365,31 +392,41 @@ window.Cbx300Case = (function () {
     section.setAttribute('data-cbx-live-beat', '0');
     section.setAttribute('aria-label', 'Hi, meet Aisha.');
 
-    var stage = el('div', 'cbx-growth__frame');
-    stage.setAttribute('data-cbx-growth-frame', '');
+    var scene = el('div', 'cbx-growth__scene');
+    scene.setAttribute('data-cbx-desk', '');
+    scene.setAttribute('data-cbx-montage', '');
 
-    var copy = el('div', 'cbx-growth__copy');
-    copy.appendChild(shout('p', 'cbx-growth__intro', INTRO, glitch));
-    var beats = el('div', 'cbx-growth__beats');
-    beats.setAttribute('data-cbx-beats', '');
-    BEATS.forEach(function (beat, i) {
-      beats.appendChild(beatCopy(beat, i, glitch));
-    });
-    copy.appendChild(beats);
-    copy.appendChild(el('p', 'cbx-growth__close', CLOSE));
-    stage.appendChild(copy);
-
-    var well = el('div', 'cbx-growth__well');
-    well.appendChild(buildGhosts());
     var cast = el('div', 'cbx-growth__cast');
     cast.setAttribute('data-cbx-cast', '');
     PEOPLE.forEach(function (person) {
       cast.appendChild(personFig(person));
     });
-    well.appendChild(cast);
-    stage.appendChild(well);
+    scene.appendChild(cast);
 
-    section.appendChild(stage);
+    var desk = el('div', 'cbx-growth__desk');
+    var top = el('div', 'cbx-growth__top');
+    var props = el('div', 'cbx-growth__props');
+    PROPS.forEach(function (spec) {
+      props.appendChild(propNode(spec));
+    });
+    top.appendChild(props);
+    top.appendChild(buildDevices());
+
+    var notes = el('div', 'cbx-growth__notes');
+    notes.setAttribute('data-cbx-beats', '');
+    BEATS.forEach(function (beat, i) {
+      notes.appendChild(beatCopy(beat, i, glitch));
+    });
+    top.appendChild(notes);
+    desk.appendChild(top);
+
+    var apron = el('div', 'cbx-growth__apron');
+    apron.appendChild(shout('p', 'cbx-growth__intro', INTRO, glitch));
+    apron.appendChild(el('p', 'cbx-growth__close', CLOSE));
+    desk.appendChild(apron);
+
+    scene.appendChild(desk);
+    section.appendChild(scene);
     return section;
   }
 
@@ -472,6 +509,13 @@ window.Cbx300Case = (function () {
     motion.refreshTimers = [];
   }
 
+  function morphNodes(root) {
+    if (!root || !root.querySelectorAll) return [];
+    return Array.prototype.slice.call(
+      root.querySelectorAll('[data-cbx-person], [data-cbx-beat], [data-cbx-device], [data-cbx-prop]')
+    );
+  }
+
   function kill() {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
@@ -495,17 +539,11 @@ window.Cbx300Case = (function () {
       motion.pin.classList.remove('is-static');
       motion.pin.style.height = '';
       if (gsap) {
-        Array.prototype.forEach.call(
-          motion.pin.querySelectorAll('[data-cbx-person], [data-cbx-beat], [data-cbx-ghost]'),
-          function (node) { gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' }); }
-        );
+        morphNodes(motion.pin).forEach(function (node) {
+          gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' });
+        });
       }
-      applyBeat(
-        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-beat]')),
-        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-ghost]')),
-        Array.prototype.slice.call(motion.pin.querySelectorAll('[data-cbx-person]')),
-        0
-      );
+      applyBeat(motion.pin, 0);
     }
     motion.pin = null;
     if (motion.normalized && ScrollTrigger && ScrollTrigger.normalizeScroll) {
@@ -513,7 +551,6 @@ window.Cbx300Case = (function () {
       motion.normalized = false;
     }
   }
-
 
   function watchSteps(cover, pin, onStep) {
     var ScrollTrigger = window.ScrollTrigger;
@@ -559,16 +596,16 @@ window.Cbx300Case = (function () {
   function fitMoney(root) {
     if (!root) return;
     Array.prototype.forEach.call(
-      root.querySelectorAll('.cbx-ghost__hero, .cbx-ghost__money'),
+      root.querySelectorAll('.cbx-device__hero, .cbx-device__money'),
       function (node) {
-        var wrap = node.closest('.cbx-ghost');
+        var wrap = node.closest('.cbx-device');
         if (!wrap) return;
         node.style.fontSize = '';
         var cs = window.getComputedStyle(wrap);
-        var pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
-        var max = wrap.clientWidth - pad;
+        var padX = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+        var max = wrap.clientWidth - padX;
         if (max <= 0) {
-          max = wrap.getBoundingClientRect().width - pad;
+          max = wrap.getBoundingClientRect().width - padX;
         }
         if (max <= 8) return;
         var size = parseFloat(window.getComputedStyle(node).fontSize) || 20;
@@ -582,33 +619,36 @@ window.Cbx300Case = (function () {
     );
   }
 
-  function applyBeat(beats, ghosts, people, index) {
-    beats.forEach(function (beat, i) {
+  function applyBeat(root, index) {
+    var pane = root;
+    if (root && root.closest && !root.hasAttribute('data-cbx-growth')) {
+      pane = root.closest('[data-cbx-growth]');
+    }
+    if (!pane) return;
+    pane.setAttribute('data-cbx-live-beat', String(index));
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-beat]'), function (beat, i) {
       beat.classList.toggle('is-on', i === index);
     });
-    ghosts.forEach(function (ghost, i) {
-      ghost.classList.toggle('is-on', i === index);
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-device]'), function (device, i) {
+      device.classList.toggle('is-on', i === index);
     });
-    people.forEach(function (person) {
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-person]'), function (person) {
       var from = parseInt(person.getAttribute('data-from'), 10) || 0;
       person.classList.toggle('is-in', from <= index);
     });
-    var host = beats[0] || ghosts[0] || people[0];
-    if (host && host.closest) {
-      var pane = host.closest('[data-cbx-growth]');
-      if (pane) pane.setAttribute('data-cbx-live-beat', String(index));
-      fitMoney(pane || host);
-    }
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-prop]'), function (prop) {
+      var from = parseInt(prop.getAttribute('data-from'), 10) || 0;
+      prop.classList.toggle('is-in', from <= index);
+    });
+    fitMoney(pane);
   }
 
   function setupStatic(pin) {
     if (!pin) return;
     pin.classList.add('is-static');
     pin.style.height = '';
-    var beats = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-beat]'));
-    var people = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-person]'));
-    var ghosts = Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-ghost]'));
-    applyBeat(beats, ghosts, people, Math.max(0, beats.length - 1));
+    var beats = pin.querySelectorAll('[data-cbx-beat]');
+    applyBeat(pin, Math.max(0, beats.length - 1));
   }
 
   function bindCinematic(world, opts) {
@@ -617,9 +657,6 @@ window.Cbx300Case = (function () {
     var stage = world.querySelector('[data-cbx-stage]');
     var pin = world.querySelector('[data-cbx-growth]');
     var cover = world.querySelector('[data-cbx-section="01"]');
-    var beats = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-beat]')) : [];
-    var people = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-person]')) : [];
-    var ghosts = pin ? Array.prototype.slice.call(pin.querySelectorAll('[data-cbx-ghost]')) : [];
     var onStep = opts.onStep;
 
     motion.pin = pin;
@@ -634,10 +671,10 @@ window.Cbx300Case = (function () {
     sizePane(stage);
     applyCbxRise(0);
 
-    beats.concat(ghosts, people).forEach(function (node) {
+    morphNodes(pin).forEach(function (node) {
       gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' });
     });
-    applyBeat(beats, ghosts, people, 0);
+    applyBeat(pin, 0);
 
     motion.riseState.p = 0;
 
@@ -670,7 +707,7 @@ window.Cbx300Case = (function () {
           if (self.progress > morphStart) {
             morphP = (self.progress - morphStart) / Math.max(0.0001, 1 - morphStart);
           }
-          applyBeat(beats, ghosts, people, beatIndexFromProgress(morphP));
+          applyBeat(pin, beatIndexFromProgress(morphP));
           if (onStep) onStep(motion.riseState.p > 0.92 ? 1 : 0);
         }
       }
@@ -792,8 +829,9 @@ window.Cbx300Case = (function () {
     BEATS: BEATS,
     INTRO: INTRO,
     CLOSE: CLOSE,
-    GHOSTS: GHOSTS,
+    DEVICES: DEVICES,
     PEOPLE: PEOPLE,
+    PROPS: PROPS,
     STUBS: STUBS
   };
 })();
