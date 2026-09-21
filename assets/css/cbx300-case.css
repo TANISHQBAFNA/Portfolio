@@ -480,18 +480,27 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   z-index: 3;
   left: 50%;
   bottom: 5%;
-  width: min(86%, 58rem);
+  width: min(88%, 70rem);
   transform: translateX(-50%);
   overflow: visible;
   transition: width 280ms ease;
 }
 
 .cbx-growth[data-cbx-live-beat="1"] .cbx-growth__desk {
-  width: min(90%, 64rem);
+  width: min(92%, 82rem);
 }
 
 .cbx-growth[data-cbx-live-beat="2"] .cbx-growth__desk {
-  width: min(94%, 72rem);
+  width: min(96%, 92rem);
+}
+
+.cbx-growth[data-cbx-live-beat="2"] .cbx-growth__cast {
+  left: 6%;
+  right: 6%;
+}
+
+.cbx-growth[data-cbx-live-beat="2"] .cbx-growth__person[data-cbx-person="aisha"] {
+  max-width: 26%;
 }
 
 .cbx-growth__top {
