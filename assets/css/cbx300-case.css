@@ -395,10 +395,10 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 .cbx-growth__cast {
   position: absolute;
   z-index: 2;
-  left: 18%;
-  right: 34%;
-  top: 4%;
-  bottom: 5%;
+  left: 26%;
+  right: 30%;
+  top: 5%;
+  bottom: 6%;
   height: auto;
   display: flex;
   flex-flow: row nowrap;
@@ -463,8 +463,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 }
 
 .cbx-growth[data-cbx-live-beat="1"] .cbx-growth__person[data-cbx-person="aisha"] {
-  max-width: 38%;
-  height: 86%;
+  max-width: 34%;
+  height: 82%;
 }
 
 .cbx-growth[data-cbx-live-beat="2"] .cbx-growth__person[data-cbx-person="aisha"] {
@@ -500,12 +500,13 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 .cbx-growth__voice {
   position: absolute;
   z-index: 4;
-  left: 4.5%;
-  bottom: 8%;
-  width: min(28%, 18.5rem);
+  left: 4%;
+  top: 18%;
+  bottom: auto;
+  width: min(21%, 16rem);
   display: grid;
   grid-template-columns: 1fr;
-  align-content: end;
+  align-content: start;
   pointer-events: none;
 }
 
@@ -1084,8 +1085,10 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
   }
   .cbx-growth__voice {
     left: 5%;
+    top: auto;
     bottom: 4%;
     width: min(92%, 22rem);
+    align-content: end;
   }
   .cbx-growth__devices {
     right: 4%;
