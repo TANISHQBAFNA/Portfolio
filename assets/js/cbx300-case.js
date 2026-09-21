@@ -17,30 +17,39 @@ window.Cbx300Case = (function () {
     word: 'the Business'
   };
 
-  /* Iris casual pack until Echo replies. Meet-a-friend, not FINDING/CHOICE stamps. */
-  var INTRO = 'Hi — meet Aisha. She runs her freelance work on SME Banking.';
+  /* Echo casual caption pack — verbatim. Meet-a-friend, not FINDING/CHOICE. */
+  var INTRO = 'Hi — meet Aisha. She runs her work through SME Banking, and as her business grows, the pressure changes.';
+  var CLOSE = 'Same bank. It just grows up with her.';
+  var HARD_K = 'What’s hard';
+  var CHANGE_K = 'What we did';
 
   var BEATS = [
     {
       id: 'freelancer',
       label: 'Freelancer',
-      hard: 'She’s freelancing and needs money to move today.',
-      change: 'So the home screen is get paid and pay.',
-      need: 'Did the money land — can I pay?'
+      meet: 'She’s freelancing, and the app is basically her bank desk in her pocket.',
+      hard: 'She just needs money in and money out.',
+      change: 'Made get-paid and pay work cleanly on her phone.',
+      need: 'Did I get paid — and can I pay someone?',
+      fact: 'The phone shows pay and cash coming in.'
     },
     {
       id: 'sole',
       label: 'Sole proprietor',
-      hard: 'One balance number used to lie to her.',
-      change: 'Available goes first on the card.',
-      need: 'How much can I safely spend today?'
+      meet: 'Now it’s a little shop-of-one — still her, but the money questions get sharper.',
+      hard: 'One big “balance” number can lie about what she can spend.',
+      change: 'Put available money first, with the other balances beside it.',
+      need: 'How much can I actually spend today?',
+      fact: 'Available leads the card; the rest sits next to it.'
     },
     {
       id: 'mid',
       label: 'Mid-size',
-      hard: 'Approving stuff is basically her day now.',
-      change: 'She gets her own door, every row still visible.',
-      need: 'Who’s waiting — can I clear this safely?'
+      meet: 'She’s got a small team now — people prepare payments, and someone has to sign them off.',
+      hard: 'Approving other people’s money is the job, and it piles up.',
+      change: 'Gave approvals their own door, and kept every line visible when she signs.',
+      need: 'Who’s waiting on me — and can I clear this without a mess?',
+      fact: 'Approvals has its own door; Approve (n) still shows each line.'
     }
   ];
 
@@ -248,14 +257,23 @@ window.Cbx300Case = (function () {
     return figure;
   }
 
+  function talkBlock(label, text, valueClass) {
+    var block = el('div', 'cbx-growth__talk');
+    block.appendChild(el('p', 'cbx-growth__k', label));
+    block.appendChild(el('p', valueClass, text));
+    return block;
+  }
+
   function beatCopy(beat, index, glitch) {
     var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
     beatEl.setAttribute('data-cbx-beat', beat.id);
     beatEl.setAttribute('data-beat-index', String(index));
     beatEl.appendChild(shout('h2', 'cbx-growth__stage', pad(index + 1) + ' · ' + beat.label, glitch));
-    beatEl.appendChild(el('p', 'cbx-growth__hard', beat.hard));
-    beatEl.appendChild(el('p', 'cbx-growth__change', beat.change));
+    beatEl.appendChild(el('p', 'cbx-growth__meet', beat.meet));
+    beatEl.appendChild(talkBlock(HARD_K, beat.hard, 'cbx-growth__hard'));
+    beatEl.appendChild(talkBlock(CHANGE_K, beat.change, 'cbx-growth__change'));
     beatEl.appendChild(el('p', 'cbx-growth__need', beat.need));
+    beatEl.appendChild(el('p', 'cbx-growth__fact', beat.fact));
     return beatEl;
   }
 
@@ -358,6 +376,7 @@ window.Cbx300Case = (function () {
       beats.appendChild(beatCopy(beat, i, glitch));
     });
     copy.appendChild(beats);
+    copy.appendChild(el('p', 'cbx-growth__close', CLOSE));
     stage.appendChild(copy);
 
     var well = el('div', 'cbx-growth__well');
@@ -772,6 +791,7 @@ window.Cbx300Case = (function () {
     META: META,
     BEATS: BEATS,
     INTRO: INTRO,
+    CLOSE: CLOSE,
     GHOSTS: GHOSTS,
     PEOPLE: PEOPLE,
     STUBS: STUBS

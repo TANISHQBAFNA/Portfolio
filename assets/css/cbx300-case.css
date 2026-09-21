@@ -396,14 +396,14 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 }
 
 .cbx-growth__intro {
-  margin: 0 0 12px;
-  max-width: 32ch;
+  margin: 0 0 10px;
+  max-width: 36ch;
   font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   font-weight: 400;
   font-style: italic;
   letter-spacing: -0.012em;
-  line-height: 1.4;
+  line-height: 1.38;
   color: rgba(244, 239, 230, 0.86);
 }
 
@@ -450,9 +450,9 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   hyphens: none;
 }
 
-.cbx-growth__hard {
-  margin: 12px 0 0;
-  max-width: 28ch;
+.cbx-growth__meet {
+  margin: 10px 0 0;
+  max-width: 32ch;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 0.9375rem;
   font-weight: 500;
@@ -461,9 +461,29 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   color: rgba(244, 239, 230, 0.9);
 }
 
+.cbx-growth__talk {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  margin: 12px 0 0;
+}
+
+.cbx-growth__k {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.3;
+  color: rgba(244, 239, 230, 0.7);
+}
+
+.cbx-growth__hard,
 .cbx-growth__change {
-  margin: 8px 0 0;
-  max-width: 28ch;
+  margin: 0;
+  max-width: 32ch;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 0.9375rem;
   font-weight: 400;
@@ -474,13 +494,35 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 
 .cbx-growth__need {
   margin: 16px 0 0;
-  max-width: 22ch;
+  max-width: 26ch;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: clamp(1.375rem, 1.5vw, 1.625rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: var(--cream, #f4efe6);
+}
+
+.cbx-growth__fact {
+  margin: 8px 0 0;
+  max-width: 34ch;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: rgba(244, 239, 230, 0.65);
+}
+
+.cbx-growth__close {
+  margin: 16px 0 0;
+  max-width: 28ch;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.35;
+  color: rgba(244, 239, 230, 0.7);
 }
 
 .cbx-growth__well {
