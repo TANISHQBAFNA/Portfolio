@@ -49,10 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s57') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s55') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s57') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s55') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s58') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s56') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s58') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s56') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -367,15 +367,16 @@ check('light proof: desk voice and product objects on the desk', function () {
   assert.ok(stageCss.indexOf('0.875rem') !== -1, 'stage must stay small 01 · label, not a billboard');
   assert.ok(stageCss.indexOf('0.78') !== -1, 'stage cream must stay readable on coffee');
   var meetCss = css.slice(css.indexOf('.cbx-growth__meet {'), css.indexOf('.cbx-growth__k {'));
-  assert.ok(meetCss.indexOf('Outfit') !== -1, 'meet line must be product sans');
-  assert.ok(meetCss.indexOf('0.9375rem') !== -1, 'meet line is spoken body, not a stamp');
+  assert.ok(meetCss.indexOf('Newsreader') !== -1, 'meet line must be handwritten-adjacent serif');
+  assert.ok(meetCss.indexOf('italic') !== -1, 'meet line must stay spoken, not product UI');
+  assert.ok(meetCss.indexOf('0.875rem') !== -1, 'meet line is spoken body, not a stamp');
   var kCss = css.slice(css.indexOf('.cbx-growth__k {'), css.indexOf('.cbx-growth__hard,'));
   assert.ok(kCss.indexOf('text-transform: none') !== -1, 'What’s hard / What we did must stay sentence case');
   assert.ok(kCss.indexOf('uppercase') === -1, 'talk labels must not shout uppercase');
   assert.ok(kCss.indexOf('0.75rem') !== -1, 'talk labels stay small');
   var talkCss = css.slice(css.indexOf('.cbx-growth__hard,'), css.indexOf('.cbx-growth__props {'));
-  assert.ok(talkCss.indexOf('Outfit') !== -1, 'hard/change must be product sans');
-  assert.ok(talkCss.indexOf('0.9375rem') !== -1, 'hard/change are spoken body, not stamps');
+  assert.ok(talkCss.indexOf('Newsreader') !== -1, 'hard/change must be handwritten-adjacent serif');
+  assert.ok(talkCss.indexOf('0.875rem') !== -1, 'hard/change are spoken body, not stamps');
   assert.ok(css.indexOf('.cbx-growth__chip') === -1, 'stamp chips must stay gone');
   assert.ok(css.indexOf('.cbx-growth__spine') === -1, 'spine chip css must stay gone');
   var heroCss = css.slice(css.indexOf('.cbx-device__hero {'), css.indexOf('.cbx-device__subs {'));
@@ -398,7 +399,9 @@ check('light proof: desk voice and product objects on the desk', function () {
   assert.ok(css.indexOf('.cbx-ghost') === -1, 'ghost annotation layer must stay gone');
   assert.ok(css.indexOf('.cbx-device--desktop') === -1, 'desktop dashboard ghost must stay gone');
   assert.ok(css.indexOf('backdrop-filter') === -1, 'no glass');
-  assert.ok(!/box-shadow:\s*[^;]*0 0/.test(css.slice(css.indexOf('.cbx-device'))), 'no glow on device');
+  assert.ok(css.indexOf('.cbx-device__screen') !== -1 && css.indexOf('inset 0 0 16px rgba(255, 236, 200, 0.2)') !== -1,
+    'device screens need a tiny warm glow, not a neon halo');
+  assert.ok(!/#5ecfcf|#3de8f5/.test(css.slice(css.indexOf('.cbx-device'))), 'no neon glow on device');
   assert.ok(pages.indexOf('travelX') === -1, 'proof pass must not bring back sideways travel');
   assert.ok(pages.indexOf('film-decision') === -1, 'old film decision chips must stay gone');
 });
@@ -466,6 +469,10 @@ check('desk montage replaces the two-column copy/proof frame', function () {
   var topCss = css.slice(css.indexOf('.cbx-growth__top {'), css.indexOf('.cbx-growth__apron {'));
   assert.ok(topCss.indexOf('#8a6244') !== -1, 'desk top must read as wood, not UI chrome');
   assert.ok(topCss.indexOf('repeating-linear-gradient') !== -1, 'desk top needs wood grain');
+  assert.ok(css.indexOf('.cbx-growth__lip') !== -1, 'desk needs a front edge lip');
+  assert.ok(css.indexOf('.cbx-prop__shadow') !== -1, 'props need contact shadows that fade with them');
+  assert.ok(css.indexOf('cbx-growth__note--hard') !== -1 && css.indexOf('#e8a07a') !== -1, 'hard note must be the urgent paper');
+  assert.ok(css.indexOf('cbx-growth__note--did') !== -1 && css.indexOf('#e6dfd0') !== -1, 'did note must be the calm paper');
   var notesCss = css.slice(css.indexOf('.cbx-growth__notes {'), css.indexOf('.cbx-growth__beat {'));
   assert.ok(notesCss.indexOf('position: absolute') !== -1, 'notes sit on the desk, not in a left column');
   assert.ok(notesCss.indexOf('display: grid') !== -1, 'beats must overlay without a fake min-height band');

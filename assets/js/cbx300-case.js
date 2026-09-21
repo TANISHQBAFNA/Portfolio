@@ -90,7 +90,8 @@ window.Cbx300Case = (function () {
     { id: 'mug2', from: 1 },
     { id: 'papers', from: 1 },
     { id: 'mug3', from: 2 },
-    { id: 'chair', from: 2 }
+    { id: 'chair', from: 2 },
+    { id: 'pile', from: 2 }
   ];
 
   var STUBS = [
@@ -263,12 +264,30 @@ window.Cbx300Case = (function () {
     return figure;
   }
 
+  function propParts(id) {
+    if (id.indexOf('mug') === 0) return ['shadow', 'body', 'cup', 'handle'];
+    if (id === 'sticky') return ['shadow', 'sheet'];
+    if (id === 'invoice') return ['shadow', 'sheet'];
+    if (id === 'receipts') return ['shadow', 'sheet', 'sheet', 'sheet'];
+    if (id === 'papers') return ['shadow', 'sheet', 'sheet'];
+    if (id === 'pile') return ['shadow', 'sheet', 'sheet', 'sheet'];
+    if (id === 'chair') return ['shadow', 'back', 'seat'];
+    return ['shadow'];
+  }
+
   function propNode(spec) {
     var node = el('div', 'cbx-growth__prop cbx-growth__prop--' + spec.id);
     node.setAttribute('data-cbx-prop', spec.id);
     node.setAttribute('data-from', String(spec.from));
     if ((spec.from || 0) === 0) node.classList.add('is-in');
     node.setAttribute('aria-hidden', 'true');
+    var counts = {};
+    propParts(spec.id).forEach(function (part) {
+      counts[part] = (counts[part] || 0) + 1;
+      var cls = 'cbx-prop__' + part;
+      if (counts[part] > 1) cls += ' cbx-prop__' + part + '--' + counts[part];
+      node.appendChild(el('span', cls));
+    });
     return node;
   }
 
@@ -413,6 +432,10 @@ window.Cbx300Case = (function () {
     });
     top.appendChild(notes);
     desk.appendChild(top);
+
+    var lip = el('div', 'cbx-growth__lip');
+    lip.setAttribute('aria-hidden', 'true');
+    desk.appendChild(lip);
 
     var apron = el('div', 'cbx-growth__apron');
     apron.appendChild(shout('p', 'cbx-growth__intro', INTRO, glitch));
