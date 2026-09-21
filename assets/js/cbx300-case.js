@@ -19,9 +19,9 @@ window.Cbx300Case = (function () {
     word: 'the Business'
   };
 
-  /* Echo casual caption pack — verbatim. Meet-a-friend, not FINDING/CHOICE. */
-  var INTRO = 'Hi — meet Aisha. She runs her work through SME Banking, and as her business grows, the pressure changes.';
-  var CLOSE = 'Same bank. It just grows up with her.';
+  /* Echo desk-life caption pack — verbatim. Meet-a-friend, not FINDING/CHOICE. */
+  var INTRO = 'Hi — meet Aisha. Same person. Desk just gets busier.';
+  var CLOSE = 'Pressure changes. The bank grows with her desk.';
   var HARD_K = 'What’s hard';
   var CHANGE_K = 'What we did';
 
@@ -29,29 +29,23 @@ window.Cbx300Case = (function () {
     {
       id: 'freelancer',
       label: 'Freelancer',
-      meet: 'She’s freelancing, and the app is basically her bank desk in her pocket.',
-      hard: 'She just needs money in and money out.',
-      change: 'Made get-paid and pay work cleanly on her phone.',
-      need: 'Did I get paid — and can I pay someone?',
-      fact: 'The phone shows pay and cash coming in.'
+      meet: 'Just her. One client at a time.',
+      hard: '“Did I get paid — can I pay someone?”',
+      change: 'Phone shows pay and cash in.'
     },
     {
       id: 'sole',
       label: 'Sole proprietor',
-      meet: 'Now it’s a little shop-of-one — still her, but the money questions get sharper.',
-      hard: 'One big “balance” number can lie about what she can spend.',
-      change: 'Put available money first, with the other balances beside it.',
-      need: 'How much can I actually spend today?',
-      fact: 'Available leads the card; the rest sits next to it.'
+      meet: 'Business is real now. Desk’s fuller.',
+      hard: '“How much can I safely spend today?”',
+      change: 'Available sits largest on the propped screen.'
     },
     {
       id: 'mid',
       label: 'Mid-size',
-      meet: 'She’s got a small team now — people prepare payments, and someone has to sign them off.',
-      hard: 'Approving other people’s money is the job, and it piles up.',
-      change: 'Gave approvals their own door, and kept every line visible when she signs.',
-      need: 'Who’s waiting on me — and can I clear this without a mess?',
-      fact: 'Approvals has its own door; Approve (n) still shows each line.'
+      meet: 'Team energy. Approving is the day job.',
+      hard: '“Who’s waiting — can I clear this safely?”',
+      change: 'Approvals live on the laptop, with who can act.'
     }
   ];
 
@@ -390,7 +384,7 @@ window.Cbx300Case = (function () {
     section.setAttribute('data-cbx-live', '');
     section.setAttribute('data-cbx-growth', '');
     section.setAttribute('data-cbx-live-beat', '0');
-    section.setAttribute('aria-label', 'Hi, meet Aisha.');
+    section.setAttribute('aria-label', 'Hi — meet Aisha. Same person. Desk just gets busier.');
 
     var scene = el('div', 'cbx-growth__scene');
     scene.setAttribute('data-cbx-desk', '');
