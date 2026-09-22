@@ -1,25 +1,68 @@
 # Tanishq Bafna — portfolio landing (horizontal edition)
 
-A bold, editorial landing experience for a product/UX designer. Static HTML, CSS
-and vanilla JS — no build step, no dependencies, no framework. It matches the
-conventions of the existing tanishqbafna.com site (`assets/…` paths, sibling
-`.html` pages), so it can drop straight into that repo root.
+A bold, editorial landing experience for a product/UX designer. **Static HTML,
+CSS, and vanilla JS — zero build.** Sibling `.html` pages and `assets/…` URLs
+match tanishqbafna.com. Production ships the repo root (GitHub Pages / any
+static host). There is no Firebase app, no Vite/Next/React rewrite, and no
+`firebase.json`.
 
 ## Run it locally
 
 ```bash
-python3 -m http.server 4321 --directory ~/Projects/tanishqbafna-portfolio
+python3 -m http.server 4321
 ```
 
-Then open <http://localhost:4321>. Opening `index.html` directly by double-click
-also works — all scripts are plain (non-module) files for exactly that reason.
+Same thing via npm (no install needed — scripts call Python and Node):
 
-Deep links for this prototype:
+```bash
+npm run dev      # python3 -m http.server 4321
+npm test         # existing UX gates + toolchain freeze checks
+```
 
-- `http://localhost:4321/?open=daughters` — open the Daughters flip book
-- `http://localhost:4321/?open=daughters&hold=flip` — freeze the first sheet mid-turn (QA)
+Then open <http://localhost:4321>. Opening `index.html` by double-click also
+works — all scripts are classic (non-module) IIFEs.
 
-Cache-bust query on CSS/JS is `?v=flipbook3`. Hard-refresh if a previous preview is stuck.
+| URL | Page |
+| --- | --- |
+| `/` or `/index.html` | Cream home (`index.html`) |
+| `/index-multiverse.html` | Multiverse home |
+| `/about.html` | About |
+| `/contact.html` | Contact |
+| `/404.html` | Not found |
+| `/?beyond=1` | Cream → Multiverse cover |
+| Case studies (CBX300) | In-page worlds on home (`data-world="cbx300"`), not separate HTML files |
+
+Cache-bust query on CSS/JS is per-file (`?v=aeo33`, `?v=film13`, …).
+Hard-refresh if a previous preview is stuck.
+
+### What Camila changed (toolchain) — conservative
+
+- Added `package.json` with `dev` / `start` / `test` only. No bundler.
+- **Skipped Vite.** `vite` injects `<script type="module" src="/@vite/client">`
+  into `index.html` in dev and can wrap CSS as JS modules. That is not
+  zero-risk for CBX300 GSAP pin, cream curtain, Multiverse, or ProjectRail.
+- **Did not bump GSAP.** Vendor files stay **3.12.5**. GSAP 3.13 changed
+  ScrollTrigger `onEnter` timing on first refresh; the Aisha coffee film was
+  not proven on 3.15.
+- Guard scripts: `npm test` runs `scripts/check-multiverse-ux.js`,
+  `check-cbx300-case.js`, `test-iris-motion-gate.js`, and `check-toolchain.js`.
+
+### Frozen for Iris (motion walk — do not touch)
+
+Iris CDO flag: cream Multiverse + CBX300 / Aisha coffee GSAP pin +
+curtain-over-cover + ProjectRail is mid-flight. Leave these alone:
+
+- GSAP timelines, ScrollTrigger pin/scrub, `normalizeScroll`, curtain
+- `assets/js/project-study.js`, `case-scroll-kit.js`, `cbx300-case.js`
+- `assets/js/beyond-transition.js`, `iris-motion.js`, `iris-motion-multiverse.js`
+- `assets/js/project-rail.js` (wheel → horizontal)
+- Cream/coffee film UI: `landing.css`, `landing-multiverse.css`,
+  `cbx300-case.css`, atmosphere, tokens
+- Case HTML worlds in `index.html` / `index-multiverse.html`, `assets/img/cbx300/`
+- Rail copy: `assets/js/project-data.js`
+- `assets/vendor/gsap.min.js`, `ScrollTrigger.min.js` (keep 3.12.5)
+
+Camila may keep touching `package.json` and `scripts/check-toolchain.js` only.
 
 ## Opened case (what changed vs the flat card)
 

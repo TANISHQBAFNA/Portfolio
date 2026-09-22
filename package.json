@@ -1,0 +1,11 @@
+{
+  "name": "tanishq-portfolio",
+  "private": true,
+  "description": "Static multi-page portfolio. Zero-build. npm scripts wrap the Python static server and existing Node check gates.",
+  "scripts": {
+    "dev": "python3 -m http.server 4321",
+    "start": "python3 -m http.server 4321",
+    "check": "node scripts/check-multiverse-ux.js && node scripts/check-cbx300-case.js && node scripts/test-iris-motion-gate.js && node scripts/check-toolchain.js",
+    "test": "npm run check"
+  }
+}
