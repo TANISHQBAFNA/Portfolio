@@ -3,7 +3,8 @@
  * Window is the scroller. Pins stay sparse.
  *
  * Cut / Tunnel / Helix / Deck / Type — motion skins.
- * cbx300 — cream Infoviz scroll film (bank-calm, no glitch theatre).
+ * cbx300 — cream Infoviz scroll film (bank-calm).
+ * Multiverse may glitch study chrome / mark / title hitch only.
  */
 window.ProjectStudy = (function () {
   'use strict';
@@ -15,6 +16,31 @@ window.ProjectStudy = (function () {
 
   function pad(n) {
     return String(n).length < 2 ? '0' + n : String(n);
+  }
+
+
+  function unlockFilmScroller(htmlEl) {
+    if (!htmlEl) return;
+    htmlEl.classList.add('is-study-film');
+    /* One scroller only (html). Dual html+body overflow:scroll fights Arc/Chromium. */
+    htmlEl.style.setProperty('overflow-x', 'hidden', 'important');
+    htmlEl.style.setProperty('overflow-y', 'auto', 'important');
+    htmlEl.style.setProperty('height', 'auto', 'important');
+    htmlEl.style.setProperty('max-height', 'none', 'important');
+    document.body.style.setProperty('overflow-x', 'hidden', 'important');
+    document.body.style.setProperty('overflow-y', 'visible', 'important');
+    document.body.style.setProperty('height', 'auto', 'important');
+    document.body.style.setProperty('max-height', 'none', 'important');
+    window.scrollTo(0, 0);
+  }
+
+  function clearFilmScroller(htmlEl) {
+    if (!htmlEl) return;
+    htmlEl.classList.remove('is-study-film');
+    ['overflow-x', 'overflow-y', 'height', 'max-height'].forEach(function (prop) {
+      htmlEl.style.removeProperty(prop);
+      document.body.style.removeProperty(prop);
+    });
   }
 
   function create(options) {
@@ -103,7 +129,7 @@ window.ProjectStudy = (function () {
     function killMotion() {
       if (caseKit && caseKit.kill) caseKit.kill();
       caseKit = null;
-      html.classList.remove('is-study-film');
+      clearFilmScroller(html);
       triggers.forEach(function (t) {
         if (t && t.kill) t.kill();
       });
@@ -146,8 +172,18 @@ window.ProjectStudy = (function () {
         });
       });
       var proj = nodes.project || root.querySelector('[data-study-project]');
-      if (proj) proj.textContent = currentTitle;
-      if (nodes.fly) nodes.fly.textContent = currentTitle;
+      if (proj) {
+        proj.textContent = currentTitle;
+        if (html.classList.contains('is-multiverse') && window.IrisMotion && window.IrisMotion.armGlitchTarget) {
+          window.IrisMotion.armGlitchTarget(proj, currentTitle);
+        }
+      }
+      if (nodes.fly) {
+        nodes.fly.textContent = currentTitle;
+        if (html.classList.contains('is-multiverse') && window.IrisMotion && window.IrisMotion.armGlitchTarget) {
+          window.IrisMotion.armGlitchTarget(nodes.fly, currentTitle);
+        }
+      }
     }
 
     var lastStep = -1;
@@ -163,8 +199,21 @@ window.ProjectStudy = (function () {
 
     function onScroll() {
       if (mode !== 'study') return;
-      var max = Math.max(0, root.scrollHeight - root.clientHeight);
-      var y = root.scrollTop || window.scrollY || 0;
+      var film = html.classList.contains('is-study-film');
+      var vh;
+      var max;
+      var y;
+      if (film) {
+        vh = (window.layoutViewport && window.layoutViewport.height())
+          || (window.visualViewport && window.visualViewport.height)
+          || window.innerHeight
+          || 1;
+        max = Math.max(0, (document.documentElement.scrollHeight || 0) - vh);
+        y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      } else {
+        max = Math.max(0, root.scrollHeight - root.clientHeight);
+        y = root.scrollTop || window.scrollY || 0;
+      }
       var p = max > 0 ? y / max : 0;
       if (nodes.progress) {
         nodes.progress.style.transform = 'scaleX(' + Math.max(0.02, Math.min(1, p)).toFixed(4) + ')';
@@ -179,7 +228,11 @@ window.ProjectStudy = (function () {
 
     function syncHead() {
       var head = headPx();
-      var stage = Math.max(240, Math.round(root.clientHeight || window.innerHeight) - head);
+      var vh = (window.layoutViewport && window.layoutViewport.height())
+        || (window.visualViewport && window.visualViewport.height)
+        || window.innerHeight
+        || 800;
+      var stage = Math.max(240, Math.round(vh) - head);
       root.style.setProperty('--study-head', head + 'px');
       root.style.setProperty('--study-stage', stage + 'px');
     }
@@ -729,13 +782,21 @@ window.ProjectStudy = (function () {
       });
     }
 
-    function bindCbx300() {
+    function bindCbx300(attempt) {
       var world = root.querySelector('[data-world="cbx300"]');
-      if (!world || !window.CaseScrollKit) return;
+      if (!world) return;
+      var tries = typeof attempt === 'number' ? attempt : 0;
+      /* Unlock BEFORE kit/gsap — a missed CaseScrollKit left Arc with overflow:hidden. */
+      unlockFilmScroller(html);
       var beats = world.querySelectorAll('[data-film-beat]');
       setTotal(beats.length);
       setStep(0);
-      html.classList.add('is-study-film');
+      if (!window.CaseScrollKit) {
+        if (tries < 40 && mode === 'study') {
+          window.setTimeout(function () { bindCbx300(tries + 1); }, 50);
+        }
+        return;
+      }
       if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
         ScrollTrigger.config({ ignoreMobileResize: true });
@@ -748,6 +809,9 @@ window.ProjectStudy = (function () {
         startPage: pendingPage || '',
         forceStatic: typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined'
       });
+      window.setTimeout(function () {
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      }, 120);
     }
 
     function bindMotion() {
@@ -1200,12 +1264,15 @@ window.ProjectStudy = (function () {
       syncHead();
       paintTitle(project.cardTitle || project.title || 'Project');
       caseMount = null;
-      if (template === 'cbx300' && window.Cbx300Case) {
-        caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
-        var caseWorld = root.querySelector('[data-world="cbx300"]');
-        var caseBeats = caseWorld ? caseWorld.querySelectorAll('[data-film-beat]') : [];
-        setTotal(caseBeats.length);
-        setStep(0);
+      if (template === 'cbx300') {
+        unlockFilmScroller(html);
+        if (window.Cbx300Case) {
+          caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
+          var caseWorld = root.querySelector('[data-world="cbx300"]');
+          var caseBeats = caseWorld ? caseWorld.querySelectorAll('[data-film-beat]') : [];
+          setTotal(caseBeats.length);
+          setStep(0);
+        }
       }
       root.scrollTop = 0;
       window.scrollTo(0, 0);
@@ -1278,6 +1345,11 @@ window.ProjectStudy = (function () {
       if (event.key === 'Escape' && mode === 'study') close();
     });
     window.addEventListener('resize', function () {
+      if (mode !== 'study') return;
+      syncHead();
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    });
+    document.documentElement.addEventListener('layoutviewport', function () {
       if (mode !== 'study') return;
       syncHead();
       if (window.ScrollTrigger) ScrollTrigger.refresh();

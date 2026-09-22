@@ -5852,3 +5852,29 @@ html.is-multiverse.is-print .theme-tab__icon--moon { display: flex !important; }
 html.is-multiverse.is-dark .theme-tab__icon--sun { display: flex !important; }
 html.is-multiverse.is-dark .theme-tab__icon--moon { display: none !important; }
 
+/* Iris film scroll unlock — end of multiverse landing CSS */
+html.is-study-film,
+html.is-study.is-study-film {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overscroll-behavior-y: contain;
+}
+html.is-study-film body,
+html.is-study.is-study-film body {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+html.is-study-film .study[data-template="cbx300"],
+html.is-study.is-study-film .study[data-template="cbx300"] {
+  position: relative !important;
+  inset: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  touch-action: pan-y;
+}
