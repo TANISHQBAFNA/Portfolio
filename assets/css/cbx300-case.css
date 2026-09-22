@@ -468,6 +468,11 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   height: 92%;
 }
 
+.cbx-growth[data-cbx-live-beat="2"] .cbx-growth__cast {
+  padding-left: 15%;
+  justify-content: flex-start;
+}
+
 .cbx-growth[data-cbx-live-beat="2"] .cbx-growth__person[data-cbx-person="aisha"] {
   max-width: 26%;
   height: 86%;
@@ -579,7 +584,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 
 .cbx-growth__close {
   margin: 8px 0 0;
-  max-width: 28ch;
+  max-width: 36ch;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 0.75rem;
   font-weight: 500;
