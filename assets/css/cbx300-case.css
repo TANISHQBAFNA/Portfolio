@@ -3,9 +3,9 @@
    Cover + study chrome stay parked. Coffee panel rises over them
    with --cbx-rise / --panel-flush, same family as landing
    --rise / --panel-flush / is-projects-in.
-   Then pin one coffee well: full-bleed clay cast densifies,
-   a tiny product chip whispers the UI. No desk. No furniture.
-   No left essay. No sideways slide.
+   Then pin one coffee well: full-bleed clay cast densifies.
+   Story UI is a cinematic lower-third + tiny proof stamp.
+   No desk. No furniture. No left essay. No sideways slide.
    Cream stays calm. Multiverse uses ink + glitch plates. */
 
 /* Window is the scroller. html.is-study { overflow: hidden } without film
@@ -399,7 +399,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   left: 2%;
   right: 2%;
   top: 0;
-  bottom: 0;
+  bottom: 6.75rem;
   height: auto;
   display: flex;
   flex-flow: row nowrap;
@@ -407,7 +407,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   justify-content: center;
   gap: clamp(6px, 1.4vw, 28px);
   margin: 0;
-  padding: 0 0 36px;
+  padding: 0 0 8px;
   background: transparent;
   overflow: visible;
   pointer-events: none;
@@ -468,11 +468,6 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   height: 92%;
 }
 
-.cbx-growth[data-cbx-live-beat="2"] .cbx-growth__cast {
-  padding-left: 15%;
-  justify-content: flex-start;
-}
-
 .cbx-growth[data-cbx-live-beat="2"] .cbx-growth__person[data-cbx-person="aisha"] {
   max-width: 26%;
   height: 86%;
@@ -508,16 +503,33 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   pointer-events: none;
 }
 
-.cbx-growth__voice {
+.cbx-growth__third {
   position: absolute;
   z-index: 4;
-  left: 5%;
-  top: 8%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(16px, 3vw, 40px);
+  padding: 2.6rem 4.5% 3.1%;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(30, 21, 16, 0) 0%, rgba(30, 21, 16, 0.58) 70%);
+}
+
+.cbx-growth__voice {
+  position: relative;
+  z-index: 4;
+  left: auto;
+  top: auto;
   bottom: auto;
-  width: min(28%, 16rem);
+  width: min(36rem, 58%);
   display: grid;
   grid-template-columns: 1fr;
-  align-content: start;
+  align-content: end;
   pointer-events: none;
 }
 
@@ -526,7 +538,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 5px;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -550,7 +562,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   line-height: 1.3;
   color: rgba(244, 239, 230, 0.7);
   text-shadow: 0 2px 16px rgba(30, 21, 16, 0.7);
@@ -558,49 +570,49 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 
 .cbx-growth__lead {
   margin: 0;
-  max-width: 22ch;
+  max-width: 28ch;
   font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 400;
   font-style: italic;
   letter-spacing: -0.014em;
-  line-height: 1.28;
+  line-height: 1.22;
   color: rgba(244, 239, 230, 0.94);
   text-shadow: 0 2px 18px rgba(30, 21, 16, 0.75);
 }
 
 .cbx-growth__meet {
   margin: 0;
-  max-width: 24ch;
-  font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
-  font-size: 1.0625rem;
+  max-width: 32ch;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.8125rem;
   font-weight: 400;
-  font-style: italic;
-  letter-spacing: -0.012em;
-  line-height: 1.32;
-  color: rgba(244, 239, 230, 0.86);
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  color: rgba(244, 239, 230, 0.72);
   text-shadow: 0 2px 16px rgba(30, 21, 16, 0.7);
 }
 
 .cbx-growth__close {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   max-width: 36ch;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0;
   line-height: 1.35;
-  color: rgba(244, 239, 230, 0.7);
+  color: rgba(244, 239, 230, 0.62);
   text-shadow: 0 2px 14px rgba(30, 21, 16, 0.7);
 }
 
 .cbx-growth__devices {
-  position: absolute;
+  position: relative;
   z-index: 5;
-  right: 3.5%;
-  bottom: 6%;
+  right: auto;
+  bottom: auto;
   width: 132px;
   min-height: 0;
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: 1fr;
   align-items: end;
@@ -899,12 +911,21 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   overflow: visible;
 }
 
+.cbx-growth.is-static .cbx-growth__third {
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  padding: 16px 0 0;
+  background: none;
+}
+
 .cbx-growth.is-static .cbx-growth__voice {
   position: relative;
   left: auto;
   top: auto;
   width: min(36rem, 92%);
-  margin: 16px 0 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
 }
@@ -946,7 +967,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   right: auto;
   bottom: auto;
   width: 132px;
-  margin: 16px 0 0 auto;
+  margin: 0 0 0 auto;
 }
 
 html.is-multiverse .study[data-template="cbx300"] .cbx-growth {
@@ -969,17 +990,15 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
     left: 2%;
     right: 2%;
     top: 2%;
-    bottom: 22%;
+    bottom: 9.25rem;
+  }
+  .cbx-growth__third {
+    padding: 2.1rem 5% 4.5%;
   }
   .cbx-growth__voice {
-    left: 5%;
-    top: auto;
-    bottom: 5%;
-    width: min(70%, 18rem);
+    width: min(72%, 20rem);
   }
   .cbx-growth__devices {
-    right: 4%;
-    bottom: 5%;
     width: 108px;
   }
   .cbx-growth__person.is-in,

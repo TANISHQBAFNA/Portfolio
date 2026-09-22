@@ -4,8 +4,9 @@
  * Growth: coffee panel curtains over the parked cover + chrome
  * (--cbx-rise / --panel-flush, same family as landing --rise /
  * --panel-flush / is-projects-in), then one pinned morph: full-bleed
- * clay cast densifies, a tiny product chip whispers the UI, short
- * captions overlay the people. No desk. No furniture. No left essay.
+ * clay cast densifies, then a cinematic lower-third + tiny proof
+ * stamp. Cast stays the frame. Type never a left essay tower.
+ * No desk. No furniture.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
@@ -19,7 +20,7 @@ window.Cbx300Case = (function () {
     word: 'the Business'
   };
 
-  /* Meet voice only. Casual, not FINDING/CHOICE. No desk. No case-study stack. */
+  /* Lower-third only. Casual, not FINDING/CHOICE. No desk. No case-study stack. */
   var CLOSE = 'Pressure changes. The bank grows with her.';
 
   var BEATS = [
@@ -32,8 +33,8 @@ window.Cbx300Case = (function () {
     {
       id: 'sole',
       label: 'Sole prop',
-      lead: 'Now it’s a real shop.',
-      meet: 'Two people. Money decisions get sharper.'
+      lead: 'Shop of two.',
+      meet: 'Spend decisions get sharper.'
     },
     {
       id: 'mid',
@@ -349,6 +350,7 @@ window.Cbx300Case = (function () {
     var wrap = el('div', 'cbx-growth__devices');
     wrap.setAttribute('data-cbx-devices', '');
     wrap.setAttribute('data-cbx-chip', '');
+    wrap.setAttribute('data-cbx-proof', '');
     wrap.setAttribute('aria-hidden', 'true');
     DEVICES.forEach(function (spec, i) {
       var slot = el('div', 'cbx-growth__device' + (i === 0 ? ' is-on' : ''));
@@ -384,9 +386,12 @@ window.Cbx300Case = (function () {
     BEATS.forEach(function (beat, i) {
       voice.appendChild(beatCopy(beat, i, glitch));
     });
-    scene.appendChild(voice);
 
-    scene.appendChild(buildDevices());
+    var third = el('div', 'cbx-growth__third');
+    third.setAttribute('data-cbx-third', '');
+    third.appendChild(voice);
+    third.appendChild(buildDevices());
+    scene.appendChild(third);
     section.appendChild(scene);
     return section;
   }
