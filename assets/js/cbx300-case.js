@@ -1,11 +1,11 @@
 /**
- * CBX300 case study — Section 01 cover + Section 02 Meet Aisha stage.
+ * CBX300 case study — Section 01 cover + Section 02 portrait strip.
  * Cover: kicker → accent → word. Image overlaps type from the right.
  * Growth: coffee panel curtains over the parked cover + chrome
  * (--cbx-rise / --panel-flush, same family as landing --rise /
- * --panel-flush / is-projects-in), then one pinned morph: cast densifies,
- * one product object upgrades (phone → propped tablet → laptop),
- * captions soft-crossfade in the coffee well. No desk. No furniture.
+ * --panel-flush / is-projects-in), then one pinned morph: full-bleed
+ * clay cast densifies, a tiny product chip whispers the UI, short
+ * captions overlay the people. No desk. No furniture. No left essay.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
@@ -19,33 +19,28 @@ window.Cbx300Case = (function () {
     word: 'the Business'
   };
 
-  /* Echo meet-Aisha voice. Casual, not FINDING/CHOICE. No desk metaphors. */
-  var INTRO = 'Hi — meet Aisha.';
+  /* Meet voice only. Casual, not FINDING/CHOICE. No desk. No case-study stack. */
   var CLOSE = 'Pressure changes. The bank grows with her.';
-  var HARD_K = 'What’s hard';
-  var CHANGE_K = 'What we did';
 
   var BEATS = [
     {
       id: 'freelancer',
       label: 'Freelancer',
-      meet: 'Just her. One client at a time.',
-      hard: 'Did I get paid — can I pay someone?',
-      change: 'Phone shows pay and cash in.'
+      lead: 'Meet Aisha.',
+      meet: 'Just her. One client at a time.'
     },
     {
       id: 'sole',
       label: 'Sole prop',
-      meet: 'Business is real now. Team of two.',
-      hard: 'How much can I safely spend today?',
-      change: 'Available sits largest on the propped screen.'
+      lead: 'Now it’s a real shop.',
+      meet: 'Two people. Money decisions get sharper.'
     },
     {
       id: 'mid',
       label: 'Mid-size',
-      meet: 'Team energy. Approving is the day job.',
-      hard: 'Who’s waiting — can I clear this safely?',
-      change: 'Approvals live on the laptop, with who can act.'
+      lead: 'Team energy.',
+      meet: 'Approving is the day job.',
+      close: CLOSE
     }
   ];
 
@@ -252,21 +247,14 @@ window.Cbx300Case = (function () {
     return figure;
   }
 
-  function talkLine(kind, label, text, valueClass) {
-    var block = el('div', 'cbx-growth__talk cbx-growth__talk--' + kind);
-    block.appendChild(el('p', 'cbx-growth__k', label));
-    block.appendChild(el('p', valueClass, text));
-    return block;
-  }
-
   function beatCopy(beat, index, glitch) {
     var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
     beatEl.setAttribute('data-cbx-beat', beat.id);
     beatEl.setAttribute('data-beat-index', String(index));
     beatEl.appendChild(shout('p', 'cbx-growth__stage', pad(index + 1) + ' · ' + beat.label, glitch));
+    beatEl.appendChild(el('p', 'cbx-growth__lead', beat.lead));
     beatEl.appendChild(el('p', 'cbx-growth__meet', beat.meet));
-    beatEl.appendChild(talkLine('hard', HARD_K, beat.hard, 'cbx-growth__hard'));
-    beatEl.appendChild(talkLine('did', CHANGE_K, beat.change, 'cbx-growth__change'));
+    if (beat.close) beatEl.appendChild(el('p', 'cbx-growth__close', beat.close));
     return beatEl;
   }
 
@@ -320,23 +308,12 @@ window.Cbx300Case = (function () {
     return screen;
   }
 
-  function deviceShape(job) {
-    if (job === 'pay') return 'phone';
-    if (job === 'balance') return 'tablet';
-    if (job === 'approvals') return 'laptop';
-    return 'phone';
+  function deviceShape() {
+    return 'chip';
   }
 
   function deviceShell(job) {
-    var shape = deviceShape(job);
-    var shell = el('div', 'cbx-device cbx-device--' + shape + ' cbx-device--' + job);
-    if (shape === 'laptop') {
-      var lid = el('div', 'cbx-device__lid');
-      lid.appendChild(productScreen(job));
-      shell.appendChild(lid);
-      shell.appendChild(el('div', 'cbx-device__base'));
-      return shell;
-    }
+    var shell = el('div', 'cbx-device cbx-device--chip cbx-device--' + job);
     shell.appendChild(productScreen(job));
     return shell;
   }
@@ -344,6 +321,7 @@ window.Cbx300Case = (function () {
   function buildDevices() {
     var wrap = el('div', 'cbx-growth__devices');
     wrap.setAttribute('data-cbx-devices', '');
+    wrap.setAttribute('data-cbx-chip', '');
     wrap.setAttribute('aria-hidden', 'true');
     DEVICES.forEach(function (spec, i) {
       var slot = el('div', 'cbx-growth__device' + (i === 0 ? ' is-on' : ''));
@@ -362,11 +340,10 @@ window.Cbx300Case = (function () {
     section.setAttribute('data-cbx-live', '');
     section.setAttribute('data-cbx-growth', '');
     section.setAttribute('data-cbx-live-beat', '0');
-    section.setAttribute('aria-label', 'Hi — meet Aisha.');
+    section.setAttribute('aria-label', 'Meet Aisha.');
 
     var scene = el('div', 'cbx-growth__scene');
-    scene.setAttribute('data-cbx-meet', '');
-    scene.setAttribute('data-cbx-montage', '');
+    scene.setAttribute('data-cbx-strip', '');
 
     var cast = el('div', 'cbx-growth__cast');
     cast.setAttribute('data-cbx-cast', '');
@@ -377,11 +354,9 @@ window.Cbx300Case = (function () {
 
     var voice = el('div', 'cbx-growth__voice');
     voice.setAttribute('data-cbx-beats', '');
-    voice.appendChild(shout('p', 'cbx-growth__intro', INTRO, glitch));
     BEATS.forEach(function (beat, i) {
       voice.appendChild(beatCopy(beat, i, glitch));
     });
-    voice.appendChild(el('p', 'cbx-growth__close', CLOSE));
     scene.appendChild(voice);
 
     scene.appendChild(buildDevices());
@@ -782,7 +757,6 @@ window.Cbx300Case = (function () {
     beatIndexFromProgress: beatIndexFromProgress,
     META: META,
     BEATS: BEATS,
-    INTRO: INTRO,
     CLOSE: CLOSE,
     DEVICES: DEVICES,
     PEOPLE: PEOPLE,
