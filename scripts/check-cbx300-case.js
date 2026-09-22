@@ -49,10 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s64') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s58') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s64') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s58') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s65') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s59') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s65') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s59') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -535,14 +535,21 @@ check('portrait strip replaces the Meet Aisha dual-column stage', function () {
   assert.ok(leadC > meetC && meetC > closeC, 'voice hierarchy must be lead > meet > close');
 });
 
-check('coffee curtain docks on a slight scroll', function () {
+check('coffee curtain docks with landing projects softness', function () {
   var rise = pages.match(/var RISE_DUR = ([0-9.]+)/);
-  assert.ok(rise && parseFloat(rise[1]) > 0 && parseFloat(rise[1]) <= 0.28,
-    'RISE_DUR must be a short vh so a slight nudge docks the sheet');
-  var scrub = pages.match(/scrub:\s*([0-9.]+)/);
-  assert.ok(scrub && parseFloat(scrub[1]) > 0 && parseFloat(scrub[1]) <= 0.4,
-    'curtain scrub lag must stay snappy');
-  assert.ok(pages.indexOf("ease: 'power2.out'") !== -1, 'rise ease must front-load the dock');
+  assert.ok(rise && parseFloat(rise[1]) === 1,
+    'RISE_DUR must match landing riseMax (~1vh from .scroll-run 200vh)');
+  var lerp = pages.match(/var RISE_LERP = ([0-9.]+)/);
+  assert.ok(lerp && parseFloat(lerp[1]) === 0.7,
+    'RISE_LERP must match landing tweenBento duration 0.7');
+  assert.ok(pages.indexOf('function tweenCbxRise') !== -1, 'missing landing tweenBento analog');
+  assert.ok(pages.indexOf("ease: 'power3.out'") !== -1, 'rise lerp must use landing power3.out');
+  assert.ok(pages.indexOf('overwrite: true') !== -1, 'rise lerp must overwrite like tweenBento');
+  assert.ok(pages.indexOf('scrub: true') !== -1, 'pin playhead must stay 1:1 so morph runs after dock');
+  assert.ok(pages.indexOf('fastScrollEnd: true') === -1, 'fastScrollEnd snaps; landing has no snap');
+  assert.ok(pages.indexOf("ease: 'power2.out'") === -1, 'power2.out front-loads; too snappy vs landing');
+  assert.ok(landing.indexOf('duration: opts.duration || 0.7') !== -1, 'landing tweenBento 0.7 must still be source');
+  assert.ok(landing.indexOf("ease: opts.ease || 'power3.out'") !== -1, 'landing tweenBento power3.out must still be source');
 });
 
 check('rail wheel yields to open study so CBX300 window-scroll can pin-scrub', function () {

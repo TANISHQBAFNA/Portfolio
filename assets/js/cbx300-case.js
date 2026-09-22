@@ -89,6 +89,7 @@ window.Cbx300Case = (function () {
   var motion = {
     triggers: [],
     tween: null,
+    riseTween: null,
     riseState: { p: 0 },
     refreshTimers: [],
     normalized: false,
@@ -96,9 +97,13 @@ window.Cbx300Case = (function () {
     stage: null
   };
 
-  /* Rise is a slight wheel/trackpad nudge, not a full-viewport scrub.
-     Morph still owns the long pin after the sheet is flush-top. */
-  var RISE_DUR = 0.16;
+  /* Landing projects curtain is the feel source of truth:
+     .scroll-run 200vh => riseMax() ≈ 1 viewport of native scroll,
+     then tweenBento lerps visual p (duration 0.7, ease power3.out,
+     overwrite true). Mirror that family here. Morph still owns the
+     long pin after the sheet is flush-top. */
+  var RISE_DUR = 1;
+  var RISE_LERP = 0.7;
   var MORPH_VH = 2.35;
 
   function isMultiverse() {
@@ -165,9 +170,31 @@ window.Cbx300Case = (function () {
     html.classList.toggle('is-cbx-growth-in', p > 0.08);
   }
 
+  function tweenCbxRise(next, immediate) {
+    var gsap = window.gsap;
+    var target = Math.max(0, Math.min(1, next));
+    if (immediate || !gsap) {
+      if (motion.riseTween && motion.riseTween.kill) motion.riseTween.kill();
+      motion.riseTween = null;
+      motion.riseState.p = target;
+      applyCbxRise(target);
+      return;
+    }
+    motion.riseTween = gsap.to(motion.riseState, {
+      p: target,
+      duration: RISE_LERP,
+      ease: 'power3.out',
+      overwrite: true,
+      onUpdate: function () { applyCbxRise(motion.riseState.p); },
+      onComplete: function () { motion.riseTween = null; }
+    });
+  }
+
   function restRise() {
     var html = document.documentElement;
     var pane = growthPane();
+    if (motion.riseTween && motion.riseTween.kill) motion.riseTween.kill();
+    motion.riseTween = null;
     html.classList.remove('is-cbx-growth-in');
     html.style.removeProperty('--cbx-rise');
     if (pane) pane.style.removeProperty('--panel-flush');
@@ -619,13 +646,15 @@ window.Cbx300Case = (function () {
         },
         pin: true,
         pinSpacing: true,
-        scrub: 0.28,
+        scrub: true,
         invalidateOnRefresh: true,
         anticipatePin: 1,
-        fastScrollEnd: true,
         refreshPriority: 1,
         onRefresh: function () { sizePane(stage); },
         onToggle: function (self) {
+          if (!self.isActive) {
+            tweenCbxRise(self.progress >= 1 ? 1 : 0, true);
+          }
           if (self.isActive && onStep) {
             onStep(motion.riseState.p > 0.08 ? 1 : 0);
           }
@@ -633,6 +662,11 @@ window.Cbx300Case = (function () {
         onUpdate: function (self) {
           var dur = tl.duration() || 1;
           var morphStart = RISE_DUR / dur;
+          var riseTarget = 1;
+          if (morphStart > 0) {
+            riseTarget = Math.max(0, Math.min(1, self.progress / morphStart));
+          }
+          tweenCbxRise(riseTarget);
           var morphP = 0;
           if (self.progress > morphStart) {
             morphP = (self.progress - morphStart) / Math.max(0.0001, 1 - morphStart);
@@ -643,13 +677,7 @@ window.Cbx300Case = (function () {
       }
     });
 
-    tl.to(motion.riseState, {
-      p: 1,
-      duration: RISE_DUR,
-      ease: 'power2.out',
-      onUpdate: function () { applyCbxRise(motion.riseState.p); }
-    }, 0);
-
+    tl.to({}, { duration: RISE_DUR });
     tl.to({}, { duration: MORPH_VH });
     motion.tween = tl;
     if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
