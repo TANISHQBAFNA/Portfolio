@@ -511,6 +511,7 @@ check('story-first chapter board replaces full-bleed portrait captions', functio
   assert.ok(railCss.indexOf('display: flex') !== -1, 'stage rail must stay in one glanceable row');
   var storyCss = css.slice(css.indexOf('.cbx-growth__story {'), css.indexOf('.cbx-growth__eyebrow {'));
   assert.ok(storyCss.indexOf('flex: 1 1 58%') !== -1, 'story column must be the hero width');
+  assert.ok(storyCss.indexOf('max-width: none') !== -1, 'story column must actually take the 58% hero width');
   var plateCss = css.slice(css.indexOf('.cbx-growth__plate {'), css.indexOf('.cbx-growth__plate::after {'));
   assert.ok(plateCss.indexOf('min(420px, 48vh)') !== -1, 'cast plate must stay supporting, not full-bleed');
   assert.ok(plateCss.indexOf('border-radius: 22px') !== -1, 'cast sits in a framed plate');

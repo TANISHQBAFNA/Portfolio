@@ -463,7 +463,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 
 .cbx-growth__story {
   flex: 1 1 58%;
-  max-width: 38rem;
+  max-width: none;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
