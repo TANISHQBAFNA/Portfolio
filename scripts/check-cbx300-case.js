@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * Guards CBX300 Section 01 cover + Section 02 portrait strip.
+ * Guards CBX300 Section 01 cover + Section 02 story-first board.
  * Same markup for cream + Multiverse. Glitch only on Multiverse.
  */
 var fs = require('fs');
@@ -49,10 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s66') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s60') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s66') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s60') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s67') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s61') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s67') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s61') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -108,7 +108,12 @@ check('Section 02 is Aisha growth, not the old 8-beat film', function () {
   assert.ok(pages.indexOf('people/aisha.png') !== -1, 'missing Aisha person layer');
   assert.ok(pages.indexOf('people/teammate-01.png') !== -1, 'missing first teammate layer');
   assert.ok(pages.indexOf('cbx-growth__cast') !== -1, 'missing cast well markup');
-  assert.ok(pages.indexOf('data-cbx-strip') !== -1, 'missing portrait-strip hook');
+  assert.ok(pages.indexOf('data-cbx-board') !== -1, 'missing story-board hook');
+  assert.ok(pages.indexOf('data-cbx-rail') !== -1, 'missing glanceable stage rail');
+  assert.ok(pages.indexOf('data-cbx-plate') !== -1, 'missing supporting cast plate');
+  assert.ok(pages.indexOf('data-cbx-strip') === -1, 'full-bleed portrait-strip hook must be gone');
+  assert.ok(pages.indexOf('data-cbx-third') === -1, 'cinematic lower-third hook must be gone');
+  assert.ok(pages.indexOf('cbx-growth__third') === -1, 'lower-third markup must be gone');
   assert.ok(pages.indexOf('data-cbx-meet') === -1, 'Meet Aisha stage hook must be gone');
   assert.ok(pages.indexOf('data-cbx-montage') === -1, 'desk/meet montage hook must be gone');
   assert.ok(pages.indexOf('cbx-growth__desk') === -1, 'desk surface must be gone');
@@ -147,14 +152,14 @@ check('Section 02 growth field is coffee; cover stays cream', function () {
   assert.ok(coverCss.indexOf('background: var(--film-cream)') !== -1, 'cover world must stay cream');
   assert.ok(growthCss.indexOf('background: var(--coffee, #1E1510)') !== -1, 'growth pane must be coffee #1E1510');
   assert.ok(growthCss.indexOf('html.is-light-home .study[data-template="cbx300"] .cbx-growth') !== -1, 'cream home growth must stay coffee');
-  var sceneCss = css.slice(css.indexOf('.cbx-growth__scene {'), css.indexOf('.cbx-growth__cast {'));
+  var sceneCss = css.slice(css.indexOf('.cbx-growth__scene {'), css.indexOf('.cbx-growth__rail {'));
   assert.ok(sceneCss.indexOf('background: transparent') !== -1, 'scene must not be a boxed plate');
   assert.ok(sceneCss.indexOf('border-radius: 0') !== -1, 'scene must drop the rounded plate');
   assert.ok(sceneCss.indexOf('box-shadow: none') !== -1, 'scene must drop the inset plate ring');
   assert.ok(sceneCss.indexOf('overflow: hidden') !== -1, 'scene must crop the strip into the coffee well');
   assert.ok(sceneCss.indexOf('#2a211c') === -1, 'coffee plate fill must be gone');
   var castCss = css.slice(css.indexOf('.cbx-growth__cast {'), css.indexOf('.cbx-growth__person {'));
-  assert.ok(castCss.indexOf('position: absolute') !== -1, 'cast stands in the coffee well, unboxed');
+  assert.ok(castCss.indexOf('position: absolute') !== -1, 'cast stands inside the supporting plate');
   assert.ok(castCss.indexOf('background: transparent') !== -1, 'cast must not be an inset plate');
   assert.ok(css.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__scene') !== -1, 'missing Multiverse scene');
   var mvScene = css.slice(
@@ -193,7 +198,7 @@ check('cream and Multiverse share one cover + growth layout', function () {
   assert.ok(css.indexOf('html.is-multiverse .cbx-cover .hero__word') !== -1, 'multiverse must reuse cover type');
   assert.ok(css.indexOf('.cbx-growth__frame') === -1, 'old two-column frame css must be gone');
   assert.ok(css.indexOf('minmax(16.5rem, 22.5rem)') === -1, 'old copy/proof grid must be gone');
-  assert.ok(css.indexOf('.cbx-growth__voice') !== -1, 'missing portrait-strip voice');
+  assert.ok(css.indexOf('.cbx-growth__voice') !== -1, 'missing story voice');
   assert.ok(css.indexOf('.cbx-growth.is-static') !== -1, 'reduced-motion must show full cast');
 });
 
@@ -263,16 +268,19 @@ check('no invented NPS/outcomes; Echo avoid-list stays off the page', function (
   assert.ok(pages.indexOf('“Did the money land') === -1, 'fake quotes around freelancer need');
 });
 
-check('light proof: lower-third voice and tiny proof stamp', function () {
+check('light proof: story-first chapter board', function () {
   assert.ok(pages.indexOf('cbx-growth__intro') === -1, 'essay intro must be gone');
-  assert.ok(pages.indexOf('cbx-growth__lead') !== -1, 'missing meet line');
-  assert.ok(pages.indexOf('cbx-growth__meet') !== -1, 'missing pressure whisper');
+  assert.ok(pages.indexOf('cbx-growth__lead') !== -1, 'missing story title');
+  assert.ok(pages.indexOf('cbx-growth__meet') !== -1, 'missing story body');
   assert.ok(pages.indexOf('cbx-growth__hard') === -1, 'What’s hard stack must be gone');
   assert.ok(pages.indexOf('cbx-growth__change') === -1, 'What we did stack must be gone');
-  assert.ok(pages.indexOf('cbx-growth__voice') !== -1, 'missing lower-third voice');
-  assert.ok(pages.indexOf('cbx-growth__third') !== -1, 'missing cinematic lower-third');
-  assert.ok(pages.indexOf('data-cbx-third') !== -1, 'missing lower-third hook');
-  assert.ok(pages.indexOf('data-cbx-proof') !== -1, 'missing proof stamp hook');
+  assert.ok(pages.indexOf('cbx-growth__voice') !== -1, 'missing story voice');
+  assert.ok(pages.indexOf('cbx-growth__rail') !== -1, 'missing glanceable stage rail');
+  assert.ok(pages.indexOf('cbx-growth__story') !== -1, 'missing story column');
+  assert.ok(pages.indexOf('cbx-growth__plate') !== -1, 'missing supporting plate');
+  assert.ok(pages.indexOf('cbx-growth__eyebrow') !== -1, 'missing Meet Aisha eyebrow');
+  assert.ok(pages.indexOf('cbx-growth__third') === -1, 'cinematic lower-third must be gone');
+  assert.ok(pages.indexOf('data-cbx-proof') !== -1, 'missing proof chip hook');
   assert.ok(pages.indexOf('cbx-growth__talk') === -1, 'talk stack must be gone');
   assert.ok(pages.indexOf("need: '") === -1, 'need field must not pad the caption pack');
   assert.ok(pages.indexOf("fact: '") === -1, 'fact field must not pad the caption pack');
@@ -299,10 +307,11 @@ check('light proof: lower-third voice and tiny proof stamp', function () {
   assert.ok(pages.indexOf("'Get paid'") !== -1, 'pay home missing Get paid');
   assert.ok(pages.indexOf("'Pay'") !== -1, 'pay home missing Pay');
   assert.ok(pages.indexOf("'Receive'") === -1, 'old Receive ghost leaked');
-  assert.ok(pages.indexOf("return 'chip'") !== -1, 'product must be a tiny chip');
+  assert.ok(pages.indexOf("return 'chip'") !== -1, 'product must stay a supporting chip, not a device hero');
   assert.ok(pages.indexOf("return 'phone'") === -1, 'large phone object must be gone');
   assert.ok(pages.indexOf('Shop of two.') !== -1, 'sole lead');
-  assert.ok(pages.indexOf('Spend decisions get sharper.') !== -1, 'sole whisper');
+  assert.ok(pages.indexOf('Spend decisions get sharper.') !== -1, 'sole body');
+  assert.ok(pages.indexOf("label: 'Shop of two'") !== -1, 'rail stage 02 must be Shop of two');
   assert.ok(pages.indexOf('Now it’s a real shop.') === -1, 'old sole overlay lead leaked');
   assert.ok(pages.indexOf('Two people. Money decisions get sharper.') === -1, 'old sole overlay meet leaked');
   assert.ok(pages.indexOf('Business is real now. Team of two.') === -1, 'old sole meet leaked');
@@ -325,7 +334,7 @@ check('light proof: lower-third voice and tiny proof stamp', function () {
   assert.ok(pages.indexOf("'Payroll'") !== -1, 'approvals missing queue rows');
   assert.ok(pages.indexOf("return 'laptop'") === -1, 'laptop stage prop must be gone');
   assert.ok(pages.indexOf("return 'door'") === -1, 'floating door ghost must be gone');
-  assert.ok(pages.indexOf("label: 'Sole prop'") !== -1, 'sole stage label must be Sole prop');
+  assert.ok(pages.indexOf("label: 'Sole prop'") === -1, 'Sole prop rail label must be gone');
   assert.ok(pages.indexOf('Finding:') === -1, 'FINDING stamps must stay off the film');
   assert.ok(pages.indexOf('Choice:') === -1, 'CHOICE stamps must stay off the film');
   assert.ok(pages.indexOf('Same bank. It just grows up with her.') === -1, 'previous Echo close leaked');
@@ -382,15 +391,13 @@ check('light proof: lower-third voice and tiny proof stamp', function () {
   assert.ok(growthCss.indexOf('Syne') === -1, 'growth stage and money must drop display Syne');
   assert.ok(growthCss.indexOf('#5ecfcf') === -1, 'growth must drop neon teal stamps');
   var leadCss = css.slice(css.indexOf('.cbx-growth__lead {'), css.indexOf('.cbx-growth__meet {'));
-  assert.ok(leadCss.indexOf('Newsreader') !== -1, 'meet line must feel spoken, not a chip');
-  assert.ok(leadCss.indexOf('italic') !== -1, 'meet line must stay italic');
-  var stageCss = css.slice(css.indexOf('.cbx-growth__stage {'), css.indexOf('.cbx-growth__lead {'));
-  assert.ok(stageCss.indexOf('Outfit') !== -1, 'stage must be product sans');
-  assert.ok(stageCss.indexOf('0.75rem') !== -1, 'stage must stay a whisper 01 · label, not a billboard');
+  assert.ok(leadCss.indexOf('Newsreader') !== -1, 'story title must feel spoken, not a chip');
+  assert.ok(leadCss.indexOf('italic') !== -1, 'story title must stay italic');
+  assert.ok(leadCss.indexOf('clamp(2.4rem') !== -1, 'story title must be large enough to read at a glance');
   var meetCss = css.slice(css.indexOf('.cbx-growth__meet {'), css.indexOf('.cbx-growth__close {'));
-  assert.ok(meetCss.indexOf('Outfit') !== -1, 'pressure whisper must be lighter sans, not a second italic tower');
-  assert.ok(meetCss.indexOf('italic') === -1, 'whisper must not compete with the meet line');
-  assert.ok(meetCss.indexOf('0.8125rem') !== -1, 'whisper must stay small');
+  assert.ok(meetCss.indexOf('Outfit') !== -1, 'story body must be readable sans');
+  assert.ok(meetCss.indexOf('1.2rem') !== -1, 'story body must not be a whisper caption');
+  assert.ok(meetCss.indexOf('1.5') !== -1, 'story body needs 1.5 line-height');
   assert.ok(css.indexOf('.cbx-growth__k {') === -1, 'What’s hard / What we did labels must be gone');
   assert.ok(css.indexOf('.cbx-growth__chip') === -1, 'stamp chips must stay gone');
   assert.ok(css.indexOf('.cbx-growth__spine') === -1, 'spine chip css must stay gone');
@@ -407,8 +414,10 @@ check('light proof: lower-third voice and tiny proof stamp', function () {
   assert.ok(heroCss.indexOf('tabular-nums') !== -1, 'Available must use tabular figures');
   var chipCss = css.slice(css.indexOf('.cbx-device--chip {'), css.indexOf('.cbx-device__screen {'));
   assert.ok(chipCss.indexOf('container-type: inline-size') !== -1, 'chip must size money to its width');
-  assert.ok(chipCss.indexOf('118px') !== -1, 'chip must stay phone-sized or smaller');
-  assert.ok(pages.indexOf("pad(index + 1) + ' · ' + beat.label") !== -1, 'stage must read 01 · Freelancer');
+  assert.ok(chipCss.indexOf('196px') !== -1, 'proof chip must be readable, not a microscopic stamp');
+  assert.ok(chipCss.indexOf('118px') === -1, 'old 118px stamp size must be gone');
+  assert.ok(pages.indexOf('cbx-growth__step-name') !== -1, 'rail must name Freelancer / Shop of two / Mid-size');
+  assert.ok(pages.indexOf("pad(i + 1)") !== -1, 'rail must number the three stages');
   assert.ok(pages.indexOf("data-cbx-money") !== -1, 'Available hero must be measurable');
   assert.ok(pages.indexOf('function fitMoney') !== -1, 'money must shrink to the card, not spill');
   assert.ok(css.indexOf('.cbx-device--chip') !== -1, 'tiny product chip missing');
@@ -441,13 +450,12 @@ check('growth layers lock to the same beat index', function () {
   assert.ok(pages.indexOf('tl.to({}, { duration: MORPH_VH })') !== -1, 'morph runway must keep pin duration');
   assert.ok(pages.indexOf('from <= index') !== -1, 'cast must enter from the live beat, not all-on');
   assert.ok(pages.indexOf("figure.classList.add('is-in')") !== -1, 'freelancer must start in');
-  var beatFn = pages.slice(pages.indexOf('function beatCopy'), pages.indexOf('function productScreen'));
-  var stageAt = beatFn.indexOf("cbx-growth__stage");
+  var beatFn = pages.slice(pages.indexOf('function beatCopy'), pages.indexOf('function buildRail'));
   var leadAt = beatFn.indexOf("cbx-growth__lead");
   var meetAt = beatFn.indexOf("cbx-growth__meet");
-  assert.ok(stageAt !== -1 && leadAt !== -1 && meetAt !== -1
-    && stageAt < leadAt && leadAt < meetAt,
-    'voice order must be stage, lead, meet');
+  assert.ok(leadAt !== -1 && meetAt !== -1 && leadAt < meetAt,
+    'voice order must be title then body');
+  assert.ok(beatFn.indexOf("cbx-growth__stage") === -1, 'beat copy must not restage the rail');
   assert.ok(beatFn.indexOf("cbx-growth__hard") === -1, 'hard must not be a caption line');
   assert.ok(beatFn.indexOf("cbx-growth__change") === -1, 'change must not be a caption line');
   assert.ok(beatFn.indexOf("cbx-growth__need") === -1, 'need must not be a fourth caption line');
@@ -482,7 +490,7 @@ check('growth layers lock to the same beat index', function () {
     'morph nodes must be cast + captions + one device');
 });
 
-check('cinematic lower-third replaces the overlay tower', function () {
+check('story-first chapter board replaces full-bleed portrait captions', function () {
   assert.ok(css.indexOf('.cbx-growth__copy') === -1, 'left essay column css must be gone');
   assert.ok(css.indexOf('.cbx-growth__frame') === -1, 'two-column frame css must be gone');
   assert.ok(css.indexOf('.cbx-growth__well') === -1, 'old proof well must be gone');
@@ -498,27 +506,26 @@ check('cinematic lower-third replaces the overlay tower', function () {
   assert.ok(css.indexOf('#e6dfd0') === -1, 'calm paper color must be gone');
   var growthCss = css.slice(css.indexOf('.cbx-growth {'));
   assert.ok(growthCss.indexOf('repeating-linear-gradient') === -1, 'wood grain must be gone');
-  var thirdCss = css.slice(css.indexOf('.cbx-growth__third {'), css.indexOf('.cbx-growth__voice {'));
-  assert.ok(thirdCss.indexOf('position: absolute') !== -1, 'lower-third sits on the coffee well');
-  assert.ok(thirdCss.indexOf('bottom: 0') !== -1, 'lower-third must sit at the bottom, not a left tower');
-  assert.ok(thirdCss.indexOf('display: flex') !== -1, 'lower-third holds type + proof stamp');
+  assert.ok(css.indexOf('.cbx-growth__third') === -1, 'cinematic lower-third css must be gone');
+  var railCss = css.slice(css.indexOf('.cbx-growth__rail {'), css.indexOf('.cbx-growth__step {'));
+  assert.ok(railCss.indexOf('display: flex') !== -1, 'stage rail must stay in one glanceable row');
+  var storyCss = css.slice(css.indexOf('.cbx-growth__story {'), css.indexOf('.cbx-growth__eyebrow {'));
+  assert.ok(storyCss.indexOf('flex: 1 1 58%') !== -1, 'story column must be the hero width');
+  var plateCss = css.slice(css.indexOf('.cbx-growth__plate {'), css.indexOf('.cbx-growth__plate::after {'));
+  assert.ok(plateCss.indexOf('min(420px, 48vh)') !== -1, 'cast plate must stay supporting, not full-bleed');
+  assert.ok(plateCss.indexOf('border-radius: 22px') !== -1, 'cast sits in a framed plate');
   assert.ok(css.indexOf('min(28%, 16rem)') === -1, 'old left overlay column must be gone');
-  assert.ok(css.indexOf('top: 8%') === -1, 'captions must not pin to the top-left of faces');
-  assert.ok(css.indexOf('padding-left: 15%') === -1, 'cast must not dodge a left essay');
   var voiceCss = css.slice(css.indexOf('.cbx-growth__voice {'), css.indexOf('.cbx-growth__beat {'));
   assert.ok(voiceCss.indexOf('display: grid') !== -1, 'beats must overlay without a fake min-height band');
-  var castCss = css.slice(css.indexOf('.cbx-growth__cast {'), css.indexOf('.cbx-growth__person {'));
-  assert.ok(castCss.indexOf('left: 2%') !== -1, 'cast must fill the coffee panel');
-  assert.ok(castCss.indexOf('right: 2%') !== -1, 'cast must fill the coffee panel');
-  assert.ok(castCss.indexOf('bottom: 6.75rem') !== -1, 'cast must stand above the lower-third');
   var devicesWrap = css.slice(css.indexOf('.cbx-growth__devices {'), css.indexOf('.cbx-growth__device {'));
-  assert.ok(devicesWrap.indexOf('132px') !== -1, 'product chip wrap must stay tiny');
-  assert.ok(devicesWrap.indexOf('position: relative') !== -1, 'proof stamp sits in the lower-third, not a floating hero');
+  assert.ok(devicesWrap.indexOf('200px') !== -1, 'proof chip wrap must be readable');
+  assert.ok(devicesWrap.indexOf('132px') === -1, 'old stamp wrap must be gone');
   assert.ok(css.indexOf('min-height: 16.5rem') === -1, 'empty 16.5rem band between intro and stage must be gone');
   assert.ok(css.indexOf('min-height: 16rem') === -1, 'mobile must not reintroduce the empty beat well');
   var beatOff = css.slice(css.indexOf('.cbx-growth__beat {'), css.indexOf('.cbx-growth__beat.is-on {'));
   assert.ok(beatOff.indexOf('grid-area: 1 / 1') !== -1, 'beats must overlay in one cell');
   assert.ok(beatOff.indexOf('position: absolute') === -1, 'beats must not bottom-pin inside an empty well');
+  assert.ok(pages.indexOf('[data-cbx-step]') !== -1, 'applyBeat must light the stage rail');
   var coffee = [30, 21, 16];
   var cream = [244, 239, 230];
   function srgbToLin(c) {
@@ -536,15 +543,13 @@ check('cinematic lower-third replaces the overlay tower', function () {
     var lo = Math.min(lum(fg), lum(bg));
     return (hi + 0.05) / (lo + 0.05);
   }
-  var leadC = contrast(blend(cream, coffee, 0.94), coffee);
-  var meetC = contrast(blend(cream, coffee, 0.72), coffee);
-  var stageC = contrast(blend(cream, coffee, 0.7), coffee);
-  var closeC = contrast(blend(cream, coffee, 0.62), coffee);
-  assert.ok(leadC >= 7, 'meet line cream must be readable on coffee (' + leadC.toFixed(2) + ')');
-  assert.ok(meetC >= 4.5, 'whisper must stay AA on coffee (' + meetC.toFixed(2) + ')');
-  assert.ok(stageC >= 4.5, 'stage whisper must stay AA on coffee (' + stageC.toFixed(2) + ')');
+  var leadC = contrast(blend(cream, coffee, 0.96), coffee);
+  var meetC = contrast(blend(cream, coffee, 0.86), coffee);
+  var closeC = contrast(blend(cream, coffee, 0.7), coffee);
+  assert.ok(leadC >= 7, 'story title must be readable on coffee (' + leadC.toFixed(2) + ')');
+  assert.ok(meetC >= 7, 'story body must stay AAA on coffee (' + meetC.toFixed(2) + ')');
   assert.ok(closeC >= 4.5, 'close line must stay AA on coffee (' + closeC.toFixed(2) + ')');
-  assert.ok(leadC > meetC && meetC > closeC, 'voice hierarchy must be meet line > whisper > close');
+  assert.ok(leadC > meetC && meetC > closeC, 'voice hierarchy must be title > body > close');
 });
 
 check('coffee curtain docks with landing projects softness', function () {
