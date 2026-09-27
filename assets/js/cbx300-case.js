@@ -63,7 +63,7 @@ window.Cbx300Case = (function () {
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
 
-  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s6';
+  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s7';
   /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
      clears the mug; the stage-03 left figure shifts off the plant. */
   var LINA_X = 112;
@@ -115,6 +115,10 @@ window.Cbx300Case = (function () {
      ~70px on screen. Legs shorten by the same amount so the feet stay
      planted; stage 03 tweens both back. */
   var FLOOR_DROP = 60;
+  var CAST_SCALE = 1.16;
+  /* Same root-unit shift the cast scale applies to FLOOR_DROP. The
+     floor-shift group, Lina, and the connector ends all use this. */
+  var FLOOR_ROOT = FLOOR_DROP * CAST_SCALE;
   var LEG_FULL = 104;
   var LEG_ORIGIN = '300 416';
 
@@ -507,22 +511,37 @@ window.Cbx300Case = (function () {
     return root ? root.querySelector('[data-cbx-layer="' + name + '"]') : null;
   }
 
+  function seatConnectors(root, dy) {
+    var drop = +dy || 0;
+    function yAt(y) {
+      return Math.round((y - drop) * 10) / 10;
+    }
+    var arrowD = 'M470 ' + yAt(176) + ' C 450 ' + yAt(240) + ', 410 290, 362 328';
+    var arrow = layer(root, 's01-arrow');
+    var line = arrow && arrow.querySelector('path[mask]');
+    var draw = layer(root, 's01-arrow-draw');
+    if (line) line.setAttribute('d', arrowD);
+    if (draw) draw.setAttribute('d', arrowD);
+    var aishaArc = root.querySelector('[data-cbx-connector="aisha"]');
+    var linaArc = root.querySelector('[data-cbx-connector="lina"]');
+    if (aishaArc) aishaArc.setAttribute('d', 'M240 ' + yAt(168) + ' C 175 ' + yAt(210) + ', 160 270, 230 322');
+    if (linaArc) linaArc.setAttribute('d', 'M368 ' + yAt(162) + ' C 430 ' + yAt(210) + ', 455 270, 452 328');
+  }
+
   function posePersist(root, beatIndex) {
     var gsap = window.gsap;
     if (!gsap || !root) return;
+    var shift = layer(root, 'floor-shift');
     var aisha = layer(root, 'aisha');
-    var desk = layer(root, 'desk');
-    var mug = layer(root, 'mug');
     var plant = layer(root, 'plant');
     var legs = layer(root, 'desk-legs');
     var lina = layer(root, 's02-lina');
     var sideL = layer(root, 's03-side-l');
     var dropped = (beatIndex || 0) < 2;
-    var floorY = dropped ? FLOOR_DROP : 0;
+    var dy = dropped ? FLOOR_ROOT : 0;
     var legScale = dropped ? (LEG_FULL - FLOOR_DROP) / LEG_FULL : 1;
-    [aisha, desk, mug, plant].forEach(function (node) {
-      if (node) gsap.set(node, { y: floorY });
-    });
+    if (shift) gsap.set(shift, { y: dy });
+    seatConnectors(root, dy);
     if (legs) gsap.set(legs, { scaleY: legScale, svgOrigin: LEG_ORIGIN });
     if (aisha) gsap.set(aisha, { x: 0 });
     if (plant) gsap.set(plant, { x: 0 });
@@ -640,7 +659,7 @@ window.Cbx300Case = (function () {
     var steamB = layer(root, 'steam-b');
     if (steamA) {
       tweens.push(gsap.fromTo(steamA, { y: 0, opacity: 0.55 }, {
-        y: -10,
+        y: -4,
         opacity: 0,
         duration: 2.2,
         ease: 'sine.out',
@@ -649,8 +668,8 @@ window.Cbx300Case = (function () {
       }));
     }
     if (steamB) {
-      tweens.push(gsap.fromTo(steamB, { y: 2, opacity: 0.4 }, {
-        y: -12,
+      tweens.push(gsap.fromTo(steamB, { y: 0, opacity: 0.4 }, {
+        y: -5,
         opacity: 0,
         duration: 2.5,
         delay: 0.35,
@@ -728,6 +747,7 @@ window.Cbx300Case = (function () {
     var supplier = layer(pin, 's03-card-supplier');
     var pill = layer(pin, 's03-pill');
     var legs = layer(pin, 'desk-legs');
+    var shift = layer(pin, 'floor-shift');
     var floor = [aisha, desk, mug, plant].filter(Boolean);
     var enter01 = Math.max(0, RISE_DUR - 0.86);
     var t12 = RISE_DUR + STAGE_HOLD;
@@ -735,11 +755,17 @@ window.Cbx300Case = (function () {
     var legShort = (LEG_FULL - FLOOR_DROP) / LEG_FULL;
 
     if (legs) tl.set(legs, { scaleY: legShort, svgOrigin: LEG_ORIGIN }, 0);
+    if (shift) {
+      tl.set(shift, { y: FLOOR_ROOT }, 0);
+      tl.fromTo(shift, { y: FLOOR_ROOT + 16 * CAST_SCALE }, {
+        y: FLOOR_ROOT,
+        duration: 0.28,
+        ease: 'power3.out'
+      }, enter01);
+    }
     if (floor.length) {
-      tl.set(floor, { y: FLOOR_DROP }, 0);
-      tl.fromTo(floor, { opacity: 0, y: FLOOR_DROP + 16 }, {
+      tl.fromTo(floor, { opacity: 0 }, {
         opacity: 1,
-        y: FLOOR_DROP,
         duration: 0.28,
         stagger: 0.04,
         ease: 'power3.out'
@@ -786,8 +812,8 @@ window.Cbx300Case = (function () {
 
     addCopyLeave(tl, beats[1], t23);
     addCopyEnter(tl, beats[2], t23 + 0.1);
-    if (floor.length) {
-      tl.to(floor, { y: 0, duration: 0.42, ease: 'power3.out' }, t23);
+    if (shift) {
+      tl.to(shift, { y: 0, duration: 0.42, ease: 'power3.out' }, t23);
     }
     if (legs) {
       tl.to(legs, { scaleY: 1, svgOrigin: LEG_ORIGIN, duration: 0.42, ease: 'power3.out' }, t23);
@@ -823,6 +849,8 @@ window.Cbx300Case = (function () {
         ease: 'power3.out'
       }, t23 + 0.74);
     }
+    var shiftNow = shift && window.gsap ? window.gsap.getProperty(shift, 'y') : FLOOR_ROOT;
+    seatConnectors(pin, shiftNow == null ? FLOOR_ROOT : shiftNow);
   }
 
   function tickMorph(pin, morphP, riseTarget, self) {
@@ -836,6 +864,9 @@ window.Cbx300Case = (function () {
       else resetPulse('late', layer(pin, 's01-late'));
       if (morphT >= STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23) pulseOnce('pill', layer(pin, 's03-pill'));
       else resetPulse('pill', layer(pin, 's03-pill'));
+      var shift = layer(pin, 'floor-shift');
+      var shiftY = shift && window.gsap ? window.gsap.getProperty(shift, 'y') : 0;
+      seatConnectors(pin, shiftY);
     }
     setIdlePlaying(!!(self && self.isActive) && riseTarget >= 0.92 && !motion.reduce);
   }
