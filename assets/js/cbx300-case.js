@@ -64,8 +64,14 @@ window.Cbx300Case = (function () {
   ];
 
   var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg';
-  var AISHA_X = [0, -104, 0];
-  var PLANT_X = [0, -40, 0];
+  /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
+     clears the mug; the stage-03 left figure shifts off the plant. */
+  var LINA_X = 112;
+  var SIDE_L_X = -28;
+  /* One stage per gesture. A notch (~100px) or ~72px of trackpad
+     travel commits the next stop; quieter than this ends the gesture. */
+  var STEP_PX = 72;
+  var GESTURE_QUIET = 80;
 
   var motion = {
     triggers: [],
@@ -78,7 +84,9 @@ window.Cbx300Case = (function () {
     stage: null,
     idle: null,
     pulsed: {},
-    reduce: false
+    reduce: false,
+    onStep: null,
+    stepCtrl: null
   };
 
   /* Landing projects curtain is the feel source of truth:
@@ -494,13 +502,17 @@ window.Cbx300Case = (function () {
     return root ? root.querySelector('[data-cbx-layer="' + name + '"]') : null;
   }
 
-  function posePersist(root, index) {
+  function posePersist(root) {
     var gsap = window.gsap;
     if (!gsap || !root) return;
     var aisha = layer(root, 'aisha');
     var plant = layer(root, 'plant');
-    if (aisha) gsap.set(aisha, { x: AISHA_X[index] || 0 });
-    if (plant) gsap.set(plant, { x: PLANT_X[index] || 0 });
+    var lina = layer(root, 's02-lina');
+    var sideL = layer(root, 's03-side-l');
+    if (aisha) gsap.set(aisha, { x: 0 });
+    if (plant) gsap.set(plant, { x: 0 });
+    if (lina) gsap.set(lina, { x: LINA_X });
+    if (sideL) gsap.set(sideL, { x: SIDE_L_X });
   }
 
   function setRailInk(root, morphP) {
@@ -731,10 +743,12 @@ window.Cbx300Case = (function () {
     floatOut(tl, inv014, t12 + 0.04, 14);
     floatOut(tl, inv012, t12 + 0.08, 18);
     if (arrow) floatOut(tl, arrow, t12, 0);
-    if (aisha) tl.to(aisha, { x: AISHA_X[1], duration: 0.42, ease: 'power3.inOut' }, t12);
-    if (plant) tl.to(plant, { x: PLANT_X[1], duration: 0.42, ease: 'power3.inOut' }, t12);
     if (lina) {
-      tl.fromTo(lina, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' }, t12 + 0.12);
+      tl.fromTo(lina,
+        { x: LINA_X + 48, opacity: 0 },
+        { x: LINA_X, opacity: 1, duration: 0.4, ease: 'power3.out' },
+        t12 + 0.12
+      );
     }
     dropIn(tl, shared, t12 + 0.22, -4);
     dropIn(tl, payday, t12 + 0.3, -7);
@@ -745,18 +759,20 @@ window.Cbx300Case = (function () {
 
     addCopyLeave(tl, beats[1], t23);
     addCopyEnter(tl, beats[2], t23 + 0.1);
-    floatOut(tl, lina, t23, 20);
+    floatOut(tl, lina, t23, LINA_X);
     floatOut(tl, shared, t23, 0);
     floatOut(tl, payday, t23 + 0.04, -12);
     floatOut(tl, freeAfter, t23 + 0.08, 12);
     if (s02arrows) floatOut(tl, s02arrows, t23, 0);
-    if (aisha) tl.to(aisha, { x: AISHA_X[2], duration: 0.36, ease: 'power3.inOut' }, t23);
-    if (plant) tl.to(plant, { x: PLANT_X[2], duration: 0.36, ease: 'power3.inOut' }, t23);
     if (sideL) {
-      tl.fromTo(sideL, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.32, ease: 'power3.out' }, t23 + 0.16);
+      tl.fromTo(sideL,
+        { x: SIDE_L_X, y: 22, opacity: 0 },
+        { x: SIDE_L_X, y: 0, opacity: 1, duration: 0.32, ease: 'power3.out' },
+        t23 + 0.16
+      );
     }
     if (sideR) {
-      tl.fromTo(sideR, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.32, ease: 'power3.out' }, t23 + 0.22);
+      tl.fromTo(sideR, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.32, ease: 'power3.out' }, t23 + 0.32);
     }
     if (row) {
       tl.fromTo(row, { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34, ease: 'power3.out' }, t23 + 0.34);
@@ -794,6 +810,7 @@ window.Cbx300Case = (function () {
   function kill() {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
+    unbindStageStep();
     clearTimers();
     killIdle();
     if (motion.tween && motion.tween.scrollTrigger && motion.tween.scrollTrigger.kill) {
@@ -886,19 +903,206 @@ window.Cbx300Case = (function () {
     return t / total;
   }
 
-  function nearestStageSnap(progress) {
-    var pts = [0, pinSnapProgress(0), pinSnapProgress(1), pinSnapProgress(2), 1];
-    var best = pts[0];
-    var bestD = Math.abs(progress - pts[0]);
+  function stageStops(st) {
+    var start = st.start;
+    var span = Math.max(1, st.end - st.start);
+    return [
+      start,
+      start + pinSnapProgress(0) * span,
+      start + pinSnapProgress(1) * span,
+      start + pinSnapProgress(2) * span,
+      st.end
+    ];
+  }
+
+  function nearestStopIndex(y, stops) {
+    var best = 0;
+    var bestD = Math.abs(y - stops[0]);
     var i;
-    for (i = 1; i < pts.length; i += 1) {
-      var d = Math.abs(progress - pts[i]);
+    for (i = 1; i < stops.length; i += 1) {
+      var d = Math.abs(y - stops[i]);
       if (d < bestD) {
         bestD = d;
-        best = pts[i];
+        best = i;
       }
     }
     return best;
+  }
+
+  function sectionStepFromY(y, st) {
+    if (!st) return 0;
+    var span = Math.max(1, st.end - st.start);
+    var risePx = span * (RISE_DUR / (RISE_DUR + MORPH_VH));
+    return y > st.start + risePx * 0.92 ? 1 : 0;
+  }
+
+  function publishSectionStep() {
+    if (!motion.onStep) return;
+    var st = motion.tween && motion.tween.scrollTrigger;
+    if (!st) return;
+    var y = window.scrollY || document.documentElement.scrollTop || 0;
+    motion.onStep(sectionStepFromY(y, st));
+  }
+
+  function unbindStageStep() {
+    var ctrl = motion.stepCtrl;
+    if (!ctrl) return;
+    if (ctrl.timer) window.clearTimeout(ctrl.timer);
+    if (ctrl.tween && ctrl.tween.kill) ctrl.tween.kill();
+    window.removeEventListener('wheel', ctrl.onWheel, true);
+    window.removeEventListener('keydown', ctrl.onKey, true);
+    window.removeEventListener('scroll', ctrl.onScroll);
+    motion.stepCtrl = null;
+  }
+
+  function bindStageStep() {
+    unbindStageStep();
+    var ctrl = {
+      active: false,
+      origin: 0,
+      settled: 0,
+      travel: 0,
+      timer: 0,
+      tween: null
+    };
+
+    function pinTrigger() {
+      return motion.tween && motion.tween.scrollTrigger;
+    }
+
+    function killTween() {
+      if (ctrl.tween && ctrl.tween.kill) ctrl.tween.kill();
+      ctrl.tween = null;
+    }
+
+    function animateTo(y) {
+      var gsap = window.gsap;
+      killTween();
+      if (!gsap) {
+        window.scrollTo(0, y);
+        publishSectionStep();
+        return;
+      }
+      var proxy = { y: window.scrollY || 0 };
+      ctrl.tween = gsap.to(proxy, {
+        y: y,
+        duration: 0.26,
+        ease: 'power3.out',
+        overwrite: true,
+        onUpdate: function () { window.scrollTo(0, proxy.y); },
+        onComplete: function () {
+          ctrl.tween = null;
+          window.scrollTo(0, y);
+          publishSectionStep();
+        }
+      });
+    }
+
+    function wheelPixels(event) {
+      var dy = event.deltaY || 0;
+      if (event.deltaMode === 1) dy *= 16;
+      else if (event.deltaMode === 2) dy *= viewH();
+      return dy;
+    }
+
+    function finishGesture() {
+      ctrl.timer = 0;
+      var st = pinTrigger();
+      if (!st) {
+        ctrl.active = false;
+        ctrl.travel = 0;
+        return;
+      }
+      var stops = stageStops(st);
+      var dir = ctrl.travel >= 0 ? 1 : -1;
+      var dest = ctrl.origin;
+      if (Math.abs(ctrl.travel) >= STEP_PX) {
+        dest = Math.max(0, Math.min(stops.length - 1, ctrl.origin + dir));
+      }
+      ctrl.active = false;
+      ctrl.travel = 0;
+      ctrl.settled = dest;
+      ctrl.origin = dest;
+      animateTo(stops[dest]);
+    }
+
+    function onWheel(event) {
+      if (motion.reduce) return;
+      var st = pinTrigger();
+      if (!st) return;
+      var dy = wheelPixels(event);
+      if (!dy) return;
+      var y = window.scrollY || 0;
+      if (y <= st.start + 1 && dy < 0) return;
+      if (y >= st.end - 1 && dy > 0) return;
+      if (y < st.start - 2 || y > st.end + 2) return;
+      event.preventDefault();
+      var stops = stageStops(st);
+      if (!ctrl.active) {
+        var interrupted = !!ctrl.tween;
+        killTween();
+        if (interrupted) {
+          window.scrollTo(0, stops[ctrl.settled]);
+        } else if (Math.abs(y - stops[ctrl.settled]) > 48) {
+          ctrl.settled = nearestStopIndex(y, stops);
+        }
+        ctrl.active = true;
+        ctrl.origin = ctrl.settled;
+        ctrl.travel = 0;
+      }
+      ctrl.travel += dy;
+      var dir = ctrl.travel >= 0 ? 1 : -1;
+      var next = ctrl.origin;
+      if (Math.abs(ctrl.travel) >= STEP_PX) {
+        next = Math.max(0, Math.min(stops.length - 1, ctrl.origin + dir));
+      }
+      var lo = Math.min(stops[ctrl.origin], stops[next]);
+      var hi = Math.max(stops[ctrl.origin], stops[next]);
+      var raw = stops[ctrl.origin] + ctrl.travel;
+      window.scrollTo(0, Math.max(lo, Math.min(hi, raw)));
+      if (ctrl.timer) window.clearTimeout(ctrl.timer);
+      ctrl.timer = window.setTimeout(finishGesture, GESTURE_QUIET);
+    }
+
+    function onKey(event) {
+      if (motion.reduce || event.repeat) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      var dir = 0;
+      if (event.key === 'ArrowDown') dir = 1;
+      else if (event.key === 'ArrowUp') dir = -1;
+      else return;
+      var target = event.target;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      if (!document.documentElement.classList.contains('is-study-page')) return;
+      var st = pinTrigger();
+      if (!st) return;
+      var y = window.scrollY || 0;
+      if (y < st.start - 2 || y > st.end + 2) return;
+      if (y <= st.start + 1 && dir < 0) return;
+      if (y >= st.end - 1 && dir > 0) return;
+      event.preventDefault();
+      var stops = stageStops(st);
+      if (ctrl.timer) window.clearTimeout(ctrl.timer);
+      ctrl.timer = 0;
+      ctrl.active = false;
+      ctrl.travel = 0;
+      killTween();
+      if (Math.abs(y - stops[ctrl.settled]) > 48) {
+        ctrl.settled = nearestStopIndex(y, stops);
+      }
+      var dest = Math.max(0, Math.min(stops.length - 1, ctrl.settled + dir));
+      ctrl.settled = dest;
+      ctrl.origin = dest;
+      animateTo(stops[dest]);
+    }
+
+    ctrl.onWheel = onWheel;
+    ctrl.onKey = onKey;
+    ctrl.onScroll = publishSectionStep;
+    window.addEventListener('wheel', onWheel, { passive: false, capture: true });
+    window.addEventListener('keydown', onKey, true);
+    window.addEventListener('scroll', publishSectionStep, { passive: true });
+    motion.stepCtrl = ctrl;
   }
 
   var MV_FLICK = ['s01-inv-012', 's02-card-free', 's03-card-supplier'];
@@ -1006,14 +1210,6 @@ window.Cbx300Case = (function () {
         pin: true,
         pinSpacing: true,
         scrub: true,
-        snap: {
-          snapTo: nearestStageSnap,
-          duration: { min: 0.18, max: 0.38 },
-          delay: 0.14,
-          ease: 'power3.out',
-          inertia: false,
-          directional: false
-        },
         invalidateOnRefresh: true,
         anticipatePin: 1,
         refreshPriority: 1,
@@ -1023,9 +1219,7 @@ window.Cbx300Case = (function () {
             tweenCbxRise(self.progress >= 1 ? 1 : 0, true);
             setIdlePlaying(false);
           }
-          if (self.isActive && onStep) {
-            onStep(motion.riseState.p > 0.08 ? 1 : 0);
-          }
+          if (self.isActive) publishSectionStep();
         },
         onUpdate: function (self) {
           var dur = tl.duration() || 1;
@@ -1041,7 +1235,7 @@ window.Cbx300Case = (function () {
           }
           applyBeat(pin, beatIndexFromProgress(morphP));
           tickMorph(pin, morphP, riseTarget, self);
-          if (onStep) onStep(motion.riseState.p > 0.92 ? 1 : 0);
+          publishSectionStep();
         }
       }
     });
@@ -1054,6 +1248,9 @@ window.Cbx300Case = (function () {
     if (!motion.reduce) wireScene(tl, pin);
     motion.tween = tl;
     if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
+    motion.onStep = onStep;
+    bindStageStep();
+    publishSectionStep();
   }
 
   function refreshSoon() {
@@ -1098,6 +1295,7 @@ window.Cbx300Case = (function () {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     motion.reduce = !!(reduce && reduce.matches);
+    motion.onStep = opts.onStep || null;
 
     function afterIllos() {
       if (!gsap || !ScrollTrigger) {
@@ -1163,8 +1361,9 @@ window.Cbx300Case = (function () {
     applyCbxRise: applyCbxRise,
     applyBeat: applyBeat,
     beatIndexFromProgress: beatIndexFromProgress,
-    nearestStageSnap: nearestStageSnap,
     pinSnapProgress: pinSnapProgress,
+    stageStops: stageStops,
+    STEP_PX: STEP_PX,
     META: META,
     BEATS: BEATS,
     STUBS: STUBS,

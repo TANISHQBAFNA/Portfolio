@@ -37,8 +37,9 @@ html.is-study-page {
   --panel-flush: 0;
 }
 
-/* Cover + chrome stay the under-layer (parked, no fade). Growth is z-index
-   40, same band as the landing projects rail, so it curtains over the header. */
+/* Cover stays parked. The study bar stays a solid strip above the coffee
+   panel (same job as the landing header above the projects rail) so CLOSE,
+   the title, and the counter stay visible and receive the click. */
 html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome,
 html.is-study-page .study[data-template="cbx300"] .study__chrome {
   position: fixed !important;
@@ -46,7 +47,7 @@ html.is-study-page .study[data-template="cbx300"] .study__chrome {
   left: 0;
   right: 0;
   z-index: 21;
-  background: transparent;
+  background: var(--film-cream, var(--cream, #f4efe6));
   visibility: visible;
   pointer-events: auto;
 }
@@ -338,11 +339,13 @@ html.is-study .study-rail .work-card__cap {
 .cbx-growth {
   box-sizing: border-box;
   position: fixed;
-  inset: 0;
+  top: var(--study-head, 72px);
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 40;
   width: 100%;
-  height: 100svh;
-  height: 100dvh;
+  height: auto;
   overflow: hidden;
   background: var(--coffee, #1E1510);
   color: var(--cream, #f4efe6);
@@ -381,8 +384,12 @@ html.is-study .study-rail .work-card__cap {
 }
 
 html.is-study-page .study[data-template="cbx300"] .cbx-growth {
-  height: 100svh;
-  height: 100dvh;
+  top: var(--study-head, 72px);
+  height: auto;
+}
+
+html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-static {
+  top: auto;
 }
 
 html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
