@@ -50,8 +50,10 @@
     </g>
     <g data-cbx-layer="desk">
       <rect data-cbx-ink="desk" x="80" y="398" width="440" height="18" rx="4" fill="#6E4630"/>
-      <rect data-cbx-ink="desk-leg" x="100" y="416" width="12" height="104" fill="#5A3826"/>
-      <rect data-cbx-ink="desk-leg" x="488" y="416" width="12" height="104" fill="#5A3826"/>
+      <g data-cbx-layer="desk-legs">
+        <rect data-cbx-ink="desk-leg" x="100" y="416" width="12" height="104" fill="#5A3826"/>
+        <rect data-cbx-ink="desk-leg" x="488" y="416" width="12" height="104" fill="#5A3826"/>
+      </g>
     </g>
     <g data-cbx-layer="mug">
       <rect data-cbx-ink="mug" x="380" y="364" width="28" height="34" rx="5" fill="#F4EFE6"/>
@@ -70,7 +72,7 @@
   </g>
 
   <g data-cbx-layer="s02-lina">
-    <g data-cbx-scale="lina" transform="translate(0,56) translate(404,398) scale(1.16) translate(-404,-398)">
+    <g data-cbx-scale="lina" transform="translate(0,126) translate(404,398) scale(1.16) translate(-404,-398)">
     <path data-cbx-ink="shirt-lina" d="M346 398 C346 320 364 286 404 286 C444 286 462 320 462 398 Z" fill="#8FA58A"/>
     <rect x="394" y="264" width="20" height="26" rx="8" fill="#A86F52"/>
     <circle cx="404" cy="184" r="18" fill="#3A2418"/>
@@ -240,7 +242,7 @@
       </g>
     </g>
     <g data-cbx-layer="s03-pill">
-      <g transform="translate(248,28) translate(52,20) scale(1.16) translate(-52,-20)">
+      <g transform="translate(248,108) translate(52,20) scale(1.16) translate(-52,-20)">
         <rect data-cbx-ink="pill" width="104" height="40" rx="20" fill="#E8A96B"/>
         <text x="52.0" y="26" text-anchor="middle" font-family="Outfit, sans-serif" font-size="16" font-weight="700" fill="#1E1510">7 waiting</text>
       </g>

@@ -63,7 +63,7 @@ window.Cbx300Case = (function () {
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
 
-  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s5';
+  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s6';
   /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
      clears the mug; the stage-03 left figure shifts off the plant. */
   var LINA_X = 112;
@@ -108,7 +108,15 @@ window.Cbx300Case = (function () {
   var STAGE_HOLD = 0.55;
   var TRANS_12 = 0.64;
   var TRANS_23 = 0.96;
-  var MORPH_VH = STAGE_HOLD * 3 + TRANS_12 + TRANS_23;
+  /* Pin ends on the stage-03 snap. A trailing half-hold was a dead
+     tail: one gesture down moved with no visible change. */
+  var MORPH_VH = STAGE_HOLD * 2 + TRANS_12 + TRANS_23 + STAGE_HOLD * 0.5;
+  /* Stages 01–02 only. 60 local units inside the 1.16 cast scale is
+     ~70px on screen. Legs shorten by the same amount so the feet stay
+     planted; stage 03 tweens both back. */
+  var FLOOR_DROP = 60;
+  var LEG_FULL = 104;
+  var LEG_ORIGIN = '300 416';
 
   function isMultiverse() {
     return document.documentElement.classList.contains('is-multiverse');
@@ -499,13 +507,23 @@ window.Cbx300Case = (function () {
     return root ? root.querySelector('[data-cbx-layer="' + name + '"]') : null;
   }
 
-  function posePersist(root) {
+  function posePersist(root, beatIndex) {
     var gsap = window.gsap;
     if (!gsap || !root) return;
     var aisha = layer(root, 'aisha');
+    var desk = layer(root, 'desk');
+    var mug = layer(root, 'mug');
     var plant = layer(root, 'plant');
+    var legs = layer(root, 'desk-legs');
     var lina = layer(root, 's02-lina');
     var sideL = layer(root, 's03-side-l');
+    var dropped = (beatIndex || 0) < 2;
+    var floorY = dropped ? FLOOR_DROP : 0;
+    var legScale = dropped ? (LEG_FULL - FLOOR_DROP) / LEG_FULL : 1;
+    [aisha, desk, mug, plant].forEach(function (node) {
+      if (node) gsap.set(node, { y: floorY });
+    });
+    if (legs) gsap.set(legs, { scaleY: legScale, svgOrigin: LEG_ORIGIN });
     if (aisha) gsap.set(aisha, { x: 0 });
     if (plant) gsap.set(plant, { x: 0 });
     if (lina) gsap.set(lina, { x: LINA_X });
@@ -690,7 +708,6 @@ window.Cbx300Case = (function () {
     var mug = layer(pin, 'mug');
     var plant = layer(pin, 'plant');
     var lampNode = layer(pin, 'lamp');
-    var persist = [aisha, desk, mug, plant, lampNode].filter(Boolean);
     var beats = pin.querySelectorAll('[data-cbx-beat]');
     var inv015 = layer(pin, 's01-inv-015');
     var inv014 = layer(pin, 's01-inv-014');
@@ -710,16 +727,29 @@ window.Cbx300Case = (function () {
     var payroll = layer(pin, 's03-card-payroll');
     var supplier = layer(pin, 's03-card-supplier');
     var pill = layer(pin, 's03-pill');
+    var legs = layer(pin, 'desk-legs');
+    var floor = [aisha, desk, mug, plant].filter(Boolean);
     var enter01 = Math.max(0, RISE_DUR - 0.86);
     var t12 = RISE_DUR + STAGE_HOLD;
     var t23 = t12 + TRANS_12 + STAGE_HOLD;
+    var legShort = (LEG_FULL - FLOOR_DROP) / LEG_FULL;
 
-    if (persist.length) {
-      tl.fromTo(persist, { opacity: 0, y: 16 }, {
+    if (legs) tl.set(legs, { scaleY: legShort, svgOrigin: LEG_ORIGIN }, 0);
+    if (floor.length) {
+      tl.set(floor, { y: FLOOR_DROP }, 0);
+      tl.fromTo(floor, { opacity: 0, y: FLOOR_DROP + 16 }, {
+        opacity: 1,
+        y: FLOOR_DROP,
+        duration: 0.28,
+        stagger: 0.04,
+        ease: 'power3.out'
+      }, enter01);
+    }
+    if (lampNode) {
+      tl.fromTo(lampNode, { opacity: 0, y: 16 }, {
         opacity: 1,
         y: 0,
         duration: 0.28,
-        stagger: 0.04,
         ease: 'power3.out'
       }, enter01);
     }
@@ -756,6 +786,12 @@ window.Cbx300Case = (function () {
 
     addCopyLeave(tl, beats[1], t23);
     addCopyEnter(tl, beats[2], t23 + 0.1);
+    if (floor.length) {
+      tl.to(floor, { y: 0, duration: 0.42, ease: 'power3.out' }, t23);
+    }
+    if (legs) {
+      tl.to(legs, { scaleY: 1, svgOrigin: LEG_ORIGIN, duration: 0.42, ease: 'power3.out' }, t23);
+    }
     floatOut(tl, lina, t23, LINA_X);
     floatOut(tl, shared, t23, 0);
     floatOut(tl, payday, t23 + 0.04, -12);
@@ -896,7 +932,7 @@ window.Cbx300Case = (function () {
     var total = RISE_DUR + MORPH_VH;
     var t = RISE_DUR + STAGE_HOLD * 0.5;
     if (index === 1) t = RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD * 0.5;
-    else if (index >= 2) t = RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23 + STAGE_HOLD * 0.5;
+    else if (index >= 2) return 1;
     return t / total;
   }
 

@@ -53,7 +53,7 @@ html.is-multiverse.is-dark .study[data-template="cbx300"] .cbx-cover .hero__acce
 
 /* Worry board. Coffee panel becomes the night comic field. */
 html.is-multiverse .study[data-template="cbx300"] .cbx-growth {
-  background: #0e1018;
+  background: #12141c;
   color: #f3eee4;
   --panel-radius: 4px;
 }
