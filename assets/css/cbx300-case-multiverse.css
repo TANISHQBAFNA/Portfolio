@@ -13,12 +13,13 @@ html.is-multiverse .study[data-template="cbx300"] {
   --film-faint: rgba(243, 238, 228, 0.48);
   --film-line: rgba(61, 232, 245, 0.32);
   --film-teal: #3de8f5;
+  /* Ink on the cover and once the panel is docked. No light strip. */
+  --cbx-bar-cover: #0e1018;
+  --cbx-bar-dock: #0e1018;
+  --cbx-bar-ink: #f3eee4;
+  --cbx-bar-dock-ink: #f3eee4;
   background: #0e1018;
   color: #f3eee4;
-}
-
-html.is-multiverse .study[data-template="cbx300"] .study__chrome {
-  background: #0e1018;
 }
 
 html.is-multiverse .study[data-template="cbx300"] .study__count {

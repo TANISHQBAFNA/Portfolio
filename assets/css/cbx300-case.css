@@ -37,9 +37,9 @@ html.is-study-page {
   --panel-flush: 0;
 }
 
-/* Cover stays parked. The study bar stays a solid strip above the coffee
-   panel (same job as the landing header above the projects rail) so CLOSE,
-   the title, and the counter stay visible and receive the click. */
+/* Cover stays parked. The same bar stays clickable above the coffee panel.
+   --cbx-rise 1 is the cream cover; 0 is docked, and the bar scrubs into the
+   panel colour with the curtain instead of sitting as a light strip. */
 html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome,
 html.is-study-page .study[data-template="cbx300"] .study__chrome {
   position: fixed !important;
@@ -47,9 +47,66 @@ html.is-study-page .study[data-template="cbx300"] .study__chrome {
   left: 0;
   right: 0;
   z-index: 21;
-  background: var(--film-cream, var(--cream, #f4efe6));
+  background: var(--cbx-bar-dock, var(--coffee, #1E1510));
+  /* The progress track used to occupy this 3px. Paint the dock colour
+     there so the cover cannot show through once the panel is up. */
+  box-shadow: 0 -3px 0 var(--cbx-bar-dock, var(--coffee, #1E1510));
+  color: color-mix(
+    in srgb,
+    var(--cbx-bar-ink, var(--coffee, #1E1510)) calc(var(--cbx-rise, 1) * 100%),
+    var(--cbx-bar-dock-ink, var(--cream, #f4efe6))
+  );
   visibility: visible;
   pointer-events: auto;
+}
+
+/* Fills the 3px progress gap and crossfades the cover colour off the dock. */
+html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome::before,
+html.is-study-page .study[data-template="cbx300"] .study__chrome::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -3px;
+  bottom: 0;
+  background: var(--cbx-bar-cover, var(--film-cream, #f4efe6));
+  opacity: var(--cbx-rise, 1);
+  pointer-events: none;
+}
+
+/* Hairline between the bar and the stage rail. Gone on the cover. */
+html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome::after,
+html.is-study-page .study[data-template="cbx300"] .study__chrome::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 1px;
+  background: rgb(244 239 230 / calc(0.12 * (1 - var(--cbx-rise, 1))));
+  pointer-events: none;
+}
+
+html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome-row,
+html.is-study-page .study[data-template="cbx300"] .study__chrome-row {
+  position: relative;
+  z-index: 1;
+}
+
+html.is-study.is-study-page .study[data-template="cbx300"] .study__progress,
+html.is-study-page .study[data-template="cbx300"] .study__progress {
+  visibility: hidden;
+}
+
+html.is-study.is-study-page .study[data-template="cbx300"] .study__mark,
+html.is-study-page .study[data-template="cbx300"] .study__mark {
+  transform: scale(calc(var(--cbx-mark-dock, 0.68) + (1 - var(--cbx-mark-dock, 0.68)) * var(--cbx-rise, 1)));
+  transform-origin: center center;
+}
+
+html.is-study-page .study[data-template="cbx300"] .study__count {
+  color: var(--film-teal, #00a0a0);
 }
 
 .study[data-template="cbx300"] {
@@ -63,6 +120,12 @@ html.is-study-page .study[data-template="cbx300"] .study__chrome {
   --film-gutter: var(--gutter, 24px);
   --cbx-shout: clamp(2.55rem, 8.4vw, 7.25rem);
   --cbx-kicker: clamp(1.45rem, 3.4vw, 2.85rem);
+  /* Bar on the cover, then the same bar once the coffee panel is docked. */
+  --cbx-bar-cover: var(--film-cream, #f4efe6);
+  --cbx-bar-dock: var(--coffee, #1E1510);
+  --cbx-bar-ink: var(--coffee, #1E1510);
+  --cbx-bar-dock-ink: var(--cream, #f4efe6);
+  --cbx-mark-dock: 0.68;
   background: var(--film-cream);
   color: var(--film-ink);
 }
@@ -75,10 +138,22 @@ html.is-light-home.is-dark .study[data-template="cbx300"] {
   --film-faint: rgba(244, 239, 230, 0.42);
   --film-line: rgba(244, 239, 230, 0.2);
   --film-teal: #56c6c6;
+  --cbx-bar-cover: #1e1510;
+  --cbx-bar-dock: #1e1510;
+  --cbx-bar-ink: #f4efe6;
+  --cbx-bar-dock-ink: #f4efe6;
 }
 
 .study[data-template="cbx300"] .study__temps {
   display: none;
+}
+
+/* Same bar box in both skins. Measured before is-study-page, so this
+   cannot wait for that class or the panel docks at a different height. */
+.study[data-template="cbx300"] .study__chrome {
+  display: block;
+  gap: 0;
+  padding: 18px var(--gutter, 24px) 14px;
 }
 
 .cbx-world {
