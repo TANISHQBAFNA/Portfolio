@@ -49,10 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s71') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s64') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s71') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s64') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s72') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s65') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s72') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s65') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -478,6 +478,28 @@ check('growth layers lock to the same beat index', function () {
   assert.ok(pages.indexOf('[data-cbx-beat], [data-cbx-illo]') !== -1,
     'morph nodes must be captions + illustrations');
   assert.ok(pages.indexOf('from <= index') === -1, 'clay cast enter-from must be gone');
+  assert.ok(pages.indexOf('illo-d2-scene.svg') !== -1, 'missing layered scene illustration');
+  assert.ok(pages.indexOf('data-cbx-layer') !== -1, 'missing illustration layer hooks');
+  assert.ok(pages.indexOf('cbx-growth__word') !== -1, 'question words must stagger as spans');
+  assert.ok(pages.indexOf('cbx-growth__rule') !== -1, 'divider rule must draw, not sit as a static border');
+  assert.ok(pages.indexOf('cbx-growth__rail-ink') !== -1, 'stage rail cream underline must slide');
+  assert.ok(pages.indexOf('strokeDashoffset') !== -1, 'stage 01 arrow must draw via stroke-dashoffset');
+  assert.ok(pages.indexOf('function wireScene') !== -1, 'missing scrubbed scene wiring');
+  assert.ok(pages.indexOf('function armIdle') !== -1, 'missing ambient idle loops');
+  assert.ok(pages.indexOf('setIdlePlaying') !== -1, 'idle loops must pause off-screen');
+  assert.ok(css.indexOf('.cbx-growth__rail-ink') !== -1, 'missing sliding rail ink css');
+  assert.ok(css.indexOf('.cbx-growth__word') !== -1, 'missing word span css');
+  assert.ok(css.indexOf('.cbx-growth__rule') !== -1, 'missing divider rule css');
+  var sceneSvg = read('assets/img/aisha-growth/illo-d2-scene.svg');
+  assert.ok(sceneSvg.indexOf('data-cbx-layer="aisha"') !== -1, 'scene must keep Aisha as a persist layer');
+  assert.ok(sceneSvg.indexOf('data-cbx-layer="desk"') !== -1, 'scene must keep the desk as a persist layer');
+  assert.ok(sceneSvg.indexOf('data-cbx-layer="plant"') !== -1, 'scene must keep the plant as a persist layer');
+  assert.ok(sceneSvg.indexOf('data-cbx-layer="mug"') !== -1, 'scene must keep the mug as a persist layer');
+  assert.ok(sceneSvg.indexOf('data-cbx-layer="lamp"') !== -1, 'scene must keep the lamp as a persist layer');
+  assert.ok(sceneSvg.indexOf('data-cbx-layer="s02-lina"') !== -1, 'scene must isolate Lina');
+  assert.ok(sceneSvg.indexOf('data-cbx-layer="s03-pill"') !== -1, 'scene must isolate the waiting pill');
+  assert.ok(sceneSvg.indexOf('s01-arrow-draw') !== -1, 'scene must expose the invoice arrow draw path');
+  assert.ok(sceneSvg.indexOf('pathLength="1"') !== -1, 'arrow draw path must use pathLength 1');
 });
 
 check('D2 worry board replaces clay plate and product chips', function () {

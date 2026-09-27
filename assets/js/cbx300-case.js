@@ -62,6 +62,10 @@ window.Cbx300Case = (function () {
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
 
+  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg';
+  var AISHA_X = [0, -104, 0];
+  var PLANT_X = [0, -40, 0];
+
   var motion = {
     triggers: [],
     tween: null,
@@ -70,7 +74,10 @@ window.Cbx300Case = (function () {
     refreshTimers: [],
     normalized: false,
     pin: null,
-    stage: null
+    stage: null,
+    idle: null,
+    pulsed: {},
+    reduce: false
   };
 
   /* Landing projects curtain is the feel source of truth:
@@ -80,7 +87,7 @@ window.Cbx300Case = (function () {
      long pin after the sheet is flush-top. */
   var RISE_DUR = 1;
   var RISE_LERP = 0.7;
-  var MORPH_VH = 2.35;
+  var MORPH_VH = 3;
 
   function isMultiverse() {
     return document.documentElement.classList.contains('is-multiverse');
@@ -244,14 +251,24 @@ window.Cbx300Case = (function () {
 
     var ask = el('h2', 'cbx-growth__ask');
     var quote = el('q', 'cbx-growth__quote');
-    quote.appendChild(shout('span', 'cbx-growth__ask-text', beat.ask, glitch));
+    var askText = el('span', glitch ? 'cbx-growth__ask-text glitch' : 'cbx-growth__ask-text');
+    askText.setAttribute('data-latin', beat.ask);
+    if (glitch) askText.setAttribute('data-text', beat.ask);
+    var words = beat.ask.split(' ');
+    words.forEach(function (part, w) {
+      if (w) askText.appendChild(document.createTextNode(' '));
+      askText.appendChild(el('span', 'cbx-growth__word', part));
+    });
+    quote.appendChild(askText);
     ask.appendChild(quote);
     beatEl.appendChild(ask);
+    beatEl.appendChild(el('span', 'cbx-growth__rule'));
     beatEl.appendChild(el('p', 'cbx-growth__sub', beat.sub));
     return beatEl;
   }
 
   function buildRail() {
+    var wrap = el('div', 'cbx-growth__rail-wrap');
     var rail = el('ol', 'cbx-growth__rail');
     rail.setAttribute('data-cbx-rail', '');
     rail.setAttribute('aria-label', 'Aisha grows through three stages');
@@ -263,14 +280,18 @@ window.Cbx300Case = (function () {
       item.appendChild(el('span', 'cbx-growth__step-name', beat.label));
       rail.appendChild(item);
     });
-    return rail;
+    var ink = el('span', 'cbx-growth__rail-ink');
+    ink.setAttribute('data-cbx-rail-ink', '');
+    wrap.appendChild(rail);
+    wrap.appendChild(ink);
+    return wrap;
   }
 
-  function illoSlot(beat, index) {
-    var slot = el('div', 'cbx-growth__illo' + (index === 0 ? ' is-on' : ''));
-    slot.setAttribute('data-cbx-illo', beat.id);
-    slot.setAttribute('data-illo-src', beat.illo);
-    if (beat.crop) slot.setAttribute('data-illo-crop', '1');
+  function illoSlot() {
+    var slot = el('div', 'cbx-growth__illo is-on');
+    slot.setAttribute('data-cbx-illo', 'scene');
+    slot.setAttribute('data-illo-src', SCENE_ILLO);
+    slot.setAttribute('data-illo-crop', '1');
     slot.setAttribute('aria-hidden', 'true');
     return slot;
   }
@@ -285,13 +306,13 @@ window.Cbx300Case = (function () {
     var raw = svg.getAttribute('viewBox') || '-8 -24 616 662';
     var parts = raw.trim().split(/[\s,]+/).map(Number);
     if (parts.length !== 4 || parts.some(isNaN)) return;
-    /* Pull min-y up so the lamp sits inside; shorten height to drop empty floor. */
+    /* Pull min-y up so the lamp sits inside. Keep full height so the
+       stage-03 bench stays in the viewBox. */
     var minX = parts[0];
     var minY = Math.min(parts[1], -40);
     var width = parts[2];
     var maxY = parts[1] + parts[3];
-    var floorY = Math.min(maxY, 612);
-    svg.setAttribute('viewBox', [minX, minY, width, floorY - minY].join(' '));
+    svg.setAttribute('viewBox', [minX, minY, width, maxY - minY].join(' '));
   }
 
   function paintIllo(slot, done) {
@@ -364,9 +385,7 @@ window.Cbx300Case = (function () {
 
     var pic = el('div', 'cbx-growth__pic');
     pic.setAttribute('data-cbx-pic', '');
-    BEATS.forEach(function (beat, i) {
-      pic.appendChild(illoSlot(beat, i));
-    });
+    pic.appendChild(illoSlot());
 
     board.appendChild(worry);
     board.appendChild(pic);
@@ -461,10 +480,303 @@ window.Cbx300Case = (function () {
     );
   }
 
+  function layer(root, name) {
+    return root ? root.querySelector('[data-cbx-layer="' + name + '"]') : null;
+  }
+
+  function posePersist(root, index) {
+    var gsap = window.gsap;
+    if (!gsap || !root) return;
+    var aisha = layer(root, 'aisha');
+    var plant = layer(root, 'plant');
+    if (aisha) gsap.set(aisha, { x: AISHA_X[index] || 0 });
+    if (plant) gsap.set(plant, { x: PLANT_X[index] || 0 });
+  }
+
+  function setRailInk(root, morphP) {
+    var gsap = window.gsap;
+    var ink = root && root.querySelector('[data-cbx-rail-ink]');
+    if (!gsap || !ink) return;
+    var t = Math.max(0, Math.min(1, morphP));
+    gsap.set(ink, { xPercent: t * 200 });
+  }
+
+  function copyBits(beatEl) {
+    if (!beatEl) return [];
+    return Array.prototype.slice.call(
+      beatEl.querySelectorAll('.cbx-growth__lab, .cbx-growth__word, .cbx-growth__rule, .cbx-growth__sub')
+    );
+  }
+
+  function addCopyEnter(tl, beatEl, at) {
+    if (!beatEl) return;
+    var lab = beatEl.querySelector('.cbx-growth__lab');
+    var words = beatEl.querySelectorAll('.cbx-growth__word');
+    var rule = beatEl.querySelector('.cbx-growth__rule');
+    var sub = beatEl.querySelector('.cbx-growth__sub');
+    if (lab) {
+      tl.fromTo(lab, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.16, ease: 'power3.out' }, at);
+    }
+    if (words.length) {
+      tl.fromTo(words, { opacity: 0, y: 14 }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.26,
+        stagger: 0.04,
+        ease: 'power3.out'
+      }, at + 0.05);
+    }
+    var ruleAt = at + 0.22;
+    if (rule) {
+      tl.fromTo(rule, { scaleX: 0 }, {
+        scaleX: 1,
+        duration: 0.2,
+        ease: 'power3.out',
+        transformOrigin: '0% 50%'
+      }, ruleAt);
+    }
+    if (sub) {
+      tl.fromTo(sub, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.2, ease: 'power3.out' }, ruleAt + 0.1);
+    }
+  }
+
+  function addCopyLeave(tl, beatEl, at) {
+    var bits = copyBits(beatEl);
+    if (!bits.length) return;
+    tl.to(bits, { opacity: 0, y: -8, duration: 0.2, stagger: 0.015, ease: 'power3.in' }, at);
+  }
+
+  function dropIn(tl, node, at, rot) {
+    if (!node) return;
+    tl.fromTo(node,
+      { y: -24, rotation: rot || 7, opacity: 0 },
+      { y: 0, rotation: 0, opacity: 1, duration: 0.26, ease: 'power3.out' },
+      at
+    );
+  }
+
+  function floatOut(tl, node, at, dx) {
+    if (!node) return;
+    tl.to(node, { y: -16, x: dx || 0, opacity: 0, duration: 0.24, ease: 'power3.in' }, at);
+  }
+
+  function killIdle() {
+    var gsap = window.gsap;
+    (motion.idle || []).forEach(function (tw) {
+      if (tw && tw.kill) tw.kill();
+    });
+    motion.idle = [];
+    motion.pulsed = {};
+    if (gsap && motion.pin) {
+      Array.prototype.forEach.call(motion.pin.querySelectorAll('[data-cbx-idle]'), function (node) {
+        gsap.set(node, { y: 0, rotation: 0 });
+      });
+    }
+  }
+
+  function armIdle(root) {
+    var gsap = window.gsap;
+    killIdle();
+    if (!gsap || !root || motion.reduce) return;
+    var tweens = [];
+    var lamp = root.querySelector('[data-cbx-idle="lamp"]');
+    if (lamp) {
+      gsap.set(lamp, { transformOrigin: '50% 0%', svgOrigin: '300 -30' });
+      tweens.push(gsap.to(lamp, {
+        rotation: 2,
+        duration: 1.9,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        paused: true
+      }));
+    }
+    var steamA = layer(root, 'steam-a');
+    var steamB = layer(root, 'steam-b');
+    if (steamA) {
+      tweens.push(gsap.fromTo(steamA, { y: 0, opacity: 0.55 }, {
+        y: -10,
+        opacity: 0,
+        duration: 2.2,
+        ease: 'sine.out',
+        repeat: -1,
+        paused: true
+      }));
+    }
+    if (steamB) {
+      tweens.push(gsap.fromTo(steamB, { y: 2, opacity: 0.4 }, {
+        y: -12,
+        opacity: 0,
+        duration: 2.5,
+        delay: 0.35,
+        ease: 'sine.out',
+        repeat: -1,
+        paused: true
+      }));
+    }
+    Array.prototype.forEach.call(root.querySelectorAll('[data-cbx-idle="card"]'), function (card, i) {
+      tweens.push(gsap.to(card, {
+        y: 3.5,
+        duration: 2.4 + (i % 3) * 0.15,
+        delay: i * 0.08,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        paused: true
+      }));
+    });
+    motion.idle = tweens;
+  }
+
+  function setIdlePlaying(on) {
+    (motion.idle || []).forEach(function (tw) {
+      if (!tw) return;
+      if (on) tw.play();
+      else tw.pause();
+    });
+  }
+
+  function pulseOnce(key, node) {
+    var gsap = window.gsap;
+    if (!gsap || !node || motion.reduce) return;
+    if (motion.pulsed[key]) return;
+    motion.pulsed[key] = true;
+    gsap.fromTo(node, { scale: 1 }, {
+      scale: 1.06,
+      duration: 0.32,
+      yoyo: true,
+      repeat: 1,
+      ease: 'sine.inOut',
+      transformOrigin: '50% 50%'
+    });
+  }
+
+  function resetPulse(key, node) {
+    if (!motion.pulsed[key]) return;
+    motion.pulsed[key] = false;
+    if (node && window.gsap) window.gsap.set(node, { scale: 1 });
+  }
+
+  function wireScene(tl, pin) {
+    var aisha = layer(pin, 'aisha');
+    var desk = layer(pin, 'desk');
+    var mug = layer(pin, 'mug');
+    var plant = layer(pin, 'plant');
+    var lampNode = layer(pin, 'lamp');
+    var persist = [aisha, desk, mug, plant, lampNode].filter(Boolean);
+    var beats = pin.querySelectorAll('[data-cbx-beat]');
+    var inv015 = layer(pin, 's01-inv-015');
+    var inv014 = layer(pin, 's01-inv-014');
+    var inv012 = layer(pin, 's01-inv-012');
+    var arrow = layer(pin, 's01-arrow');
+    var draw = layer(pin, 's01-arrow-draw');
+    var head = layer(pin, 's01-arrow-head');
+    var lina = layer(pin, 's02-lina');
+    var s02arrows = layer(pin, 's02-arrows');
+    var shared = layer(pin, 's02-card-shared');
+    var payday = layer(pin, 's02-card-payday');
+    var freeAfter = layer(pin, 's02-card-free');
+    var sideL = layer(pin, 's03-side-l');
+    var sideR = layer(pin, 's03-side-r');
+    var row = layer(pin, 's03-row');
+    var bench = layer(pin, 's03-bench');
+    var payroll = layer(pin, 's03-card-payroll');
+    var supplier = layer(pin, 's03-card-supplier');
+    var pill = layer(pin, 's03-pill');
+    var enter01 = Math.max(0, RISE_DUR - 0.48);
+    var t12 = RISE_DUR + 0.42;
+    var t23 = t12 + 1.1;
+
+    if (persist.length) {
+      tl.fromTo(persist, { opacity: 0, y: 16 }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.28,
+        stagger: 0.04,
+        ease: 'power3.out'
+      }, enter01);
+    }
+    addCopyEnter(tl, beats[0], enter01);
+    dropIn(tl, inv015, enter01 + 0.22, -8);
+    dropIn(tl, inv014, enter01 + 0.3, 7);
+    dropIn(tl, inv012, enter01 + 0.38, -5);
+    if (draw) {
+      tl.fromTo(draw, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.36, ease: 'none' }, enter01 + 0.48);
+    }
+    if (head) {
+      tl.fromTo(head, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: 'power3.out' }, enter01 + 0.72);
+    }
+
+    addCopyLeave(tl, beats[0], t12);
+    addCopyEnter(tl, beats[1], t12 + 0.08);
+    floatOut(tl, inv015, t12, -12);
+    floatOut(tl, inv014, t12 + 0.04, 14);
+    floatOut(tl, inv012, t12 + 0.08, 18);
+    if (arrow) floatOut(tl, arrow, t12, 0);
+    if (aisha) tl.to(aisha, { x: AISHA_X[1], duration: 0.42, ease: 'power3.inOut' }, t12);
+    if (plant) tl.to(plant, { x: PLANT_X[1], duration: 0.42, ease: 'power3.inOut' }, t12);
+    if (lina) {
+      tl.fromTo(lina, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' }, t12 + 0.12);
+    }
+    dropIn(tl, shared, t12 + 0.22, -4);
+    dropIn(tl, payday, t12 + 0.3, -7);
+    dropIn(tl, freeAfter, t12 + 0.38, 6);
+    if (s02arrows) {
+      tl.fromTo(s02arrows, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power3.out' }, t12 + 0.4);
+    }
+
+    addCopyLeave(tl, beats[1], t23);
+    addCopyEnter(tl, beats[2], t23 + 0.1);
+    floatOut(tl, lina, t23, 20);
+    floatOut(tl, shared, t23, 0);
+    floatOut(tl, payday, t23 + 0.04, -12);
+    floatOut(tl, freeAfter, t23 + 0.08, 12);
+    if (s02arrows) floatOut(tl, s02arrows, t23, 0);
+    if (aisha) tl.to(aisha, { x: AISHA_X[2], duration: 0.36, ease: 'power3.inOut' }, t23);
+    if (plant) tl.to(plant, { x: PLANT_X[2], duration: 0.36, ease: 'power3.inOut' }, t23);
+    if (sideL) {
+      tl.fromTo(sideL, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.32, ease: 'power3.out' }, t23 + 0.16);
+    }
+    if (sideR) {
+      tl.fromTo(sideR, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.32, ease: 'power3.out' }, t23 + 0.22);
+    }
+    if (row) {
+      tl.fromTo(row, { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34, ease: 'power3.out' }, t23 + 0.34);
+    }
+    if (bench) {
+      tl.fromTo(bench, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28, ease: 'power3.out' }, t23 + 0.38);
+    }
+    dropIn(tl, payroll, t23 + 0.52, -7);
+    dropIn(tl, supplier, t23 + 0.6, 6);
+    if (pill) {
+      tl.fromTo(pill, { opacity: 0, scale: 0.88 }, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.22,
+        ease: 'power3.out'
+      }, t23 + 0.74);
+    }
+  }
+
+  function tickMorph(pin, morphP, riseTarget, self) {
+    applyBeat(pin, beatIndexFromProgress(morphP));
+    if (motion.reduce) {
+      posePersist(pin, beatIndexFromProgress(morphP));
+    } else {
+      setRailInk(pin, morphP);
+      if (morphP < 0.18 && riseTarget >= 0.95) pulseOnce('late', layer(pin, 's01-late'));
+      else resetPulse('late', layer(pin, 's01-late'));
+      if (morphP >= 0.82) pulseOnce('pill', layer(pin, 's03-pill'));
+      else resetPulse('pill', layer(pin, 's03-pill'));
+    }
+    setIdlePlaying(!!(self && self.isActive) && riseTarget >= 0.92 && !motion.reduce);
+  }
+
   function kill() {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     clearTimers();
+    killIdle();
     if (motion.tween && motion.tween.scrollTrigger && motion.tween.scrollTrigger.kill) {
       motion.tween.scrollTrigger.kill();
     }
@@ -481,16 +793,23 @@ window.Cbx300Case = (function () {
     }
     motion.stage = null;
     if (motion.pin) {
-      motion.pin.classList.remove('is-static');
+      motion.pin.classList.remove('is-static', 'is-cinematic', 'is-reduce');
       motion.pin.style.height = '';
       if (gsap) {
         morphNodes(motion.pin).forEach(function (node) {
           gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' });
         });
+        Array.prototype.forEach.call(
+          motion.pin.querySelectorAll('[data-cbx-layer], [data-cbx-idle], .cbx-growth__word, .cbx-growth__rule, .cbx-growth__sub, .cbx-growth__lab, [data-cbx-rail-ink]'),
+          function (node) {
+            gsap.set(node, { clearProps: 'opacity,visibility,transform,x,y,rotation,scale,strokeDashoffset' });
+          }
+        );
       }
       applyBeat(motion.pin, 0);
     }
     motion.pin = null;
+    motion.reduce = false;
     if (motion.normalized && ScrollTrigger && ScrollTrigger.normalizeScroll) {
       ScrollTrigger.normalizeScroll(false);
       motion.normalized = false;
@@ -547,6 +866,10 @@ window.Cbx300Case = (function () {
       beat.classList.toggle('is-on', i === index);
     });
     Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-illo]'), function (illo, i) {
+      if (illo.getAttribute('data-cbx-illo') === 'scene') {
+        illo.classList.add('is-on');
+        return;
+      }
       illo.classList.toggle('is-on', i === index);
     });
     Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-step]'), function (step, i) {
@@ -580,6 +903,8 @@ window.Cbx300Case = (function () {
     }
 
     pin.classList.remove('is-static');
+    pin.classList.toggle('is-cinematic', !motion.reduce);
+    pin.classList.toggle('is-reduce', !!motion.reduce);
     sizePane(stage);
     applyCbxRise(0);
 
@@ -587,6 +912,8 @@ window.Cbx300Case = (function () {
       gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' });
     });
     applyBeat(pin, 0);
+    if (motion.reduce) posePersist(pin, 0);
+    else setRailInk(pin, 0);
 
     motion.riseState.p = 0;
 
@@ -609,6 +936,7 @@ window.Cbx300Case = (function () {
         onToggle: function (self) {
           if (!self.isActive) {
             tweenCbxRise(self.progress >= 1 ? 1 : 0, true);
+            setIdlePlaying(false);
           }
           if (self.isActive && onStep) {
             onStep(motion.riseState.p > 0.08 ? 1 : 0);
@@ -627,6 +955,7 @@ window.Cbx300Case = (function () {
             morphP = (self.progress - morphStart) / Math.max(0.0001, 1 - morphStart);
           }
           applyBeat(pin, beatIndexFromProgress(morphP));
+          tickMorph(pin, morphP, riseTarget, self);
           if (onStep) onStep(motion.riseState.p > 0.92 ? 1 : 0);
         }
       }
@@ -634,6 +963,7 @@ window.Cbx300Case = (function () {
 
     tl.to({}, { duration: RISE_DUR });
     tl.to({}, { duration: MORPH_VH });
+    if (!motion.reduce) wireScene(tl, pin);
     motion.tween = tl;
     if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
   }
@@ -679,29 +1009,34 @@ window.Cbx300Case = (function () {
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
+    motion.reduce = !!(reduce && reduce.matches);
 
-    if (!gsap || !ScrollTrigger || reduce.matches) {
-      setupStatic(pin);
-      restRise();
-      if (ScrollTrigger) {
-        watchSteps(cover, pin, opts.onStep);
+    function afterIllos() {
+      if (!gsap || !ScrollTrigger) {
+        setupStatic(pin);
+        restRise();
+        posePersist(pin, BEATS.length - 1);
+        if (ScrollTrigger) {
+          watchSteps(cover, pin, opts.onStep);
+        }
+        return;
       }
-      return;
-    }
 
-    gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.config({ ignoreMobileResize: true });
+      gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
 
-    var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    if (touch && ScrollTrigger.normalizeScroll) {
-      ScrollTrigger.normalizeScroll(true);
-      motion.normalized = true;
-    }
+      var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      if (touch && ScrollTrigger.normalizeScroll) {
+        ScrollTrigger.normalizeScroll(true);
+        motion.normalized = true;
+      }
 
-    bindCinematic(world, opts);
-    fillIllos(pin, function () {
+      bindCinematic(world, opts);
+      if (!motion.reduce) armIdle(pin);
       whenImages(pin, refreshSoon);
-    });
+    }
+
+    fillIllos(pin, afterIllos);
   }
 
   function liveCount(world) {
