@@ -279,7 +279,19 @@ window.Cbx300Case = (function () {
     if (!svg) return;
     svg.removeAttribute('width');
     svg.removeAttribute('height');
-    svg.setAttribute('preserveAspectRatio', crop ? 'xMidYMin slice' : 'xMidYMid slice');
+    /* 01/02: contain, bottom-anchored. Trim empty floor only — never the sides. */
+    svg.setAttribute('preserveAspectRatio', crop ? 'xMidYMax meet' : 'xMidYMid slice');
+    if (!crop) return;
+    var raw = svg.getAttribute('viewBox') || '-8 -24 616 662';
+    var parts = raw.trim().split(/[\s,]+/).map(Number);
+    if (parts.length !== 4 || parts.some(isNaN)) return;
+    /* Pull min-y up so the lamp sits inside; shorten height to drop empty floor. */
+    var minX = parts[0];
+    var minY = Math.min(parts[1], -40);
+    var width = parts[2];
+    var maxY = parts[1] + parts[3];
+    var floorY = Math.min(maxY, 612);
+    svg.setAttribute('viewBox', [minX, minY, width, floorY - minY].join(' '));
   }
 
   function paintIllo(slot, done) {

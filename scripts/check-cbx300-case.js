@@ -49,10 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s70') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s63') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s70') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s63') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s71') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s64') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s71') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s64') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -517,6 +517,17 @@ check('D2 worry board replaces clay plate and product chips', function () {
   assert.ok(beatOff.indexOf('position: absolute') === -1, 'beats must not bottom-pin inside an empty well');
   assert.ok(pages.indexOf('[data-cbx-step]') !== -1, 'applyBeat must light the stage rail');
   assert.ok(pages.indexOf('data-illo-crop') !== -1, 'stages 01/02 must crop the empty floor band');
+  assert.ok(pages.indexOf("'xMidYMax meet'") !== -1, '01/02 must contain the scene, not slice the sides');
+  assert.ok(pages.indexOf("'xMidYMin slice'") === -1, 'top-sliced crop must be gone');
+  assert.ok(css.indexOf('122%') === -1, 'side-zoom crop must be gone');
+  assert.ok(css.indexOf('.cbx-growth__illo[data-illo-crop="1"]') !== -1, '01/02 illustration padding missing');
+  var cropCss = css.slice(
+    css.indexOf('.cbx-growth__illo[data-illo-crop="1"] {'),
+    css.indexOf('.cbx-growth__illo[data-illo-crop="1"] svg')
+  );
+  assert.ok(cropCss.indexOf('inset: 24px') !== -1, 'prop cards need ~24px inner padding');
+  assert.ok(css.indexOf('object-fit: contain') !== -1, '01/02 must fit width, not cover');
+  assert.ok(css.indexOf('object-position: center bottom') !== -1, '01/02 must sit on the panel floor');
   var coffee = [30, 21, 16];
   var cream = [244, 239, 230];
   function srgbToLin(c) {

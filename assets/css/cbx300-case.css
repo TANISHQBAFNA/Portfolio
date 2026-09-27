@@ -618,14 +618,21 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   object-fit: cover;
 }
 
+.cbx-growth__illo[data-illo-crop="1"] {
+  inset: 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
 .cbx-growth__illo[data-illo-crop="1"] svg,
 .cbx-growth__illo[data-illo-crop="1"] .cbx-growth__illo-img {
-  width: 122%;
-  height: 122%;
-  max-width: none;
-  margin-left: -11%;
-  margin-top: 0;
-  object-position: center top;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  margin: 0;
+  object-fit: contain;
+  object-position: center bottom;
 }
 
 .cbx-growth.is-static {
