@@ -396,10 +396,12 @@
    * Night tints cream on ink; print/light uses production coffee mesh + teal glow.
    */
   function wireParticles(reduceMotion) {
+    if (wireParticles.started) return;
     var canvas = document.querySelector("[data-particles]");
     if (!canvas || reduceMotion.matches) return;
     var ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
     if (!ctx) return;
+    wireParticles.started = true;
     var finePointer = window.matchMedia("(pointer: fine)").matches;
 
     var dpr = Math.min(window.devicePixelRatio || 1, 1.25);

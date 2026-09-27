@@ -101,7 +101,55 @@ window.ProjectStudy = (function () {
       return '';
     }
 
+    function particlesCanvas() {
+      return document.querySelector('[data-particles]');
+    }
+
+    function visibleWorld() {
+      if (!root) return null;
+      var worlds = root.querySelectorAll('[data-world]');
+      var i;
+      for (i = 0; i < worlds.length; i++) {
+        if (!worlds[i].hidden) return worlds[i];
+      }
+      return null;
+    }
+
+    function coverHost() {
+      var world = visibleWorld();
+      if (!world) return null;
+      var cover = world.querySelector('.cbx-cover');
+      if (cover) return cover;
+      var slot = world.querySelector('[data-study-cover]');
+      if (slot) return slot;
+      slot = document.createElement('div');
+      slot.className = 'study-cover-web';
+      slot.setAttribute('data-study-cover', '');
+      slot.setAttribute('aria-hidden', 'true');
+      world.insertBefore(slot, world.firstChild);
+      return slot;
+    }
+
+    function parkParticles() {
+      var canvas = particlesCanvas();
+      var host = coverHost();
+      if (!canvas || !host) return;
+      if (!canvas.__particlesHome) canvas.__particlesHome = canvas.parentNode;
+      if (canvas.parentNode !== host) host.insertBefore(canvas, host.firstChild);
+      canvas.classList.add('is-study-cover');
+    }
+
+    function restoreParticles() {
+      var canvas = particlesCanvas();
+      if (!canvas || !canvas.__particlesHome) return;
+      if (canvas.parentNode !== canvas.__particlesHome) {
+        canvas.__particlesHome.appendChild(canvas);
+      }
+      canvas.classList.remove('is-study-cover');
+    }
+
     function killMotion() {
+      restoreParticles();
       if (caseKit && caseKit.kill) caseKit.kill();
       caseKit = null;
       if (caseMount && caseMount.kill) caseMount.kill();
@@ -754,25 +802,29 @@ window.ProjectStudy = (function () {
 
     function bindMotion() {
       killMotion();
-      syncHead();
-      if (template === 'cbx300') {
-        bindCbx300();
-        return;
+      try {
+        syncHead();
+        if (template === 'cbx300') {
+          bindCbx300();
+          return;
+        }
+        if (reduceMotion.matches || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+          var scenes = visibleScenes();
+          setTotal(scenes.length);
+          return;
+        }
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.config({ ignoreMobileResize: true });
+        if (template === 'original') bindOriginal();
+        else if (template === 'tunnel') bindTunnel();
+        else if (template === 'helix') bindHelix();
+        else if (template === 'deck') bindDeck();
+        else if (template === 'type') bindType();
+        else bindCut();
+        ScrollTrigger.refresh();
+      } finally {
+        parkParticles();
       }
-      if (reduceMotion.matches || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-        var scenes = visibleScenes();
-        setTotal(scenes.length);
-        return;
-      }
-      gsap.registerPlugin(ScrollTrigger);
-      ScrollTrigger.config({ ignoreMobileResize: true });
-      if (template === 'original') bindOriginal();
-      else if (template === 'tunnel') bindTunnel();
-      else if (template === 'helix') bindHelix();
-      else if (template === 'deck') bindDeck();
-      else if (template === 'type') bindType();
-      else bindCut();
-      ScrollTrigger.refresh();
     }
 
     function flyMaxWidth() {
@@ -973,6 +1025,7 @@ window.ProjectStudy = (function () {
     function coverLive() {
       html.classList.remove('is-study-wipe');
       html.classList.add('is-study');
+      parkParticles();
     }
 
     function revealHome() {

@@ -66,10 +66,12 @@
    * Light coffee mesh, slow continuous drift, teal glow near the cursor.
    */
   function wireParticles(reduceMotion) {
+    if (wireParticles.started) return;
     var canvas = document.querySelector("[data-particles]");
     if (!canvas || reduceMotion.matches) return;
     var ctx = canvas.getContext("2d");
     if (!ctx) return;
+    wireParticles.started = true;
     var finePointer = window.matchMedia("(pointer: fine)").matches;
 
     var dpr = Math.min(window.devicePixelRatio || 1, 2);

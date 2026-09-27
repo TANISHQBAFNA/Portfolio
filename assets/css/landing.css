@@ -3107,6 +3107,31 @@ html.is-light-home .atmosphere::after {
   position: absolute; inset: 0; width: 100%; height: 100%;
   display: block; opacity: 1; pointer-events: none;
 }
+/* Same canvas, parked in the study cover. Inline window size loses to this. */
+.atmosphere__particles.is-study-cover {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  contain: none !important;
+  pointer-events: none !important;
+}
+.study-world { position: relative; }
+.study-cover-web {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 100svh;
+  height: 100dvh;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+.cbx-cover > .cbx-cover__inner { z-index: 2; }
+.study-scene + .study-scene { background: var(--cream, #f4efe6); }
+html.is-dark .study-scene + .study-scene { background: var(--coffee, #1E1510); }
 @media (prefers-reduced-motion: reduce) {
   .atmosphere__particles { display: none; }
 }
