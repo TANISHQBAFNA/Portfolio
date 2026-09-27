@@ -25,10 +25,6 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
   color: #3de8f5;
 }
 
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media .work-card__media {
-  border-radius: 0;
-}
-
 /* Home Ben-Day fill disappears on the ink study. Solid type; RGB stays in plates. */
 html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__kicker,
 html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__word,
@@ -159,16 +155,7 @@ html.is-multiverse .cbx-growth__sub {
   color: rgba(243, 238, 228, 0.82);
 }
 
-html.is-multiverse .cbx-growth__pic {
-  background: #12141c;
-  border-radius: 4px;
-  box-shadow:
-    0 0 0 1px rgba(61, 232, 245, 0.55),
-    0 0 10px rgba(61, 232, 245, 0.35),
-    0 0 22px rgba(61, 232, 245, 0.16);
-}
-
-html.is-multiverse .cbx-growth__pic::after {
+html.is-multiverse .cbx-growth__pic-media::after {
   content: "";
   position: absolute;
   inset: 0;

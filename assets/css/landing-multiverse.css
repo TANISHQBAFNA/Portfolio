@@ -3043,6 +3043,18 @@ html.is-multiverse {
   --projects-panel: #12141c;
   --panel-radius: 4px;
   --panel-flush: 0;
+  --work-frame-pad-top: 14px;
+  --work-frame-pad-x: 14px;
+  --work-frame-pad-bottom: 16px;
+  --work-frame-pad: var(--work-frame-pad-top) var(--work-frame-pad-x) var(--work-frame-pad-bottom);
+  --work-frame-radius: 0px;
+  --work-frame-bg: var(--cream);
+  --work-frame-ink: var(--ink);
+  --work-frame-border: 4px solid var(--ink);
+  --work-frame-shadow: 7px 7px 0 var(--cyan), 10px 10px 0 var(--ink);
+  --work-frame-media-radius: 0px;
+  --work-frame-media-bg: rgba(30, 21, 16, 0.06);
+  --work-frame-media-border: 3px solid var(--ink);
   --on-dark: var(--cream);
   --accent: var(--cyan);
   --accent-soft: var(--cyan);
@@ -3596,23 +3608,25 @@ html.is-multiverse .work-card[data-tone] {
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  padding: 14px 14px 16px;
-  border-radius: 22px;
+  padding: var(--work-frame-pad);
+  border: var(--work-frame-border);
+  border-radius: var(--work-frame-radius);
   overflow: hidden;
   text-decoration: none;
-  background: var(--cream);
-  color: var(--coffee);
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
   transform: none;
   filter: none;
-  box-shadow: none;
+  box-shadow: var(--work-frame-shadow);
 }
 html.is-multiverse .work-card__media {
   display: block;
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  border-radius: 14px;
-  background: rgba(30, 21, 16, 0.06);
+  border: var(--work-frame-media-border);
+  border-radius: var(--work-frame-media-radius);
+  background: var(--work-frame-media-bg);
 }
 html.is-multiverse .work-card__img {
   width: 100%;
@@ -4516,24 +4530,33 @@ html.is-dark .study__chrome {
 
 .study-frame {
   position: relative;
-  background: var(--coffee, #1E1510);
-  border-radius: 28px;
+  background: var(--work-frame-bg);
+  border: var(--work-frame-border);
+  border-radius: var(--work-frame-radius);
+  box-shadow: var(--work-frame-shadow);
   overflow: hidden;
   transform-style: preserve-3d;
   transform-origin: 50% 50%;
 }
 html.is-dark .study-frame {
-  background: var(--cream, #f4efe6);
+  background: var(--work-frame-bg);
+  border: var(--work-frame-border);
+  box-shadow: var(--work-frame-shadow);
 }
 .study-frame__core {
   position: absolute;
-  inset: 14px;
-  border-radius: 16px;
-  background: var(--cream, #f4efe6);
+  top: var(--work-frame-pad-top);
+  right: var(--work-frame-pad-x);
+  bottom: var(--work-frame-pad-bottom);
+  left: var(--work-frame-pad-x);
+  border: var(--work-frame-media-border);
+  border-radius: var(--work-frame-media-radius);
+  background: var(--work-frame-media-bg);
   transform-origin: 50% 50%;
 }
 html.is-dark .study-frame__core {
-  background: var(--coffee, #1E1510);
+  background: var(--work-frame-media-bg);
+  border: var(--work-frame-media-border);
 }
 
 .study-frame--hero {
@@ -4551,7 +4574,7 @@ html.is-dark .study-frame__core {
 .study-frame--bleed {
   width: 100%;
   height: var(--study-stage);
-  border-radius: 28px;
+  border-radius: var(--work-frame-radius);
 }
 .study-frame--grid {
   height: min(32vh, 280px);
@@ -4872,7 +4895,7 @@ html.is-dark .study-phone__island {
 .study-card .study-frame--bleed {
   width: min(82vw, 980px);
   height: min(62vh, 560px);
-  border-radius: 28px;
+  border-radius: var(--work-frame-radius);
 }
 .study-helix-item .study-frame--strip {
   flex: none;
@@ -5507,13 +5530,11 @@ html.is-multiverse .work-card,
 html.is-multiverse .work-card[data-tone] {
   position: relative;
   isolation: isolate;
-  border: 4px solid var(--ink);
-  border-radius: 0 !important;
-  background: var(--cream);
-  color: var(--ink);
-  box-shadow:
-    7px 7px 0 var(--cyan),
-    10px 10px 0 var(--ink);
+  border: var(--work-frame-border);
+  border-radius: var(--work-frame-radius) !important;
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
+  box-shadow: var(--work-frame-shadow);
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
 }
 html.is-multiverse .work-card__cap {
@@ -5545,8 +5566,8 @@ html.is-multiverse.is-projects-hitching .work-card {
     3px 0 0 rgba(61, 126, 255, 0.35);
 }
 html.is-multiverse .work-card__media {
-  border-radius: 0 !important;
-  border: 3px solid var(--ink);
+  border-radius: var(--work-frame-media-radius) !important;
+  border: var(--work-frame-media-border);
 }
 html.is-multiverse .work-card__title {
   color: var(--ink) !important;

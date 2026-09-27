@@ -3039,6 +3039,18 @@ html.is-light-home {
   --projects-panel: var(--coffee);
   --panel-radius: clamp(24px, 2.8vw, 36px);
   --panel-flush: 0;
+  --work-frame-pad-top: 14px;
+  --work-frame-pad-x: 14px;
+  --work-frame-pad-bottom: 16px;
+  --work-frame-pad: var(--work-frame-pad-top) var(--work-frame-pad-x) var(--work-frame-pad-bottom);
+  --work-frame-radius: 22px;
+  --work-frame-bg: var(--cream);
+  --work-frame-ink: var(--coffee);
+  --work-frame-border: none;
+  --work-frame-shadow: none;
+  --work-frame-media-radius: 14px;
+  --work-frame-media-bg: rgba(30, 21, 16, 0.06);
+  --work-frame-media-border: none;
   --on-dark: var(--cream);
   --accent: var(--teal);
   --accent-soft: var(--teal);
@@ -3054,6 +3066,9 @@ html.is-light-home.is-dark {
   --fg-faint: rgba(244, 239, 230, 0.62);
   --curtain-ink: var(--cream);
   --projects-panel: var(--cream);
+  --work-frame-bg: var(--coffee);
+  --work-frame-ink: var(--cream);
+  --work-frame-media-bg: rgba(244, 239, 230, 0.08);
 }
 
 html.is-light-home,
@@ -3831,23 +3846,25 @@ html.is-light-home .work-card[data-tone] {
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  padding: 14px 14px 16px;
-  border-radius: 22px;
+  padding: var(--work-frame-pad);
+  border: var(--work-frame-border);
+  border-radius: var(--work-frame-radius);
   overflow: hidden;
   text-decoration: none;
-  background: var(--cream);
-  color: var(--coffee);
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
   transform: none;
   filter: none;
-  box-shadow: none;
+  box-shadow: var(--work-frame-shadow);
 }
 html.is-light-home .work-card__media {
   display: block;
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  border-radius: 14px;
-  background: rgba(30, 21, 16, 0.06);
+  border: var(--work-frame-media-border);
+  border-radius: var(--work-frame-media-radius);
+  background: var(--work-frame-media-bg);
 }
 html.is-light-home .work-card__img {
   width: 100%;
@@ -4144,11 +4161,11 @@ html.is-light-home .work-card .work-card__caption {
 }
 html.is-light-home.is-dark .work-card,
 html.is-light-home.is-dark .work-card[data-tone] {
-  background: var(--coffee);
-  color: var(--cream);
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
 }
 html.is-light-home.is-dark .work-card__media {
-  background: rgba(244, 239, 230, 0.08);
+  background: var(--work-frame-media-bg);
 }
 html.is-light-home.is-dark .work-card .work-card__title {
   color: var(--cream) !important;
@@ -4785,17 +4802,18 @@ html.is-dark .study__chrome {
   flex-direction: column;
   width: min(100%, 560px);
   height: min(100%, 560px);
-  padding: 14px 14px 16px;
-  border-radius: 22px;
+  padding: var(--work-frame-pad);
+  border: var(--work-frame-border);
+  border-radius: var(--work-frame-radius);
   overflow: hidden;
-  background: var(--coffee, #1E1510);
-  color: var(--cream, #f4efe6);
-  box-shadow: 0 28px 64px rgba(30, 21, 16, 0.28);
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
+  box-shadow: var(--work-frame-shadow);
 }
 html.is-dark .study-mock__card {
-  background: var(--cream, #f4efe6);
-  color: var(--coffee, #1E1510);
-  box-shadow: 0 28px 64px rgba(30, 21, 16, 0.55);
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
+  box-shadow: var(--work-frame-shadow);
 }
 .study-mock__card--phone {
   width: min(280px, 44%);
@@ -4830,14 +4848,15 @@ html.is-dark .study-mock__card {
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  border-radius: 14px;
-  background: rgba(244, 239, 230, 0.08);
+  border: var(--work-frame-media-border);
+  border-radius: var(--work-frame-media-radius);
+  background: var(--work-frame-media-bg);
 }
 .study-mock__card--phone .study-mock__media {
   border-radius: 18px;
 }
 html.is-dark .study-mock__media {
-  background: rgba(30, 21, 16, 0.06);
+  background: var(--work-frame-media-bg);
 }
 .study-mock__media img {
   display: block;
@@ -4990,24 +5009,33 @@ html.is-dark .study-chart__dot {
 
 .study-frame {
   position: relative;
-  background: var(--coffee, #1E1510);
-  border-radius: 28px;
+  background: var(--work-frame-bg);
+  border: var(--work-frame-border);
+  border-radius: var(--work-frame-radius);
+  box-shadow: var(--work-frame-shadow);
   overflow: hidden;
   transform-style: preserve-3d;
   transform-origin: 50% 50%;
 }
 html.is-dark .study-frame {
-  background: var(--cream, #f4efe6);
+  background: var(--work-frame-bg);
+  border: var(--work-frame-border);
+  box-shadow: var(--work-frame-shadow);
 }
 .study-frame__core {
   position: absolute;
-  inset: 14px;
-  border-radius: 16px;
-  background: var(--cream, #f4efe6);
+  top: var(--work-frame-pad-top);
+  right: var(--work-frame-pad-x);
+  bottom: var(--work-frame-pad-bottom);
+  left: var(--work-frame-pad-x);
+  border: var(--work-frame-media-border);
+  border-radius: var(--work-frame-media-radius);
+  background: var(--work-frame-media-bg);
   transform-origin: 50% 50%;
 }
 html.is-dark .study-frame__core {
-  background: var(--coffee, #1E1510);
+  background: var(--work-frame-media-bg);
+  border: var(--work-frame-media-border);
 }
 
 .study-frame--hero {
@@ -5025,7 +5053,7 @@ html.is-dark .study-frame__core {
 .study-frame--bleed {
   width: 100%;
   height: var(--study-stage);
-  border-radius: 28px;
+  border-radius: var(--work-frame-radius);
 }
 .study-frame--grid {
   height: min(32vh, 280px);
@@ -5200,15 +5228,19 @@ html.is-dark .study-phone__island {
   min-width: 0;
   min-height: 0;
   margin: 0;
-  padding: 14px 14px 16px;
-  border-radius: 22px;
+  padding: var(--work-frame-pad);
+  border: var(--work-frame-border);
+  border-radius: var(--work-frame-radius);
   overflow: hidden;
-  background: var(--coffee, #1E1510);
-  color: var(--cream, #f4efe6);
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
+  box-shadow: var(--work-frame-shadow);
 }
 html.is-dark .study-card {
-  background: var(--cream, #f4efe6);
-  color: var(--coffee, #1E1510);
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
+  border: var(--work-frame-border);
+  box-shadow: var(--work-frame-shadow);
 }
 .study-card__media {
   display: block;
@@ -5216,20 +5248,22 @@ html.is-dark .study-card {
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  border-radius: 14px;
-  background: rgba(244, 239, 230, 0.08);
+  border: var(--work-frame-media-border);
+  border-radius: var(--work-frame-media-radius);
+  background: var(--work-frame-media-bg);
 }
 html.is-dark .study-card__media {
-  background: rgba(30, 21, 16, 0.06);
+  background: var(--work-frame-media-bg);
+  border: var(--work-frame-media-border);
 }
 .study-card__core {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: var(--cream, #f4efe6);
+  background: var(--work-frame-media-bg);
 }
 html.is-dark .study-card__core {
-  background: var(--coffee, #1E1510);
+  background: var(--work-frame-media-bg);
 }
 .study-card__cap {
   display: flex;
@@ -5292,26 +5326,20 @@ html.is-dark .study-card__core {
   height: min(32vh, 280px);
 }
 html.is-study .study-rail .work-card,
-html.is-study .study-rail .work-card[data-tone] {
-  background: var(--coffee, #1E1510);
-  color: var(--cream, #f4efe6);
-}
+html.is-study .study-rail .work-card[data-tone],
 html.is-study.is-dark .study-rail .work-card,
 html.is-study.is-dark .study-rail .work-card[data-tone] {
-  background: var(--cream, #f4efe6);
-  color: var(--coffee, #1E1510);
+  background: var(--work-frame-bg);
+  color: var(--work-frame-ink);
 }
-html.is-study .study-rail .work-card .work-card__title {
-  color: var(--cream, #f4efe6) !important;
-}
-html.is-study .study-rail .work-card .work-card__caption {
-  color: rgba(244, 239, 230, 0.72) !important;
-}
+html.is-study .study-rail .work-card .work-card__title,
 html.is-study.is-dark .study-rail .work-card .work-card__title {
-  color: var(--coffee, #1E1510) !important;
+  color: var(--work-frame-ink) !important;
 }
+html.is-study .study-rail .work-card .work-card__caption,
 html.is-study.is-dark .study-rail .work-card .work-card__caption {
-  color: rgba(30, 21, 16, 0.72) !important;
+  color: var(--work-frame-ink) !important;
+  opacity: 0.72;
 }
 html.is-study .study-rail .work-card.is-current {
   outline: 1px solid #00a0a0;

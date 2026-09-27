@@ -50,12 +50,12 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s76') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s68') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s77') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s69') !== -1, 'index.html missing growth js cache-bust');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s76') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s68') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv1') !== -1, 'multiverse missing case skin');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s77') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s69') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv2') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -83,8 +83,10 @@ check('image sits in the project work-card frame', function () {
   assert.ok(/right:\s*0/.test(css), 'media must sit on the right');
   assert.ok(/top:\s*0/.test(css), 'media must sit in the top-right corner');
   assert.ok(/justify-content:\s*flex-end/.test(css), 'type stack must sit bottom-left');
-  assert.ok(css.indexOf('border-radius: 22px') !== -1, 'cream cover must use the work-card 22px tile');
-  assert.ok(css.indexOf('border-radius: 14px') !== -1, 'cream cover must use the work-card 14px inner crop');
+  assert.ok(css.indexOf('border-radius: var(--work-frame-radius)') !== -1, 'cover must use the shared frame radius token');
+  assert.ok(css.indexOf('border-radius: var(--work-frame-media-radius)') !== -1, 'cover must use the shared inner radius token');
+  assert.ok(css.indexOf('border-radius: 22px') === -1, 'cover must not hardcode the 22px tile');
+  assert.ok(css.indexOf('border-radius: 14px') === -1, 'cover must not hardcode the 14px crop');
   var coverCss = css.slice(0, css.indexOf('.cbx-growth'));
   assert.ok(coverCss.indexOf('dashed') === -1, 'dashed placeholder must stay off the cover');
   var typeRule = coverCss.slice(coverCss.indexOf('.cbx-cover .cbx-cover__type'), coverCss.indexOf('.cbx-cover .hero__heading'));
@@ -172,8 +174,12 @@ check('Section 02 growth field is coffee; cover stays cream', function () {
   assert.ok(sceneCss.indexOf('overflow: hidden') !== -1, 'scene must crop the strip into the coffee well');
   assert.ok(sceneCss.indexOf('#2a211c') === -1, 'coffee plate fill must be gone');
   var picCss = css.slice(css.indexOf('.cbx-growth__pic {'), css.indexOf('.cbx-growth__illo {'));
-  assert.ok(picCss.indexOf('border-radius: 28px') !== -1, 'illustration sits in a tall rounded panel');
-  assert.ok(picCss.indexOf('background: #2A1E17') !== -1, 'illustration panel must match D2 coffee2');
+  assert.ok(picCss.indexOf('border-radius: var(--work-frame-radius)') !== -1, 'illustration panel must use the shared frame radius');
+  assert.ok(picCss.indexOf('background: var(--work-frame-bg)') !== -1, 'illustration panel must use the shared frame background');
+  assert.ok(picCss.indexOf('box-shadow: var(--work-frame-shadow)') !== -1, 'illustration panel must use the shared frame shadow');
+  assert.ok(picCss.indexOf('padding: var(--work-frame-pad)') !== -1, 'illustration panel must use the shared frame padding');
+  assert.ok(picCss.indexOf('border-radius: 28px') === -1, 'illustration panel must not hardcode 28px');
+  assert.ok(picCss.indexOf('#2A1E17') === -1, 'illustration panel must not hardcode coffee2');
   assert.ok(mvCase.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__scene') !== -1, 'missing Multiverse scene');
   var mvScene = mvCase.slice(
     mvCase.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__scene'),
@@ -181,6 +187,17 @@ check('Section 02 growth field is coffee; cover stays cream', function () {
   );
   assert.ok(mvScene.indexOf('background: transparent') !== -1, 'Multiverse scene must not be a boxed plate');
   assert.ok(landingCss.indexOf('--projects-panel: var(--coffee)') !== -1, 'growth must match landing projects rail coffee');
+  assert.ok(landingCss.indexOf('--work-frame-radius: 22px') !== -1, 'cream frame radius lives on the landing token');
+  assert.ok(landingCss.indexOf('--work-frame-media-radius: 14px') !== -1, 'cream inner radius lives on the landing token');
+  assert.ok(landingCss.indexOf('--work-frame-pad-top: 14px') !== -1, 'cream frame padding lives on the landing token');
+  assert.ok(/--work-frame-shadow:\s*none/.test(landingCss), 'cream frame shadow lives on the landing token');
+  assert.ok(landingCss.indexOf('border-radius: var(--work-frame-radius)') !== -1, 'landing work-card must consume the radius token');
+  assert.ok(mvCss.indexOf('--work-frame-radius: 0px') !== -1, 'multiverse frame radius lives on the landing token');
+  assert.ok(mvCss.indexOf('--work-frame-border: 4px solid var(--ink)') !== -1, 'multiverse frame border lives on the landing token');
+  assert.ok(/--work-frame-shadow:\s*7px 7px 0 var\(--cyan\)/.test(mvCss), 'multiverse frame shadow lives on the landing token');
+  assert.ok(mvCss.indexOf('border-radius: var(--work-frame-radius)') !== -1, 'multiverse work-card must consume the radius token');
+  assert.ok(!/html\.is-multiverse \.cbx-growth__pic \{[^}]*border-radius/.test(mvCase), 'skin must not restyle the illustration frame');
+  assert.ok(pages.indexOf('cbx-growth__pic-media') !== -1, 'illustration must sit in the inner media well');
 });
 
 check('cream stays calm; Multiverse glitches cover + chrome', function () {
@@ -543,7 +560,8 @@ check('D2 worry board replaces clay plate and product chips', function () {
   var worryCss = css.slice(css.indexOf('.cbx-growth__worry {'), css.indexOf('.cbx-growth__voice {'));
   assert.ok(worryCss.indexOf('justify-content: center') !== -1, 'worry column must sit vertically centred');
   var picCss = css.slice(css.indexOf('.cbx-growth__pic {'), css.indexOf('.cbx-growth__illo {'));
-  assert.ok(picCss.indexOf('border-radius: 28px') !== -1, 'illustration panel must be the tall rounded well');
+  assert.ok(picCss.indexOf('var(--work-frame-radius)') !== -1, 'illustration panel must be the shared work-card frame');
+  assert.ok(picCss.indexOf('cbx-growth__pic-media') !== -1, 'illustration sits in the shared inner media well');
   assert.ok(picCss.indexOf('min(420px, 48vh)') === -1, 'old supporting plate height must be gone');
   assert.ok(css.indexOf('min(28%, 16rem)') === -1, 'old left overlay column must be gone');
   var voiceCss = css.slice(css.indexOf('.cbx-growth__voice {'), css.indexOf('.cbx-growth__beat {'));

@@ -393,7 +393,9 @@ window.Cbx300Case = (function () {
 
     var pic = el('div', 'cbx-growth__pic');
     pic.setAttribute('data-cbx-pic', '');
-    pic.appendChild(illoSlot());
+    var picMedia = el('div', 'cbx-growth__pic-media');
+    picMedia.appendChild(illoSlot());
+    pic.appendChild(picMedia);
 
     board.appendChild(worry);
     board.appendChild(pic);
