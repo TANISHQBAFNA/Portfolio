@@ -170,6 +170,7 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media.work-card {
   bottom: auto;
   transform: none;
   z-index: 1;
+  pointer-events: none;
   width: min(34vw, 26rem);
   height: min(68vh, 34rem);
 }
@@ -205,7 +206,11 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media .work-card__
 }
 
 .cbx-cover .cbx-cover__type,
-.cbx-cover .hero__type {
+.cbx-cover .hero__type,
+html.is-light-home .cbx-cover .cbx-cover__type,
+html.is-light-home .cbx-cover .hero__type,
+html.is-multiverse .cbx-cover .cbx-cover__type,
+html.is-multiverse .cbx-cover .hero__type {
   position: relative;
   z-index: 3;
   display: flex;
