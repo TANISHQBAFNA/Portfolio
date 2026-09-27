@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -24 616 662" width="100%" height="100%" preserveAspectRatio="xMidYMax meet">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-110 -72 860 700" width="100%" height="100%" preserveAspectRatio="xMidYMax slice">
   <defs>
     <mask id="cbx-s01-arrow-mask" maskUnits="userSpaceOnUse">
       <rect x="-50" y="-50" width="700" height="740" fill="black"/>
@@ -7,23 +7,23 @@
   </defs>
 
   <g data-cbx-layer="glow">
-    <rect data-cbx-ink="panel" x="-50" y="-50" width="700" height="740" fill="#2A1E17"/>
-    <rect data-cbx-ink="floor" x="-50" y="520" width="700" height="200" fill="#241913"/>
-    <ellipse data-cbx-ink="rug" cx="300" cy="566" rx="260" ry="30" fill="#2E211A"/>
-    <ellipse data-cbx-ink="rug-ring" cx="300" cy="566" rx="200" ry="20" fill="none" stroke="#3A2A20" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+    <rect data-cbx-ink="panel" x="-400" y="-220" width="1600" height="1400" fill="#2A1E17"/>
+    <rect data-cbx-ink="floor" x="-400" y="520" width="1600" height="520" fill="#241913"/>
+    <ellipse data-cbx-ink="rug" cx="300" cy="566" rx="360" ry="36" fill="#2E211A"/>
+    <ellipse data-cbx-ink="rug-ring" cx="300" cy="566" rx="270" ry="24" fill="none" stroke="#3A2A20" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
     <circle data-cbx-ink="halo" cx="300" cy="260" r="200" fill="#33251C"/>
   </g>
 
   <g data-cbx-layer="s03-sides">
     <g data-cbx-layer="s03-side-l">
-      <g transform="translate(82,318) scale(0.72)">
+      <g transform="translate(82,318) scale(0.86)">
         <path data-cbx-ink="shirt-side-l" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#E9A15B"/>
         <circle cx="0" cy="-22" r="30" fill="#C98E6B"/>
         <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#2B1B12"/>
       </g>
     </g>
     <g data-cbx-layer="s03-side-r">
-      <g transform="translate(518,318) scale(0.72)">
+      <g transform="translate(518,318) scale(0.86)">
         <path data-cbx-ink="shirt-side-r" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#9C7BA0"/>
         <circle cx="0" cy="-22" r="30" fill="#A86F52"/>
         <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#1B120D"/>
@@ -32,6 +32,7 @@
   </g>
 
   <g data-cbx-layer="persist">
+    <g data-cbx-scale="cast" transform="translate(300,398) scale(1.16) translate(-300,-398)">
     <g data-cbx-layer="aisha">
       <path data-cbx-ink="shirt-aisha" d="M238 398 C238 318 256 280 300 280 C344 280 362 318 362 398 Z" fill="#E9C85A"/>
       <path data-cbx-ink="neck" d="M286 280 Q300 294 314 280" fill="none" stroke="#C9A640" stroke-width="3"/>
@@ -63,9 +64,11 @@
       <path data-cbx-ink="leaf-a" d="M140 358 C110 328 106 298 132 286 C136 312 140 338 140 358 Z" fill="#8FA58A"/>
       <path data-cbx-ink="leaf-b" d="M140 358 C168 338 180 306 158 294 C150 318 144 338 140 358 Z" fill="#6F8A6B"/>
     </g>
+    </g>
   </g>
 
   <g data-cbx-layer="s02-lina">
+    <g data-cbx-scale="lina" transform="translate(404,398) scale(1.16) translate(-404,-398)">
     <path data-cbx-ink="shirt-lina" d="M346 398 C346 320 364 286 404 286 C444 286 462 320 462 398 Z" fill="#8FA58A"/>
     <rect x="394" y="264" width="20" height="26" rx="8" fill="#A86F52"/>
     <circle cx="404" cy="184" r="18" fill="#3A2418"/>
@@ -79,6 +82,7 @@
       <path data-cbx-ink="laptop" d="M-36 -10 L-30 -58 H30 L36 -10 Z" fill="#D9D0C3"/>
       <circle data-cbx-ink="laptop-dot" cx="0" cy="-34" r="6" fill="#E8A96B"/>
     </g>
+    </g>
   </g>
 
   <g data-cbx-layer="s01">
@@ -88,38 +92,38 @@
     </g>
     <g data-cbx-layer="s01-inv-015">
       <g data-cbx-idle="card">
-        <g transform="translate(36,110) rotate(-8)">
+        <g transform="translate(36,110) rotate(-8) translate(75,48) scale(1.2) translate(-75,-48)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
           <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #015</text>
-          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$1,650</text>
+          <text x="14" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #015</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit, sans-serif" font-size="22" font-weight="600" fill="#1E1510">$1,650</text>
           <rect x="14" y="68" width="69.80000000000001" height="18" rx="9" fill="#9A6A1E" data-cbx-ink="tag-due"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">DUE FRI</text>
+          <text x="23" y="81" font-family="Outfit, sans-serif" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">DUE FRI</text>
         </g>
       </g>
     </g>
     <g data-cbx-layer="s01-inv-014">
       <g data-cbx-idle="card">
-        <g transform="translate(410,58) rotate(7)">
+        <g transform="translate(410,58) rotate(7) translate(75,48) scale(1.2) translate(-75,-48)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
           <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #014</text>
-          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$2,400</text>
+          <text x="14" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #014</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit, sans-serif" font-size="22" font-weight="600" fill="#1E1510">$2,400</text>
           <rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36" data-cbx-ink="tag-paid"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">PAID</text>
+          <text x="23" y="81" font-family="Outfit, sans-serif" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">PAID</text>
         </g>
       </g>
     </g>
     <g data-cbx-layer="s01-inv-012">
       <g data-cbx-idle="card">
-        <g transform="translate(430,236) rotate(-5)">
+        <g transform="translate(430,236) rotate(-5) translate(78,48) scale(1.2) translate(-78,-48)">
           <rect x="0" y="4" width="156" height="96" rx="12" fill="#000" opacity=".22"/>
           <rect data-cbx-ink="card" width="156" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #012</text>
-          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$2,800</text>
+          <text x="14" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #012</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit, sans-serif" font-size="22" font-weight="600" fill="#1E1510">$2,800</text>
           <g data-cbx-layer="s01-late">
             <rect data-cbx-ink="tag-late" x="14" y="68" width="99.4" height="18" rx="9" fill="#C8664A"/>
-            <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">6 DAYS LATE</text>
+            <text x="23" y="81" font-family="Outfit, sans-serif" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">6 DAYS LATE</text>
           </g>
         </g>
       </g>
@@ -133,65 +137,65 @@
     </g>
     <g data-cbx-layer="s02-card-shared">
       <g data-cbx-idle="card">
-        <g transform="translate(225,96) rotate(-4)">
+        <g transform="translate(225,96) rotate(-4) translate(75,47) scale(1.22) translate(-75,-47)">
           <rect x="0" y="5" width="150" height="94" rx="12" fill="#000" opacity=".25"/>
           <rect width="150" height="94" rx="12" fill="#E8A96B" data-cbx-ink="card-cyan"/>
           <rect data-cbx-ink="chip" x="16" y="26" width="28" height="20" rx="4" fill="#F3D7A8"/>
-          <text x="16" y="74" font-family="Outfit" font-size="13" font-weight="600" fill="#1E1510" letter-spacing="2">"""" 4821</text>
+          <circle cx="24" cy="69" r="2.4" fill="#1E1510"/><circle cx="34" cy="69" r="2.4" fill="#1E1510"/><circle cx="44" cy="69" r="2.4" fill="#1E1510"/><circle cx="54" cy="69" r="2.4" fill="#1E1510"/><text x="66" y="74" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#1E1510" letter-spacing="1.1">4821</text>
           <circle data-cbx-ink="chip-hot" cx="116" cy="30" r="10" fill="#C8664A" opacity=".9"/>
           <circle data-cbx-ink="chip-cool" cx="128" cy="30" r="10" fill="#F3D7A8" opacity=".9"/>
-          <text x="16" y="18" font-family="Outfit" font-size="10" font-weight="700" fill="#1E1510" letter-spacing="1.2" opacity=".7">SHARED</text>
+          <text x="16" y="18" font-family="Outfit, sans-serif" font-size="10" font-weight="700" fill="#1E1510" letter-spacing="1.2" opacity=".7">SHARED</text>
         </g>
       </g>
     </g>
     <g data-cbx-layer="s02-card-payday">
       <g data-cbx-idle="card">
-        <g transform="translate(28,70) rotate(-7)">
+        <g transform="translate(28,70) rotate(-7) translate(75,48) scale(1.22) translate(-75,-48)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
           <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">PAYDAY · FRI</text>
-          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$3,200</text>
+          <text x="14" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">PAYDAY</text><circle data-cbx-ink="card-label" cx="76" cy="21" r="2.15" fill="#6B5E54"/><text x="84" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">FRI</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit, sans-serif" font-size="22" font-weight="600" fill="#1E1510">$3,200</text>
           <rect x="14" y="68" width="62.400000000000006" height="18" rx="9" fill="#9A6A1E" data-cbx-ink="tag-due"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">SALARY</text>
+          <text x="23" y="81" font-family="Outfit, sans-serif" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">SALARY</text>
         </g>
       </g>
     </g>
     <g data-cbx-layer="s02-card-free">
       <g data-cbx-idle="card">
-        <g transform="translate(430,62) rotate(6)">
+        <g transform="translate(430,62) rotate(6) translate(75,48) scale(1.22) translate(-75,-48)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
           <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">FREE AFTER</text>
-          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$7,130</text>
+          <text x="14" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">FREE AFTER</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit, sans-serif" font-size="22" font-weight="600" fill="#1E1510">$7,130</text>
           <rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36" data-cbx-ink="tag-paid"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">SAFE</text>
+          <text x="23" y="81" font-family="Outfit, sans-serif" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">SAFE</text>
         </g>
       </g>
     </g>
   </g>
 
   <g data-cbx-layer="s03-row">
-    <g transform="translate(64,516) scale(0.82)">
+    <g transform="translate(64,516) scale(0.96)">
       <path data-cbx-ink="row-1" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#8FA58A"/>
       <circle cx="0" cy="-22" r="30" fill="#A86F52"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#2B1B12"/>
     </g>
-    <g transform="translate(182,522) scale(0.8)">
+    <g transform="translate(182,522) scale(0.94)">
       <path data-cbx-ink="row-2" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#C8664A"/>
       <circle cx="0" cy="-22" r="30" fill="#C98E6B"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#4A2E1E"/>
     </g>
-    <g transform="translate(300,526) scale(0.78)">
+    <g transform="translate(300,526) scale(0.92)">
       <path data-cbx-ink="row-3" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#D9D0C3"/>
       <circle cx="0" cy="-22" r="30" fill="#8A5A40"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#3A2418"/>
     </g>
-    <g transform="translate(418,522) scale(0.8)">
+    <g transform="translate(418,522) scale(0.94)">
       <path data-cbx-ink="row-4" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#7C8FB0"/>
       <circle cx="0" cy="-22" r="30" fill="#B67E5E"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#1B120D"/>
     </g>
-    <g transform="translate(536,516) scale(0.82)">
+    <g transform="translate(536,516) scale(0.96)">
       <path data-cbx-ink="row-5" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#E9C85A"/>
       <circle cx="0" cy="-22" r="30" fill="#A86F52"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#4A2E1E"/>
@@ -211,32 +215,32 @@
   <g data-cbx-layer="s03">
     <g data-cbx-layer="s03-card-payroll">
       <g data-cbx-idle="card">
-        <g transform="translate(34,64) rotate(-7)">
+        <g transform="translate(34,64) rotate(-7) translate(75,48) scale(1.2) translate(-75,-48)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
           <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">PAYROLL · 8</text>
-          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$38,400</text>
+          <text x="14" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">PAYROLL</text><circle data-cbx-ink="card-label" cx="86" cy="21" r="2.15" fill="#6B5E54"/><text x="94" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">8</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit, sans-serif" font-size="22" font-weight="600" fill="#1E1510">$38,400</text>
           <rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E" data-cbx-ink="tag-due"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">APPROVE?</text>
+          <text x="23" y="81" font-family="Outfit, sans-serif" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">APPROVE?</text>
         </g>
       </g>
     </g>
     <g data-cbx-layer="s03-card-supplier">
       <g data-cbx-idle="card">
-        <g transform="translate(420,56) rotate(6)">
+        <g transform="translate(420,56) rotate(6) translate(75,48) scale(1.2) translate(-75,-48)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
           <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">SUPPLIER BILL</text>
-          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$4,120</text>
+          <text x="14" y="26" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">SUPPLIER BILL</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit, sans-serif" font-size="22" font-weight="600" fill="#1E1510">$4,120</text>
           <rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E" data-cbx-ink="tag-due"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">APPROVE?</text>
+          <text x="23" y="81" font-family="Outfit, sans-serif" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">APPROVE?</text>
         </g>
       </g>
     </g>
     <g data-cbx-layer="s03-pill">
-      <g transform="translate(248,28)">
+      <g transform="translate(248,28) translate(52,20) scale(1.16) translate(-52,-20)">
         <rect data-cbx-ink="pill" width="104" height="40" rx="20" fill="#E8A96B"/>
-        <text x="52.0" y="26" text-anchor="middle" font-family="Outfit" font-size="16" font-weight="700" fill="#1E1510">7 waiting</text>
+        <text x="52.0" y="26" text-anchor="middle" font-family="Outfit, sans-serif" font-size="16" font-weight="700" fill="#1E1510">7 waiting</text>
       </g>
     </g>
   </g>

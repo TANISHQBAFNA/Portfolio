@@ -63,7 +63,7 @@ window.Cbx300Case = (function () {
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
 
-  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg';
+  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s3';
   /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
      clears the mug; the stage-03 left figure shifts off the plant. */
   var LINA_X = 112;
@@ -317,19 +317,11 @@ window.Cbx300Case = (function () {
     if (!svg) return;
     svg.removeAttribute('width');
     svg.removeAttribute('height');
-    /* 01/02: contain, bottom-anchored. Trim empty floor only — never the sides. */
-    svg.setAttribute('preserveAspectRatio', crop ? 'xMidYMax meet' : 'xMidYMid slice');
+    /* Fill the card well. Bottom-anchored slice; the viewBox keeps the
+       lamp, cards, people, desk and bench inside the widest stage. */
+    svg.setAttribute('preserveAspectRatio', crop ? 'xMidYMax slice' : 'xMidYMid slice');
     if (!crop) return;
-    var raw = svg.getAttribute('viewBox') || '-8 -24 616 662';
-    var parts = raw.trim().split(/[\s,]+/).map(Number);
-    if (parts.length !== 4 || parts.some(isNaN)) return;
-    /* Pull min-y up so the lamp sits inside. Keep full height so the
-       stage-03 bench stays in the viewBox. */
-    var minX = parts[0];
-    var minY = Math.min(parts[1], -40);
-    var width = parts[2];
-    var maxY = parts[1] + parts[3];
-    svg.setAttribute('viewBox', [minX, minY, width, maxY - minY].join(' '));
+    svg.setAttribute('viewBox', '-110 -72 860 700');
   }
 
   function paintIllo(slot, done) {

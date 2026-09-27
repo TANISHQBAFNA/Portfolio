@@ -50,11 +50,11 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s78') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s71') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s79') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s72') !== -1, 'index.html missing growth js cache-bust');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s78') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s71') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s79') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s72') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv2') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s43') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
@@ -573,18 +573,27 @@ check('D2 worry board replaces clay plate and product chips', function () {
   assert.ok(beatOff.indexOf('grid-area: 1 / 1') !== -1, 'beats must overlay in one cell');
   assert.ok(beatOff.indexOf('position: absolute') === -1, 'beats must not bottom-pin inside an empty well');
   assert.ok(pages.indexOf('[data-cbx-step]') !== -1, 'applyBeat must light the stage rail');
-  assert.ok(pages.indexOf('data-illo-crop') !== -1, 'stages 01/02 must crop the empty floor band');
-  assert.ok(pages.indexOf("'xMidYMax meet'") !== -1, '01/02 must contain the scene, not slice the sides');
+  assert.ok(pages.indexOf('data-illo-crop') !== -1, 'illustration must fill the landing-card well');
+  assert.ok(pages.indexOf("'xMidYMax slice'") !== -1, 'illustration must slice to the card edges, bottom-anchored');
+  assert.ok(pages.indexOf("'xMidYMax meet'") === -1, 'contain crop must be gone so the drawing fills the well');
   assert.ok(pages.indexOf("'xMidYMin slice'") === -1, 'top-sliced crop must be gone');
   assert.ok(css.indexOf('122%') === -1, 'side-zoom crop must be gone');
-  assert.ok(css.indexOf('.cbx-growth__illo[data-illo-crop="1"]') !== -1, '01/02 illustration padding missing');
+  assert.ok(css.indexOf('.cbx-growth__illo[data-illo-crop="1"]') !== -1, 'illustration fill rule missing');
   var cropCss = css.slice(
     css.indexOf('.cbx-growth__illo[data-illo-crop="1"] {'),
     css.indexOf('.cbx-growth__illo[data-illo-crop="1"] svg')
   );
-  assert.ok(cropCss.indexOf('inset: 24px') !== -1, 'prop cards need ~24px inner padding');
-  assert.ok(css.indexOf('object-fit: contain') !== -1, '01/02 must fit width, not cover');
-  assert.ok(css.indexOf('object-position: center bottom') !== -1, '01/02 must sit on the panel floor');
+  assert.ok(cropCss.indexOf('inset: 0') !== -1, 'illustration must meet the inner well edge');
+  assert.ok(cropCss.indexOf('inset: 24px') === -1, 'inner mat inset must be gone');
+  assert.ok(css.indexOf('object-fit: fill') !== -1, 'illustration viewport must fill the well');
+  assert.ok(css.indexOf('object-fit: contain') === -1, 'contain fit must not letterbox the drawing');
+  assert.ok(css.indexOf('object-position: center bottom') !== -1, 'illustration must sit on the panel floor');
+  var sceneSvg = read('assets/img/aisha-growth/illo-d2-scene.svg');
+  assert.ok(sceneSvg.indexOf('""""') === -1, 'masked card digits must not be quote glyphs');
+  assert.ok(sceneSvg.indexOf('\u00b7') === -1, 'prop labels must not rely on a middle-dot glyph');
+  assert.ok(sceneSvg.indexOf('>4821<') !== -1, 'shared card must keep the visible digits');
+  assert.ok(sceneSvg.indexOf('>PAYDAY<') !== -1 && sceneSvg.indexOf('>FRI<') !== -1, 'payday label must split around a drawn dot');
+  assert.ok(sceneSvg.indexOf('>PAYROLL<') !== -1, 'payroll label must split around a drawn dot');
   var coffee = [30, 21, 16];
   var cream = [244, 239, 230];
   function srgbToLin(c) {
