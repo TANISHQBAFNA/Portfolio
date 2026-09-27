@@ -1,6 +1,7 @@
 /**
  * CBX300 case study — Section 01 cover + Section 02 D2 worry board.
- * Cover: kicker → accent → word. Image overlaps type from the right.
+ * Cover: kicker → accent → word. Image overlaps type from the right;
+ * type always paints on top of the image.
  * Growth: coffee panel curtains over the parked cover + chrome
  * (--cbx-rise / --panel-flush, same family as landing --rise /
  * --panel-flush / is-projects-in), then one pinned morph:
@@ -240,8 +241,8 @@ window.Cbx300Case = (function () {
     shot.appendChild(img);
     media.appendChild(shot);
 
-    inner.appendChild(type);
     inner.appendChild(media);
+    inner.appendChild(type);
     section.appendChild(inner);
     return section;
   }

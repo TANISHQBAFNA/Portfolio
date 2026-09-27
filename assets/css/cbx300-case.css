@@ -1,5 +1,6 @@
 /* CBX300 Section 01 cover + Section 02 D2 worry board.
-   Home hero language. Image overlaps type from the right.
+   Home hero language. Image overlaps type from the right,
+   and type always paints on top of that image (Sep 15 lock).
    Cover + study chrome stay parked. Coffee panel rises over them
    with --cbx-rise / --panel-flush, same family as landing
    --rise / --panel-flush / is-projects-in.
@@ -133,6 +134,7 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
 
 .cbx-cover__inner {
   position: relative;
+  isolation: isolate;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -143,11 +145,12 @@ html.is-multiverse .study[data-template="cbx300"] .study__count {
 }
 
 /* Same chrome as the work-rail cards: .work-card + .work-card__media.
-   Cream radius / Multiverse ink offset come from landing sheets. */
+   Cream radius / Multiverse ink offset come from landing sheets.
+   Image is the under-layer. Type sits on top and stays clickable. */
 .cbx-cover__media.work-card {
   box-sizing: border-box;
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   top: 0;
   right: 0;
   display: flex;
@@ -166,7 +169,7 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media.work-card {
   left: auto;
   bottom: auto;
   transform: none;
-  z-index: 2;
+  z-index: 1;
   width: min(34vw, 26rem);
   height: min(68vh, 34rem);
 }
@@ -204,7 +207,7 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media .work-card__
 .cbx-cover .cbx-cover__type,
 .cbx-cover .hero__type {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -213,6 +216,7 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media .work-card__
   max-width: none;
   container-type: inline-size;
   container-name: cbx-shout;
+  pointer-events: auto;
 }
 
 .cbx-cover .hero__heading {
@@ -283,6 +287,19 @@ html.is-multiverse .cbx-cover .hero__word {
   color: var(--film-ink) !important;
 }
 
+/* Soft film-cream halo so overlapping type stays readable on the photo.
+   :not(.is-glitching) yields to Multiverse burst plates. */
+.cbx-cover .hero__kicker:not(.is-glitching),
+.cbx-cover .hero__word:not(.is-glitching),
+.cbx-cover .hero__accent:not(.is-glitching),
+html.is-multiverse .cbx-cover .hero__kicker:not(.is-glitching),
+html.is-multiverse .cbx-cover .hero__word:not(.is-glitching),
+html.is-multiverse .cbx-cover .hero__accent:not(.is-glitching) {
+  text-shadow:
+    0 0 14px var(--film-cream),
+    0 1px 8px var(--film-cream);
+}
+
 /* Home Multiverse paints kicker/word with Ben-Day + print fill (#0e1018).
    That fill disappears on the ink study. Solid type; RGB stays in glitch plates. */
 html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__kicker,
@@ -320,6 +337,20 @@ html.is-light-home .study[data-template="cbx300"] .glitch::after {
   content: none !important;
   animation: none !important;
   display: none !important;
+}
+
+/* Home rail + in-study rail: title/caption sit above the photo if they share space. */
+html.is-light-home .work-card__media,
+html.is-multiverse .work-card__media,
+html.is-study .study-rail .work-card__media {
+  position: relative;
+  z-index: 0;
+}
+html.is-light-home .work-card__cap,
+html.is-multiverse .work-card__cap,
+html.is-study .study-rail .work-card__cap {
+  position: relative;
+  z-index: 1;
 }
 
 .cbx-rest[hidden],

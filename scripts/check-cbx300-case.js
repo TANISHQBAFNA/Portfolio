@@ -49,10 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s73') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s66') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s73') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s66') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s74') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s67') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s74') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s67') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -71,7 +71,7 @@ check('image sits in the project work-card frame', function () {
   var coverFn = pages.slice(pages.indexOf('function buildCover'), pages.indexOf('function beatCopy'));
   var appendType = coverFn.indexOf('inner.appendChild(type)');
   var appendMedia = coverFn.indexOf('inner.appendChild(media)');
-  assert.ok(appendType !== -1 && appendMedia !== -1 && appendType < appendMedia, 'type first, media on top');
+  assert.ok(appendType !== -1 && appendMedia !== -1 && appendMedia < appendType, 'media first, type on top');
   assert.ok(coverFn.indexOf("work-card cbx-cover__media") !== -1, 'cover media must reuse .work-card');
   assert.ok(coverFn.indexOf('work-card__media') !== -1, 'cover must use work-card inner media');
   assert.ok(coverFn.indexOf('work-card__img') !== -1, 'cover must use the work-card image');
@@ -84,7 +84,13 @@ check('image sits in the project work-card frame', function () {
   assert.ok(css.indexOf('border-radius: 14px') !== -1, 'cream cover must use the work-card 14px inner crop');
   var coverCss = css.slice(0, css.indexOf('.cbx-growth'));
   assert.ok(coverCss.indexOf('dashed') === -1, 'dashed placeholder must stay off the cover');
-  assert.ok(css.indexOf('z-index: 2') !== -1, 'media must paint over type');
+  var typeRule = coverCss.slice(coverCss.indexOf('.cbx-cover .cbx-cover__type'), coverCss.indexOf('.cbx-cover .hero__heading'));
+  var mediaRule = coverCss.slice(coverCss.indexOf('.cbx-cover__media.work-card'), coverCss.indexOf('.cbx-cover__media .work-card__media'));
+  assert.ok(/z-index:\s*3/.test(typeRule), 'type must paint over the project image');
+  assert.ok(/pointer-events:\s*auto/.test(typeRule), 'cover type must stay clickable');
+  assert.ok(/z-index:\s*1/.test(mediaRule), 'media must sit behind type');
+  assert.ok(!/z-index:\s*2/.test(mediaRule), 'media must not paint over type');
+  assert.ok(/pointer-events:\s*none/.test(mediaRule), 'cover media must not steal clicks');
 });
 
 check('cover type is still a large home-parity shout', function () {
