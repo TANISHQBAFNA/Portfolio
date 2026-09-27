@@ -51,10 +51,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
   assert.ok(index.indexOf('cbx300-case.css?v=s78') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s70') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s71') !== -1, 'index.html missing growth js cache-bust');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
   assert.ok(mvIndex.indexOf('cbx300-case.css?v=s78') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s70') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s71') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv2') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
@@ -626,6 +626,8 @@ check('coffee curtain docks with landing projects softness', function () {
   assert.ok(pages.indexOf('var GESTURE_QUIET = 80') !== -1, 'a short pause must end the gesture before the next stage');
   assert.ok(pages.indexOf('function bindStageStep') !== -1, 'direction-aware stage step missing');
   assert.ok(pages.indexOf('ctrl.origin + dir') !== -1, 'one gesture may advance only one stage');
+  assert.ok(pages.indexOf('function dockScrollY') !== -1, 'stage step must wait until the curtain has docked');
+  assert.ok(pages.indexOf("ctrl.kind = 'rise'") !== -1, 'curtain rise stays smooth until the panel is flush');
   assert.ok(pages.indexOf('snapTo:') === -1, 'nearest snap pulls short gestures backward');
   assert.ok(pages.indexOf('directional: false') === -1, 'nearest snap is not direction-aware');
   assert.ok(pages.indexOf('var LINA_X = 112') !== -1, 'Lina must move aside so Aisha stays put');

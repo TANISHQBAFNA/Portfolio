@@ -68,8 +68,9 @@ window.Cbx300Case = (function () {
      clears the mug; the stage-03 left figure shifts off the plant. */
   var LINA_X = 112;
   var SIDE_L_X = -28;
-  /* One stage per gesture. A notch (~100px) or ~72px of trackpad
-     travel commits the next stop; quieter than this ends the gesture. */
+  /* After the curtain is docked, one stage per gesture. A notch (~100px)
+     or ~72px of trackpad travel commits the next rail tab. The rise
+     itself stays 1:1 with the wheel — no step until the panel is flush. */
   var STEP_PX = 72;
   var GESTURE_QUIET = 80;
 
@@ -915,17 +916,28 @@ window.Cbx300Case = (function () {
     ];
   }
 
-  function nearestStopIndex(y, stops) {
+  function dockScrollY(st) {
+    var span = Math.max(1, st.end - st.start);
+    return st.start + span * (RISE_DUR / (RISE_DUR + MORPH_VH));
+  }
+
+  function railStops(st) {
+    var all = stageStops(st);
+    return [all[1], all[2], all[3]];
+  }
+
+  function nearestRailIndex(y, rails) {
     var best = 0;
-    var bestD = Math.abs(y - stops[0]);
+    var bestD = Math.abs(y - rails[0]);
     var i;
-    for (i = 1; i < stops.length; i += 1) {
-      var d = Math.abs(y - stops[i]);
+    for (i = 1; i < rails.length; i += 1) {
+      var d = Math.abs(y - rails[i]);
       if (d < bestD) {
         bestD = d;
         best = i;
       }
     }
+    if (y > rails[2] + 24) return 3;
     return best;
   }
 
@@ -959,8 +971,11 @@ window.Cbx300Case = (function () {
     unbindStageStep();
     var ctrl = {
       active: false,
+      kind: 'rise',
       origin: 0,
+      originY: 0,
       settled: 0,
+      park: null,
       travel: 0,
       timer: 0,
       tween: null
@@ -1005,25 +1020,72 @@ window.Cbx300Case = (function () {
       return dy;
     }
 
+    function armQuiet() {
+      if (ctrl.timer) window.clearTimeout(ctrl.timer);
+      ctrl.timer = window.setTimeout(finishGesture, GESTURE_QUIET);
+    }
+
     function finishGesture() {
       ctrl.timer = 0;
       var st = pinTrigger();
-      if (!st) {
-        ctrl.active = false;
-        ctrl.travel = 0;
-        return;
-      }
-      var stops = stageStops(st);
-      var dir = ctrl.travel >= 0 ? 1 : -1;
-      var dest = ctrl.origin;
-      if (Math.abs(ctrl.travel) >= STEP_PX) {
-        dest = Math.max(0, Math.min(stops.length - 1, ctrl.origin + dir));
-      }
+      var kind = ctrl.kind;
+      var travel = ctrl.travel;
+      var origin = ctrl.origin;
       ctrl.active = false;
       ctrl.travel = 0;
+      if (!st || kind === 'native') return;
+      var rails = railStops(st);
+      if (kind === 'rise') {
+        var yNow = window.scrollY || 0;
+        if (yNow >= rails[0] - 2) {
+          ctrl.settled = 0;
+          ctrl.park = rails[0];
+        }
+        return;
+      }
+      var dir = travel >= 0 ? 1 : -1;
+      var dest = origin;
+      if (Math.abs(travel) >= STEP_PX) {
+        dest = Math.max(0, Math.min(rails.length - 1, ctrl.origin + dir));
+      }
       ctrl.settled = dest;
-      ctrl.origin = dest;
-      animateTo(stops[dest]);
+      ctrl.park = rails[dest];
+      animateTo(rails[dest]);
+    }
+
+    function beginGesture(st, y, dy) {
+      var rails = railStops(st);
+      var dock = dockScrollY(st);
+      var wasTween = !!ctrl.tween;
+      var park = ctrl.park;
+      killTween();
+      if (wasTween && park != null) {
+        window.scrollTo(0, park);
+        y = park;
+      }
+      var idx = nearestRailIndex(y, rails);
+      ctrl.active = true;
+      ctrl.travel = 0;
+      ctrl.originY = y;
+      if (y < dock - 1) {
+        ctrl.kind = 'rise';
+        ctrl.origin = 0;
+        return;
+      }
+      if (idx >= 3 && dy > 0) {
+        ctrl.kind = 'native';
+        return;
+      }
+      if (idx === 2 && dy > 0 && y >= rails[2] - 40) {
+        ctrl.kind = 'native';
+        return;
+      }
+      if (idx === 0 && dy < 0) {
+        ctrl.kind = 'native';
+        return;
+      }
+      ctrl.kind = 'step';
+      ctrl.origin = idx > 2 ? 3 : idx;
     }
 
     function onWheel(event) {
@@ -1036,32 +1098,41 @@ window.Cbx300Case = (function () {
       if (y <= st.start + 1 && dy < 0) return;
       if (y >= st.end - 1 && dy > 0) return;
       if (y < st.start - 2 || y > st.end + 2) return;
-      event.preventDefault();
-      var stops = stageStops(st);
-      if (!ctrl.active) {
-        var interrupted = !!ctrl.tween;
-        killTween();
-        if (interrupted) {
-          window.scrollTo(0, stops[ctrl.settled]);
-        } else if (Math.abs(y - stops[ctrl.settled]) > 48) {
-          ctrl.settled = nearestStopIndex(y, stops);
-        }
-        ctrl.active = true;
-        ctrl.origin = ctrl.settled;
-        ctrl.travel = 0;
+      if (ctrl.active && ctrl.kind === 'native') {
+        armQuiet();
+        return;
       }
+      if (!ctrl.active) beginGesture(st, y, dy);
+      if (ctrl.kind === 'native') {
+        armQuiet();
+        return;
+      }
+      event.preventDefault();
+      var rails = railStops(st);
       ctrl.travel += dy;
+      if (ctrl.kind === 'rise') {
+        var ceiling = rails[0];
+        var rawRise = ctrl.originY + ctrl.travel;
+        window.scrollTo(0, Math.max(st.start, Math.min(ceiling, rawRise)));
+        armQuiet();
+        return;
+      }
       var dir = ctrl.travel >= 0 ? 1 : -1;
       var next = ctrl.origin;
       if (Math.abs(ctrl.travel) >= STEP_PX) {
-        next = Math.max(0, Math.min(stops.length - 1, ctrl.origin + dir));
+        next = Math.max(0, Math.min(rails.length - 1, ctrl.origin + dir));
       }
-      var lo = Math.min(stops[ctrl.origin], stops[next]);
-      var hi = Math.max(stops[ctrl.origin], stops[next]);
-      var raw = stops[ctrl.origin] + ctrl.travel;
-      window.scrollTo(0, Math.max(lo, Math.min(hi, raw)));
-      if (ctrl.timer) window.clearTimeout(ctrl.timer);
-      ctrl.timer = window.setTimeout(finishGesture, GESTURE_QUIET);
+      var curY = ctrl.origin > 2 ? ctrl.originY : rails[ctrl.origin];
+      var destY = rails[Math.max(0, Math.min(rails.length - 1, next))];
+      if (Math.abs(ctrl.travel) < STEP_PX) {
+        window.scrollTo(0, ctrl.originY);
+      } else {
+        var raw = ctrl.originY + ctrl.travel;
+        var lo = Math.min(curY, destY, ctrl.originY);
+        var hi = Math.max(curY, destY, ctrl.originY);
+        window.scrollTo(0, Math.max(lo, Math.min(hi, raw)));
+      }
+      armQuiet();
     }
 
     function onKey(event) {
@@ -1080,20 +1151,24 @@ window.Cbx300Case = (function () {
       if (y < st.start - 2 || y > st.end + 2) return;
       if (y <= st.start + 1 && dir < 0) return;
       if (y >= st.end - 1 && dir > 0) return;
+      var rails = railStops(st);
+      var dock = dockScrollY(st);
+      var idx = nearestRailIndex(y, rails);
+      if (y < dock - 1) return;
+      if ((idx >= 3 || (idx === 2 && y >= rails[2] - 40)) && dir > 0) return;
+      if (idx === 0 && dir < 0) return;
       event.preventDefault();
-      var stops = stageStops(st);
       if (ctrl.timer) window.clearTimeout(ctrl.timer);
       ctrl.timer = 0;
       ctrl.active = false;
       ctrl.travel = 0;
       killTween();
-      if (Math.abs(y - stops[ctrl.settled]) > 48) {
-        ctrl.settled = nearestStopIndex(y, stops);
-      }
-      var dest = Math.max(0, Math.min(stops.length - 1, ctrl.settled + dir));
+      var origin = idx > 2 ? 3 : idx;
+      var dest = Math.max(0, Math.min(rails.length - 1, origin + dir));
       ctrl.settled = dest;
-      ctrl.origin = dest;
-      animateTo(stops[dest]);
+      ctrl.park = rails[dest];
+      ctrl.kind = 'step';
+      animateTo(rails[dest]);
     }
 
     ctrl.onWheel = onWheel;
@@ -1363,6 +1438,7 @@ window.Cbx300Case = (function () {
     beatIndexFromProgress: beatIndexFromProgress,
     pinSnapProgress: pinSnapProgress,
     stageStops: stageStops,
+    dockScrollY: dockScrollY,
     STEP_PX: STEP_PX,
     META: META,
     BEATS: BEATS,
