@@ -63,7 +63,7 @@ window.Cbx300Case = (function () {
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
 
-  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s4';
+  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s5';
   /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
      clears the mug; the stage-03 left figure shifts off the plant. */
   var LINA_X = 112;
