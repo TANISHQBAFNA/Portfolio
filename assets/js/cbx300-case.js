@@ -87,7 +87,14 @@ window.Cbx300Case = (function () {
      long pin after the sheet is flush-top. */
   var RISE_DUR = 1;
   var RISE_LERP = 0.7;
-  var MORPH_VH = 3;
+  /* Stage 01 enter used to overlap the curtain and start 01→02 0.42vh
+     after dock (~0.18vh of fully-shown 01). Trackpad inertia from the
+     rise then landed on 02. Hold 01 after the pin docks; space each
+     stage so one flick cannot skip it. */
+  var STAGE_HOLD = 0.55;
+  var TRANS_12 = 0.64;
+  var TRANS_23 = 0.96;
+  var MORPH_VH = STAGE_HOLD * 3 + TRANS_12 + TRANS_23;
 
   function isMultiverse() {
     return document.documentElement.classList.contains('is-multiverse');
@@ -497,8 +504,16 @@ window.Cbx300Case = (function () {
     var gsap = window.gsap;
     var ink = root && root.querySelector('[data-cbx-rail-ink]');
     if (!gsap || !ink) return;
-    var t = Math.max(0, Math.min(1, morphP));
-    gsap.set(ink, { xPercent: t * 200 });
+    var t = Math.max(0, Math.min(1, morphP)) * MORPH_VH;
+    var p0 = STAGE_HOLD * 0.5;
+    var p1 = STAGE_HOLD + TRANS_12 + STAGE_HOLD * 0.5;
+    var p2 = STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23 + STAGE_HOLD * 0.5;
+    var railT = 0;
+    if (t <= p0) railT = 0;
+    else if (t <= p1) railT = (t - p0) / Math.max(0.0001, p1 - p0);
+    else if (t <= p2) railT = 1 + (t - p1) / Math.max(0.0001, p2 - p1);
+    else railT = 2;
+    gsap.set(ink, { xPercent: railT * 100 });
   }
 
   function copyBits(beatEl) {
@@ -683,9 +698,9 @@ window.Cbx300Case = (function () {
     var payroll = layer(pin, 's03-card-payroll');
     var supplier = layer(pin, 's03-card-supplier');
     var pill = layer(pin, 's03-pill');
-    var enter01 = Math.max(0, RISE_DUR - 0.48);
-    var t12 = RISE_DUR + 0.42;
-    var t23 = t12 + 1.1;
+    var enter01 = Math.max(0, RISE_DUR - 0.86);
+    var t12 = RISE_DUR + STAGE_HOLD;
+    var t23 = t12 + TRANS_12 + STAGE_HOLD;
 
     if (persist.length) {
       tl.fromTo(persist, { opacity: 0, y: 16 }, {
@@ -764,9 +779,10 @@ window.Cbx300Case = (function () {
       posePersist(pin, beatIndexFromProgress(morphP));
     } else {
       setRailInk(pin, morphP);
-      if (morphP < 0.18 && riseTarget >= 0.95) pulseOnce('late', layer(pin, 's01-late'));
+      var morphT = morphP * MORPH_VH;
+      if (morphT < STAGE_HOLD && riseTarget >= 0.95) pulseOnce('late', layer(pin, 's01-late'));
       else resetPulse('late', layer(pin, 's01-late'));
-      if (morphP >= 0.82) pulseOnce('pill', layer(pin, 's03-pill'));
+      if (morphT >= STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23) pulseOnce('pill', layer(pin, 's03-pill'));
       else resetPulse('pill', layer(pin, 's03-pill'));
     }
     setIdlePlaying(!!(self && self.isActive) && riseTarget >= 0.92 && !motion.reduce);
@@ -852,7 +868,34 @@ window.Cbx300Case = (function () {
     var n = BEATS.length;
     if (n <= 1) return 0;
     if (progress >= 1) return n - 1;
-    return Math.min(n - 1, Math.max(0, Math.floor(progress * n)));
+    var equal = Math.min(n - 1, Math.max(0, Math.floor(progress * n)));
+    var t = Math.max(0, progress) * MORPH_VH;
+    if (t < STAGE_HOLD + TRANS_12 * 0.5) return 0;
+    if (t < STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23 * 0.5) return 1;
+    return equal;
+  }
+
+  function pinSnapProgress(index) {
+    var total = RISE_DUR + MORPH_VH;
+    var t = RISE_DUR + STAGE_HOLD * 0.5;
+    if (index === 1) t = RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD * 0.5;
+    else if (index >= 2) t = RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23 + STAGE_HOLD * 0.5;
+    return t / total;
+  }
+
+  function nearestStageSnap(progress) {
+    var pts = [0, pinSnapProgress(0), pinSnapProgress(1), pinSnapProgress(2), 1];
+    var best = pts[0];
+    var bestD = Math.abs(progress - pts[0]);
+    var i;
+    for (i = 1; i < pts.length; i += 1) {
+      var d = Math.abs(progress - pts[i]);
+      if (d < bestD) {
+        bestD = d;
+        best = pts[i];
+      }
+    }
+    return best;
   }
 
   function applyBeat(root, index) {
@@ -929,6 +972,14 @@ window.Cbx300Case = (function () {
         pin: true,
         pinSpacing: true,
         scrub: true,
+        snap: {
+          snapTo: nearestStageSnap,
+          duration: { min: 0.18, max: 0.38 },
+          delay: 0.14,
+          ease: 'power3.out',
+          inertia: false,
+          directional: false
+        },
         invalidateOnRefresh: true,
         anticipatePin: 1,
         refreshPriority: 1,
@@ -963,6 +1014,9 @@ window.Cbx300Case = (function () {
 
     tl.to({}, { duration: RISE_DUR });
     tl.to({}, { duration: MORPH_VH });
+    tl.addLabel('stage0', RISE_DUR + STAGE_HOLD * 0.5);
+    tl.addLabel('stage1', RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD * 0.5);
+    tl.addLabel('stage2', RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23 + STAGE_HOLD * 0.5);
     if (!motion.reduce) wireScene(tl, pin);
     motion.tween = tl;
     if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
@@ -1075,8 +1129,15 @@ window.Cbx300Case = (function () {
     applyCbxRise: applyCbxRise,
     applyBeat: applyBeat,
     beatIndexFromProgress: beatIndexFromProgress,
+    nearestStageSnap: nearestStageSnap,
+    pinSnapProgress: pinSnapProgress,
     META: META,
     BEATS: BEATS,
-    STUBS: STUBS
+    STUBS: STUBS,
+    RISE_DUR: RISE_DUR,
+    STAGE_HOLD: STAGE_HOLD,
+    TRANS_12: TRANS_12,
+    TRANS_23: TRANS_23,
+    MORPH_VH: MORPH_VH
   };
 })();

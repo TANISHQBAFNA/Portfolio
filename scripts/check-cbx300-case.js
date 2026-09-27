@@ -50,9 +50,9 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
   assert.ok(index.indexOf('cbx300-case.css?v=s73') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s65') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s66') !== -1, 'index.html missing growth js cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.css?v=s73') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s65') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s66') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -586,6 +586,13 @@ check('coffee curtain docks with landing projects softness', function () {
   assert.ok(pages.indexOf('scrub: true') !== -1, 'pin playhead must stay 1:1 so morph runs after dock');
   assert.ok(pages.indexOf('fastScrollEnd: true') === -1, 'fastScrollEnd snaps; landing has no snap');
   assert.ok(pages.indexOf("ease: 'power2.out'") === -1, 'power2.out front-loads; too snappy vs landing');
+  assert.ok(pages.indexOf('var STAGE_HOLD = 0.55') !== -1, 'stage 01 must dwell ~0.55vh after the curtain docks');
+  assert.ok(pages.indexOf('inertia: false') !== -1, 'stage snap must not throw past 01 with inertia');
+  assert.ok(pages.indexOf('directional: false') !== -1, 'stage snap must pick nearest, not scroll-direction');
+  assert.ok(pages.indexOf('function nearestStageSnap') !== -1, 'missing nearest-stage snap');
+  assert.ok(pages.indexOf('snapTo: nearestStageSnap') !== -1, 'pin must snap to stage points when scroll stops');
+  assert.ok(pages.indexOf('RISE_DUR + STAGE_HOLD') !== -1, '01→02 must wait until after the 01 hold');
+  assert.ok(pages.indexOf('RISE_DUR - 0.86') !== -1, 'stage 01 enter must finish before the curtain docks');
   assert.ok(landing.indexOf('duration: opts.duration || 0.7') !== -1, 'landing tweenBento 0.7 must still be source');
   assert.ok(landing.indexOf("ease: opts.ease || 'power3.out'") !== -1, 'landing tweenBento power3.out must still be source');
 });
