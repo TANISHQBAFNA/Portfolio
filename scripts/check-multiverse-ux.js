@@ -271,12 +271,12 @@ check('cache queries bumped for My Work glitch skin', function () {
     'index-multiverse.html must bump landing-multiverse.css cache to mv14'
   );
   assert.ok(
-    /iris-motion-multiverse\.js\?v=mv10/.test(index),
-    'index.html must bump iris-motion-multiverse.js cache to mv10'
+    /iris-motion-multiverse\.js\?v=mv11/.test(index),
+    'index.html must bump iris-motion-multiverse.js cache to mv11'
   );
   assert.ok(
-    /iris-motion-multiverse\.js\?v=mv10/.test(mvIndex),
-    'index-multiverse.html must bump iris-motion-multiverse.js cache to mv10'
+    /iris-motion-multiverse\.js\?v=mv11/.test(mvIndex),
+    'index-multiverse.html must bump iris-motion-multiverse.js cache to mv11'
   );
   assert.ok(
     /landing-multiverse\.js\?v=mv10/.test(index),
@@ -287,8 +287,8 @@ check('cache queries bumped for My Work glitch skin', function () {
     'index-multiverse.html must bump landing-multiverse.js cache to mv10'
   );
   assert.ok(
-    /project-study\.js\?v=s43/.test(index),
-    'index.html must bump project-study.js cache to s43'
+    /project-study\.js\?v=s44/.test(index),
+    'index.html must bump project-study.js cache to s44'
   );
   assert.ok(
     /landing\.css\?v=aeo35/.test(index),

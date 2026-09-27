@@ -11,7 +11,8 @@ window.ProjectStudy = (function () {
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   var OPEN_MS = 900;
-  var CLOSE_MS = 900;
+  /* Close matches the landing curtain (~0.55s), not the open veil. */
+  var CLOSE_MS = 200;
   var HOLD_MS = 400;
 
   function pad(n) {
@@ -934,9 +935,8 @@ window.ProjectStudy = (function () {
       introTween = gsap.to(chars, {
         opacity: 0,
         y: 8,
-        filter: 'blur(7px)',
-        duration: 0.55,
-        stagger: { each: 0.028, from: 'end' },
+        filter: 'blur(0px)',
+        duration: 0.1,
         ease: 'power3.in',
         onComplete: donePaint
       });
@@ -1225,14 +1225,12 @@ window.ProjectStudy = (function () {
           gsap.set(veil, { yPercent: 0, force3D: true });
           fly.style.fontSize = largeSize + 'px';
           gsap.set(fly, { x: dx, y: dy, force3D: true });
-          introHold = window.setTimeout(function () {
-            unpaintFlyName(function () {
-              seatFly(true);
-              revealHome();
-              if (options.onClose) options.onClose();
-              liftVeil(finishOut);
-            });
-          }, HOLD_MS);
+          unpaintFlyName(function () {
+            seatFly(true);
+            revealHome();
+            if (options.onClose) options.onClose();
+            liftVeil(finishOut);
+          });
         }
       });
       gsap.to(fly, { color: curtainInk(), duration: dur, ease: ease });

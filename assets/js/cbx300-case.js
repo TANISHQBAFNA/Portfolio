@@ -63,16 +63,20 @@ window.Cbx300Case = (function () {
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
 
-  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s3';
+  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s4';
   /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
      clears the mug; the stage-03 left figure shifts off the plant. */
   var LINA_X = 112;
   var SIDE_L_X = -28;
   /* After the curtain is docked, one stage per gesture. A notch (~100px)
      or ~72px of trackpad travel commits the next rail tab. The rise
-     itself stays 1:1 with the wheel — no step until the panel is flush. */
+     from the cover is one gesture: past the threshold it runs all the
+     way to stage 01 and rests. The next gesture steps to 02. */
   var STEP_PX = 72;
   var GESTURE_QUIET = 80;
+  /* Longer than a 150ms notch, so a steady spin cannot leave stage 01
+     in the same rise. A real pause releases the next gesture. */
+  var RISE_REST_MS = 220;
 
   var motion = {
     triggers: [],
@@ -604,7 +608,7 @@ window.Cbx300Case = (function () {
     var tweens = [];
     var lamp = root.querySelector('[data-cbx-idle="lamp"]');
     if (lamp) {
-      gsap.set(lamp, { transformOrigin: '50% 0%', svgOrigin: '300 -30' });
+      gsap.set(lamp, { transformOrigin: '50% 0%', svgOrigin: '300 -64' });
       tweens.push(gsap.to(lamp, {
         rotation: 2,
         duration: 1.9,
@@ -952,6 +956,7 @@ window.Cbx300Case = (function () {
     var ctrl = motion.stepCtrl;
     if (!ctrl) return;
     if (ctrl.timer) window.clearTimeout(ctrl.timer);
+    if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
     if (ctrl.tween && ctrl.tween.kill) ctrl.tween.kill();
     window.removeEventListener('wheel', ctrl.onWheel, true);
     window.removeEventListener('keydown', ctrl.onKey, true);
@@ -970,7 +975,10 @@ window.Cbx300Case = (function () {
       park: null,
       travel: 0,
       timer: 0,
-      tween: null
+      restTimer: 0,
+      tween: null,
+      committed: false,
+      riseHold: false
     };
 
     function pinTrigger() {
@@ -1017,21 +1025,43 @@ window.Cbx300Case = (function () {
       ctrl.timer = window.setTimeout(finishGesture, GESTURE_QUIET);
     }
 
+    function releaseRiseHold() {
+      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
+      ctrl.restTimer = window.setTimeout(function () {
+        ctrl.restTimer = 0;
+        if (ctrl.tween || ctrl.active) {
+          releaseRiseHold();
+          return;
+        }
+        ctrl.riseHold = false;
+      }, RISE_REST_MS);
+    }
+
     function finishGesture() {
       ctrl.timer = 0;
       var st = pinTrigger();
       var kind = ctrl.kind;
       var travel = ctrl.travel;
       var origin = ctrl.origin;
+      var committed = ctrl.committed;
       ctrl.active = false;
       ctrl.travel = 0;
+      ctrl.committed = false;
       if (!st || kind === 'native') return;
       var rails = railStops(st);
       if (kind === 'rise') {
-        var yNow = window.scrollY || 0;
-        if (yNow >= rails[0] - 2) {
-          ctrl.settled = 0;
-          ctrl.park = rails[0];
+        if (!committed) {
+          ctrl.park = ctrl.originY;
+          ctrl.settled = ctrl.originY >= rails[0] - 2 ? 0 : -1;
+          if (Math.abs((window.scrollY || 0) - ctrl.originY) > 1.5) animateTo(ctrl.originY);
+        }
+        return;
+      }
+      if (kind === 'leave') {
+        if (!committed) {
+          ctrl.park = rails[2];
+          ctrl.settled = 2;
+          if (Math.abs((window.scrollY || 0) - rails[2]) > 1.5) animateTo(rails[2]);
         }
         return;
       }
@@ -1047,7 +1077,6 @@ window.Cbx300Case = (function () {
 
     function beginGesture(st, y, dy) {
       var rails = railStops(st);
-      var dock = dockScrollY(st);
       var wasTween = !!ctrl.tween;
       var park = ctrl.park;
       killTween();
@@ -1058,21 +1087,21 @@ window.Cbx300Case = (function () {
       var idx = nearestRailIndex(y, rails);
       ctrl.active = true;
       ctrl.travel = 0;
+      ctrl.committed = false;
       ctrl.originY = y;
-      if (y < dock - 1) {
+      if (y < rails[0] - 2 || (idx === 0 && dy < 0)) {
         ctrl.kind = 'rise';
         ctrl.origin = 0;
+        if (dy < 0 && y >= rails[0] - 2) ctrl.originY = rails[0];
         return;
       }
-      if (idx >= 3 && dy > 0) {
-        ctrl.kind = 'native';
+      if (dy > 0 && y >= rails[2] - 40 && y < st.end - 2) {
+        ctrl.kind = 'leave';
+        ctrl.origin = 2;
+        ctrl.originY = rails[2];
         return;
       }
-      if (idx === 2 && dy > 0 && y >= rails[2] - 40) {
-        ctrl.kind = 'native';
-        return;
-      }
-      if (idx === 0 && dy < 0) {
+      if (y >= st.end - 2 && dy > 0) {
         ctrl.kind = 'native';
         return;
       }
@@ -1087,6 +1116,12 @@ window.Cbx300Case = (function () {
       var dy = wheelPixels(event);
       if (!dy) return;
       var y = window.scrollY || 0;
+      if (ctrl.riseHold) {
+        if (y < st.start - 2 || y > st.end + 2) return;
+        event.preventDefault();
+        releaseRiseHold();
+        return;
+      }
       if (y <= st.start + 1 && dy < 0) return;
       if (y >= st.end - 1 && dy > 0) return;
       if (y < st.start - 2 || y > st.end + 2) return;
@@ -1103,9 +1138,32 @@ window.Cbx300Case = (function () {
       var rails = railStops(st);
       ctrl.travel += dy;
       if (ctrl.kind === 'rise') {
-        var ceiling = rails[0];
-        var rawRise = ctrl.originY + ctrl.travel;
-        window.scrollTo(0, Math.max(st.start, Math.min(ceiling, rawRise)));
+        if (!ctrl.committed && Math.abs(ctrl.travel) >= STEP_PX) {
+          ctrl.committed = true;
+          var riseDest = ctrl.travel > 0 ? rails[0] : st.start;
+          ctrl.park = riseDest;
+          ctrl.settled = riseDest >= rails[0] - 2 ? 0 : -1;
+          if (ctrl.travel > 0) {
+            ctrl.riseHold = true;
+            releaseRiseHold();
+          }
+          animateTo(riseDest);
+        } else if (!ctrl.committed) {
+          var rawRise = ctrl.originY + ctrl.travel;
+          window.scrollTo(0, Math.max(st.start, Math.min(rails[0], rawRise)));
+        }
+        armQuiet();
+        return;
+      }
+      if (ctrl.kind === 'leave') {
+        if (!ctrl.committed && ctrl.travel >= STEP_PX) {
+          ctrl.committed = true;
+          ctrl.park = st.end;
+          ctrl.settled = 3;
+          animateTo(st.end);
+        } else if (!ctrl.committed) {
+          window.scrollTo(0, rails[2]);
+        }
         armQuiet();
         return;
       }
@@ -1144,11 +1202,43 @@ window.Cbx300Case = (function () {
       if (y <= st.start + 1 && dir < 0) return;
       if (y >= st.end - 1 && dir > 0) return;
       var rails = railStops(st);
-      var dock = dockScrollY(st);
       var idx = nearestRailIndex(y, rails);
-      if (y < dock - 1) return;
-      if ((idx >= 3 || (idx === 2 && y >= rails[2] - 40)) && dir > 0) return;
-      if (idx === 0 && dir < 0) return;
+      if (ctrl.riseHold && dir > 0 && y < rails[0] + 8) {
+        event.preventDefault();
+        releaseRiseHold();
+        return;
+      }
+      if (y < rails[0] - 2 && dir > 0) {
+        event.preventDefault();
+        killTween();
+        ctrl.kind = 'rise';
+        ctrl.park = rails[0];
+        ctrl.settled = 0;
+        ctrl.riseHold = true;
+        releaseRiseHold();
+        animateTo(rails[0]);
+        return;
+      }
+      if (idx === 0 && dir < 0) {
+        event.preventDefault();
+        killTween();
+        ctrl.kind = 'rise';
+        ctrl.park = st.start;
+        ctrl.settled = -1;
+        ctrl.riseHold = false;
+        animateTo(st.start);
+        return;
+      }
+      if (dir > 0 && y >= rails[2] - 40 && y < st.end - 2) {
+        event.preventDefault();
+        killTween();
+        ctrl.kind = 'leave';
+        ctrl.park = st.end;
+        ctrl.settled = 3;
+        animateTo(st.end);
+        return;
+      }
+      if (y >= st.end - 2 && dir > 0) return;
       event.preventDefault();
       if (ctrl.timer) window.clearTimeout(ctrl.timer);
       ctrl.timer = 0;

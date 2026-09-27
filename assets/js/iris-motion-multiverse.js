@@ -936,16 +936,19 @@
         var lg = ga > 0.04 && gb > 0.04 ? Math.max(ga, gb) : Math.max(ga, gb) * 0.3;
         var hg = Math.max(hoverN[i] || 0, hoverN[j] || 0);
 
+        var onCover = canvas.classList.contains("is-study-cover");
         if (lg > 0.05) {
-          var rgb = 4.4 + lg * 5.2;
-          ctx.globalCompositeOperation = "lighter";
-          ctx.strokeStyle = rgba(RED, (0.18 + t * 0.05 + lg * 0.5) * strength);
-          ctx.lineWidth = 1.15 + t * 0.22 + lg * 1.4;
+          var coverA = onCover ? 0.16 : 1;
+          var coverW = onCover ? 0.38 : 1;
+          var rgb = (4.4 + lg * 5.2) * (onCover ? 0.32 : 1);
+          ctx.globalCompositeOperation = onCover ? "source-over" : "lighter";
+          ctx.strokeStyle = rgba(RED, (0.18 + t * 0.05 + lg * 0.5) * strength * coverA);
+          ctx.lineWidth = (1.15 + t * 0.22 + lg * 1.4) * coverW;
           strokeLink(ax - rgb, ay, cx - rgb, cy, bx - rgb, by);
-          ctx.strokeStyle = rgba(BLUE, (0.18 + t * 0.05 + lg * 0.5) * strength);
+          ctx.strokeStyle = rgba(BLUE, (0.18 + t * 0.05 + lg * 0.5) * strength * coverA);
           strokeLink(ax + rgb, ay, cx + rgb, cy, bx + rgb, by);
-          ctx.strokeStyle = rgba(PINK, (0.14 + t * 0.04 + lg * 0.38) * strength);
-          ctx.lineWidth = 0.75 + t * 0.18 + lg * 1;
+          ctx.strokeStyle = rgba(PINK, (0.14 + t * 0.04 + lg * 0.38) * strength * coverA);
+          ctx.lineWidth = (0.75 + t * 0.18 + lg * 1) * coverW;
           strokeLink(ax, ay + 1.2, cx, cy + 1.2, bx, by + 1.2);
           ctx.globalCompositeOperation = "source-over";
         } else if (hg > 0.06) {
@@ -958,7 +961,7 @@
           strokeLink(ax, ay, cx, cy, bx, by);
         }
 
-        if (hitch > 0.12 && lg > 0.05) {
+        if (hitch > 0.12 && lg > 0.05 && !onCover) {
           var split = 1.8 + hitch * 7.4;
           ctx.globalCompositeOperation = "lighter";
           ctx.strokeStyle = rgba(RED, (0.07 + hitch * 0.24) * strength);
@@ -974,20 +977,22 @@
         a = nodes[i];
         glow = glowN[i] || 0;
         md = hoverN[i] || 0;
+        var dotCover = canvas.classList.contains("is-study-cover");
         if (glow > 0.05) {
-          var nSplit = 3.6 + glow * 4.8;
-          ctx.globalCompositeOperation = "lighter";
-          ctx.fillStyle = rgba(RED, 0.55 + glow * 0.4);
+          var nSplit = (3.6 + glow * 4.8) * (dotCover ? 0.32 : 1);
+          var dotA = dotCover ? 0.22 : 1;
+          ctx.globalCompositeOperation = dotCover ? "source-over" : "lighter";
+          ctx.fillStyle = rgba(RED, (0.55 + glow * 0.4) * dotA);
           ctx.beginPath();
-          ctx.arc(a.gx - nSplit, a.gy, a.r * 1.12 + glow * 1.8, 0, Math.PI * 2);
+          ctx.arc(a.gx - nSplit, a.gy, (a.r * 1.12 + glow * 1.8) * (dotCover ? 0.7 : 1), 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = rgba(BLUE, 0.55 + glow * 0.4);
+          ctx.fillStyle = rgba(BLUE, (0.55 + glow * 0.4) * dotA);
           ctx.beginPath();
-          ctx.arc(a.gx + nSplit, a.gy, a.r * 1.12 + glow * 1.8, 0, Math.PI * 2);
+          ctx.arc(a.gx + nSplit, a.gy, (a.r * 1.12 + glow * 1.8) * (dotCover ? 0.7 : 1), 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = rgba(PINK, 0.62 + glow * 0.3);
+          ctx.fillStyle = rgba(PINK, (0.62 + glow * 0.3) * dotA);
           ctx.beginPath();
-          ctx.arc(a.gx, a.gy + 1.4, a.r * 1.02 + glow * 1.35, 0, Math.PI * 2);
+          ctx.arc(a.gx, a.gy + 1.4, (a.r * 1.02 + glow * 1.35) * (dotCover ? 0.7 : 1), 0, Math.PI * 2);
           ctx.fill();
           ctx.globalCompositeOperation = "source-over";
         } else if (md > 0.05) {
