@@ -49,10 +49,10 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s69') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s62') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s69') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s62') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s70') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s63') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s70') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s63') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -411,7 +411,7 @@ check('light proof: D2 worry board', function () {
   var askCss = css.slice(css.indexOf('.cbx-growth__ask {'), css.indexOf('.cbx-growth__quote {'));
   assert.ok(askCss.indexOf('Newsreader') !== -1, 'question must be the existing serif');
   assert.ok(askCss.indexOf('italic') !== -1, 'question must stay italic');
-  assert.ok(askCss.indexOf('16.4cqi') !== -1, 'question must scale toward ~96px at 1440');
+  assert.ok(askCss.indexOf('6.67vw') !== -1, 'question must scale toward ~96px at 1440');
   assert.ok(askCss.indexOf('6rem') !== -1, 'question must cap near the mockup size');
   var subCss = css.slice(css.indexOf('.cbx-growth__sub {'), css.indexOf('.cbx-growth__pic {'));
   assert.ok(subCss.indexOf('Outfit') !== -1, 'subtext must be readable sans');

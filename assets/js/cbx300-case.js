@@ -277,14 +277,9 @@ window.Cbx300Case = (function () {
 
   function tightenIllo(svg, crop) {
     if (!svg) return;
+    svg.removeAttribute('width');
+    svg.removeAttribute('height');
     svg.setAttribute('preserveAspectRatio', crop ? 'xMidYMin slice' : 'xMidYMid slice');
-    if (!crop) return;
-    var raw = svg.getAttribute('viewBox') || '-8 -24 616 662';
-    var parts = raw.trim().split(/[\s,]+/).map(Number);
-    if (parts.length !== 4 || parts.some(isNaN)) return;
-    /* Drop the empty floor band under the desk on stages 01 and 02. */
-    parts[3] = Math.max(480, parts[3] - 118);
-    svg.setAttribute('viewBox', parts.join(' '));
   }
 
   function paintIllo(slot, done) {
