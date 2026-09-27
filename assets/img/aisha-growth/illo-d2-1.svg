@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -24 616 662" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect x="-50" y="-50" width="700" height="740" fill="#2A1E17"/><rect x="-50" y="520" width="700" height="200" fill="#241913"/><ellipse cx="300" cy="566" rx="260" ry="30" fill="#2E211A"/><ellipse cx="300" cy="566" rx="200" ry="20" fill="none" stroke="#3A2A20" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/><circle cx="300" cy="260" r="200" fill="#33251C"/>
+
+<path d="M238 398 C238 318 256 280 300 280 C344 280 362 318 362 398 Z" fill="#E9C85A"/>
+<path d="M286 280 Q300 294 314 280" fill="none" stroke="#C9A640" stroke-width="3"/>
+<rect x="289" y="258" width="22" height="26" rx="8" fill="#C98E6B"/>
+<path d="M256 222 C250 162 350 162 344 222 L346 260 C330 266 322 248 322 248 L278 248 C278 248 270 266 254 260 Z" fill="#1B120D"/>
+<ellipse cx="300" cy="228" rx="31" ry="36" fill="#C98E6B"/>
+<path d="M267 220 C270 184 320 176 334 216 C314 202 290 198 267 220 Z" fill="#1B120D"/>
+<circle cx="287" cy="230" r="9" fill="none" stroke="#1E1510" stroke-width="2.5"/>
+<circle cx="313" cy="230" r="9" fill="none" stroke="#1E1510" stroke-width="2.5"/>
+<path d="M296 230 H304" stroke="#1E1510" stroke-width="2.5"/>
+<path d="M293 250 Q300 255 307 250" fill="none" stroke="#8A4E36" stroke-width="2.5" stroke-linecap="round"/><rect x="80" y="398" width="440" height="18" rx="4" fill="#6E4630"/>
+<rect x="100" y="416" width="12" height="104" fill="#5A3826"/><rect x="488" y="416" width="12" height="104" fill="#5A3826"/><path d="M242 398 L250 326 H350 L358 398 Z" fill="#D9D0C3"/>
+<circle cx="300" cy="360" r="7" fill="#E8A96B"/><rect x="230" y="394" width="140" height="8" rx="3" fill="#BDB2A3"/><rect x="380" y="364" width="28" height="34" rx="5" fill="#F4EFE6"/><path d="M408 372 q14 0 14 10 t-14 10" fill="none" stroke="#F4EFE6" stroke-width="4"/>
+<path d="M388 354 q-6 -10 0 -18 M398 354 q-6 -10 0 -18" fill="none" stroke="rgba(244,239,230,.45)" stroke-width="2.5" stroke-linecap="round"/><path d="M122 358 H158 L153 398 H127 Z" fill="#C8664A"/>
+<path d="M140 358 C110 328 106 298 132 286 C136 312 140 338 140 358 Z" fill="#8FA58A"/>
+<path d="M140 358 C168 338 180 306 158 294 C150 318 144 338 140 358 Z" fill="#6F8A6B"/>
+<path d="M470 176 C 450 240, 410 290, 362 328" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+<path d="M362 312 L358 332 L378 330" fill="none" stroke="#E8A96B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(36,110) rotate(-8)">
+<rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
+<rect width="150" height="96" rx="12" fill="#F6F1E8"/>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #015</text>
+<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$1,650</text>
+<rect x="14" y="68" width="69.80000000000001" height="18" rx="9" fill="#9A6A1E"/>
+<text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">DUE FRI</text>
+</g>
+<g transform="translate(410,58) rotate(7)">
+<rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
+<rect width="150" height="96" rx="12" fill="#F6F1E8"/>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #014</text>
+<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$2,400</text>
+<rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36"/>
+<text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">PAID</text>
+</g>
+<g transform="translate(430,236) rotate(-5)">
+<rect x="0" y="4" width="156" height="96" rx="12" fill="#000" opacity=".22"/>
+<rect width="156" height="96" rx="12" fill="#F6F1E8"/>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #012</text>
+<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$2,800</text>
+<rect x="14" y="68" width="99.4" height="18" rx="9" fill="#C8664A"/>
+<text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">6 DAYS LATE</text>
+</g>
+<rect x="196" y="416" width="64" height="8" rx="2" fill="#F6F1E8" opacity=".0"/>
+<path d="M300 -30 V44" stroke="#5A3826" stroke-width="3"/><path d="M270 78 L282 44 H318 L330 78 Z" fill="#E8A96B"/><ellipse cx="300" cy="80" rx="12" ry="6" fill="#F3D7A8"/></svg>

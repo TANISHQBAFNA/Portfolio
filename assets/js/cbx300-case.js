@@ -1,12 +1,11 @@
 /**
- * CBX300 case study — Section 01 cover + Section 02 story-first board.
+ * CBX300 case study — Section 01 cover + Section 02 D2 worry board.
  * Cover: kicker → accent → word. Image overlaps type from the right.
  * Growth: coffee panel curtains over the parked cover + chrome
  * (--cbx-rise / --panel-flush, same family as landing --rise /
  * --panel-flush / is-projects-in), then one pinned morph:
- * glanceable three-stage rail, large story column, supporting
- * cast plate, readable proof chip. Type first. Art second.
- * No desk. No furniture. No full-bleed portrait captions.
+ * glanceable three-stage rail (kept), worry question + subtext,
+ * inline SVG illustration. No clay cast. No product chip.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
@@ -20,62 +19,37 @@ window.Cbx300Case = (function () {
     word: 'the Business'
   };
 
-  /* Story-first chapter board. Casual, not FINDING/CHOICE. No desk. */
-  var CLOSE = 'Pressure changes. The bank grows with her.';
-  var EYE = 'Meet Aisha';
-
+  /* D2 worry board. Rail labels stay. Questions replace the old intro. */
   var BEATS = [
     {
       id: 'freelancer',
       label: 'Freelancer',
-      lead: 'Meet Aisha.',
-      meet: 'Just her. One client at a time.'
+      num: '01',
+      kicker: 'Her worry, every morning',
+      ask: 'Did the client pay yet?',
+      sub: 'Just her, a laptop and a stack of invoices.',
+      illo: 'assets/img/aisha-growth/illo-d2-1.svg',
+      crop: true
     },
     {
       id: 'sole',
       label: 'Shop of two',
-      lead: 'Shop of two.',
-      meet: 'Spend decisions get sharper.'
+      num: '02',
+      kicker: 'Her worry, once she hires',
+      ask: 'Can I afford her salary this month?',
+      sub: 'One hire, one shared card, and payday every month.',
+      illo: 'assets/img/aisha-growth/illo-d2-2.svg',
+      crop: true
     },
     {
       id: 'mid',
       label: 'Mid-size',
-      lead: 'Team energy.',
-      meet: 'Approving is the day job.',
-      close: CLOSE
-    }
-  ];
-
-  var DEVICES = [
-    { id: 'freelancer', job: 'pay' },
-    { id: 'sole', job: 'balance' },
-    { id: 'mid', job: 'approvals' }
-  ];
-
-  var PEOPLE = [
-    {
-      id: 'aisha',
-      src: 'assets/img/aisha-growth/people/aisha.png',
-      alt: 'Clay cutout of Aisha.',
-      from: 0
-    },
-    {
-      id: 'mate-1',
-      src: 'assets/img/aisha-growth/people/teammate-01.png',
-      alt: 'Clay cutout of Aisha first teammate.',
-      from: 1
-    },
-    {
-      id: 'mate-2',
-      src: 'assets/img/aisha-growth/people/teammate-02.png',
-      alt: 'Clay cutout of a teammate with a laptop.',
-      from: 2
-    },
-    {
-      id: 'mate-3',
-      src: 'assets/img/aisha-growth/people/teammate-03.png',
-      alt: 'Clay cutout of a teammate with coffee.',
-      from: 2
+      num: '03',
+      kicker: 'Her worry, with a team',
+      ask: "Who's waiting on me today?",
+      sub: 'Eight people, and most of them need her yes.',
+      illo: 'assets/img/aisha-growth/illo-d2-3.svg',
+      crop: false
     }
   ];
 
@@ -258,31 +232,22 @@ window.Cbx300Case = (function () {
     return section;
   }
 
-  function personFig(person) {
-    var figure = el('figure', 'cbx-growth__person');
-    figure.setAttribute('data-cbx-person', person.id);
-    figure.setAttribute('data-from', String(person.from));
-    if ((person.from || 0) === 0) figure.classList.add('is-in');
-    var img = document.createElement('img');
-    img.className = 'cbx-growth__person-img';
-    img.alt = person.alt || '';
-    img.src = person.src;
-    img.decoding = 'async';
-    img.addEventListener('error', function () {
-      figure.classList.add('is-empty');
-      img.remove();
-    });
-    figure.appendChild(img);
-    return figure;
-  }
-
   function beatCopy(beat, index, glitch) {
     var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
     beatEl.setAttribute('data-cbx-beat', beat.id);
     beatEl.setAttribute('data-beat-index', String(index));
-    beatEl.appendChild(shout('p', 'cbx-growth__lead', beat.lead, glitch));
-    beatEl.appendChild(el('p', 'cbx-growth__meet', beat.meet));
-    if (beat.close) beatEl.appendChild(el('p', 'cbx-growth__close', beat.close));
+
+    var lab = el('p', 'cbx-growth__lab');
+    lab.appendChild(el('span', 'cbx-growth__lab-num', beat.num));
+    lab.appendChild(el('span', 'cbx-growth__lab-name', beat.kicker));
+    beatEl.appendChild(lab);
+
+    var ask = el('h2', 'cbx-growth__ask');
+    var quote = el('q', 'cbx-growth__quote');
+    quote.appendChild(shout('span', 'cbx-growth__ask-text', beat.ask, glitch));
+    ask.appendChild(quote);
+    beatEl.appendChild(ask);
+    beatEl.appendChild(el('p', 'cbx-growth__sub', beat.sub));
     return beatEl;
   }
 
@@ -301,80 +266,71 @@ window.Cbx300Case = (function () {
     return rail;
   }
 
-  function productScreen(job) {
-    var screen = el('div', 'cbx-device__screen cbx-device__screen--' + job);
-    if (job === 'pay') {
-      var cash = el('div', 'cbx-device__cash');
-      cash.appendChild(el('p', 'cbx-device__eyebrow', 'In today'));
-      cash.appendChild(el('p', 'cbx-device__money', '4,200.00'));
-      screen.appendChild(cash);
-      var actions = el('div', 'cbx-device__actions');
-      actions.appendChild(el('span', 'cbx-device__btn cbx-device__btn--payin', 'Get paid'));
-      actions.appendChild(el('span', 'cbx-device__btn cbx-device__btn--payout', 'Pay'));
-      screen.appendChild(actions);
-      return screen;
-    }
-    if (job === 'balance') {
-      var lead = el('div', 'cbx-device__lead');
-      lead.appendChild(el('p', 'cbx-device__eyebrow', 'Available'));
-      var hero = el('p', 'cbx-device__hero', '12,480.00');
-      hero.setAttribute('data-cbx-money', '');
-      lead.appendChild(hero);
-      screen.appendChild(lead);
-      var subs = el('div', 'cbx-device__subs');
-      subs.appendChild(el('p', 'cbx-device__sub', 'Ledger  13,850.00'));
-      subs.appendChild(el('p', 'cbx-device__sub', 'Hold  320.00'));
-      subs.appendChild(el('p', 'cbx-device__sub', 'Pending  1,050.00'));
-      screen.appendChild(subs);
-      return screen;
-    }
-    if (job === 'approvals') {
-      screen.appendChild(el('p', 'cbx-device__kicker', 'Waiting on me'));
-      var head = el('div', 'cbx-device__doorhead');
-      head.appendChild(el('p', 'cbx-device__eyebrow', 'Approvals'));
-      head.appendChild(el('span', 'cbx-device__approve', 'Approve (3)'));
-      screen.appendChild(head);
-      var queue = el('div', 'cbx-device__queue');
-      [
-        { name: 'Payroll', amt: '42,000.00' },
-        { name: 'Supplier', amt: '8,400.00' },
-        { name: 'Card limit', amt: '2,000.00' }
-      ].forEach(function (row) {
-        var line = el('p', 'cbx-device__row');
-        line.appendChild(el('span', 'cbx-device__row-name', row.name));
-        line.appendChild(el('span', 'cbx-device__row-amt', row.amt));
-        queue.appendChild(line);
-      });
-      screen.appendChild(queue);
-      return screen;
-    }
-    return screen;
+  function illoSlot(beat, index) {
+    var slot = el('div', 'cbx-growth__illo' + (index === 0 ? ' is-on' : ''));
+    slot.setAttribute('data-cbx-illo', beat.id);
+    slot.setAttribute('data-illo-src', beat.illo);
+    if (beat.crop) slot.setAttribute('data-illo-crop', '1');
+    slot.setAttribute('aria-hidden', 'true');
+    return slot;
   }
 
-  function deviceShape() {
-    return 'chip';
+  function tightenIllo(svg, crop) {
+    if (!svg) return;
+    svg.setAttribute('preserveAspectRatio', crop ? 'xMidYMin slice' : 'xMidYMid slice');
+    if (!crop) return;
+    var raw = svg.getAttribute('viewBox') || '-8 -24 616 662';
+    var parts = raw.trim().split(/[\s,]+/).map(Number);
+    if (parts.length !== 4 || parts.some(isNaN)) return;
+    /* Drop the empty floor band under the desk on stages 01 and 02. */
+    parts[3] = Math.max(480, parts[3] - 118);
+    svg.setAttribute('viewBox', parts.join(' '));
   }
 
-  function deviceShell(job) {
-    var shell = el('div', 'cbx-device cbx-device--chip cbx-device--' + job);
-    shell.appendChild(productScreen(job));
-    return shell;
-  }
-
-  function buildDevices() {
-    var wrap = el('div', 'cbx-growth__devices');
-    wrap.setAttribute('data-cbx-devices', '');
-    wrap.setAttribute('data-cbx-chip', '');
-    wrap.setAttribute('data-cbx-proof', '');
-    wrap.setAttribute('aria-hidden', 'true');
-    DEVICES.forEach(function (spec, i) {
-      var slot = el('div', 'cbx-growth__device' + (i === 0 ? ' is-on' : ''));
-      slot.setAttribute('data-cbx-device', spec.id);
-      slot.setAttribute('data-cbx-job', spec.job);
-      slot.appendChild(deviceShell(spec.job));
-      wrap.appendChild(slot);
+  function paintIllo(slot, done) {
+    var src = slot.getAttribute('data-illo-src');
+    var crop = slot.getAttribute('data-illo-crop') === '1';
+    var finish = function () {
+      if (done) done();
+    };
+    if (slot.querySelector('svg, img')) {
+      finish();
+      return;
+    };
+    if (!src || !window.fetch) {
+      finish();
+      return;
+    }
+    window.fetch(src).then(function (res) {
+      if (!res.ok) throw new Error('illo ' + src);
+      return res.text();
+    }).then(function (markup) {
+      slot.innerHTML = markup;
+      tightenIllo(slot.querySelector('svg'), crop);
+      finish();
+    }).catch(function () {
+      var img = document.createElement('img');
+      img.className = 'cbx-growth__illo-img';
+      img.alt = '';
+      img.src = src;
+      slot.appendChild(img);
+      finish();
     });
-    return wrap;
+  }
+
+  function fillIllos(root, done) {
+    var slots = root ? root.querySelectorAll('[data-cbx-illo]') : [];
+    var left = slots.length;
+    if (!left) {
+      done();
+      return;
+    }
+    Array.prototype.forEach.call(slots, function (slot) {
+      paintIllo(slot, function () {
+        left -= 1;
+        if (left <= 0) done();
+      });
+    });
   }
 
   function buildGrowth() {
@@ -384,35 +340,29 @@ window.Cbx300Case = (function () {
     section.setAttribute('data-cbx-live', '');
     section.setAttribute('data-cbx-growth', '');
     section.setAttribute('data-cbx-live-beat', '0');
-    section.setAttribute('aria-label', 'Meet Aisha.');
+    section.setAttribute('aria-label', 'Aisha grows through three worries.');
 
     var scene = el('div', 'cbx-growth__scene');
     scene.setAttribute('data-cbx-board', '');
     scene.appendChild(buildRail());
 
     var board = el('div', 'cbx-growth__board');
-    var story = el('div', 'cbx-growth__story');
-    story.appendChild(el('p', 'cbx-growth__eyebrow', EYE));
-
+    var worry = el('div', 'cbx-growth__worry');
     var voice = el('div', 'cbx-growth__voice');
     voice.setAttribute('data-cbx-beats', '');
     BEATS.forEach(function (beat, i) {
       voice.appendChild(beatCopy(beat, i, glitch));
     });
-    story.appendChild(voice);
-    story.appendChild(buildDevices());
+    worry.appendChild(voice);
 
-    var plate = el('div', 'cbx-growth__plate');
-    plate.setAttribute('data-cbx-plate', '');
-    var cast = el('div', 'cbx-growth__cast');
-    cast.setAttribute('data-cbx-cast', '');
-    PEOPLE.forEach(function (person) {
-      cast.appendChild(personFig(person));
+    var pic = el('div', 'cbx-growth__pic');
+    pic.setAttribute('data-cbx-pic', '');
+    BEATS.forEach(function (beat, i) {
+      pic.appendChild(illoSlot(beat, i));
     });
-    plate.appendChild(cast);
 
-    board.appendChild(story);
-    board.appendChild(plate);
+    board.appendChild(worry);
+    board.appendChild(pic);
     scene.appendChild(board);
     section.appendChild(scene);
     return section;
@@ -500,7 +450,7 @@ window.Cbx300Case = (function () {
   function morphNodes(root) {
     if (!root || !root.querySelectorAll) return [];
     return Array.prototype.slice.call(
-      root.querySelectorAll('[data-cbx-person], [data-cbx-beat], [data-cbx-device]')
+      root.querySelectorAll('[data-cbx-beat], [data-cbx-illo]')
     );
   }
 
@@ -569,8 +519,6 @@ window.Cbx300Case = (function () {
     if (!stage) return paneH();
     var h = paneH();
     stage.style.height = h + 'px';
-    var pin = motion.pin || document.querySelector('[data-cbx-growth]');
-    fitMoney(pin);
     return h;
   }
 
@@ -579,32 +527,6 @@ window.Cbx300Case = (function () {
     if (n <= 1) return 0;
     if (progress >= 1) return n - 1;
     return Math.min(n - 1, Math.max(0, Math.floor(progress * n)));
-  }
-
-  function fitMoney(root) {
-    if (!root) return;
-    Array.prototype.forEach.call(
-      root.querySelectorAll('.cbx-device__hero, .cbx-device__money'),
-      function (node) {
-        var wrap = node.closest('.cbx-device');
-        if (!wrap) return;
-        node.style.fontSize = '';
-        var cs = window.getComputedStyle(wrap);
-        var padX = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
-        var max = wrap.clientWidth - padX;
-        if (max <= 0) {
-          max = wrap.getBoundingClientRect().width - padX;
-        }
-        if (max <= 8) return;
-        var size = parseFloat(window.getComputedStyle(node).fontSize) || 20;
-        var guard = 0;
-        while (node.scrollWidth > max + 0.5 && size > 13 && guard < 32) {
-          size -= 0.5;
-          node.style.fontSize = size + 'px';
-          guard += 1;
-        }
-      }
-    );
   }
 
   function applyBeat(root, index) {
@@ -617,18 +539,13 @@ window.Cbx300Case = (function () {
     Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-beat]'), function (beat, i) {
       beat.classList.toggle('is-on', i === index);
     });
-    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-device]'), function (device, i) {
-      device.classList.toggle('is-on', i === index);
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-illo]'), function (illo, i) {
+      illo.classList.toggle('is-on', i === index);
     });
     Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-step]'), function (step, i) {
       step.classList.toggle('is-on', i === index);
       step.classList.toggle('is-past', i < index);
     });
-    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-person]'), function (person) {
-      var from = parseInt(person.getAttribute('data-from'), 10) || 0;
-      person.classList.toggle('is-in', from <= index);
-    });
-    fitMoney(pane);
   }
 
   function setupStatic(pin) {
@@ -775,7 +692,9 @@ window.Cbx300Case = (function () {
     }
 
     bindCinematic(world, opts);
-    whenImages(pin, refreshSoon);
+    fillIllos(pin, function () {
+      whenImages(pin, refreshSoon);
+    });
   }
 
   function liveCount(world) {
@@ -796,7 +715,7 @@ window.Cbx300Case = (function () {
     world.appendChild(stage);
     world.appendChild(buildGrowth());
     world.appendChild(buildStubs());
-    fitMoney(world);
+    fillIllos(world, function () { armGlitch(world, { chrome: false }); });
     armGlitch(world, { chrome: false });
     return {
       project: project || null,
@@ -816,9 +735,6 @@ window.Cbx300Case = (function () {
     beatIndexFromProgress: beatIndexFromProgress,
     META: META,
     BEATS: BEATS,
-    CLOSE: CLOSE,
-    DEVICES: DEVICES,
-    PEOPLE: PEOPLE,
     STUBS: STUBS
   };
 })();

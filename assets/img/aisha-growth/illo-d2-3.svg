@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -24 616 662" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect x="-50" y="-50" width="700" height="740" fill="#2A1E17"/><rect x="-50" y="520" width="700" height="200" fill="#241913"/><ellipse cx="300" cy="566" rx="260" ry="30" fill="#2E211A"/><ellipse cx="300" cy="566" rx="200" ry="20" fill="none" stroke="#3A2A20" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/><circle cx="300" cy="240" r="200" fill="#33251C"/>
+<g transform="translate(82,318) scale(0.72)">
+<path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#E9A15B"/>
+<circle cx="0" cy="-22" r="30" fill="#C98E6B"/><path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#2B1B12"/></g><g transform="translate(518,318) scale(0.72)">
+<path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#9C7BA0"/>
+<circle cx="0" cy="-22" r="30" fill="#A86F52"/><path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#1B120D"/></g>
+
+<path d="M238 378 C238 298 256 260 300 260 C344 260 362 298 362 378 Z" fill="#E9C85A"/>
+<path d="M286 260 Q300 274 314 260" fill="none" stroke="#C9A640" stroke-width="3"/>
+<rect x="289" y="238" width="22" height="26" rx="8" fill="#C98E6B"/>
+<path d="M256 202 C250 142 350 142 344 202 L346 240 C330 246 322 228 322 228 L278 228 C278 228 270 246 254 240 Z" fill="#1B120D"/>
+<ellipse cx="300" cy="208" rx="31" ry="36" fill="#C98E6B"/>
+<path d="M267 200 C270 164 320 156 334 196 C314 182 290 178 267 200 Z" fill="#1B120D"/>
+<circle cx="287" cy="210" r="9" fill="none" stroke="#1E1510" stroke-width="2.5"/>
+<circle cx="313" cy="210" r="9" fill="none" stroke="#1E1510" stroke-width="2.5"/>
+<path d="M296 210 H304" stroke="#1E1510" stroke-width="2.5"/>
+<path d="M293 230 Q300 235 307 230" fill="none" stroke="#8A4E36" stroke-width="2.5" stroke-linecap="round"/><rect x="110" y="378" width="380" height="18" rx="4" fill="#6E4630"/>
+<rect x="130" y="396" width="12" height="124" fill="#5A3826"/><rect x="458" y="396" width="12" height="124" fill="#5A3826"/><path d="M242 378 L250 306 H350 L358 378 Z" fill="#D9D0C3"/>
+<circle cx="300" cy="340" r="7" fill="#E8A96B"/><rect x="230" y="374" width="140" height="8" rx="3" fill="#BDB2A3"/><rect x="372" y="344" width="28" height="34" rx="5" fill="#F4EFE6"/><path d="M400 352 q14 0 14 10 t-14 10" fill="none" stroke="#F4EFE6" stroke-width="4"/>
+<path d="M380 334 q-6 -10 0 -18 M390 334 q-6 -10 0 -18" fill="none" stroke="rgba(244,239,230,.45)" stroke-width="2.5" stroke-linecap="round"/>
+<g transform="translate(34,64) rotate(-7)">
+<rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
+<rect width="150" height="96" rx="12" fill="#F6F1E8"/>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">PAYROLL · 8</text>
+<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$38,400</text>
+<rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E"/>
+<text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">APPROVE?</text>
+</g>
+<g transform="translate(420,56) rotate(6)">
+<rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
+<rect width="150" height="96" rx="12" fill="#F6F1E8"/>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">SUPPLIER BILL</text>
+<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$4,120</text>
+<rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E"/>
+<text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">APPROVE?</text>
+</g>
+<g transform="translate(248,28)"><rect width="104" height="40" rx="20" fill="#E8A96B"/><text x="52.0" y="26" text-anchor="middle" font-family="Outfit" font-size="16" font-weight="700" fill="#1E1510">7 waiting</text></g>
+<g transform="translate(64,516) scale(0.82)">
+<path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#8FA58A"/>
+<circle cx="0" cy="-22" r="30" fill="#A86F52"/><path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#2B1B12"/></g><g transform="translate(182,522) scale(0.8)">
+<path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#C8664A"/>
+<circle cx="0" cy="-22" r="30" fill="#C98E6B"/><path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#4A2E1E"/></g><g transform="translate(300,526) scale(0.78)">
+<path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#D9D0C3"/>
+<circle cx="0" cy="-22" r="30" fill="#8A5A40"/><path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#3A2418"/></g><g transform="translate(418,522) scale(0.8)">
+<path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#7C8FB0"/>
+<circle cx="0" cy="-22" r="30" fill="#B67E5E"/><path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#1B120D"/></g><g transform="translate(536,516) scale(0.82)">
+<path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#E9C85A"/>
+<circle cx="0" cy="-22" r="30" fill="#A86F52"/><path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#4A2E1E"/></g>
+<rect x="-50" y="590" width="700" height="16" fill="#6E4630"/><rect x="-50" y="606" width="700" height="8" fill="#5A3826"/>
+</svg>
