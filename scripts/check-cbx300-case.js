@@ -50,12 +50,12 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s81') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s82') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s74') !== -1, 'index.html missing growth js cache-bust');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s81') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s82') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s74') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv3') !== -1, 'multiverse missing case skin');
+  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv4') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s44') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -641,7 +641,9 @@ check('coffee curtain docks with landing projects softness', function () {
   assert.ok(pages.indexOf('directional: false') === -1, 'nearest snap is not direction-aware');
   assert.ok(pages.indexOf('var LINA_X = 112') !== -1, 'Lina must move aside so Aisha stays put');
   assert.ok(pages.indexOf('AISHA_X') === -1, 'Aisha x must stay constant across stages');
-  assert.ok(css.indexOf('top: var(--study-head, 72px)') !== -1, 'growth panel must dock below the study bar');
+  assert.ok(css.indexOf('top: var(--study-head, 72px)') === -1, 'coffee panel must cover the study bar');
+  assert.ok(css.indexOf('inset: 0') !== -1, 'coffee panel must meet the viewport edge');
+  assert.ok(css.indexOf('height: 100vh') !== -1, 'coffee panel must fill the viewport');
   assert.ok(pages.indexOf('RISE_DUR + STAGE_HOLD') !== -1, '01→02 must wait until after the 01 hold');
   assert.ok(pages.indexOf('RISE_DUR - 0.86') !== -1, 'stage 01 enter must finish before the curtain docks');
   assert.ok(landing.indexOf('duration: opts.duration || 0.7') !== -1, 'landing tweenBento 0.7 must still be source');

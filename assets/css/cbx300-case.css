@@ -37,9 +37,8 @@ html.is-study-page {
   --panel-flush: 0;
 }
 
-/* Cover stays parked. The same bar stays clickable above the coffee panel.
-   --cbx-rise 1 is the cream cover; 0 is docked, and the bar scrubs into the
-   panel colour with the curtain instead of sitting as a light strip. */
+/* Cover + chrome stay the under-layer (parked, no fade). Growth is z-index
+   40, same band as the landing projects rail, so it curtains over the bar. */
 html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome,
 html.is-study-page .study[data-template="cbx300"] .study__chrome {
   position: fixed !important;
@@ -47,66 +46,9 @@ html.is-study-page .study[data-template="cbx300"] .study__chrome {
   left: 0;
   right: 0;
   z-index: 21;
-  background: var(--cbx-bar-dock, var(--coffee, #1E1510));
-  /* The progress track used to occupy this 3px. Paint the dock colour
-     there so the cover cannot show through once the panel is up. */
-  box-shadow: 0 -3px 0 var(--cbx-bar-dock, var(--coffee, #1E1510));
-  color: color-mix(
-    in srgb,
-    var(--cbx-bar-ink, var(--coffee, #1E1510)) calc(var(--cbx-rise, 1) * 100%),
-    var(--cbx-bar-dock-ink, var(--cream, #f4efe6))
-  );
+  background: transparent;
   visibility: visible;
   pointer-events: auto;
-}
-
-/* Fills the 3px progress gap and crossfades the cover colour off the dock. */
-html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome::before,
-html.is-study-page .study[data-template="cbx300"] .study__chrome::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -3px;
-  bottom: 0;
-  background: var(--cbx-bar-cover, var(--film-cream, #f4efe6));
-  opacity: var(--cbx-rise, 1);
-  pointer-events: none;
-}
-
-/* Hairline between the bar and the stage rail. Gone on the cover. */
-html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome::after,
-html.is-study-page .study[data-template="cbx300"] .study__chrome::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  height: 1px;
-  background: rgb(244 239 230 / calc(0.12 * (1 - var(--cbx-rise, 1))));
-  pointer-events: none;
-}
-
-html.is-study.is-study-page .study[data-template="cbx300"] .study__chrome-row,
-html.is-study-page .study[data-template="cbx300"] .study__chrome-row {
-  position: relative;
-  z-index: 1;
-}
-
-html.is-study.is-study-page .study[data-template="cbx300"] .study__progress,
-html.is-study-page .study[data-template="cbx300"] .study__progress {
-  visibility: hidden;
-}
-
-html.is-study.is-study-page .study[data-template="cbx300"] .study__mark,
-html.is-study-page .study[data-template="cbx300"] .study__mark {
-  transform: scale(calc(var(--cbx-mark-dock, 0.68) + (1 - var(--cbx-mark-dock, 0.68)) * var(--cbx-rise, 1)));
-  transform-origin: center center;
-}
-
-html.is-study-page .study[data-template="cbx300"] .study__count {
-  color: var(--film-teal, #00a0a0);
 }
 
 .study[data-template="cbx300"] {
@@ -120,12 +62,6 @@ html.is-study-page .study[data-template="cbx300"] .study__count {
   --film-gutter: var(--gutter, 24px);
   --cbx-shout: clamp(2.55rem, 8.4vw, 7.25rem);
   --cbx-kicker: clamp(1.45rem, 3.4vw, 2.85rem);
-  /* Bar on the cover, then the same bar once the coffee panel is docked. */
-  --cbx-bar-cover: var(--film-cream, #f4efe6);
-  --cbx-bar-dock: var(--coffee, #1E1510);
-  --cbx-bar-ink: var(--coffee, #1E1510);
-  --cbx-bar-dock-ink: var(--cream, #f4efe6);
-  --cbx-mark-dock: 0.68;
   background: var(--film-cream);
   color: var(--film-ink);
 }
@@ -138,22 +74,10 @@ html.is-light-home.is-dark .study[data-template="cbx300"] {
   --film-faint: rgba(244, 239, 230, 0.42);
   --film-line: rgba(244, 239, 230, 0.2);
   --film-teal: #56c6c6;
-  --cbx-bar-cover: #1e1510;
-  --cbx-bar-dock: #1e1510;
-  --cbx-bar-ink: #f4efe6;
-  --cbx-bar-dock-ink: #f4efe6;
 }
 
 .study[data-template="cbx300"] .study__temps {
   display: none;
-}
-
-/* Same bar box in both skins. Measured before is-study-page, so this
-   cannot wait for that class or the panel docks at a different height. */
-.study[data-template="cbx300"] .study__chrome {
-  display: block;
-  gap: 0;
-  padding: 18px var(--gutter, 24px) 14px;
 }
 
 .cbx-world {
@@ -414,13 +338,13 @@ html.is-study .study-rail .work-card__cap {
 .cbx-growth {
   box-sizing: border-box;
   position: fixed;
-  top: var(--study-head, 72px);
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
+  top: 0;
   z-index: 40;
   width: 100%;
-  height: auto;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
   overflow: hidden;
   background: var(--coffee, #1E1510);
   color: var(--cream, #f4efe6);
@@ -445,7 +369,7 @@ html.is-study .study-rail .work-card__cap {
   background: transparent;
   border-radius: 0;
   box-shadow: none;
-  padding: clamp(22px, 3.6vh, 40px) clamp(24px, 5vw, 72px) clamp(24px, 3.4vh, 40px);
+  padding: var(--gutter, clamp(20px, 4vw, 64px)) clamp(24px, 5vw, 72px) clamp(20px, 3vh, 36px);
 }
 
 .cbx-growth__scene::before {
@@ -459,12 +383,15 @@ html.is-study .study-rail .work-card__cap {
 }
 
 html.is-study-page .study[data-template="cbx300"] .cbx-growth {
-  top: var(--study-head, 72px);
-  height: auto;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
 }
 
 html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-static {
   top: auto;
+  height: auto;
 }
 
 html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
@@ -850,7 +777,7 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
 
 @media (max-width: 820px) {
   .cbx-growth__scene {
-    padding: 18px 6% 22px;
+    padding: var(--gutter, 20px) 6% 22px;
   }
   .cbx-growth__board {
     display: flex;
