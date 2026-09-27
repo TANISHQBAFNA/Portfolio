@@ -59,8 +59,8 @@
     <g data-cbx-layer="mug">
       <rect data-cbx-ink="mug" x="380" y="364" width="28" height="34" rx="5" fill="#F4EFE6"/>
       <path data-cbx-ink="mug-handle" d="M408 372 q14 0 14 10 t-14 10" fill="none" stroke="#F4EFE6" stroke-width="4"/>
-      <path data-cbx-layer="steam-a" data-cbx-ink="steam" d="M388 363 q-6 -8 0 -16" fill="none" stroke="rgba(244,239,230,.45)" stroke-width="2.5" stroke-linecap="round"/>
-      <path data-cbx-layer="steam-b" data-cbx-ink="steam" d="M398 363 q-6 -8 0 -16" fill="none" stroke="rgba(244,239,230,.45)" stroke-width="2.5" stroke-linecap="round"/>
+      <path data-cbx-layer="steam-a" data-cbx-ink="steam" d="M388 363 q-6 -8 0 -16" fill="none" stroke="rgba(244,239,230,.82)" stroke-width="2.5" stroke-linecap="round"/>
+      <path data-cbx-layer="steam-b" data-cbx-ink="steam" d="M398 363 q-6 -8 0 -16" fill="none" stroke="rgba(244,239,230,.82)" stroke-width="2.5" stroke-linecap="round"/>
     </g>
     <g data-cbx-layer="plant">
       <g transform="translate(40,0)">
@@ -93,10 +93,13 @@
     <path data-cbx-ink="arrow" mask="url(#cbx-s01-arrow-mask)" d="M470 176 C 450 240, 410 290, 362 328" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
     <path data-cbx-layer="s01-arrow-head" data-cbx-ink="arrow" d="M362 312 L358 332 L378 330" fill="none" stroke="#E8A96B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-  <g data-cbx-layer="s02-arrows">
-    <path data-cbx-connector="aisha" data-cbx-ink="arrow" d="M240 168 C 175 210, 160 270, 230 322" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
-    <path data-cbx-connector="lina" data-cbx-ink="arrow" d="M368 162 C 430 210, 455 270, 452 328" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
   </g>
+
+  <g data-cbx-layer="s02-arrows">
+    <path data-cbx-connector="aisha" data-cbx-ink="arrow" d="M240 166 C 205 260, 175 370, 255 406" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+    <circle data-cbx-ink="arrow-dot" cx="255" cy="406" r="2" fill="#E8A96B"/>
+    <path data-cbx-connector="lina" data-cbx-ink="arrow" d="M372 157 C 448 200, 415 365, 478 408" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+    <circle data-cbx-ink="arrow-dot" cx="478" cy="408" r="2" fill="#E8A96B"/>
   </g>
 
   <g data-cbx-layer="s01">

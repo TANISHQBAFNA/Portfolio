@@ -202,11 +202,12 @@ html.is-multiverse .cbx-growth [data-cbx-ink="bench-edge"] { fill: #1e2236; }
 
 html.is-multiverse .cbx-growth [data-cbx-ink="mug"] { fill: #c9d3e6; }
 html.is-multiverse .cbx-growth [data-cbx-ink="mug-handle"] { stroke: #c9d3e6; }
-html.is-multiverse .cbx-growth [data-cbx-ink="steam"] { stroke: rgba(61, 232, 245, 0.45); }
+html.is-multiverse .cbx-growth [data-cbx-ink="steam"] { stroke: rgba(61, 232, 245, 0.82); }
 html.is-multiverse .cbx-growth [data-cbx-ink="pot"] { fill: #ff4eb8; }
 html.is-multiverse .cbx-growth [data-cbx-ink="leaf-a"] { fill: #00ff9c; }
 html.is-multiverse .cbx-growth [data-cbx-ink="leaf-b"] { fill: #00a0a0; }
 html.is-multiverse .cbx-growth [data-cbx-ink="arrow"] { stroke: #3de8f5; }
+html.is-multiverse .cbx-growth [data-cbx-ink="arrow-dot"] { fill: #3de8f5; }
 html.is-multiverse .cbx-growth [data-cbx-ink="lamp-cord"] { stroke: #1e2236; }
 html.is-multiverse .cbx-growth [data-cbx-ink="lamp-shade"] { fill: #3de8f5; }
 html.is-multiverse .cbx-growth [data-cbx-ink="lamp-bulb"] { fill: #b8f6fb; }

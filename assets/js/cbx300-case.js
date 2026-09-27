@@ -63,7 +63,7 @@ window.Cbx300Case = (function () {
     { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
   ];
 
-  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s7';
+  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s8';
   /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
      clears the mug; the stage-03 left figure shifts off the plant. */
   var LINA_X = 112;
@@ -522,10 +522,6 @@ window.Cbx300Case = (function () {
     var draw = layer(root, 's01-arrow-draw');
     if (line) line.setAttribute('d', arrowD);
     if (draw) draw.setAttribute('d', arrowD);
-    var aishaArc = root.querySelector('[data-cbx-connector="aisha"]');
-    var linaArc = root.querySelector('[data-cbx-connector="lina"]');
-    if (aishaArc) aishaArc.setAttribute('d', 'M240 ' + yAt(168) + ' C 175 ' + yAt(210) + ', 160 270, 230 322');
-    if (linaArc) linaArc.setAttribute('d', 'M368 ' + yAt(162) + ' C 430 ' + yAt(210) + ', 455 270, 452 328');
   }
 
   function posePersist(root, beatIndex) {
@@ -658,9 +654,9 @@ window.Cbx300Case = (function () {
     var steamA = layer(root, 'steam-a');
     var steamB = layer(root, 'steam-b');
     if (steamA) {
-      tweens.push(gsap.fromTo(steamA, { y: 0, opacity: 0.55 }, {
+      tweens.push(gsap.fromTo(steamA, { y: 0, opacity: 0.95 }, {
         y: -4,
-        opacity: 0,
+        opacity: 0.55,
         duration: 2.2,
         ease: 'sine.out',
         repeat: -1,
@@ -668,9 +664,9 @@ window.Cbx300Case = (function () {
       }));
     }
     if (steamB) {
-      tweens.push(gsap.fromTo(steamB, { y: 0, opacity: 0.4 }, {
+      tweens.push(gsap.fromTo(steamB, { y: 0, opacity: 0.85 }, {
         y: -5,
-        opacity: 0,
+        opacity: 0.5,
         duration: 2.5,
         delay: 0.35,
         ease: 'sine.out',
