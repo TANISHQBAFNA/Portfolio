@@ -584,6 +584,16 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   margin-left: -0.36em;
 }
 
+.cbx-growth__quote::after {
+  content: none;
+}
+
+.cbx-growth__word:last-child::after {
+  content: "”";
+  color: #E8A96B;
+  font-style: italic;
+}
+
 .cbx-growth__ask-text {
   font: inherit;
   color: inherit;
