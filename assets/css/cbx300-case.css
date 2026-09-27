@@ -76,25 +76,6 @@ html.is-light-home.is-dark .study[data-template="cbx300"] {
   --film-teal: #56c6c6;
 }
 
-/* Multiverse study is always the ink/glitch world, not cream paper. */
-html.is-multiverse .study[data-template="cbx300"] {
-  --film-cream: #0e1018;
-  --film-paper: #161822;
-  --film-ink: #f3eee4;
-  --film-muted: rgba(243, 238, 228, 0.68);
-  --film-faint: rgba(243, 238, 228, 0.48);
-  --film-line: rgba(61, 232, 245, 0.32);
-  --film-teal: #3de8f5;
-  background: #0e1018;
-  color: #f3eee4;
-}
-html.is-multiverse .study[data-template="cbx300"] .study__chrome {
-  background: #0e1018;
-}
-html.is-multiverse .study[data-template="cbx300"] .study__count {
-  color: #3de8f5;
-}
-
 .study[data-template="cbx300"] .study__temps {
   display: none;
 }
@@ -191,10 +172,6 @@ html.is-light-home .study[data-template="cbx300"] .cbx-cover__media.work-card {
   overflow: hidden;
   border-radius: 14px;
   background: rgba(30, 21, 16, 0.06);
-}
-
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media .work-card__media {
-  border-radius: 0;
 }
 
 .cbx-cover__media .work-card__img {
@@ -303,31 +280,6 @@ html.is-multiverse .cbx-cover .hero__accent:not(.is-glitching) {
   text-shadow:
     0 0 14px var(--film-cream),
     0 1px 8px var(--film-cream);
-}
-
-/* Home Multiverse paints kicker/word with Ben-Day + print fill (#0e1018).
-   That fill disappears on the ink study. Solid type; RGB stays in glitch plates. */
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__kicker,
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__word,
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__accent {
-  background-image: none !important;
-  background-clip: border-box !important;
-  -webkit-background-clip: border-box !important;
-  -webkit-text-fill-color: currentColor !important;
-  text-transform: none !important;
-}
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__kicker,
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__word,
-html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__kicker,
-html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__word {
-  color: #f3eee4 !important;
-  -webkit-text-fill-color: #f3eee4 !important;
-}
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__accent,
-html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__accent,
-html.is-multiverse.is-dark .study[data-template="cbx300"] .cbx-cover .hero__accent {
-  color: #3de8f5 !important;
-  -webkit-text-fill-color: #3de8f5 !important;
 }
 
 /* Cream stays still. Multiverse glitch plates live in landing-multiverse.css. */
@@ -789,16 +741,6 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
 
 .cbx-growth.is-static .cbx-growth__pic {
   min-height: min(52vh, 520px);
-}
-
-html.is-multiverse .study[data-template="cbx300"] .cbx-growth {
-  background: #0e1018;
-  color: #f3eee4;
-}
-
-html.is-multiverse .study[data-template="cbx300"] .cbx-growth__scene {
-  background: transparent;
-  box-shadow: none;
 }
 
 html.is-cream-home .study[data-template="cbx300"] .cbx-growth,

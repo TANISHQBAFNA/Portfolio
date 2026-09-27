@@ -7,24 +7,24 @@
   </defs>
 
   <g data-cbx-layer="glow">
-    <rect x="-50" y="-50" width="700" height="740" fill="#2A1E17"/>
-    <rect x="-50" y="520" width="700" height="200" fill="#241913"/>
-    <ellipse cx="300" cy="566" rx="260" ry="30" fill="#2E211A"/>
-    <ellipse cx="300" cy="566" rx="200" ry="20" fill="none" stroke="#3A2A20" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
-    <circle cx="300" cy="260" r="200" fill="#33251C"/>
+    <rect data-cbx-ink="panel" x="-50" y="-50" width="700" height="740" fill="#2A1E17"/>
+    <rect data-cbx-ink="floor" x="-50" y="520" width="700" height="200" fill="#241913"/>
+    <ellipse data-cbx-ink="rug" cx="300" cy="566" rx="260" ry="30" fill="#2E211A"/>
+    <ellipse data-cbx-ink="rug-ring" cx="300" cy="566" rx="200" ry="20" fill="none" stroke="#3A2A20" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+    <circle data-cbx-ink="halo" cx="300" cy="260" r="200" fill="#33251C"/>
   </g>
 
   <g data-cbx-layer="s03-sides">
     <g data-cbx-layer="s03-side-l">
       <g transform="translate(82,318) scale(0.72)">
-        <path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#E9A15B"/>
+        <path data-cbx-ink="shirt-side-l" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#E9A15B"/>
         <circle cx="0" cy="-22" r="30" fill="#C98E6B"/>
         <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#2B1B12"/>
       </g>
     </g>
     <g data-cbx-layer="s03-side-r">
       <g transform="translate(518,318) scale(0.72)">
-        <path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#9C7BA0"/>
+        <path data-cbx-ink="shirt-side-r" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#9C7BA0"/>
         <circle cx="0" cy="-22" r="30" fill="#A86F52"/>
         <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#1B120D"/>
       </g>
@@ -33,8 +33,8 @@
 
   <g data-cbx-layer="persist">
     <g data-cbx-layer="aisha">
-      <path d="M238 398 C238 318 256 280 300 280 C344 280 362 318 362 398 Z" fill="#E9C85A"/>
-      <path d="M286 280 Q300 294 314 280" fill="none" stroke="#C9A640" stroke-width="3"/>
+      <path data-cbx-ink="shirt-aisha" d="M238 398 C238 318 256 280 300 280 C344 280 362 318 362 398 Z" fill="#E9C85A"/>
+      <path data-cbx-ink="neck" d="M286 280 Q300 294 314 280" fill="none" stroke="#C9A640" stroke-width="3"/>
       <rect x="289" y="258" width="22" height="26" rx="8" fill="#C98E6B"/>
       <path d="M256 222 C250 162 350 162 344 222 L346 260 C330 266 322 248 322 248 L278 248 C278 248 270 266 254 260 Z" fill="#1B120D"/>
       <ellipse cx="300" cy="228" rx="31" ry="36" fill="#C98E6B"/>
@@ -43,30 +43,30 @@
       <circle cx="313" cy="230" r="9" fill="none" stroke="#1E1510" stroke-width="2.5"/>
       <path d="M296 230 H304" stroke="#1E1510" stroke-width="2.5"/>
       <path d="M293 250 Q300 255 307 250" fill="none" stroke="#8A4E36" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M242 398 L250 326 H350 L358 398 Z" fill="#D9D0C3"/>
-      <circle cx="300" cy="360" r="7" fill="#E8A96B"/>
-      <rect x="230" y="394" width="140" height="8" rx="3" fill="#BDB2A3"/>
+      <path data-cbx-ink="laptop" d="M242 398 L250 326 H350 L358 398 Z" fill="#D9D0C3"/>
+      <circle data-cbx-ink="laptop-dot" cx="300" cy="360" r="7" fill="#E8A96B"/>
+      <rect data-cbx-ink="laptop-base" x="230" y="394" width="140" height="8" rx="3" fill="#BDB2A3"/>
     </g>
     <g data-cbx-layer="desk">
-      <rect x="80" y="398" width="440" height="18" rx="4" fill="#6E4630"/>
-      <rect x="100" y="416" width="12" height="104" fill="#5A3826"/>
-      <rect x="488" y="416" width="12" height="104" fill="#5A3826"/>
+      <rect data-cbx-ink="desk" x="80" y="398" width="440" height="18" rx="4" fill="#6E4630"/>
+      <rect data-cbx-ink="desk-leg" x="100" y="416" width="12" height="104" fill="#5A3826"/>
+      <rect data-cbx-ink="desk-leg" x="488" y="416" width="12" height="104" fill="#5A3826"/>
     </g>
     <g data-cbx-layer="mug">
-      <rect x="380" y="364" width="28" height="34" rx="5" fill="#F4EFE6"/>
-      <path d="M408 372 q14 0 14 10 t-14 10" fill="none" stroke="#F4EFE6" stroke-width="4"/>
-      <path data-cbx-layer="steam-a" d="M388 354 q-6 -10 0 -18" fill="none" stroke="rgba(244,239,230,.45)" stroke-width="2.5" stroke-linecap="round"/>
-      <path data-cbx-layer="steam-b" d="M398 354 q-6 -10 0 -18" fill="none" stroke="rgba(244,239,230,.45)" stroke-width="2.5" stroke-linecap="round"/>
+      <rect data-cbx-ink="mug" x="380" y="364" width="28" height="34" rx="5" fill="#F4EFE6"/>
+      <path data-cbx-ink="mug-handle" d="M408 372 q14 0 14 10 t-14 10" fill="none" stroke="#F4EFE6" stroke-width="4"/>
+      <path data-cbx-layer="steam-a" data-cbx-ink="steam" d="M388 354 q-6 -10 0 -18" fill="none" stroke="rgba(244,239,230,.45)" stroke-width="2.5" stroke-linecap="round"/>
+      <path data-cbx-layer="steam-b" data-cbx-ink="steam" d="M398 354 q-6 -10 0 -18" fill="none" stroke="rgba(244,239,230,.45)" stroke-width="2.5" stroke-linecap="round"/>
     </g>
     <g data-cbx-layer="plant">
-      <path d="M122 358 H158 L153 398 H127 Z" fill="#C8664A"/>
-      <path d="M140 358 C110 328 106 298 132 286 C136 312 140 338 140 358 Z" fill="#8FA58A"/>
-      <path d="M140 358 C168 338 180 306 158 294 C150 318 144 338 140 358 Z" fill="#6F8A6B"/>
+      <path data-cbx-ink="pot" d="M122 358 H158 L153 398 H127 Z" fill="#C8664A"/>
+      <path data-cbx-ink="leaf-a" d="M140 358 C110 328 106 298 132 286 C136 312 140 338 140 358 Z" fill="#8FA58A"/>
+      <path data-cbx-ink="leaf-b" d="M140 358 C168 338 180 306 158 294 C150 318 144 338 140 358 Z" fill="#6F8A6B"/>
     </g>
   </g>
 
   <g data-cbx-layer="s02-lina">
-    <path d="M346 398 C346 320 364 286 404 286 C444 286 462 320 462 398 Z" fill="#8FA58A"/>
+    <path data-cbx-ink="shirt-lina" d="M346 398 C346 320 364 286 404 286 C444 286 462 320 462 398 Z" fill="#8FA58A"/>
     <rect x="394" y="264" width="20" height="26" rx="8" fill="#A86F52"/>
     <circle cx="404" cy="184" r="18" fill="#3A2418"/>
     <ellipse cx="404" cy="234" rx="30" ry="35" fill="#A86F52"/>
@@ -75,26 +75,26 @@
     <circle cx="415" cy="238" r="3.2" fill="#1E1510"/>
     <path d="M397 255 Q404 261 411 255" fill="none" stroke="#5E3322" stroke-width="2.5" stroke-linecap="round"/>
     <g transform="translate(404,398)">
-      <rect x="-44" y="-10" width="88" height="10" rx="3" fill="#BDB2A3"/>
-      <path d="M-36 -10 L-30 -58 H30 L36 -10 Z" fill="#D9D0C3"/>
-      <circle cx="0" cy="-34" r="6" fill="#E8A96B"/>
+      <rect data-cbx-ink="laptop-base" x="-44" y="-10" width="88" height="10" rx="3" fill="#BDB2A3"/>
+      <path data-cbx-ink="laptop" d="M-36 -10 L-30 -58 H30 L36 -10 Z" fill="#D9D0C3"/>
+      <circle data-cbx-ink="laptop-dot" cx="0" cy="-34" r="6" fill="#E8A96B"/>
     </g>
   </g>
 
   <g data-cbx-layer="s01">
     <g data-cbx-layer="s01-arrow">
-      <path data-cbx-layer="s01-arrow-line" mask="url(#cbx-s01-arrow-mask)" d="M470 176 C 450 240, 410 290, 362 328" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
-      <path data-cbx-layer="s01-arrow-head" d="M362 312 L358 332 L378 330" fill="none" stroke="#E8A96B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path data-cbx-ink="arrow" mask="url(#cbx-s01-arrow-mask)" d="M470 176 C 450 240, 410 290, 362 328" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+      <path data-cbx-layer="s01-arrow-head" data-cbx-ink="arrow" d="M362 312 L358 332 L378 330" fill="none" stroke="#E8A96B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
     <g data-cbx-layer="s01-inv-015">
       <g data-cbx-idle="card">
         <g transform="translate(36,110) rotate(-8)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
-          <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #015</text>
-          <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$1,650</text>
-          <rect x="14" y="68" width="69.80000000000001" height="18" rx="9" fill="#9A6A1E"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">DUE FRI</text>
+          <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
+          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #015</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$1,650</text>
+          <rect x="14" y="68" width="69.80000000000001" height="18" rx="9" fill="#9A6A1E" data-cbx-ink="tag-due"/>
+          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">DUE FRI</text>
         </g>
       </g>
     </g>
@@ -102,11 +102,11 @@
       <g data-cbx-idle="card">
         <g transform="translate(410,58) rotate(7)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
-          <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #014</text>
-          <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$2,400</text>
-          <rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">PAID</text>
+          <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
+          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #014</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$2,400</text>
+          <rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36" data-cbx-ink="tag-paid"/>
+          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">PAID</text>
         </g>
       </g>
     </g>
@@ -114,12 +114,12 @@
       <g data-cbx-idle="card">
         <g transform="translate(430,236) rotate(-5)">
           <rect x="0" y="4" width="156" height="96" rx="12" fill="#000" opacity=".22"/>
-          <rect width="156" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #012</text>
-          <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$2,800</text>
+          <rect data-cbx-ink="card" width="156" height="96" rx="12" fill="#F6F1E8"/>
+          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">INVOICE #012</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$2,800</text>
           <g data-cbx-layer="s01-late">
-            <rect x="14" y="68" width="99.4" height="18" rx="9" fill="#C8664A"/>
-            <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">6 DAYS LATE</text>
+            <rect data-cbx-ink="tag-late" x="14" y="68" width="99.4" height="18" rx="9" fill="#C8664A"/>
+            <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">6 DAYS LATE</text>
           </g>
         </g>
       </g>
@@ -128,18 +128,18 @@
 
   <g data-cbx-layer="s02">
     <g data-cbx-layer="s02-arrows">
-      <path d="M232 262 C 250 214, 272 196, 296 188" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
-      <path d="M368 262 C 350 214, 328 196, 304 188" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+      <path data-cbx-ink="arrow" d="M232 262 C 250 214, 272 196, 296 188" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+      <path data-cbx-ink="arrow" d="M368 262 C 350 214, 328 196, 304 188" fill="none" stroke="#E8A96B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
     </g>
     <g data-cbx-layer="s02-card-shared">
       <g data-cbx-idle="card">
         <g transform="translate(225,96) rotate(-4)">
           <rect x="0" y="5" width="150" height="94" rx="12" fill="#000" opacity=".25"/>
-          <rect width="150" height="94" rx="12" fill="#E8A96B"/>
-          <rect x="16" y="26" width="28" height="20" rx="4" fill="#F3D7A8"/>
+          <rect width="150" height="94" rx="12" fill="#E8A96B" data-cbx-ink="card-cyan"/>
+          <rect data-cbx-ink="chip" x="16" y="26" width="28" height="20" rx="4" fill="#F3D7A8"/>
           <text x="16" y="74" font-family="Outfit" font-size="13" font-weight="600" fill="#1E1510" letter-spacing="2">"""" 4821</text>
-          <circle cx="116" cy="30" r="10" fill="#C8664A" opacity=".9"/>
-          <circle cx="128" cy="30" r="10" fill="#F3D7A8" opacity=".9"/>
+          <circle data-cbx-ink="chip-hot" cx="116" cy="30" r="10" fill="#C8664A" opacity=".9"/>
+          <circle data-cbx-ink="chip-cool" cx="128" cy="30" r="10" fill="#F3D7A8" opacity=".9"/>
           <text x="16" y="18" font-family="Outfit" font-size="10" font-weight="700" fill="#1E1510" letter-spacing="1.2" opacity=".7">SHARED</text>
         </g>
       </g>
@@ -148,11 +148,11 @@
       <g data-cbx-idle="card">
         <g transform="translate(28,70) rotate(-7)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
-          <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">PAYDAY � FRI</text>
-          <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$3,200</text>
-          <rect x="14" y="68" width="62.400000000000006" height="18" rx="9" fill="#9A6A1E"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">SALARY</text>
+          <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
+          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">PAYDAY � FRI</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$3,200</text>
+          <rect x="14" y="68" width="62.400000000000006" height="18" rx="9" fill="#9A6A1E" data-cbx-ink="tag-due"/>
+          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">SALARY</text>
         </g>
       </g>
     </g>
@@ -160,11 +160,11 @@
       <g data-cbx-idle="card">
         <g transform="translate(430,62) rotate(6)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
-          <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">FREE AFTER</text>
-          <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$7,130</text>
-          <rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">SAFE</text>
+          <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
+          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">FREE AFTER</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$7,130</text>
+          <rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36" data-cbx-ink="tag-paid"/>
+          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">SAFE</text>
         </g>
       </g>
     </g>
@@ -172,40 +172,40 @@
 
   <g data-cbx-layer="s03-row">
     <g transform="translate(64,516) scale(0.82)">
-      <path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#8FA58A"/>
+      <path data-cbx-ink="row-1" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#8FA58A"/>
       <circle cx="0" cy="-22" r="30" fill="#A86F52"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#2B1B12"/>
     </g>
     <g transform="translate(182,522) scale(0.8)">
-      <path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#C8664A"/>
+      <path data-cbx-ink="row-2" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#C8664A"/>
       <circle cx="0" cy="-22" r="30" fill="#C98E6B"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#4A2E1E"/>
     </g>
     <g transform="translate(300,526) scale(0.78)">
-      <path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#D9D0C3"/>
+      <path data-cbx-ink="row-3" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#D9D0C3"/>
       <circle cx="0" cy="-22" r="30" fill="#8A5A40"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#3A2418"/>
     </g>
     <g transform="translate(418,522) scale(0.8)">
-      <path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#7C8FB0"/>
+      <path data-cbx-ink="row-4" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#7C8FB0"/>
       <circle cx="0" cy="-22" r="30" fill="#B67E5E"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#1B120D"/>
     </g>
     <g transform="translate(536,516) scale(0.82)">
-      <path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#E9C85A"/>
+      <path data-cbx-ink="row-5" d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#E9C85A"/>
       <circle cx="0" cy="-22" r="30" fill="#A86F52"/>
       <path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#4A2E1E"/>
     </g>
   </g>
   <g data-cbx-layer="s03-bench">
-    <rect x="-50" y="590" width="700" height="16" fill="#6E4630"/>
-    <rect x="-50" y="606" width="700" height="8" fill="#5A3826"/>
+    <rect data-cbx-ink="bench" x="-50" y="590" width="700" height="16" fill="#6E4630"/>
+    <rect data-cbx-ink="bench-edge" x="-50" y="606" width="700" height="8" fill="#5A3826"/>
   </g>
   <g data-cbx-layer="lamp">
     <g data-cbx-idle="lamp">
-      <path d="M300 -30 V44" stroke="#5A3826" stroke-width="3"/>
-      <path d="M270 78 L282 44 H318 L330 78 Z" fill="#E8A96B"/>
-      <ellipse cx="300" cy="80" rx="12" ry="6" fill="#F3D7A8"/>
+      <path d="M300 -30 V44" stroke="#5A3826" stroke-width="3" data-cbx-ink="lamp-cord"/>
+      <path d="M270 78 L282 44 H318 L330 78 Z" fill="#E8A96B" data-cbx-ink="lamp-shade"/>
+      <ellipse cx="300" cy="80" rx="12" ry="6" fill="#F3D7A8" data-cbx-ink="lamp-bulb"/>
     </g>
   </g>
   <g data-cbx-layer="s03">
@@ -213,11 +213,11 @@
       <g data-cbx-idle="card">
         <g transform="translate(34,64) rotate(-7)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
-          <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">PAYROLL � 8</text>
-          <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$38,400</text>
-          <rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">APPROVE?</text>
+          <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
+          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">PAYROLL � 8</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$38,400</text>
+          <rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E" data-cbx-ink="tag-due"/>
+          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">APPROVE?</text>
         </g>
       </g>
     </g>
@@ -225,17 +225,17 @@
       <g data-cbx-idle="card">
         <g transform="translate(420,56) rotate(6)">
           <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
-          <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">SUPPLIER BILL</text>
-          <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$4,120</text>
-          <rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E"/>
-          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">APPROVE?</text>
+          <rect data-cbx-ink="card" width="150" height="96" rx="12" fill="#F6F1E8"/>
+          <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" data-cbx-ink="card-label" letter-spacing="1">SUPPLIER BILL</text>
+          <text data-cbx-ink="card-amt" x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$4,120</text>
+          <rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E" data-cbx-ink="tag-due"/>
+          <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" data-cbx-ink="tag-ink" letter-spacing=".8">APPROVE?</text>
         </g>
       </g>
     </g>
     <g data-cbx-layer="s03-pill">
       <g transform="translate(248,28)">
-        <rect width="104" height="40" rx="20" fill="#E8A96B"/>
+        <rect data-cbx-ink="pill" width="104" height="40" rx="20" fill="#E8A96B"/>
         <text x="52.0" y="26" text-anchor="middle" font-family="Outfit" font-size="16" font-weight="700" fill="#1E1510">7 waiting</text>
       </g>
     </g>

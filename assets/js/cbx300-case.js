@@ -899,13 +899,44 @@ window.Cbx300Case = (function () {
     return best;
   }
 
+  var MV_FLICK = ['s01-inv-012', 's02-card-free', 's03-card-supplier'];
+  var mvBurstTimer = 0;
+  var mvFlickTimer = 0;
+
+  function pulseMvArrive(pane, index) {
+    if (!isMultiverse() || motion.reduce || !pane) return;
+    var card = pane.querySelector('[data-cbx-layer="' + (MV_FLICK[index] || '') + '"]');
+    var prev = pane.querySelector('.is-mv-flick');
+    if (prev && prev !== card) prev.classList.remove('is-mv-flick');
+    pane.classList.remove('is-mv-burst');
+    if (pane.offsetWidth >= 0) pane.classList.add('is-mv-burst');
+    if (mvBurstTimer) window.clearTimeout(mvBurstTimer);
+    mvBurstTimer = window.setTimeout(function () {
+      pane.classList.remove('is-mv-burst');
+      mvBurstTimer = 0;
+    }, 420);
+    if (!card) return;
+    card.classList.remove('is-mv-flick');
+    if (card.offsetWidth >= 0) card.classList.add('is-mv-flick');
+    if (mvFlickTimer) window.clearTimeout(mvFlickTimer);
+    mvFlickTimer = window.setTimeout(function () {
+      card.classList.remove('is-mv-flick');
+      mvFlickTimer = 0;
+    }, 420);
+  }
+
   function applyBeat(root, index) {
     var pane = root;
     if (root && root.closest && !root.hasAttribute('data-cbx-growth')) {
       pane = root.closest('[data-cbx-growth]');
     }
     if (!pane) return;
+    var arrived = pane.getAttribute('data-cbx-mv-seen') !== String(index);
     pane.setAttribute('data-cbx-live-beat', String(index));
+    if (arrived) {
+      pane.setAttribute('data-cbx-mv-seen', String(index));
+      pulseMvArrive(pane, index);
+    }
     Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-beat]'), function (beat, i) {
       beat.classList.toggle('is-on', i === index);
     });

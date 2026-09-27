@@ -23,6 +23,7 @@ var landing = read('assets/js/landing.js');
 var mvLanding = read('assets/js/landing-multiverse.js');
 var rail = read('assets/js/project-rail.js');
 var css = read('assets/css/cbx300-case.css');
+var mvCase = read('assets/css/cbx300-case-multiverse.css');
 var landingCss = read('assets/css/landing.css');
 var mvCss = read('assets/css/landing-multiverse.css');
 
@@ -49,10 +50,12 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s75') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s67') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s75') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s67') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s76') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s68') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s76') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s68') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv1') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s42') !== -1, 'index.html missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
@@ -171,10 +174,10 @@ check('Section 02 growth field is coffee; cover stays cream', function () {
   var picCss = css.slice(css.indexOf('.cbx-growth__pic {'), css.indexOf('.cbx-growth__illo {'));
   assert.ok(picCss.indexOf('border-radius: 28px') !== -1, 'illustration sits in a tall rounded panel');
   assert.ok(picCss.indexOf('background: #2A1E17') !== -1, 'illustration panel must match D2 coffee2');
-  assert.ok(css.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__scene') !== -1, 'missing Multiverse scene');
-  var mvScene = css.slice(
-    css.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__scene'),
-    css.indexOf('html.is-cream-home .study[data-template="cbx300"] .cbx-growth')
+  assert.ok(mvCase.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__scene') !== -1, 'missing Multiverse scene');
+  var mvScene = mvCase.slice(
+    mvCase.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__scene'),
+    mvCase.indexOf('html.is-multiverse .cbx-growth__step')
   );
   assert.ok(mvScene.indexOf('background: transparent') !== -1, 'Multiverse scene must not be a boxed plate');
   assert.ok(landingCss.indexOf('--projects-panel: var(--coffee)') !== -1, 'growth must match landing projects rail coffee');
@@ -195,11 +198,12 @@ check('cream stays calm; Multiverse glitches cover + chrome', function () {
 });
 
 check('Multiverse study uses ink/glitch blue, not cream paper', function () {
-  assert.ok(css.indexOf('html.is-multiverse .study[data-template="cbx300"]') !== -1, 'missing Multiverse study skin');
-  assert.ok(css.indexOf('#0e1018') !== -1, 'missing Multiverse ink');
-  assert.ok(css.indexOf('#3de8f5') !== -1, 'missing Multiverse cyan');
-  assert.ok(css.indexOf('-webkit-text-fill-color: #f3eee4') !== -1, 'Multiverse cover kicker/word must beat home print fill');
+  assert.ok(mvCase.indexOf('html.is-multiverse .study[data-template="cbx300"]') !== -1, 'missing Multiverse study skin');
+  assert.ok(mvCase.indexOf('#0e1018') !== -1, 'missing Multiverse ink');
+  assert.ok(mvCase.indexOf('#3de8f5') !== -1, 'missing Multiverse cyan');
+  assert.ok(mvCase.indexOf('-webkit-text-fill-color: #f3eee4') !== -1, 'Multiverse cover kicker/word must beat home print fill');
   assert.ok(css.indexOf('html.is-light-home.is-dark .study[data-template="cbx300"]') !== -1, 'cream dark must not steal Multiverse ink');
+  assert.ok(css.indexOf('#0e1018') === -1, 'shared sheet must not carry Multiverse ink');
 });
 
 check('cream and Multiverse share one cover + growth layout', function () {
@@ -211,11 +215,18 @@ check('cream and Multiverse share one cover + growth layout', function () {
   assert.ok(css.indexOf('.cbx-growth__voice') !== -1, 'missing story voice');
   assert.ok(css.indexOf('.cbx-growth.is-static') !== -1, 'reduced-motion must keep the coffee pane');
   assert.ok(css.indexOf('grid-template-columns: 45fr 55fr') !== -1, 'D2 board must be 45/55');
-  var mvGrowthPos = css.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth {');
-  var mvGrowthRule = css.slice(mvGrowthPos, mvGrowthPos + 280);
+  var mvGrowthPos = mvCase.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth {');
+  var mvGrowthRule = mvCase.slice(mvGrowthPos, mvGrowthPos + 280);
+  assert.ok(mvGrowthPos !== -1, 'Multiverse growth skin missing');
   assert.ok(mvGrowthRule.indexOf('grid-template-columns') === -1, 'Multiverse must not reposition the board');
-  assert.ok(css.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__board') === -1,
+  assert.ok(mvCase.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__board') === -1,
     'Multiverse must not fork board positioning');
+  assert.ok(css.indexOf('html.is-multiverse .study[data-template="cbx300"] .cbx-growth__board') === -1,
+    'shared sheet must not fork Multiverse board positioning');
+  assert.ok(pages.indexOf('pulseMvArrive') !== -1, 'stage arrival must pulse the Multiverse glitch');
+  assert.ok(pages.indexOf('s01-inv-012') !== -1, 'stage 01 card flicker target missing');
+  assert.ok(mvCase.indexOf('@keyframes cbx-mv-ask') !== -1, 'question arrival glitch missing');
+  assert.ok(mvCase.indexOf('prefers-reduced-motion: reduce') !== -1, 'reduced motion must keep the static skin');
 });
 
 check('study page scroll unlocks; coffee panel curtains over parked chrome', function () {
