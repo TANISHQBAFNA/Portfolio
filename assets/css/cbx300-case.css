@@ -441,6 +441,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   padding: 0 18px 12px 0;
   border-bottom: 2px solid rgba(244, 239, 230, 0.16);
   color: rgba(244, 239, 230, 0.4);
+  transition: color 620ms cubic-bezier(0.16, 1, 0.3, 1), border-bottom-color 620ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cbx-growth__step.is-past {
@@ -714,6 +715,15 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   transition: none;
 }
 
+.cbx-growth.is-shifting .cbx-growth__word,
+.cbx-growth.is-shifting .cbx-growth__lab,
+.cbx-growth.is-shifting .cbx-growth__rule,
+.cbx-growth.is-shifting .cbx-growth__sub,
+.cbx-growth.is-shifting [data-cbx-layer],
+.cbx-growth.is-shifting .cbx-growth__rail-ink {
+  will-change: transform, opacity;
+}
+
 .cbx-growth.is-cinematic [data-cbx-layer="aisha"],
 .cbx-growth.is-cinematic [data-cbx-layer="desk"],
 .cbx-growth.is-cinematic [data-cbx-layer="mug"],
@@ -815,6 +825,26 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
   .cbx-growth__rail-ink {
     display: none;
   }
+  .cbx-growth__step {
+    transition-duration: 200ms !important;
+  }
+  .cbx-growth__beat,
+  .cbx-growth__illo {
+    transition: opacity 200ms ease, visibility 0s linear 200ms !important;
+  }
+  .cbx-growth__beat.is-on,
+  .cbx-growth__illo.is-on {
+    transition: opacity 200ms ease, visibility 0s linear 0s !important;
+  }
+  .cbx-growth.is-reduce [data-cbx-layer="s01"],
+  .cbx-growth.is-reduce [data-cbx-layer="s02"],
+  .cbx-growth.is-reduce [data-cbx-layer="s02-lina"],
+  .cbx-growth.is-reduce [data-cbx-layer="s03"],
+  .cbx-growth.is-reduce [data-cbx-layer="s03-sides"],
+  .cbx-growth.is-reduce [data-cbx-layer="s03-row"],
+  .cbx-growth.is-reduce [data-cbx-layer="s03-bench"] {
+    transition: opacity 200ms ease !important;
+  }
   .cbx-growth__step.is-on {
     border-bottom-color: #f4efe6;
   }
@@ -826,7 +856,7 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
   .cbx-growth.is-reduce [data-cbx-layer="s03-row"],
   .cbx-growth.is-reduce [data-cbx-layer="s03-bench"] {
     opacity: 0;
-    transition: opacity 280ms ease;
+    transition: opacity 200ms ease;
   }
   .cbx-growth.is-reduce[data-cbx-live-beat="0"] [data-cbx-layer="s01"] {
     opacity: 1;

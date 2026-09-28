@@ -271,12 +271,12 @@ check('cache queries bumped for My Work glitch skin', function () {
     'index-multiverse.html must bump landing-multiverse.css cache to mv14'
   );
   assert.ok(
-    /iris-motion-multiverse\.js\?v=mv11/.test(index),
-    'index.html must bump iris-motion-multiverse.js cache to mv11'
+    /iris-motion-multiverse\.js\?v=mv12/.test(index),
+    'index.html must bump iris-motion-multiverse.js cache to mv12'
   );
   assert.ok(
-    /iris-motion-multiverse\.js\?v=mv11/.test(mvIndex),
-    'index-multiverse.html must bump iris-motion-multiverse.js cache to mv11'
+    /iris-motion-multiverse\.js\?v=mv12/.test(mvIndex),
+    'index-multiverse.html must bump iris-motion-multiverse.js cache to mv12'
   );
   assert.ok(
     /landing-multiverse\.js\?v=mv10/.test(index),

@@ -1,6 +1,16 @@
 (function (global) {
   "use strict";
 
+  var coverHold = false;
+  var particlePause = function () {};
+  var particlePlay = function () {};
+
+  function setCoverPaused(on) {
+    coverHold = !!on;
+    if (coverHold) particlePause();
+    else particlePlay();
+  }
+
   function revealLanding(html, reduceMotion) {
     var navBits = document.querySelectorAll(".masthead__nav li");
     var heroBits = document.querySelectorAll(".hero__role, .hero__kicker, .hero__accent, .hero__word, .hero__support");
@@ -72,6 +82,8 @@
     var ctx = canvas.getContext("2d");
     if (!ctx) return;
     wireParticles.started = true;
+    var running = !coverHold;
+    var raf = 0;
     var finePointer = window.matchMedia("(pointer: fine)").matches;
 
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -322,8 +334,23 @@
         }
       }
 
-      requestAnimationFrame(tick);
+      if (running) raf = requestAnimationFrame(tick);
     }
+
+    function playParticles() {
+      if (coverHold || running) return;
+      running = true;
+      raf = requestAnimationFrame(tick);
+    }
+
+    function pauseParticles() {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    }
+
+    particlePause = pauseParticles;
+    particlePlay = playParticles;
 
     if (finePointer) {
       window.addEventListener("pointermove", function (e) {
@@ -341,8 +368,12 @@
     });
     resize();
     spawn();
-    requestAnimationFrame(tick);
+    if (running) raf = requestAnimationFrame(tick);
   }
 
-  global.IrisMotion = { revealLanding: revealLanding, wireParticles: wireParticles };
+  global.IrisMotion = {
+    revealLanding: revealLanding,
+    wireParticles: wireParticles,
+    setCoverPaused: setCoverPaused
+  };
 })(window);

@@ -5,6 +5,16 @@
     return;
   }
 
+  var coverHold = false;
+  var particlePause = function () {};
+  var particlePlay = function () {};
+
+  function setCoverPaused(on) {
+    coverHold = !!on;
+    if (coverHold) particlePause();
+    else particlePlay();
+  }
+
   var glitchTimers = [];
   var scriptTimers = new WeakMap();
   var SCRIPT_MAPS = {
@@ -1012,6 +1022,7 @@
     }
 
     function play() {
+      if (coverHold || document.hidden) return;
       if (running) return;
       running = true;
       raf = requestAnimationFrame(tick);
@@ -1066,6 +1077,8 @@
       if (document.hidden) pause();
       else play();
     });
+    particlePause = pause;
+    particlePlay = play;
     resize();
     spawn();
     armHitchCycle(true);
@@ -1116,6 +1129,7 @@
   global.IrisMotion = {
     revealLanding: revealLanding,
     wireParticles: wireParticles,
+    setCoverPaused: setCoverPaused,
     burstGlitch: burstGlitch,
     burstWorkCta: burstWorkCta,
     burstBig: burstBig,

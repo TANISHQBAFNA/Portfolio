@@ -74,12 +74,28 @@ window.Cbx300Case = (function () {
      projects curtain. They are not a threshold snap. */
   var STEP_PX = 72;
   var GESTURE_QUIET = 80;
-  /* After the stage tween, ignore input until the wheel has been quiet
-     this long. 180ms sits in the 150–200ms band that eats a flick's tail. */
+  /* After a docked stage change, ignore input until the wheel has been
+     quiet this long. The quiet window starts when the in-place transition
+     ends. 180ms sits in the 150–200ms band that eats a flick's tail. */
   var STEP_LOCK_MS = 180;
   /* Idle in the curtain band, then ease to the nearer end (cover or 01). */
   var RISE_REST_MS = 220;
   var DOCK_PX = 4;
+  /* Docked 01↔02↔03 plays in place. The scroll rail jumps immediately
+     so deep links and close stay mapped; the panel itself does not move. */
+  var SHIFT_DUR = 0.62;
+  var SHIFT_COPY = 28;
+  var SHIFT_ILLO = 20;
+  var STAGE_TOPS = [
+    ['s01', 's01-arrow'],
+    ['s02', 's02-lina', 's02-arrows'],
+    ['s03', 's03-sides', 's03-row', 's03-bench']
+  ];
+  var STAGE_BITS = [
+    ['s01-inv-015', 's01-inv-014', 's01-inv-012', 's01-arrow', 's01-arrow-head'],
+    ['s02-lina', 's02-card-shared', 's02-card-payday', 's02-card-free', 's02-arrows'],
+    ['s03-side-l', 's03-side-r', 's03-row', 's03-bench', 's03-card-payroll', 's03-card-supplier', 's03-pill']
+  ];
 
   var motion = {
     triggers: [],
@@ -94,7 +110,8 @@ window.Cbx300Case = (function () {
     pulsed: {},
     reduce: false,
     onStep: null,
-    stepCtrl: null
+    stepCtrl: null,
+    coverPaused: false
   };
 
   /* Landing projects curtain is the feel source of truth:
@@ -187,6 +204,29 @@ window.Cbx300Case = (function () {
        owns html --panel-flush for the projects rail (flush 1 after open). */
     if (pane) pane.style.setProperty('--panel-flush', flush);
     html.classList.toggle('is-cbx-growth-in', p > 0.08);
+    syncCoverParticles(rise);
+  }
+
+  /* The constellation canvas sits under the docked curtain. Pause it
+     once the sheet covers the viewport, and resume as the sheet falls. */
+  function syncCoverParticles(rise) {
+    var iris = window.IrisMotion;
+    if (!iris || !iris.setCoverPaused) return;
+    var onStudy = document.documentElement.classList.contains('is-study-page');
+    if (!onStudy) {
+      if (motion.coverPaused) {
+        motion.coverPaused = false;
+        iris.setCoverPaused(false);
+      }
+      return;
+    }
+    if (!motion.coverPaused && rise <= 0.03) {
+      motion.coverPaused = true;
+      iris.setCoverPaused(true);
+    } else if (motion.coverPaused && rise >= 0.05) {
+      motion.coverPaused = false;
+      iris.setCoverPaused(false);
+    }
   }
 
   function tweenCbxRise(next, immediate) {
@@ -218,6 +258,10 @@ window.Cbx300Case = (function () {
     html.style.removeProperty('--cbx-rise');
     if (pane) pane.style.removeProperty('--panel-flush');
     motion.riseState.p = 0;
+    motion.coverPaused = false;
+    if (window.IrisMotion && window.IrisMotion.setCoverPaused) {
+      window.IrisMotion.setCoverPaused(false);
+    }
   }
 
   function restChrome() {
@@ -1018,6 +1062,76 @@ window.Cbx300Case = (function () {
     motion.onStep(sectionStepFromY(y, st));
   }
 
+  function stageNodes(pin, index, table) {
+    var names = table[index] || [];
+    var out = [];
+    var i;
+    for (i = 0; i < names.length; i += 1) {
+      var node = layer(pin, names[i]);
+      if (node) out.push(node);
+    }
+    return out;
+  }
+
+  function bitX(name) {
+    if (name === 's02-lina') return LINA_X;
+    if (name === 's03-side-l') return SIDE_L_X;
+    return 0;
+  }
+
+  function showStageBits(pin, index) {
+    var gsap = window.gsap;
+    var bits = stageNodes(pin, index, STAGE_BITS);
+    if (!gsap || !bits.length) return;
+    gsap.set(bits, { opacity: 1, y: 0, rotation: 0, scale: 1 });
+    bits.forEach(function (node) {
+      gsap.set(node, { x: bitX(node.getAttribute('data-cbx-layer')) });
+    });
+    if (index === 0) {
+      var draw = layer(pin, 's01-arrow-draw');
+      if (draw) gsap.set(draw, { strokeDashoffset: 0 });
+    }
+  }
+
+  function copyNodes(beatEl) {
+    var empty = { lab: null, words: [], rule: null, sub: null, all: [] };
+    if (!beatEl) return empty;
+    var lab = beatEl.querySelector('.cbx-growth__lab');
+    var words = Array.prototype.slice.call(beatEl.querySelectorAll('.cbx-growth__word'));
+    var rule = beatEl.querySelector('.cbx-growth__rule');
+    var sub = beatEl.querySelector('.cbx-growth__sub');
+    return {
+      lab: lab,
+      words: words,
+      rule: rule,
+      sub: sub,
+      all: [lab].concat(words, [rule, sub]).filter(Boolean)
+    };
+  }
+
+  function clearShiftGroups(pin) {
+    var gsap = window.gsap;
+    if (!gsap || !pin) return;
+    var tops = [];
+    var i;
+    for (i = 0; i < STAGE_TOPS.length; i += 1) tops = tops.concat(stageNodes(pin, i, STAGE_TOPS));
+    if (tops.length) gsap.set(tops, { clearProps: 'opacity,transform,x,y,scale,rotation' });
+  }
+
+  function syncScrubPose() {
+    var tl = motion.tween;
+    if (!tl || !tl.render) return;
+    /* Same time still has to re-apply. A plain time() set no-ops when
+       the playhead has not moved, and the shift tweens would linger. */
+    tl.render(tl.time(), true, true);
+  }
+
+  function resumeIdle() {
+    var st = motion.tween && motion.tween.scrollTrigger;
+    var rise = motion.riseState ? motion.riseState.p : 0;
+    setIdlePlaying(!!(st && st.isActive) && rise >= 0.92 && !motion.reduce);
+  }
+
   function unbindStageStep() {
     var ctrl = motion.stepCtrl;
     if (!ctrl) return;
@@ -1025,6 +1139,7 @@ window.Cbx300Case = (function () {
     if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
     if (ctrl.unlockTimer) window.clearTimeout(ctrl.unlockTimer);
     if (ctrl.tween && ctrl.tween.kill) ctrl.tween.kill();
+    if (motion.pin) motion.pin.classList.remove('is-shifting');
     window.removeEventListener('wheel', ctrl.onWheel, true);
     window.removeEventListener('keydown', ctrl.onKey, true);
     window.removeEventListener('touchstart', ctrl.onTouchStart, true);
@@ -1066,8 +1181,16 @@ window.Cbx300Case = (function () {
     }
 
     function killTween() {
-      if (ctrl.tween && ctrl.tween.kill) ctrl.tween.kill();
+      var tw = ctrl.tween;
       ctrl.tween = null;
+      if (tw && tw.kill) tw.kill();
+      var pin = motion.pin;
+      var shifting = pin && pin.classList.contains('is-shifting');
+      if (pin) pin.classList.remove('is-shifting');
+      if (!shifting) return;
+      clearShiftGroups(pin);
+      syncScrubPose();
+      resumeIdle();
     }
 
     function noteInput() {
@@ -1275,7 +1398,149 @@ window.Cbx300Case = (function () {
       ctrl.kind = 'step';
       ctrl.settled = dest;
       ctrl.park = rails[dest];
-      animateTo(rails[dest]);
+      playStageShift(origin, dest, rails[dest]);
+    }
+
+    /* Scroll jumps to the destination rail in this turn. The pin and the
+       fixed curtain keep the panel visually still; this timeline then
+       replaces the seek with a directional crossfade before paint. */
+    function playStageShift(origin, dest, y) {
+      killTween();
+      lockStep();
+      var pin = motion.pin;
+      var gsap = window.gsap;
+      var animate = !!(pin && gsap && !motion.reduce);
+      if (animate) pin.classList.add('is-shifting');
+      window.scrollTo(0, y);
+      if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
+      publishSectionStep();
+      if (!animate) {
+        if (motion.reduce) {
+          var token = { kill: function () { token.dead = true; } };
+          ctrl.tween = token;
+          window.setTimeout(function () {
+            if (ctrl.tween !== token) return;
+            ctrl.tween = null;
+            ctrl.lastInput = Date.now();
+            armUnlock();
+          }, 200);
+          return;
+        }
+        armUnlock();
+        return;
+      }
+      var forward = dest > origin;
+      var outCopyY = forward ? -SHIFT_COPY : SHIFT_COPY;
+      var inCopyY = forward ? SHIFT_COPY : -SHIFT_COPY;
+      var outIlloY = forward ? -SHIFT_ILLO : SHIFT_ILLO;
+      var inIlloY = forward ? SHIFT_ILLO : -SHIFT_ILLO;
+      var beats = pin.querySelectorAll('[data-cbx-beat]');
+      var outCopy = copyNodes(beats[origin]);
+      var inCopy = copyNodes(beats[dest]);
+      var outTops = stageNodes(pin, origin, STAGE_TOPS);
+      var inTops = stageNodes(pin, dest, STAGE_TOPS);
+      if (pin.offsetWidth >= 0) pin.classList.add('is-shifting');
+      setIdlePlaying(false);
+      showStageBits(pin, origin);
+      showStageBits(pin, dest);
+      if (outTops.length) gsap.set(outTops, { opacity: 1, y: 0, scale: 1 });
+      if (inTops.length) gsap.set(inTops, { opacity: 0, y: inIlloY, scale: 1.02 });
+      if (outCopy.all.length) gsap.set(outCopy.all, { opacity: 1, y: 0, force3D: true });
+      if (outCopy.rule) gsap.set(outCopy.rule, { scaleX: 1 });
+      if (inCopy.all.length) gsap.set(inCopy.all, { opacity: 0, y: inCopyY, force3D: true });
+      var ink = pin.querySelector('[data-cbx-rail-ink]');
+      if (ink) gsap.set(ink, { xPercent: origin * 100 });
+      var floorFrom = origin < 2 ? FLOOR_ROOT : 0;
+      var floorTo = dest < 2 ? FLOOR_ROOT : 0;
+      var legFrom = origin < 2 ? (LEG_FULL - FLOOR_DROP) / LEG_FULL : 1;
+      var legTo = dest < 2 ? (LEG_FULL - FLOOR_DROP) / LEG_FULL : 1;
+      var floor = layer(pin, 'floor-shift');
+      var legs = layer(pin, 'desk-legs');
+      var crossFloor = origin === 2 || dest === 2;
+      if (crossFloor && floor) {
+        gsap.set(floor, { y: floorFrom });
+        seatConnectors(pin, floorFrom);
+      }
+      if (crossFloor && legs) gsap.set(legs, { scaleY: legFrom, svgOrigin: LEG_ORIGIN });
+
+      var shiftTl = gsap.timeline({
+        onComplete: function () {
+          if (ctrl.tween !== shiftTl) return;
+          ctrl.tween = null;
+          pin.classList.remove('is-shifting');
+          clearShiftGroups(pin);
+          syncScrubPose();
+          resumeIdle();
+          publishSectionStep();
+          ctrl.lastInput = Date.now();
+          armUnlock();
+        }
+      });
+      ctrl.tween = shiftTl;
+      if (outCopy.all.length) {
+        shiftTl.fromTo(outCopy.all, { opacity: 1, y: 0 }, {
+          opacity: 0,
+          y: outCopyY,
+          duration: 0.25,
+          ease: 'expo.out',
+          overwrite: false,
+          immediateRender: false,
+          force3D: true
+        }, 0);
+      }
+      if (inCopy.lab) {
+        shiftTl.fromTo(inCopy.lab, { opacity: 0, y: inCopyY }, {
+          opacity: 1, y: 0, duration: 0.46, ease: 'expo.out', overwrite: false, immediateRender: false, force3D: true
+        }, 0.12);
+      }
+      if (inCopy.words.length) {
+        shiftTl.fromTo(inCopy.words, { opacity: 0, y: inCopyY }, {
+          opacity: 1, y: 0, duration: 0.42, ease: 'expo.out', overwrite: false, immediateRender: false, force3D: true
+        }, 0.17);
+      }
+      if (inCopy.rule) {
+        shiftTl.fromTo(inCopy.rule, { opacity: 0, y: inCopyY }, {
+          opacity: 1, y: 0, duration: 0.38, ease: 'expo.out', overwrite: false, immediateRender: false, force3D: true
+        }, 0.22);
+      }
+      if (inCopy.sub) {
+        shiftTl.fromTo(inCopy.sub, { opacity: 0, y: inCopyY }, {
+          opacity: 1, y: 0, duration: 0.36, ease: 'expo.out', overwrite: false, immediateRender: false, force3D: true
+        }, 0.26);
+      }
+      if (outTops.length) {
+        shiftTl.to(outTops, {
+          opacity: 0, y: outIlloY, duration: 0.36, ease: 'expo.out', overwrite: false
+        }, 0);
+      }
+      if (inTops.length) {
+        shiftTl.to(inTops, {
+          opacity: 1, y: 0, scale: 1, duration: 0.52, ease: 'expo.out', overwrite: false
+        }, 0.1);
+      }
+      if (ink) {
+        shiftTl.to(ink, {
+          xPercent: dest * 100, duration: SHIFT_DUR, ease: 'expo.out', overwrite: false
+        }, 0);
+      }
+      if (crossFloor && floor) {
+        shiftTl.to(floor, {
+          y: floorTo,
+          duration: SHIFT_DUR,
+          ease: 'expo.out',
+          overwrite: false,
+          onUpdate: function () { seatConnectors(pin, gsap.getProperty(floor, 'y')); }
+        }, 0);
+      }
+      if (crossFloor && legs) {
+        shiftTl.to(legs, {
+          scaleY: legTo,
+          svgOrigin: LEG_ORIGIN,
+          duration: SHIFT_DUR,
+          ease: 'expo.out',
+          overwrite: false
+        }, 0);
+      }
     }
 
     function armTravelReset() {
@@ -1599,6 +1864,13 @@ window.Cbx300Case = (function () {
           var morphP = 0;
           if (self.progress > morphStart) {
             morphP = (self.progress - morphStart) / Math.max(0.0001, 1 - morphStart);
+          }
+          /* A docked step has already seeked this timeline. Leave the
+             in-place crossfade in charge of copy, layers, and the ink. */
+          if (pin.classList.contains('is-shifting')) {
+            applyBeat(pin, beatIndexFromProgress(morphP));
+            publishSectionStep();
+            return;
           }
           applyBeat(pin, beatIndexFromProgress(morphP));
           tickMorph(pin, morphP, riseTarget, self);
