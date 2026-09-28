@@ -1118,6 +1118,13 @@ window.Cbx300Case = (function () {
     if (tops.length) gsap.set(tops, { clearProps: 'opacity,transform,x,y,scale,rotation' });
   }
 
+  function clearShiftText(pin) {
+    var gsap = window.gsap;
+    if (!gsap || !pin) return;
+    var nodes = pin.querySelectorAll('.cbx-growth__lab, .cbx-growth__word, .cbx-growth__rule, .cbx-growth__sub');
+    if (nodes.length) gsap.set(nodes, { clearProps: 'transform,will-change' });
+  }
+
   function syncScrubPose() {
     var tl = motion.tween;
     if (!tl || !tl.render) return;
@@ -1164,6 +1171,7 @@ window.Cbx300Case = (function () {
       restTimer: 0,
       unlockTimer: 0,
       tween: null,
+      pendingDir: 0,
       committed: false,
       locked: false,
       lastInput: 0,
@@ -1183,6 +1191,7 @@ window.Cbx300Case = (function () {
     function killTween() {
       var tw = ctrl.tween;
       ctrl.tween = null;
+      ctrl.pendingDir = 0;
       if (tw && tw.kill) tw.kill();
       var pin = motion.pin;
       var shifting = pin && pin.classList.contains('is-shifting');
@@ -1466,14 +1475,21 @@ window.Cbx300Case = (function () {
       var shiftTl = gsap.timeline({
         onComplete: function () {
           if (ctrl.tween !== shiftTl) return;
+          var dir = ctrl.pendingDir;
+          ctrl.pendingDir = 0;
           ctrl.tween = null;
           pin.classList.remove('is-shifting');
+          clearShiftText(pin);
           clearShiftGroups(pin);
           syncScrubPose();
           resumeIdle();
           publishSectionStep();
           ctrl.lastInput = Date.now();
           armUnlock();
+          if (dir) {
+            var st = pinTrigger();
+            if (st) commitStep(railStops(st), ctrl.settled, dir);
+          }
         }
       });
       ctrl.tween = shiftTl;
@@ -1510,13 +1526,19 @@ window.Cbx300Case = (function () {
       }
       if (outTops.length) {
         shiftTl.to(outTops, {
-          opacity: 0, y: outIlloY, duration: 0.36, ease: 'expo.out', overwrite: false
+          opacity: 0, duration: 0.3, ease: 'sine.out', overwrite: false
+        }, 0);
+        shiftTl.to(outTops, {
+          y: outIlloY, duration: 0.36, ease: 'expo.out', overwrite: false
         }, 0);
       }
       if (inTops.length) {
         shiftTl.to(inTops, {
-          opacity: 1, y: 0, scale: 1, duration: 0.52, ease: 'expo.out', overwrite: false
-        }, 0.1);
+          opacity: 1, duration: 0.3, ease: 'sine.out', overwrite: false
+        }, 0);
+        shiftTl.to(inTops, {
+          y: 0, scale: 1, duration: 0.52, ease: 'expo.out', overwrite: false
+        }, 0);
       }
       if (ink) {
         shiftTl.to(ink, {
@@ -1653,7 +1675,12 @@ window.Cbx300Case = (function () {
       noteInput();
       if (ctrl.locked) {
         if (event.cancelable) event.preventDefault();
-        if (ctrl.tween) return;
+        if (ctrl.tween) {
+          if (motion.pin && motion.pin.classList.contains('is-shifting') && !ctrl.pendingDir) {
+            ctrl.pendingDir = dir;
+          }
+          return;
+        }
         ctrl.locked = false;
         ctrl.travel = 0;
         ctrl.active = false;
