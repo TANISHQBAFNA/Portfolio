@@ -1141,12 +1141,18 @@ window.Cbx300Case = (function () {
     function easeTo(y, opts) {
       opts = opts || {};
       killTween();
+      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
+      ctrl.restTimer = 0;
       ctrl.park = y;
       ctrl.kind = 'rise';
       var gsap = window.gsap;
+      function done() {
+        if (opts.onComplete) opts.onComplete();
+        else publishSectionStep();
+      }
       if (!gsap) {
         window.scrollTo(0, y);
-        publishSectionStep();
+        done();
         return;
       }
       var proxy = { y: yNow() };
@@ -1163,9 +1169,24 @@ window.Cbx300Case = (function () {
           ctrl.tween = null;
           if (ctrl.locked) return;
           window.scrollTo(0, y);
-          publishSectionStep();
+          done();
         }
       });
+    }
+
+    /* Curtain is fully up from the dock line through stage 01.
+       Resting there is stage 01, with the same lock as a full rise. */
+    function parkStage(st) {
+      var dock = railStops(st)[0];
+      ctrl.park = dock;
+      ctrl.settled = 0;
+      ctrl.origin = 0;
+      ctrl.originY = dock;
+      ctrl.kind = 'step';
+      lockStep();
+      window.scrollTo(0, dock);
+      publishSectionStep();
+      armUnlock();
     }
 
     function armSettle() {
@@ -1178,11 +1199,25 @@ window.Cbx300Case = (function () {
         var y = yNow();
         var lo = st.start;
         var hi = dockScrollY(st);
+        var dock = railStops(st)[0];
+        if (y > hi - 2 && y < dock - DOCK_PX) {
+          parkStage(st);
+          return;
+        }
         if (y < lo - 2 || y > hi + 2) return;
         if (y <= lo + 2 || y >= hi - 2) return;
-        var dest = (hi - y) <= (y - lo) ? hi : lo;
-        ctrl.settled = dest >= hi - 2 ? 0 : -1;
-        easeTo(dest);
+        var towardDock = (hi - y) <= (y - lo);
+        ctrl.settled = towardDock ? 0 : -1;
+        if (!towardDock) {
+          easeTo(lo);
+          return;
+        }
+        easeTo(dock, {
+          onComplete: function () {
+            var live = pinTrigger();
+            if (live) parkStage(live);
+          }
+        });
       }, RISE_REST_MS);
     }
 
@@ -1415,14 +1450,25 @@ window.Cbx300Case = (function () {
     ctrl.onTouchStart = onTouchStart;
     ctrl.onTouchMove = onTouchMove;
     ctrl.onTouchEnd = onTouchEnd;
-    ctrl.onScroll = publishSectionStep;
+    function onScroll() {
+      publishSectionStep();
+      if (ctrl.tween || ctrl.locked) return;
+      var st = pinTrigger();
+      if (!st) return;
+      var y = yNow();
+      var hi = dockScrollY(st);
+      var dock = railStops(st)[0];
+      if (y > hi - 2 && y < dock - DOCK_PX) armSettle();
+    }
+
+    ctrl.onScroll = onScroll;
     window.addEventListener('wheel', onWheel, { passive: false, capture: true });
     window.addEventListener('keydown', onKey, { passive: false, capture: true });
     window.addEventListener('touchstart', onTouchStart, { passive: false, capture: true });
     window.addEventListener('touchmove', onTouchMove, { passive: false, capture: true });
     window.addEventListener('touchend', onTouchEnd, { passive: false, capture: true });
     window.addEventListener('touchcancel', onTouchEnd, { passive: false, capture: true });
-    window.addEventListener('scroll', publishSectionStep, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     motion.stepCtrl = ctrl;
   }
 
