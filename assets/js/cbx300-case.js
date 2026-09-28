@@ -1138,7 +1138,8 @@ window.Cbx300Case = (function () {
       });
     }
 
-    function easeTo(y) {
+    function easeTo(y, opts) {
+      opts = opts || {};
       killTween();
       ctrl.park = y;
       ctrl.kind = 'rise';
@@ -1151,8 +1152,8 @@ window.Cbx300Case = (function () {
       var proxy = { y: yNow() };
       ctrl.tween = gsap.to(proxy, {
         y: y,
-        duration: 0.55,
-        ease: 'sine.inOut',
+        duration: opts.duration || 0.55,
+        ease: opts.ease || 'sine.inOut',
         overwrite: true,
         onUpdate: function () {
           if (ctrl.locked) return;
@@ -1174,10 +1175,9 @@ window.Cbx300Case = (function () {
         if (ctrl.locked || ctrl.tween) return;
         var st = pinTrigger();
         if (!st) return;
-        var rails = railStops(st);
         var y = yNow();
         var lo = st.start;
-        var hi = rails[0];
+        var hi = dockScrollY(st);
         if (y < lo - 2 || y > hi + 2) return;
         if (y <= lo + 2 || y >= hi - 2) return;
         var dest = (hi - y) <= (y - lo) ? hi : lo;
@@ -1191,15 +1191,19 @@ window.Cbx300Case = (function () {
       ctrl.kind = 'rise';
       ctrl.active = true;
       ctrl.committed = false;
-      var next = y + dy;
       var lo = st.start;
-      var hi = rails[0];
-      if (next >= hi - 0.5) {
-        window.scrollTo(0, hi);
-        ctrl.park = hi;
+      var hi = dockScrollY(st);
+      var dock = rails[0];
+      /* Stage 01 sits past the dock. The curtain is already fully up
+         across that band, so an upward gesture skips it and scrubs. */
+      if (dy < 0 && y > hi) y = hi;
+      var next = y + dy;
+      if (dy > 0 && next >= hi - 0.5) {
+        window.scrollTo(0, dock);
+        ctrl.park = dock;
         ctrl.settled = 0;
         ctrl.origin = 0;
-        ctrl.originY = hi;
+        ctrl.originY = dock;
         lockStep();
         armUnlock();
         return;
@@ -1349,8 +1353,13 @@ window.Cbx300Case = (function () {
       noteInput();
       if (ctrl.locked) {
         if (event.cancelable) event.preventDefault();
-        if (!ctrl.tween) armUnlock();
-        return;
+        if (ctrl.tween) return;
+        ctrl.locked = false;
+        ctrl.travel = 0;
+        ctrl.active = false;
+        ctrl.committed = false;
+        if (ctrl.unlockTimer) window.clearTimeout(ctrl.unlockTimer);
+        ctrl.unlockTimer = 0;
       }
       var rails = railStops(st);
       var dock = dockedAt(y, rails);
@@ -1365,6 +1374,9 @@ window.Cbx300Case = (function () {
       }
       if (dock === 0 && dir < 0) {
         if (event.cancelable) event.preventDefault();
+        ctrl.settled = -1;
+        window.scrollTo(0, dockScrollY(st));
+        easeTo(st.start, { duration: 0.9, ease: 'power3.inOut' });
         return;
       }
       if (dock >= rails.length - 1 && dir > 0) {

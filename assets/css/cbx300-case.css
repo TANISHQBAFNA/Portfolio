@@ -849,9 +849,11 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
 html.is-study-closing .study__veil {
   z-index: 200;
 }
-html.is-study-wipe .study {
+html.is-study-wipe .study,
+html.is-study-wipe .study[data-template="cbx300"] {
   position: fixed !important;
   inset: 0 !important;
+  background: transparent !important;
 }
 html.is-study-wipe .study-world,
 html.is-study-wipe .study .cbx-growth,
