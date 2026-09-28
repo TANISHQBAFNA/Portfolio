@@ -11,8 +11,8 @@ window.ProjectStudy = (function () {
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   var OPEN_MS = 900;
-  /* Close matches the landing curtain (~0.55s), not the open veil. */
-  var CLOSE_MS = 200;
+  /* Wordmark flight matches the landing name move (MOVE_MS / EXIT_MS 900). */
+  var CLOSE_MS = 900;
   var HOLD_MS = 400;
 
   function pad(n) {
@@ -935,8 +935,9 @@ window.ProjectStudy = (function () {
       introTween = gsap.to(chars, {
         opacity: 0,
         y: 8,
-        filter: 'blur(0px)',
-        duration: 0.1,
+        filter: 'blur(7px)',
+        duration: 0.55,
+        stagger: { each: 0.028, from: 'end' },
         ease: 'power3.in',
         onComplete: donePaint
       });
@@ -1031,7 +1032,14 @@ window.ProjectStudy = (function () {
     function revealHome() {
       html.classList.add('is-study-wipe');
       html.classList.remove('is-study');
-      window.scrollTo(0, savedScroll);
+    }
+
+    /* Curtain is fully down. Kill the study scroller before any scrollTo
+       so --cbx-rise cannot ride the landing rail into view. */
+    function parkUnderCurtain() {
+      killMotion();
+      revealHome();
+      if (options.onClose) options.onClose();
     }
 
     function dropVeil(done) {
@@ -1176,6 +1184,7 @@ window.ProjectStudy = (function () {
       var fly = nodes.fly;
       var dest = nodes.project;
       var veil = nodes.veil;
+      html.classList.add('is-study-closing');
 
       function finishOut() {
         introTween = null;
@@ -1185,7 +1194,7 @@ window.ProjectStudy = (function () {
 
       if (reduceMotion.matches || typeof gsap === 'undefined' || !veil || !fly || !dest) {
         if (dest) dest.classList.remove('is-in');
-        revealHome();
+        parkUnderCurtain();
         finishOut();
         return;
       }
@@ -1225,12 +1234,13 @@ window.ProjectStudy = (function () {
           gsap.set(veil, { yPercent: 0, force3D: true });
           fly.style.fontSize = largeSize + 'px';
           gsap.set(fly, { x: dx, y: dy, force3D: true });
-          unpaintFlyName(function () {
-            seatFly(true);
-            revealHome();
-            if (options.onClose) options.onClose();
-            liftVeil(finishOut);
-          });
+          introHold = window.setTimeout(function () {
+            unpaintFlyName(function () {
+              seatFly(true);
+              parkUnderCurtain();
+              liftVeil(finishOut);
+            });
+          }, HOLD_MS);
         }
       });
       gsap.to(fly, { color: curtainInk(), duration: dur, ease: ease });
@@ -1278,11 +1288,13 @@ window.ProjectStudy = (function () {
     }
 
     function finishClose() {
+      if (mode === 'off') return;
       killMotion();
       root.hidden = true;
       root.setAttribute('aria-hidden', 'true');
       html.classList.remove('is-study');
       html.classList.remove('is-study-wipe');
+      html.classList.remove('is-study-closing');
       mode = 'off';
       openIndex = -1;
       caseMount = null;
@@ -1292,7 +1304,6 @@ window.ProjectStudy = (function () {
       if (nodes.veil && typeof gsap !== 'undefined') {
         resetVeil(-110);
       }
-      window.scrollTo(0, savedScroll);
     }
 
     function close() {

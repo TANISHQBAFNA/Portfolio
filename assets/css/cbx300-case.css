@@ -842,3 +842,20 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
     opacity: 1;
   }
 }
+
+/* Close curtain must cover the coffee panel, then hide the study
+   before the veil lifts. visibility:visible on the panel would
+   otherwise paint through a hidden ancestor. */
+html.is-study-closing .study__veil {
+  z-index: 200;
+}
+html.is-study-wipe .study {
+  position: fixed !important;
+  inset: 0 !important;
+}
+html.is-study-wipe .study-world,
+html.is-study-wipe .study .cbx-growth,
+html.is-study-wipe .study__chrome {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
