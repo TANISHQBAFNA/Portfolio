@@ -1118,11 +1118,17 @@ window.Cbx300Case = (function () {
     if (tops.length) gsap.set(tops, { clearProps: 'opacity,transform,x,y,scale,rotation' });
   }
 
-  function clearShiftText(pin) {
+  function clearShiftText(nodes) {
     var gsap = window.gsap;
-    if (!gsap || !pin) return;
-    var nodes = pin.querySelectorAll('.cbx-growth__lab, .cbx-growth__word, .cbx-growth__rule, .cbx-growth__sub');
-    if (nodes.length) gsap.set(nodes, { clearProps: 'transform,will-change' });
+    if (!gsap || !nodes || !nodes.length) return;
+    /* Only the copy this shift moved. A rule on a stage that did not
+       move keeps scaleX; clearing that one draws a full-width divider. */
+    var flat = [];
+    var i;
+    for (i = 0; i < nodes.length; i += 1) {
+      if (nodes[i]) flat.push(nodes[i]);
+    }
+    if (flat.length) gsap.set(flat, { clearProps: 'transform,will-change' });
   }
 
   function syncScrubPose() {
@@ -1131,6 +1137,18 @@ window.Cbx300Case = (function () {
     /* Same time still has to re-apply. A plain time() set no-ops when
        the playhead has not moved, and the shift tweens would linger. */
     tl.render(tl.time(), true, true);
+    /* A leave tween that has already played renders its start values at
+       progress 0, which covers the earlier beat. Replay future tweens
+       from the latest start so the resting beat wins. */
+    var now = tl.time();
+    var kids = tl.getChildren(true, true, false);
+    var pending = [];
+    var i;
+    for (i = 0; i < kids.length; i += 1) {
+      if (kids[i].startTime() > now) pending.push(kids[i]);
+    }
+    pending.sort(function (a, b) { return b.startTime() - a.startTime(); });
+    for (i = 0; i < pending.length; i += 1) pending[i].totalTime(0);
   }
 
   function resumeIdle() {
@@ -1479,7 +1497,7 @@ window.Cbx300Case = (function () {
           ctrl.pendingDir = 0;
           ctrl.tween = null;
           pin.classList.remove('is-shifting');
-          clearShiftText(pin);
+          clearShiftText(outCopy.all.concat(inCopy.all));
           clearShiftGroups(pin);
           syncScrubPose();
           resumeIdle();
@@ -1526,16 +1544,16 @@ window.Cbx300Case = (function () {
       }
       if (outTops.length) {
         shiftTl.to(outTops, {
-          opacity: 0, duration: 0.3, ease: 'sine.out', overwrite: false
-        }, 0);
+          opacity: 0, duration: 0.1, ease: 'none', overwrite: false
+        }, 0.06);
         shiftTl.to(outTops, {
           y: outIlloY, duration: 0.36, ease: 'expo.out', overwrite: false
         }, 0);
       }
       if (inTops.length) {
         shiftTl.to(inTops, {
-          opacity: 1, duration: 0.3, ease: 'sine.out', overwrite: false
-        }, 0);
+          opacity: 1, duration: 0.1, ease: 'none', overwrite: false
+        }, 0.06);
         shiftTl.to(inTops, {
           y: 0, scale: 1, duration: 0.52, ease: 'expo.out', overwrite: false
         }, 0);
