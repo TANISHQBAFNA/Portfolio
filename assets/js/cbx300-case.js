@@ -68,15 +68,18 @@ window.Cbx300Case = (function () {
      clears the mug; the stage-03 left figure shifts off the plant. */
   var LINA_X = 112;
   var SIDE_L_X = -28;
-  /* After the curtain is docked, one stage per gesture. A notch (~100px)
-     or ~72px of trackpad travel commits the next rail tab. The rise
-     from the cover is one gesture: past the threshold it runs all the
-     way to stage 01 and rests. The next gesture steps to 02. */
+  /* Docked stages take one step per gesture. ~72px of travel commits
+     the next rail, then the lock swallows the rest of that gesture.
+     The curtain rise and fall stay scroll-scrubbed, like the landing
+     projects curtain. They are not a threshold snap. */
   var STEP_PX = 72;
   var GESTURE_QUIET = 80;
-  /* Longer than a 150ms notch, so a steady spin cannot leave stage 01
-     in the same rise. A real pause releases the next gesture. */
+  /* After the stage tween, ignore input until the wheel has been quiet
+     this long. 180ms sits in the 150–200ms band that eats a flick's tail. */
+  var STEP_LOCK_MS = 180;
+  /* Idle in the curtain band, then ease to the nearer end (cover or 01). */
   var RISE_REST_MS = 220;
+  var DOCK_PX = 4;
 
   var motion = {
     triggers: [],
@@ -1020,9 +1023,14 @@ window.Cbx300Case = (function () {
     if (!ctrl) return;
     if (ctrl.timer) window.clearTimeout(ctrl.timer);
     if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
+    if (ctrl.unlockTimer) window.clearTimeout(ctrl.unlockTimer);
     if (ctrl.tween && ctrl.tween.kill) ctrl.tween.kill();
     window.removeEventListener('wheel', ctrl.onWheel, true);
     window.removeEventListener('keydown', ctrl.onKey, true);
+    window.removeEventListener('touchstart', ctrl.onTouchStart, true);
+    window.removeEventListener('touchmove', ctrl.onTouchMove, true);
+    window.removeEventListener('touchend', ctrl.onTouchEnd, true);
+    window.removeEventListener('touchcancel', ctrl.onTouchEnd, true);
     window.removeEventListener('scroll', ctrl.onScroll);
     motion.stepCtrl = null;
   }
@@ -1039,8 +1047,13 @@ window.Cbx300Case = (function () {
       travel: 0,
       timer: 0,
       restTimer: 0,
+      unlockTimer: 0,
       tween: null,
       committed: false,
+      locked: false,
+      lastInput: 0,
+      touchY: 0,
+      touchOn: false,
       riseHold: false
     };
 
@@ -1048,20 +1061,68 @@ window.Cbx300Case = (function () {
       return motion.tween && motion.tween.scrollTrigger;
     }
 
+    function yNow() {
+      return window.scrollY || document.documentElement.scrollTop || 0;
+    }
+
     function killTween() {
       if (ctrl.tween && ctrl.tween.kill) ctrl.tween.kill();
       ctrl.tween = null;
     }
 
+    function noteInput() {
+      ctrl.lastInput = Date.now();
+    }
+
+    function clearIdleTimers() {
+      if (ctrl.timer) window.clearTimeout(ctrl.timer);
+      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
+      ctrl.timer = 0;
+      ctrl.restTimer = 0;
+    }
+
+    function armUnlock() {
+      if (ctrl.unlockTimer) window.clearTimeout(ctrl.unlockTimer);
+      var quiet = Date.now() - (ctrl.lastInput || 0);
+      var wait = Math.max(0, STEP_LOCK_MS - quiet);
+      ctrl.unlockTimer = window.setTimeout(tryUnlock, wait);
+    }
+
+    function tryUnlock() {
+      ctrl.unlockTimer = 0;
+      if (!ctrl.locked) return;
+      if (ctrl.tween) return;
+      var quiet = Date.now() - (ctrl.lastInput || 0);
+      if (quiet < STEP_LOCK_MS) {
+        ctrl.unlockTimer = window.setTimeout(tryUnlock, STEP_LOCK_MS - quiet);
+        return;
+      }
+      ctrl.locked = false;
+      ctrl.travel = 0;
+      ctrl.active = false;
+      ctrl.committed = false;
+    }
+
+    function lockStep() {
+      ctrl.locked = true;
+      ctrl.travel = 0;
+      ctrl.active = true;
+      ctrl.committed = true;
+      clearIdleTimers();
+    }
+
     function animateTo(y) {
-      var gsap = window.gsap;
       killTween();
+      lockStep();
+      ctrl.park = y;
+      var gsap = window.gsap;
       if (!gsap) {
         window.scrollTo(0, y);
         publishSectionStep();
+        armUnlock();
         return;
       }
-      var proxy = { y: window.scrollY || 0 };
+      var proxy = { y: yNow() };
       ctrl.tween = gsap.to(proxy, {
         y: y,
         duration: 0.26,
@@ -1072,8 +1133,120 @@ window.Cbx300Case = (function () {
           ctrl.tween = null;
           window.scrollTo(0, y);
           publishSectionStep();
+          armUnlock();
         }
       });
+    }
+
+    function easeTo(y) {
+      killTween();
+      ctrl.park = y;
+      ctrl.kind = 'rise';
+      var gsap = window.gsap;
+      if (!gsap) {
+        window.scrollTo(0, y);
+        publishSectionStep();
+        return;
+      }
+      var proxy = { y: yNow() };
+      ctrl.tween = gsap.to(proxy, {
+        y: y,
+        duration: 0.55,
+        ease: 'sine.inOut',
+        overwrite: true,
+        onUpdate: function () {
+          if (ctrl.locked) return;
+          window.scrollTo(0, proxy.y);
+        },
+        onComplete: function () {
+          ctrl.tween = null;
+          if (ctrl.locked) return;
+          window.scrollTo(0, y);
+          publishSectionStep();
+        }
+      });
+    }
+
+    function armSettle() {
+      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
+      ctrl.restTimer = window.setTimeout(function () {
+        ctrl.restTimer = 0;
+        if (ctrl.locked || ctrl.tween) return;
+        var st = pinTrigger();
+        if (!st) return;
+        var rails = railStops(st);
+        var y = yNow();
+        var lo = st.start;
+        var hi = rails[0];
+        if (y < lo - 2 || y > hi + 2) return;
+        if (y <= lo + 2 || y >= hi - 2) return;
+        var dest = (hi - y) <= (y - lo) ? hi : lo;
+        ctrl.settled = dest >= hi - 2 ? 0 : -1;
+        easeTo(dest);
+      }, RISE_REST_MS);
+    }
+
+    function scrubCurtain(st, rails, y, dy) {
+      if (!ctrl.locked) killTween();
+      ctrl.kind = 'rise';
+      ctrl.active = true;
+      ctrl.committed = false;
+      var next = y + dy;
+      var lo = st.start;
+      var hi = rails[0];
+      if (next >= hi - 0.5) {
+        window.scrollTo(0, hi);
+        ctrl.park = hi;
+        ctrl.settled = 0;
+        ctrl.origin = 0;
+        ctrl.originY = hi;
+        lockStep();
+        armUnlock();
+        return;
+      }
+      if (next <= lo) {
+        clearIdleTimers();
+        window.scrollTo(0, lo);
+        ctrl.park = lo;
+        ctrl.settled = -1;
+        ctrl.originY = lo;
+        return;
+      }
+      window.scrollTo(0, next);
+      armSettle();
+    }
+
+    function dockedAt(y, rails) {
+      var i;
+      for (i = 0; i < rails.length; i += 1) {
+        if (Math.abs(y - rails[i]) <= DOCK_PX) return i;
+      }
+      return -1;
+    }
+
+    function commitStep(rails, origin, dir) {
+      ctrl.origin = origin;
+      ctrl.originY = rails[origin];
+      var dest = Math.max(0, Math.min(rails.length - 1, ctrl.origin + dir));
+      if (dest === origin) {
+        lockStep();
+        armUnlock();
+        return;
+      }
+      ctrl.kind = 'step';
+      ctrl.settled = dest;
+      ctrl.park = rails[dest];
+      animateTo(rails[dest]);
+    }
+
+    function armTravelReset() {
+      if (ctrl.timer) window.clearTimeout(ctrl.timer);
+      ctrl.timer = window.setTimeout(function () {
+        ctrl.timer = 0;
+        if (ctrl.locked || ctrl.tween) return;
+        ctrl.travel = 0;
+        ctrl.active = false;
+      }, GESTURE_QUIET);
     }
 
     function wheelPixels(event) {
@@ -1083,244 +1256,160 @@ window.Cbx300Case = (function () {
       return dy;
     }
 
-    function armQuiet() {
-      if (ctrl.timer) window.clearTimeout(ctrl.timer);
-      ctrl.timer = window.setTimeout(finishGesture, GESTURE_QUIET);
+    function inBand(st, y) {
+      return y >= st.start - 2 && y <= st.end + 2;
     }
 
-    function releaseRiseHold() {
-      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
-      ctrl.restTimer = window.setTimeout(function () {
-        ctrl.restTimer = 0;
-        if (ctrl.tween || ctrl.active) {
-          releaseRiseHold();
-          return;
-        }
-        ctrl.riseHold = false;
-      }, RISE_REST_MS);
-    }
-
-    function finishGesture() {
-      ctrl.timer = 0;
+    function handleDelta(dy, event) {
+      if (motion.reduce) return false;
       var st = pinTrigger();
-      var kind = ctrl.kind;
-      var travel = ctrl.travel;
-      var origin = ctrl.origin;
-      var committed = ctrl.committed;
-      ctrl.active = false;
-      ctrl.travel = 0;
-      ctrl.committed = false;
-      if (!st || kind === 'native') return;
+      if (!st || !dy) return false;
+      var y = yNow();
+      if (y <= st.start + 1 && dy < 0) return false;
+      if (y >= st.end - 1 && dy > 0) return false;
+      if (!inBand(st, y)) return false;
+      noteInput();
+      if (event.cancelable) event.preventDefault();
+      if (!ctrl.locked && ctrl.tween) {
+        killTween();
+        y = yNow();
+      }
+      if (ctrl.locked) {
+        if (!ctrl.tween) armUnlock();
+        return true;
+      }
       var rails = railStops(st);
-      if (kind === 'rise') {
-        if (!committed) {
-          ctrl.park = ctrl.originY;
-          ctrl.settled = ctrl.originY >= rails[0] - 2 ? 0 : -1;
-          if (Math.abs((window.scrollY || 0) - ctrl.originY) > 1.5) animateTo(ctrl.originY);
+      var dock = dockedAt(y, rails);
+      if (y < rails[0] - 0.5) {
+        scrubCurtain(st, rails, y, dy);
+        return true;
+      }
+      if (dock === 0 && dy < 0) {
+        scrubCurtain(st, rails, y, dy);
+        return true;
+      }
+      if (dock < 0) {
+        var near = nearestRailIndex(y, rails);
+        if (near > 2) near = 2;
+        window.scrollTo(0, rails[near]);
+        return true;
+      }
+      if (!ctrl.active || ctrl.kind !== 'step' || ctrl.origin !== dock) {
+        ctrl.active = true;
+        ctrl.kind = 'step';
+        ctrl.origin = dock;
+        ctrl.originY = rails[dock];
+        ctrl.travel = 0;
+        ctrl.committed = false;
+      }
+      ctrl.travel += dy;
+      if (Math.abs(ctrl.travel) >= STEP_PX) {
+        var dir = ctrl.travel >= 0 ? 1 : -1;
+        if (ctrl.origin === 0 && dir < 0) {
+          ctrl.travel = 0;
+          scrubCurtain(st, rails, rails[0], dy);
+          return true;
         }
-        return;
+        commitStep(rails, ctrl.origin, dir);
+        return true;
       }
-      if (kind === 'leave') {
-        if (!committed) {
-          ctrl.park = rails[2];
-          ctrl.settled = 2;
-          if (Math.abs((window.scrollY || 0) - rails[2]) > 1.5) animateTo(rails[2]);
-        }
-        return;
-      }
-      var dir = travel >= 0 ? 1 : -1;
-      var dest = origin;
-      if (Math.abs(travel) >= STEP_PX) {
-        dest = Math.max(0, Math.min(rails.length - 1, ctrl.origin + dir));
-      }
-      ctrl.settled = dest;
-      ctrl.park = rails[dest];
-      animateTo(rails[dest]);
-    }
-
-    function beginGesture(st, y, dy) {
-      var rails = railStops(st);
-      var wasTween = !!ctrl.tween;
-      var park = ctrl.park;
-      killTween();
-      if (wasTween && park != null) {
-        window.scrollTo(0, park);
-        y = park;
-      }
-      var idx = nearestRailIndex(y, rails);
-      ctrl.active = true;
-      ctrl.travel = 0;
-      ctrl.committed = false;
-      ctrl.originY = y;
-      if (y < rails[0] - 2 || (idx === 0 && dy < 0)) {
-        ctrl.kind = 'rise';
-        ctrl.origin = 0;
-        if (dy < 0 && y >= rails[0] - 2) ctrl.originY = rails[0];
-        return;
-      }
-      if (dy > 0 && y >= rails[2] - 40 && y < st.end - 2) {
-        ctrl.kind = 'leave';
-        ctrl.origin = 2;
-        ctrl.originY = rails[2];
-        return;
-      }
-      if (y >= st.end - 2 && dy > 0) {
-        ctrl.kind = 'native';
-        return;
-      }
-      ctrl.kind = 'step';
-      ctrl.origin = idx > 2 ? 3 : idx;
+      window.scrollTo(0, rails[ctrl.origin]);
+      armTravelReset();
+      return true;
     }
 
     function onWheel(event) {
-      if (motion.reduce) return;
-      var st = pinTrigger();
-      if (!st) return;
-      var dy = wheelPixels(event);
-      if (!dy) return;
-      var y = window.scrollY || 0;
-      if (ctrl.riseHold) {
-        if (y < st.start - 2 || y > st.end + 2) return;
-        event.preventDefault();
-        releaseRiseHold();
-        return;
-      }
-      if (y <= st.start + 1 && dy < 0) return;
-      if (y >= st.end - 1 && dy > 0) return;
-      if (y < st.start - 2 || y > st.end + 2) return;
-      if (ctrl.active && ctrl.kind === 'native') {
-        armQuiet();
-        return;
-      }
-      if (!ctrl.active) beginGesture(st, y, dy);
-      if (ctrl.kind === 'native') {
-        armQuiet();
-        return;
-      }
-      event.preventDefault();
-      var rails = railStops(st);
-      ctrl.travel += dy;
-      if (ctrl.kind === 'rise') {
-        if (!ctrl.committed && Math.abs(ctrl.travel) >= STEP_PX) {
-          ctrl.committed = true;
-          var riseDest = ctrl.travel > 0 ? rails[0] : st.start;
-          ctrl.park = riseDest;
-          ctrl.settled = riseDest >= rails[0] - 2 ? 0 : -1;
-          if (ctrl.travel > 0) {
-            ctrl.riseHold = true;
-            releaseRiseHold();
-          }
-          animateTo(riseDest);
-        } else if (!ctrl.committed) {
-          var rawRise = ctrl.originY + ctrl.travel;
-          window.scrollTo(0, Math.max(st.start, Math.min(rails[0], rawRise)));
-        }
-        armQuiet();
-        return;
-      }
-      if (ctrl.kind === 'leave') {
-        if (!ctrl.committed && ctrl.travel >= STEP_PX) {
-          ctrl.committed = true;
-          ctrl.park = st.end;
-          ctrl.settled = 3;
-          animateTo(st.end);
-        } else if (!ctrl.committed) {
-          window.scrollTo(0, rails[2]);
-        }
-        armQuiet();
-        return;
-      }
-      var dir = ctrl.travel >= 0 ? 1 : -1;
-      var next = ctrl.origin;
-      if (Math.abs(ctrl.travel) >= STEP_PX) {
-        next = Math.max(0, Math.min(rails.length - 1, ctrl.origin + dir));
-      }
-      var curY = ctrl.origin > 2 ? ctrl.originY : rails[ctrl.origin];
-      var destY = rails[Math.max(0, Math.min(rails.length - 1, next))];
-      if (Math.abs(ctrl.travel) < STEP_PX) {
-        window.scrollTo(0, ctrl.originY);
-      } else {
-        var raw = ctrl.originY + ctrl.travel;
-        var lo = Math.min(curY, destY, ctrl.originY);
-        var hi = Math.max(curY, destY, ctrl.originY);
-        window.scrollTo(0, Math.max(lo, Math.min(hi, raw)));
-      }
-      armQuiet();
+      if (event.ctrlKey || event.metaKey) return;
+      handleDelta(wheelPixels(event), event);
+    }
+
+    function keyDir(event) {
+      if (event.key === 'ArrowDown' || event.key === 'PageDown') return 1;
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') return -1;
+      if (event.key === ' ' || event.key === 'Spacebar') return event.shiftKey ? -1 : 1;
+      return 0;
     }
 
     function onKey(event) {
-      if (motion.reduce || event.repeat) return;
+      if (motion.reduce) return;
       if (event.metaKey || event.ctrlKey || event.altKey) return;
-      var dir = 0;
-      if (event.key === 'ArrowDown') dir = 1;
-      else if (event.key === 'ArrowUp') dir = -1;
-      else return;
+      var dir = keyDir(event);
+      if (!dir) return;
       var target = event.target;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.tagName === 'BUTTON' || target.tagName === 'A' || target.isContentEditable)) return;
       if (!document.documentElement.classList.contains('is-study-page')) return;
       var st = pinTrigger();
       if (!st) return;
-      var y = window.scrollY || 0;
-      if (y < st.start - 2 || y > st.end + 2) return;
-      if (y <= st.start + 1 && dir < 0) return;
-      if (y >= st.end - 1 && dir > 0) return;
+      var y = yNow();
+      if (!inBand(st, y)) return;
+      if (event.repeat) {
+        if (event.cancelable) event.preventDefault();
+        return;
+      }
+      noteInput();
+      if (ctrl.locked) {
+        if (event.cancelable) event.preventDefault();
+        if (!ctrl.tween) armUnlock();
+        return;
+      }
       var rails = railStops(st);
-      var idx = nearestRailIndex(y, rails);
-      if (ctrl.riseHold && dir > 0 && y < rails[0] + 8) {
-        event.preventDefault();
-        releaseRiseHold();
+      var dock = dockedAt(y, rails);
+      if (y < rails[0] - DOCK_PX) {
+        if (event.cancelable) event.preventDefault();
+        if (dir > 0) animateTo(rails[0]);
         return;
       }
-      if (y < rails[0] - 2 && dir > 0) {
-        event.preventDefault();
-        killTween();
-        ctrl.kind = 'rise';
-        ctrl.park = rails[0];
-        ctrl.settled = 0;
-        ctrl.riseHold = true;
-        releaseRiseHold();
-        animateTo(rails[0]);
+      if (dock < 0) {
+        dock = nearestRailIndex(y, rails);
+        if (dock > 2) dock = 2;
+      }
+      if (dock === 0 && dir < 0) {
+        if (event.cancelable) event.preventDefault();
         return;
       }
-      if (idx === 0 && dir < 0) {
-        event.preventDefault();
-        killTween();
-        ctrl.kind = 'rise';
-        ctrl.park = st.start;
-        ctrl.settled = -1;
-        ctrl.riseHold = false;
-        animateTo(st.start);
+      if (dock >= rails.length - 1 && dir > 0) {
+        if (event.cancelable) event.preventDefault();
         return;
       }
-      if (dir > 0 && y >= rails[2] - 40 && y < st.end - 2) {
-        event.preventDefault();
-        killTween();
-        ctrl.kind = 'leave';
-        ctrl.park = st.end;
-        ctrl.settled = 3;
-        animateTo(st.end);
+      if (event.cancelable) event.preventDefault();
+      ctrl.origin = dock;
+      commitStep(rails, dock, dir);
+    }
+
+    function onTouchStart(event) {
+      if (motion.reduce || !event.touches || event.touches.length !== 1) {
+        ctrl.touchOn = false;
         return;
       }
-      if (y >= st.end - 2 && dir > 0) return;
-      event.preventDefault();
-      if (ctrl.timer) window.clearTimeout(ctrl.timer);
-      ctrl.timer = 0;
-      ctrl.active = false;
-      ctrl.travel = 0;
-      killTween();
-      var origin = idx > 2 ? 3 : idx;
-      var dest = Math.max(0, Math.min(rails.length - 1, origin + dir));
-      ctrl.settled = dest;
-      ctrl.park = rails[dest];
-      ctrl.kind = 'step';
-      animateTo(rails[dest]);
+      ctrl.touchY = event.touches[0].clientY;
+      ctrl.touchOn = true;
+    }
+
+    function onTouchMove(event) {
+      if (!ctrl.touchOn || motion.reduce || !event.touches || event.touches.length !== 1) return;
+      var y = event.touches[0].clientY;
+      var dy = ctrl.touchY - y;
+      ctrl.touchY = y;
+      if (!dy) return;
+      handleDelta(dy, event);
+    }
+
+    function onTouchEnd() {
+      ctrl.touchOn = false;
     }
 
     ctrl.onWheel = onWheel;
     ctrl.onKey = onKey;
+    ctrl.onTouchStart = onTouchStart;
+    ctrl.onTouchMove = onTouchMove;
+    ctrl.onTouchEnd = onTouchEnd;
     ctrl.onScroll = publishSectionStep;
     window.addEventListener('wheel', onWheel, { passive: false, capture: true });
-    window.addEventListener('keydown', onKey, true);
+    window.addEventListener('keydown', onKey, { passive: false, capture: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: false, capture: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false, capture: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: false, capture: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: false, capture: true });
     window.addEventListener('scroll', publishSectionStep, { passive: true });
     motion.stepCtrl = ctrl;
   }
