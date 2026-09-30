@@ -255,20 +255,20 @@ window.Cbx300Answers = (function () {
   function phoneScreen(ch) {
     if (ch.id === 'solo') {
       return '<div class="phd cbx-ph__head"><div><span class="crumb">Home</span><h3>Invoices</h3></div>' + av('aisha', 's is-s') + '</div>' +
-        '<div class="card c-inv" data-ans-screen>' +
+        '<div class="cbx-ph__body" data-ans-screen><div class="card c-inv">' +
           '<header><h4>Invoices</h4><div class="seg"><span class="on">All</span><span>Unpaid</span><span>Paid</span></div></header>' +
           '<div class="row hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Mehta Studio</b><span>INV-015</span></div><span class="amt">₹ ——</span><span class="st paid" data-ans-t="paid">Paid</span><div class="act"><span class="match" data-ans-t="match">Matched to INV-015</span></div></div>' +
           '<div class="row">' + ini('K', '#C8664A') + '<div class="who cbx-who"><b>Kapoor &amp; Co</b><span>INV-011</span></div><span class="amt">₹ ——</span><span class="st late" data-ans-t="owe">Overdue · oldest</span><div class="act"><span class="btn nudge cbx-btn" data-ans-t="nudge">Nudge</span></div></div>' +
           '<div class="row">' + ini('R', '#7F95B0') + '<div class="who cbx-who"><b>Rao Interiors</b><span>INV-013</span></div><span class="amt">₹ ——</span><span class="st late">Overdue</span><div class="act"><span class="btn nudge">Nudge</span></div></div>' +
           '<div class="row">' + ini('S', '#8FA58A') + '<div class="who cbx-who"><b>Sen Foods</b><span>INV-016</span></div><span class="amt">₹ ——</span><span class="st due">Due Fri</span></div>' +
-        '</div>';
+        '</div></div>';
     }
     if (ch.id === 'hire') {
       return '<div class="phd cbx-ph__head"><div><span class="crumb">Planning</span><h3>Cash plan</h3></div>' + av('aisha', 's is-s') + '</div>' +
-        '<div class="card c-bal" data-ans-screen>' +
+        '<div class="cbx-ph__body" data-ans-screen><div class="card c-bal">' +
           '<header><h4>Balance</h4><span class="pill soft">This month</span></header>' +
           '<div class="bigamt">₹ ——</div>' +
-          '<div class="sbar" data-ans-t="safe"><i class="s1"></i><i class="s2"></i><i class="s3"></i></div>' +
+          '<div class="sbar"><i class="s1" data-ans-t="safe"></i><i class="s2"></i><i class="s3"></i></div>' +
           '<div class="legend">' +
             '<div><i class="s1"></i><b>Safe to spend</b><span>₹ ——</span></div>' +
             '<div data-ans-t="aside"><i class="s2"></i><b>Set aside</b><span>₹ ——</span></div>' +
@@ -278,14 +278,14 @@ window.Cbx300Answers = (function () {
         '<div class="card c-week">' +
           '<header><h4>This week</h4></header>' +
           '<div class="days7"><div class="day"><span>Mon</span></div><div class="day"><span>Tue</span></div><div class="day"><span>Wed</span></div><div class="day"><span>Thu</span></div><div class="day pay"><span>Fri</span></div><div class="day"><span>Sat</span></div><div class="day"><span>Sun</span></div></div>' +
-          '<div class="paychip" data-ans-t="payday">' + av('lina') + '<div><b>Lina’s salary</b><span>Payday · Friday</span></div><span class="ok">Covered</span></div>' +
-        '</div>';
+          '<div class="paychip">' + av('lina') + '<div><b>Lina’s salary</b><span>Payday · Friday</span></div><span class="ok" data-ans-t="payday">Covered</span></div>' +
+        '</div></div>';
     }
     return '<div class="phd cbx-ph__head"><div><span class="crumb">Team</span><h3>Waiting on you</h3></div><span class="cnt">1</span></div>' +
-      '<div class="card c-appr" data-ans-screen>' +
+      '<div class="cbx-ph__body" data-ans-screen><div class="card c-appr">' +
         '<div class="row">' + av('lina') + '<div class="who cbx-who"><b>Lina · Vendor payment</b><span>Print shop</span></div></div>' +
         '<div class="ph-cta"><span class="btn ok is-ok cbx-btn is-lg" data-ans-t="approve">Approve</span><span class="btn x cbx-btn is-ghost is-lg">Decline</span></div>' +
-      '</div>';
+      '</div></div>';
   }
 
   function buildDesk(ch) {
@@ -493,11 +493,11 @@ window.Cbx300Answers = (function () {
     return m[a] || m.c;
   }
 
-  function placeMarks(scene, ch, scale) {
+  function placeMarks(scene, ch, scale, root) {
     Array.prototype.forEach.call(scene.querySelectorAll('.cbx-ans__mkr, .cbx-ans__ring, .cbx-ans__mpulse, .cbx-ans__rpulse'), function (n) {
       n.parentNode.removeChild(n);
     });
-    var inner = scene.querySelector('.cbx-ans__cam.is-sharp .cbx-ans__camin');
+    root = root || scene;
     ch.pointers.forEach(function (p, i) {
       var scope = scene.querySelector('.cbx-ans__cam.is-sharp [data-ans-device="' + p.device + '"]') ||
         scene.querySelector('.cbx-ans__cam.is-sharp');
@@ -506,12 +506,12 @@ window.Cbx300Answers = (function () {
       if (p.rect) {
         var slot = scene.querySelector('.cbx-ans__cam.is-sharp [data-ans-device="' + p.device + '"] [data-ans-screen]') ||
           scene.querySelector('.cbx-ans__cam.is-sharp [data-ans-device="' + p.device + '"]');
-        var sr = stageRect(slot, inner, scale);
+        var sr = stageRect(slot, root, scale);
         tr = { x: sr.x + sr.w * p.rect.x / 100, y: sr.y + sr.h * p.rect.y / 100, w: sr.w * p.rect.w / 100, h: sr.h * p.rect.h / 100 };
         tr.r = tr.x + tr.w;
         tr.btm = tr.y + tr.h;
       } else if (t) {
-        tr = stageRect(t, inner, scale);
+        tr = stageRect(t, root, scale);
       } else {
         return;
       }
@@ -593,12 +593,13 @@ window.Cbx300Answers = (function () {
   }
 
   function prepareChapter(scene, ch, k, P, stage, scale) {
-    placeMarks(scene, ch, scale);
     var Z = zoomBox(scene, ch, scale);
     var cams = scene.querySelectorAll('.cbx-ans__camin');
     var gsap = window.gsap;
-    gsap.set(cams, { x: Z.tx, y: Z.ty, scale: Z.s, transformOrigin: '0 0' });
-    gsap.set(cams, { x: P.tx, y: P.ty, scale: P.s });
+    gsap.set(cams, { x: Z.tx, y: Z.ty, scale: Z.s, transformOrigin: '0 0', force3D: false });
+    if (cams[0]) cams[0].offsetWidth;
+    placeMarks(scene, ch, scale, scene);
+    gsap.set(cams, { x: P.tx, y: P.ty, scale: P.s, force3D: true });
     var sharp = scene.querySelector('.cbx-ans__cam.is-sharp');
     var spot = scene.querySelector('.cbx-ans__spot');
     gsap.set(sharp, { clipPath: insetPath(P.tx, P.ty, P.w, P.h, 16 * P.s) });
