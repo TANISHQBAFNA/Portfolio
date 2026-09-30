@@ -52,13 +52,13 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s97') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s98') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s86') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(index.indexOf('cbx300-answers.js?v=s14') !== -1, 'index.html missing answers module');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s15') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s97') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s98') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s86') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s14') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s15') !== -1, 'multiverse missing answers module');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv10') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s46') !== -1, 'index.html missing study cache-bust');
   assert.ok(mvIndex.indexOf('project-study.js?v=s46') !== -1, 'multiverse missing study cache-bust');
@@ -176,6 +176,9 @@ check('Section 03 camera into the screen, phone-hero then both', function () {
   assert.ok(pages.indexOf('is-after') !== -1, 'missing coffee is-after handoff');
   assert.ok(answers.indexOf("hero: 'phone'") !== -1, 'Ch1/Ch2 must hero the phone');
   assert.ok(answers.indexOf("hero: 'both'") !== -1, 'Ch3 must share phone and desktop');
+  assert.ok(answers.indexOf("phone: '[data-ans-device=\"phone\"]', desk: null") !== -1, 'Ch1/Ch2 must zoom the phone device');
+  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 17px/.test(css), 'does line must be 17px on the 1440 stage');
+  assert.ok(/\.cbx-ans__pg \{[\s\S]{0,180}font-size: 17px/.test(css), 'outcome line must be 17px on the 1440 stage');
   assert.ok(answers.indexOf("device: 'phone'") !== -1, 'some pointers land on the phone');
   assert.ok(answers.indexOf("device: 'desk'") !== -1, 'Ch3 pointers 1/3/4 land on desktop');
   assert.ok(answers.indexOf('out meeting a client.') !== -1, 'Ch3 pointer 2 copy missing');

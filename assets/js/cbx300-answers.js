@@ -58,7 +58,7 @@ window.Cbx300Answers = (function () {
       ],
       deskCrumb: 'Money in',
       deskTitle: 'Invoices',
-      region: { phone: '[data-ans-device="phone"] [data-ans-screen]', desk: null },
+      region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
         { worry: 'Did Mehta pay?', does: 'Shows <b>Paid</b> the moment money lands.', gain: 'No awkward call to the client.', t: '[data-ans-t="paid"]', device: 'phone', a: 'l', off: 18 },
         { worry: 'Which invoice was that for?', does: 'Matches every payment to the invoice it settles.', gain: 'Books that balance without a spreadsheet.', t: '[data-ans-t="match"]', device: 'phone', a: 'l', off: 18 },
@@ -83,7 +83,7 @@ window.Cbx300Answers = (function () {
       ],
       deskCrumb: 'Planning',
       deskTitle: 'Cash plan',
-      region: { phone: '[data-ans-device="phone"] [data-ans-screen]', desk: null },
+      region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
         { worry: 'Is this money really mine?', does: 'Splits the balance into safe to spend, set aside and coming in.', gain: 'One honest number to decide with.', t: '[data-ans-t="safe"]', device: 'phone', a: 'c', off: 0 },
         { worry: 'Will GST and rent eat into it?', does: 'Puts salary, tax and rent aside before the month begins.', gain: 'No bill ambushes payday.', t: '[data-ans-t="aside"]', device: 'phone', a: 'l', off: 16 },
@@ -475,12 +475,7 @@ window.Cbx300Answers = (function () {
     var g = 28;
     wrap.style.gap = g + 'px';
     var H = col.offsetHeight;
-    while (H > 768 && g > 12) {
-      g -= 2;
-      wrap.style.gap = g + 'px';
-      H = col.offsetHeight;
-    }
-    col.style.top = Math.round(84 + (768 - H) / 2) + 'px';
+    col.style.top = Math.round(84 + Math.max(0, (768 - H) / 2)) + 'px';
     return { H: H, g: g };
   }
 
@@ -540,38 +535,63 @@ window.Cbx300Answers = (function () {
 
   function zoomBox(scene, ch, scale) {
     var inner = scene.querySelector('.cbx-ans__cam.is-sharp .cbx-ans__camin');
-    var nodes = [];
-    if (ch.hero === 'phone') {
-      var ph = inner.querySelector(ch.region.phone);
-      if (ph) nodes.push(ph);
+    var phoneEl = inner.querySelector('[data-ans-device="phone"]');
+    var deskEl = inner.querySelector('[data-ans-device="desk"]');
+    var SHADOW = 40;
+    var COL_GAP = 30;
+    var MAX_RIGHT = NCOL.left - SHADOW - COL_GAP;
+    var d = { x: DEST.x, w: Math.min(DEST.w, MAX_RIGHT - DEST.x), cy: DEST.cy };
+    var R;
+    var s;
+    var tx;
+    var ty;
+    var hh;
+    var y0;
+    if (ch.hero === 'phone' && phoneEl) {
+      R = stageRect(phoneEl, inner, scale);
+      hh = Math.max(1, R.b - R.y);
+      s = Math.min(d.w / Math.max(1, R.r - R.x), (STAGE_H - 56) / hh);
+      var deskR = deskEl ? stageRect(deskEl, inner, scale) : null;
+      var worldLeft = deskR ? Math.min(R.x, deskR.x) : R.x;
+      tx = d.x - worldLeft * s;
+      var destRight = d.x + d.w;
+      var mappedPhoneRight = tx + R.r * s;
+      if (mappedPhoneRight > destRight) tx -= mappedPhoneRight - destRight;
+      var mappedPhoneLeft = tx + R.x * s;
+      if (mappedPhoneLeft < d.x) tx += d.x - mappedPhoneLeft;
+      hh *= s;
+      y0 = d.cy - hh / 2;
+      ty = y0 - R.y * s;
     } else {
-      var desk = inner.querySelector(ch.region.desk);
-      var phone = inner.querySelector(ch.region.phone);
-      if (desk) nodes.push(desk);
-      if (phone) nodes.push(phone);
+      var nodes = [];
+      if (ch.region.desk) {
+        var desk = inner.querySelector(ch.region.desk) || deskEl;
+        if (desk) nodes.push(desk);
+      }
+      if (ch.region.phone) {
+        var phone = inner.querySelector(ch.region.phone) || phoneEl;
+        if (phone) nodes.push(phone);
+      }
+      if (!nodes.length) nodes.push(phoneEl || inner);
+      var rs = nodes.map(function (n) { return stageRect(n, inner, scale); });
+      R = {
+        x: Math.min.apply(null, rs.map(function (r) { return r.x; })),
+        y: Math.min.apply(null, rs.map(function (r) { return r.y; })),
+        r: Math.max.apply(null, rs.map(function (r) { return r.r; })),
+        b: Math.max.apply(null, rs.map(function (r) { return r.btm; }))
+      };
+      s = d.w / Math.max(1, R.r - R.x);
+      hh = (R.b - R.y) * s;
+      tx = d.x - R.x * s;
+      y0 = d.cy - hh / 2;
+      ty = y0 - R.y * s;
     }
-    if (!nodes.length) {
-      var fallback = inner.querySelector('[data-ans-device="phone"]') || inner;
-      nodes.push(fallback);
-    }
-    var rs = nodes.map(function (n) { return stageRect(n, inner, scale); });
-    var R = {
-      x: Math.min.apply(null, rs.map(function (r) { return r.x; })),
-      y: Math.min.apply(null, rs.map(function (r) { return r.y; })),
-      r: Math.max.apply(null, rs.map(function (r) { return r.r; })),
-      b: Math.max.apply(null, rs.map(function (r) { return r.btm; }))
-    };
-    var d = DEST;
-    var s = d.w / Math.max(1, R.r - R.x);
-    var hh = (R.b - R.y) * s;
-    var tx = d.x - R.x * s;
-    var y0 = d.cy - hh / 2;
-    var ty = y0 - R.y * s;
     var pad = 16;
     var X = d.x - pad;
     var Y = y0 - pad;
     var W = d.w + 2 * pad;
     var H = hh + 2 * pad;
+    if (X + W > MAX_RIGHT) W = MAX_RIGHT - X;
     if (Y < 12) {
       H += Y - 12;
       Y = 12;

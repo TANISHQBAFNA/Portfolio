@@ -1343,7 +1343,7 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-ans__pd {
   margin: 0 0 6px;
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 400;
   line-height: 1.42;
   color: rgba(244, 239, 230, .74);
@@ -1359,7 +1359,7 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
   gap: 8px;
   margin: 0;
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.42;
   font-weight: 600;
   color: #F3C892;
@@ -1461,21 +1461,21 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
 
 .cbx-ans__scene.is-phone .cbx-desk {
   z-index: 1;
-  left: 520px;
-  top: 110px;
-  width: 860px;
-  height: 620px;
-  opacity: .42;
-  transform: scale(.92);
-  transform-origin: 80% 40%;
+  left: 40px;
+  top: 96px;
+  width: 880px;
+  height: 600px;
+  opacity: .48;
+  transform: scale(.9);
+  transform-origin: 0 40%;
 }
 
 .cbx-ans__scene.is-phone .cbx-phone {
   z-index: 3;
-  left: 72px;
-  top: 36px;
-  width: 680px;
-  height: 792px;
+  left: 300px;
+  top: 40px;
+  width: 440px;
+  height: 780px;
 }
 
 .cbx-ans__scene.is-both .cbx-desk {
@@ -2194,7 +2194,81 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
 
 .cbx-phone__screen .phd,
 .cbx-ph__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 8px;
+  flex: none;
+}
+
+.cbx-phone__screen .phd h3,
+.cbx-ph__head h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+
+.cbx-phone .ui {
+  font-size: 15px;
+}
+
+.cbx-phone .who b,
+.cbx-phone .cbx-who b {
+  font-size: 16px;
+}
+
+.cbx-phone .st,
+.cbx-phone .cbx-st,
+.cbx-phone .match,
+.cbx-phone .btn,
+.cbx-phone .cbx-btn,
+.cbx-phone .ok,
+.cbx-phone .cbx-ok,
+.cbx-phone .legend b,
+.cbx-phone .paychip b {
+  font-size: 14px;
+}
+
+.cbx-phone .c-inv .thead {
   display: none;
+}
+
+.cbx-phone .c-inv .row {
+  grid-template-columns: 34px 1fr auto;
+  grid-template-areas: "i w w" "i s x";
+  row-gap: 8px;
+  min-height: auto;
+  padding: 12px 6px;
+}
+
+.cbx-phone .c-inv .row > .ini,
+.cbx-phone .c-inv .row > .cbx-ini {
+  grid-area: i;
+  align-self: start;
+}
+
+.cbx-phone .c-inv .row .who,
+.cbx-phone .c-inv .row .cbx-who {
+  grid-area: w;
+  min-width: 0;
+}
+
+.cbx-phone .c-inv .row .amt,
+.cbx-phone .c-inv .row .cbx-amt {
+  display: none;
+}
+
+.cbx-phone .c-inv .row .st,
+.cbx-phone .c-inv .row .cbx-st {
+  grid-area: s;
+  justify-self: start;
+}
+
+.cbx-phone .c-inv .row .act {
+  grid-area: x;
+  align-items: flex-end;
 }
 
 .cbx-ph__body {
