@@ -581,8 +581,16 @@ window.Cbx300Answers = (function () {
         b: Math.max.apply(null, rs.map(function (r) { return r.btm; }))
       };
       s = d.w / Math.max(1, R.r - R.x);
-      hh = (R.b - R.y) * s;
       tx = d.x - R.x * s;
+      if (phoneEl) {
+        var phoneR = stageRect(phoneEl, inner, scale);
+        var cap = (MAX_RIGHT - d.x) / Math.max(1, phoneR.r - R.x);
+        if (cap > 0 && cap < s) {
+          s = cap;
+          tx = d.x - R.x * s;
+        }
+      }
+      hh = (R.b - R.y) * s;
       y0 = d.cy - hh / 2;
       ty = y0 - R.y * s;
     }
