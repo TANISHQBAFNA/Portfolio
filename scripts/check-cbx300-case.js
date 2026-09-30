@@ -52,14 +52,14 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s89') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s90') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s84') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(index.indexOf('cbx300-answers.js?v=s05') !== -1, 'index.html missing answers module');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s06') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s89') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s90') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s84') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s05') !== -1, 'multiverse missing answers module');
-  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv7') !== -1, 'multiverse missing case skin');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s06') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv8') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s46') !== -1, 'index.html missing study cache-bust');
   assert.ok(mvIndex.indexOf('project-study.js?v=s46') !== -1, 'multiverse missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
@@ -200,6 +200,8 @@ check('Section 03 camera into the screen, phone-hero then both', function () {
   assert.ok(css.indexOf('.cbx-ans {') !== -1 && css.indexOf('z-index: 42') !== -1, 'answers pane must pin above the released coffee sheet');
   assert.ok(mvCase.indexOf('html.is-multiverse .cbx-ans {') !== -1, 'Multiverse answers skin missing');
   assert.ok(mvCase.indexOf('.cbx-phone__bezel') === -1, 'Multiverse must not restyle the cream phone');
+  assert.ok(mvCase.indexOf('.cbx-ph__row') === -1, 'Multiverse must not skin phone rows');
+  assert.ok(mvCase.indexOf('.cbx-desk .cbx-btn') !== -1, 'Multiverse button skin must stay on the desktop');
   assert.ok(css.indexOf('html.is-study-wipe .study .cbx-ans') !== -1, 'wipe must hide answers');
 });
 

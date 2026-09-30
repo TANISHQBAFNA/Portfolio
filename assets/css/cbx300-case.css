@@ -1660,6 +1660,13 @@ html.is-study-wipe .study__chrome {
   min-width: 0;
 }
 
+.cbx-ph__row .cbx-who b,
+.cbx-ph__row .cbx-who span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .cbx-who b,
 .cbx-legend b,
 .cbx-paychip b {

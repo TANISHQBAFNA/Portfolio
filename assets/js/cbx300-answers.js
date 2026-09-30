@@ -724,6 +724,7 @@ window.Cbx300Answers = (function () {
       return prepareChapter(scene, CHAPTERS[k], k, P, stage);
     });
     var hud = section.querySelector('.cbx-ans__hud');
+    var hudLab = section.querySelector('.cbx-ans__lab');
     var bars = section.querySelectorAll('.cbx-ans__prog b');
     var SW = stage.offsetWidth;
     var SH = stage.offsetHeight;
@@ -766,8 +767,10 @@ window.Cbx300Answers = (function () {
     }
 
     function colr(l, t, dur, wide) {
-      tl.to(l.q, { color: wide ? INK : CREAM, duration: dur, ease: 'sine.inOut' }, t);
-      tl.to(l.slt, { color: wide ? INK2 : CREAM8, duration: dur, ease: 'sine.inOut' }, t);
+      if (isMultiverse()) {
+        tl.to(l.q, { color: wide ? INK : CREAM, duration: dur, ease: 'sine.inOut' }, t);
+        tl.to(l.slt, { color: wide ? INK2 : CREAM8, duration: dur, ease: 'sine.inOut' }, t);
+      }
       tl.to(l.mkav, { backgroundColor: wide ? COF : MKD, duration: dur, ease: 'sine.inOut' }, t);
     }
 
@@ -798,6 +801,7 @@ window.Cbx300Answers = (function () {
         tl.to(l.nbg, { opacity: 1, duration: 1.3, ease: 'sine.inOut' }, S0 + 0.35);
         toCol(l, S0, ZOOM);
         tl.to(hud, { '--hc': hudZoom.hc, '--hb': hudZoom.hb, duration: 1, ease: 'sine.inOut' }, S0 + 0.5);
+        if (hudLab) tl.to(hudLab, { opacity: 0, duration: 0.8, ease: 'sine.inOut' }, S0 + 0.4);
         if (bars[k]) tl.to(bars[k], { scaleX: 0.2, duration: ZOOM, ease: 'none' }, S0);
         tl.to(l.vf, { opacity: 1, duration: 0.6, stagger: 0.06, ease: 'sine.out' }, S0 + ZOOM - 0.5);
         tl.to(l.ctag, { opacity: 1, duration: 0.8, ease: 'sine.out' }, S0 + ZOOM - 0.3);
@@ -837,6 +841,7 @@ window.Cbx300Answers = (function () {
           tl.to(l.nbg, { opacity: 0, duration: 1.2, ease: 'sine.inOut' }, B + 0.25);
           toWide(l, B, BACK);
           tl.to(hud, { '--hc': hudWide.hc, '--hb': hudWide.hb, duration: 1, ease: 'sine.inOut' }, B + 1);
+          if (hudLab) tl.to(hudLab, { opacity: 1, duration: 0.8, ease: 'sine.inOut' }, B + 0.8);
           var W = B + BACK + 0.1;
           var n = layers[k + 1];
           tl.to(l.scene.querySelectorAll('.cbx-desk__main, .cbx-phone__screen'), { opacity: 0, duration: 0.4, ease: 'sine.in' }, W);
