@@ -403,6 +403,7 @@ window.Cbx300Answers = (function () {
     scene.setAttribute('data-ans-ch', String(index));
     scene.setAttribute('data-ans-hero', ch.hero);
     if (index) scene.setAttribute('hidden', '');
+    scene.style.opacity = index ? '0' : '1';
 
     var blur = el('div', 'cbx-ans__cam is-blur');
     var blurIn = el('div', 'cbx-ans__camin');
@@ -574,6 +575,8 @@ window.Cbx300Answers = (function () {
 
   function zoomBox(scene, ch, stage) {
     var inner = scene.querySelector('.cbx-ans__cam.is-sharp .cbx-ans__camin');
+    var gsap = window.gsap;
+    if (gsap) gsap.set(inner, { x: 0, y: 0, scale: 1, transformOrigin: '0 0' });
     var sels = [];
     if (ch.hero === 'both') {
       sels = [ch.region.desk, ch.region.phone].filter(Boolean);
@@ -582,17 +585,16 @@ window.Cbx300Answers = (function () {
     }
     var rs = sels.map(function (sel) {
       var node = inner.querySelector(sel);
-      return node ? node.getBoundingClientRect() : null;
+      return node ? relRect(node, inner) : null;
     }).filter(Boolean);
     if (!rs.length) {
-      var fb = inner.getBoundingClientRect();
-      rs = [fb];
+      rs = [{ x: 0, y: 0, w: inner.offsetWidth, h: inner.offsetHeight, r: inner.offsetWidth, btm: inner.offsetHeight }];
     }
     var R = {
-      x: Math.min.apply(null, rs.map(function (r) { return r.left; })),
-      y: Math.min.apply(null, rs.map(function (r) { return r.top; })),
-      r: Math.max.apply(null, rs.map(function (r) { return r.right; })),
-      b: Math.max.apply(null, rs.map(function (r) { return r.bottom; }))
+      x: Math.min.apply(null, rs.map(function (r) { return r.x; })),
+      y: Math.min.apply(null, rs.map(function (r) { return r.y; })),
+      r: Math.max.apply(null, rs.map(function (r) { return r.r; })),
+      b: Math.max.apply(null, rs.map(function (r) { return r.btm; }))
     };
     var sw = stage.offsetWidth;
     var sh = stage.offsetHeight;
@@ -860,10 +862,64 @@ window.Cbx300Answers = (function () {
     return tl;
   }
 
+  function withSectionInView(section, fn) {
+    var y = window.scrollY || 0;
+    var style = section.style;
+    var prev = {
+      position: style.position,
+      top: style.top,
+      left: style.left,
+      right: style.right,
+      width: style.width,
+      height: style.height,
+      zIndex: style.zIndex,
+      visibility: style.visibility
+    };
+    var scenes = section.querySelectorAll('.cbx-ans__scene');
+    Array.prototype.forEach.call(scenes, function (scene) {
+      scene.removeAttribute('hidden');
+      scene.style.visibility = 'visible';
+      scene.style.opacity = '1';
+    });
+    style.position = 'fixed';
+    style.top = '0';
+    style.left = '0';
+    style.right = '0';
+    style.width = '100%';
+    style.height = '100vh';
+    style.zIndex = '2';
+    style.visibility = 'visible';
+    section.getBoundingClientRect();
+    Array.prototype.forEach.call(section.querySelectorAll('.cbx-phone, .cbx-desk, .cbx-ans__camin'), function (n) {
+      void n.offsetHeight;
+    });
+    var out = fn();
+    style.position = prev.position;
+    style.top = prev.top;
+    style.left = prev.left;
+    style.right = prev.right;
+    style.width = prev.width;
+    style.height = prev.height;
+    style.zIndex = prev.zIndex;
+    style.visibility = prev.visibility;
+    Array.prototype.forEach.call(scenes, function (scene, i) {
+      if (i) {
+        scene.setAttribute('hidden', '');
+        scene.style.opacity = '0';
+      } else {
+        scene.style.opacity = '1';
+      }
+    });
+    if (y) window.scrollTo(0, y);
+    return out;
+  }
+
   function bindCamera(section) {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
-    var tl = buildTimeline(section, false);
+    var tl = withSectionInView(section, function () {
+      return buildTimeline(section, false);
+    });
     tl.to({}, { duration: CURTAIN }, 0);
     var st = ScrollTrigger.create({
       trigger: section,
@@ -871,11 +927,12 @@ window.Cbx300Answers = (function () {
       end: function () { return '+=' + Math.round(tl.duration() * PX_PER_SEC); },
       pin: true,
       pinSpacing: true,
+      pinType: 'fixed',
       scrub: 0.5,
       animation: tl,
       invalidateOnRefresh: true,
       anticipatePin: 1,
-      refreshPriority: 2,
+      refreshPriority: -1,
       onUpdate: function (self) {
         if (motion.onStep) motion.onStep(self.progress > 0.02 ? 2 : 1);
       },
@@ -907,8 +964,9 @@ window.Cbx300Answers = (function () {
         end: function () { return '+=' + Math.round(window.innerHeight * 2.4); },
         pin: true,
         pinSpacing: true,
+        pinType: 'fixed',
         scrub: 0.4,
-        refreshPriority: 2,
+        refreshPriority: -1,
         onUpdate: function (self) {
           var i = Math.min(2, Math.floor(self.progress * 3));
           Array.prototype.forEach.call(scenes, function (scene, n) {
@@ -922,6 +980,7 @@ window.Cbx300Answers = (function () {
     });
     motion.tween = tl;
     if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
+    section.dataset.ready = '1';
   }
 
   function bindNarrow(section) {
@@ -990,6 +1049,12 @@ window.Cbx300Answers = (function () {
         else if (c.isNarrow) bindNarrow(section);
         else bindCamera(section);
         seekIfNeeded(section);
+        if (window.ScrollTrigger && window.ScrollTrigger.refresh) {
+          window.requestAnimationFrame(function () {
+            window.ScrollTrigger.refresh();
+            seekIfNeeded(section);
+          });
+        }
         return function () {
           if (motion.tween && motion.tween.kill) motion.tween.kill();
           motion.tween = null;

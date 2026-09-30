@@ -928,7 +928,7 @@ html.is-study-wipe .study__chrome {
   --ans-due: #c4a35a;
   box-sizing: border-box;
   position: relative;
-  z-index: 6;
+  z-index: 42;
   width: 100%;
   height: 100vh;
   height: 100svh;
@@ -947,7 +947,7 @@ html.is-study-wipe .study__chrome {
   display: flex;
   align-items: baseline;
   gap: 18px;
-  padding: 18px 28px 0;
+  padding: calc(var(--study-head, 72px) + 6px) 28px 0;
   pointer-events: none;
   color: var(--hc, rgba(30, 21, 16, 0.55));
 }
@@ -1017,6 +1017,12 @@ html.is-study-wipe .study__chrome {
 
 .cbx-ans__scene[hidden] {
   display: none !important;
+}
+
+.cbx-ans:not(.is-static):not(.is-narrow) .cbx-ans__scene[hidden] {
+  display: block !important;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .cbx-ans__cam {
@@ -2068,7 +2074,7 @@ html.is-study-wipe .study__chrome {
     overflow: hidden;
   }
   .cbx-ans__hud {
-    padding: 12px 16px 0;
+    padding: calc(var(--study-head, 64px) + 4px) 16px 0;
     gap: 10px;
   }
   .cbx-ans__prog { display: none; }
@@ -2117,12 +2123,11 @@ html.is-study-wipe .study__chrome {
   .cbx-ans__pg { font-size: 0.7rem; }
   .cbx-ans__ctag { opacity: 0.55; }
 
-  .cbx-ans__scene.is-phone .cbx-desk,
-  .cbx-ans__scene.is-both .cbx-desk {
-    top: 12%;
+  .cbx-ans__scene.is-phone .cbx-desk {
+    top: 10%;
     left: 8%;
     width: 84%;
-    height: 34%;
+    height: 32%;
     opacity: 0.38;
     filter: saturate(0.7);
     transform: scale(0.92);
@@ -2130,27 +2135,31 @@ html.is-study-wipe .study__chrome {
     z-index: 1;
   }
   .cbx-ans__scene.is-both .cbx-desk {
-    opacity: 0.92;
+    top: 12%;
+    left: 4%;
+    width: 58%;
+    height: 38%;
+    opacity: 1;
     filter: none;
     transform: none;
-    height: 30%;
+    z-index: 2;
   }
-  .cbx-ans__scene.is-phone .cbx-phone,
-  .cbx-ans__scene.is-both .cbx-phone {
-    top: 16%;
+  .cbx-ans__scene.is-phone .cbx-phone {
+    top: 14%;
     left: 50%;
     width: min(58vw, 240px);
-    height: 46%;
+    height: 48%;
     transform: translateX(-50%);
     z-index: 3;
   }
   .cbx-ans__scene.is-both .cbx-phone {
+    top: 12%;
     left: auto;
-    right: 6%;
+    right: 4%;
+    width: min(40vw, 168px);
+    height: 42%;
     transform: none;
-    width: min(42vw, 180px);
-    height: 40%;
-    top: 14%;
+    z-index: 3;
   }
   .cbx-ans__mkr,
   .cbx-ans__ring,
