@@ -8,6 +8,7 @@
  * glanceable three-stage rail (kept), worry question + subtext,
  * inline SVG illustration. No clay cast. No product chip.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
+ * Section 03 (How our bank answers her) mounts after the coffee pin.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
  */
@@ -55,7 +56,6 @@ window.Cbx300Case = (function () {
   ];
 
   var STUBS = [
-    { id: 'roles', num: '03', title: 'I designed for roles, not one user.' },
     { id: 'approvals', num: '04', title: 'My team can prepare. I need to approve.' },
     { id: 'money', num: '05', title: 'Can I afford to pay this supplier today?' },
     { id: 'permissions', num: '06', title: 'My team needs access, but not all access.' },
@@ -914,9 +914,21 @@ window.Cbx300Case = (function () {
     setIdlePlaying(!!(self && self.isActive) && riseTarget >= 0.92 && !motion.reduce);
   }
 
+  function releaseGrowth(pin, on) {
+    if (!pin) return;
+    var was = pin.classList.contains('is-after');
+    if (on) pin.classList.add('is-after');
+    else pin.classList.remove('is-after');
+    if (was === !!on) return;
+    window.requestAnimationFrame(function () {
+      if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
+    });
+  }
+
   function kill() {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
+    if (window.Cbx300Answers && window.Cbx300Answers.kill) window.Cbx300Answers.kill();
     unbindStageStep();
     clearTimers();
     killIdle();
@@ -936,7 +948,7 @@ window.Cbx300Case = (function () {
     }
     motion.stage = null;
     if (motion.pin) {
-      motion.pin.classList.remove('is-static', 'is-cinematic', 'is-reduce');
+      motion.pin.classList.remove('is-static', 'is-cinematic', 'is-reduce', 'is-after');
       motion.pin.style.height = '';
       if (gsap) {
         morphNodes(motion.pin).forEach(function (node) {
@@ -1632,6 +1644,13 @@ window.Cbx300Case = (function () {
         scrubCurtain(st, rails, y, dy);
         return true;
       }
+      if (dock >= rails.length - 1 && dy > 0) {
+        ctrl.active = false;
+        ctrl.travel = 0;
+        window.scrollTo(0, y + dy);
+        publishSectionStep();
+        return true;
+      }
       if (dock < 0) {
         var near = nearestRailIndex(y, rails);
         if (near > 2) near = 2;
@@ -1726,6 +1745,7 @@ window.Cbx300Case = (function () {
       }
       if (dock >= rails.length - 1 && dir > 0) {
         if (event.cancelable) event.preventDefault();
+        animateTo(st.end + 8);
         return;
       }
       if (event.cancelable) event.preventDefault();
@@ -1895,6 +1915,9 @@ window.Cbx300Case = (function () {
           if (!self.isActive) {
             tweenCbxRise(self.progress >= 1 ? 1 : 0, true);
             setIdlePlaying(false);
+            releaseGrowth(pin, self.progress >= 1);
+          } else {
+            releaseGrowth(pin, false);
           }
           if (self.isActive) publishSectionStep();
         },
@@ -1989,6 +2012,7 @@ window.Cbx300Case = (function () {
         if (ScrollTrigger) {
           watchSteps(cover, pin, opts.onStep);
         }
+        bindAnswers(world, opts);
         return;
       }
 
@@ -2003,16 +2027,26 @@ window.Cbx300Case = (function () {
 
       bindCinematic(world, opts);
       if (!motion.reduce) armIdle(pin);
+      bindAnswers(world, opts);
       whenImages(pin, refreshSoon);
     }
 
     fillIllos(pin, afterIllos);
   }
 
+  function bindAnswers(world, opts) {
+    if (!window.Cbx300Answers || !window.Cbx300Answers.bind) return;
+    window.Cbx300Answers.bind(world, {
+      onStep: opts && opts.onStep,
+      page: opts && opts.page,
+      reduce: motion.reduce
+    });
+  }
+
   function liveCount(world) {
-    if (!world) return 2;
+    if (!world) return 3;
     var n = world.querySelectorAll('[data-cbx-live]').length;
-    return n || 2;
+    return n || 3;
   }
 
   function mount(world, project) {
@@ -2026,6 +2060,9 @@ window.Cbx300Case = (function () {
     stage.appendChild(buildCover(project));
     world.appendChild(stage);
     world.appendChild(buildGrowth());
+    if (window.Cbx300Answers && window.Cbx300Answers.build) {
+      world.appendChild(window.Cbx300Answers.build());
+    }
     world.appendChild(buildStubs());
     fillIllos(world, function () { armGlitch(world, { chrome: false }); });
     armGlitch(world, { chrome: false });

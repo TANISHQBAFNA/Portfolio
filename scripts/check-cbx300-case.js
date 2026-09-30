@@ -2,8 +2,9 @@
 'use strict';
 
 /**
- * Guards CBX300 Section 01 cover + Section 02 D2 worry board.
- * Same markup for cream + Multiverse. Glitch only on Multiverse.
+ * Guards CBX300 Section 01 cover + Section 02 D2 worry board +
+ * Section 03 camera-into-the-screen. Same markup for cream +
+ * Multiverse. Glitch only on Multiverse.
  */
 var fs = require('fs');
 var path = require('path');
@@ -18,6 +19,7 @@ function read(rel) {
 var index = read('index.html');
 var mvIndex = read('index-multiverse.html');
 var pages = read('assets/js/cbx300-case.js');
+var answers = read('assets/js/cbx300-answers.js');
 var study = read('assets/js/project-study.js');
 var landing = read('assets/js/landing.js');
 var mvLanding = read('assets/js/landing-multiverse.js');
@@ -50,13 +52,16 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s85') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s83') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s86') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s84') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s01') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s85') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s83') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv6') !== -1, 'multiverse missing case skin');
-  assert.ok(index.indexOf('project-study.js?v=s45') !== -1, 'index.html missing study cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s86') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s84') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s01') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv7') !== -1, 'multiverse missing case skin');
+  assert.ok(index.indexOf('project-study.js?v=s46') !== -1, 'index.html missing study cache-bust');
+  assert.ok(mvIndex.indexOf('project-study.js?v=s46') !== -1, 'multiverse missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
 });
@@ -151,14 +156,50 @@ check('Section 02 is Aisha growth, not the old 8-beat film', function () {
   assert.ok(pages.indexOf('THREE') === -1 && pages.indexOf('three.js') === -1, 'Three.js is off-limits');
 });
 
-check('later sections stay stubs after growth', function () {
+check('later sections stay stubs after answers', function () {
   assert.ok(pages.indexOf('rest.hidden = true') !== -1, 'stubs must stay hidden');
-  ['roles', 'approvals', 'money', 'permissions', 'grammar', 'scale'].forEach(function (id) {
+  ['approvals', 'money', 'permissions', 'grammar', 'scale'].forEach(function (id) {
     assert.ok(pages.indexOf("id: '" + id + "'") !== -1, 'missing stub id ' + id);
   });
+  assert.ok(pages.indexOf("id: 'roles'") === -1, '03 roles stub must be the live answers section');
   assert.ok(pages.indexOf("id: 'ladder'") === -1, 'ladder stub must be the live growth track');
   assert.ok(pages.indexOf("data-cbx-section', '01'") !== -1, 'cover is 01');
   assert.ok(pages.indexOf("data-cbx-section', '02'") !== -1, 'growth is 02');
+  assert.ok(answers.indexOf("data-cbx-section', '03'") !== -1, 'answers is 03');
+});
+
+check('Section 03 camera into the screen, phone-hero then both', function () {
+  assert.ok(pages.indexOf('Cbx300Answers.build') !== -1, 'case must mount answers');
+  assert.ok(pages.indexOf('Cbx300Answers.bind') !== -1, 'case must bind answers');
+  assert.ok(pages.indexOf('Cbx300Answers.kill') !== -1, 'case must kill answers');
+  assert.ok(pages.indexOf('releaseGrowth') !== -1, 'coffee pane must release into flow for 03');
+  assert.ok(pages.indexOf('is-after') !== -1, 'missing coffee is-after handoff');
+  assert.ok(answers.indexOf("hero: 'phone'") !== -1, 'Ch1/Ch2 must hero the phone');
+  assert.ok(answers.indexOf("hero: 'both'") !== -1, 'Ch3 must share phone and desktop');
+  assert.ok(answers.indexOf("device: 'phone'") !== -1, 'some pointers land on the phone');
+  assert.ok(answers.indexOf("device: 'desk'") !== -1, 'Ch3 pointers 1/3/4 land on desktop');
+  assert.ok(answers.indexOf('out meeting a client.') !== -1, 'Ch3 pointer 2 copy missing');
+  assert.ok(answers.indexOf("t: '[data-ans-t=\"approve\"]'") !== -1, 'one-tap approve target missing');
+  assert.ok(answers.indexOf('data-slot') !== -1, 'device slots missing');
+  assert.ok(answers.indexOf('phoneShot') !== -1, 'phone screenshot swap hook missing');
+  assert.ok(answers.indexOf('deskShot') !== -1, 'desktop screenshot swap hook missing');
+  assert.ok(answers.indexOf('Example UI · real screens to come') !== -1, 'example UI tag missing');
+  assert.ok(answers.indexOf('Example copy') !== -1, 'example copy tag missing');
+  assert.ok(answers.indexOf('₹ ——') !== -1, 'amounts must stay blank');
+  assert.ok(answers.indexOf('Payment received') !== -1, 'Ch1 payment alert missing');
+  assert.ok(answers.indexOf('Payday') !== -1, 'Ch2 payday chip missing');
+  assert.ok(answers.indexOf('PX_PER_SEC') !== -1, 'prototype timing missing');
+  assert.ok(answers.indexOf('var ZOOM = 2.1') !== -1, 'zoom duration must match prototype');
+  assert.ok(answers.indexOf('var HOLD = 5.3') !== -1, 'hold duration must match prototype');
+  assert.ok(answers.indexOf('prefers-reduced-motion') !== -1, 'reduced motion path missing');
+  assert.ok(css.indexOf('.cbx-ans__scene.is-phone .cbx-phone') !== -1, 'phone-hero layering missing');
+  assert.ok(css.indexOf('.cbx-ans__scene.is-phone .cbx-desk') !== -1, 'dimmed desktop slot missing');
+  assert.ok(css.indexOf('.cbx-ans__scene.is-both .cbx-phone') !== -1, 'Ch3 phone slot missing');
+  assert.ok(css.indexOf('.cbx-phone__bezel') !== -1, 'phone cream/coffee bezel missing');
+  assert.ok(css.indexOf('.cbx-ans.is-narrow') !== -1, '390px stack missing');
+  assert.ok(mvCase.indexOf('html.is-multiverse .cbx-ans {') !== -1, 'Multiverse answers skin missing');
+  assert.ok(mvCase.indexOf('.cbx-phone__bezel') === -1, 'Multiverse must not restyle the cream phone');
+  assert.ok(css.indexOf('html.is-study-wipe .study .cbx-ans') !== -1, 'wipe must hide answers');
 });
 
 check('Section 02 growth field is coffee; cover stays cream', function () {
@@ -439,7 +480,7 @@ check('light proof: D2 worry board', function () {
   assert.ok(pages.indexOf('Solo cash is easy to lose') === -1, 'older freelancer stamp leaked');
   assert.ok(pages.indexOf('Who still owes me a yes') === -1, 'older mid need leaked');
   assert.ok(css.indexOf('opacity: 0.42') === -1, 'faint 0.42 phone pass must be gone');
-  var growthCss = css.slice(css.indexOf('.cbx-growth {'));
+  var growthCss = css.slice(css.indexOf('.cbx-growth {'), css.indexOf('.cbx-ans {'));
   assert.ok(growthCss.indexOf('Syne') === -1, 'growth stage must drop display Syne');
   assert.ok(growthCss.indexOf('#5ecfcf') === -1, 'growth must drop neon teal stamps');
   var askCss = css.slice(css.indexOf('.cbx-growth__ask {'), css.indexOf('.cbx-growth__quote {'));
