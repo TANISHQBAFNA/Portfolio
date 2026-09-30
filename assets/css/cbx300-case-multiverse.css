@@ -423,4 +423,10 @@ html.is-multiverse .cbx-ans::before {
   html.is-multiverse .cbx-ans__note {
     background: linear-gradient(180deg, rgba(14, 16, 24, 0) 0%, #0e1018 18%);
   }
+  html.is-multiverse .cbx-ans__pd {
+    color: rgba(243, 238, 228, 0.82);
+  }
+  html.is-multiverse .cbx-ans__pd b {
+    color: #f3eee4;
+  }
 }
