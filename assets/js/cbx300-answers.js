@@ -243,7 +243,7 @@ window.Cbx300Answers = (function () {
     }
     return '<div class="view v3">' +
       '<section class="card c-appr" data-ans-region>' +
-        '<header data-ans-t="waiting"><h4>Waiting on you</h4><span class="cnt">4</span><span class="pill soft">Today</span></header>' +
+        '<header><h4 data-ans-t="waiting">Waiting on you</h4><span class="cnt">4</span><span class="pill soft">Today</span></header>' +
         '<div class="row">' + av('lina') + '<div class="who cbx-who"><b>Lina · Vendor payment</b><span>Print shop</span></div><span class="role r-payments cbx-role" data-ans-t="role">Payments</span><span class="amt cbx-amt">₹ ——</span><span class="btn x cbx-btn is-ghost">Decline</span><span class="btn ok cbx-btn is-ok">Approve</span></div>' +
         '<div class="row">' + av('dev') + '<div class="who cbx-who"><b>Dev · Reimbursement</b><span>Client travel</span></div><span class="role r-approver cbx-role">Approver</span><span class="amt cbx-amt">₹ ——</span><span class="btn x cbx-btn is-ghost">Decline</span><span class="btn ok cbx-btn is-ok">Approve</span></div>' +
         '<div class="row">' + av('mira') + '<div class="who cbx-who"><b>Mira · New vendor</b><span>Packaging supplier</span></div><span class="role r-ops cbx-role">Ops</span><span class="amt cbx-amt">₹ ——</span><span class="btn x cbx-btn is-ghost">Decline</span><span class="btn ok cbx-btn is-ok">Approve</span></div>' +
