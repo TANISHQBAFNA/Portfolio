@@ -2367,19 +2367,21 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
   .cbx-phone__screen .card { margin: 0 10px 10px; padding: 12px; }
   .cbx-phone__screen .c-inv .row {
     grid-template-columns: 34px 1fr auto;
-    grid-template-areas: "i w s" "i x x";
+    grid-template-areas: "i w w" "i s x";
     row-gap: 6px;
     min-height: auto;
     padding: 10px 4px;
   }
   .cbx-phone__screen .c-inv .row > .ini { grid-area: i; align-self: start; }
-  .cbx-phone__screen .c-inv .row .who { grid-area: w; }
+  .cbx-phone__screen .c-inv .row .who { grid-area: w; min-width: 0; }
   .cbx-phone__screen .c-inv .row .amt { display: none; }
-  .cbx-phone__screen .c-inv .row .st { grid-area: s; justify-self: end; }
+  .cbx-phone__screen .c-inv .row .st { grid-area: s; justify-self: start; }
   .cbx-phone__screen .c-inv .row .act { grid-area: x; align-items: flex-end; }
   .cbx-phone__screen .thead { display: none; }
   .cbx-phone__screen .c-inv .row .btn { height: 28px; padding: 0 12px; font-size: 12.5px; }
   .cbx-phone__screen .c-inv .row:nth-child(n+5) { display: none; }
+  .cbx-phone__tabs { display: none; }
+  .cbx-phone__screen { height: calc(100% - 36px); }
   .cbx-phone__screen .who b {
     white-space: nowrap;
     overflow: visible;
