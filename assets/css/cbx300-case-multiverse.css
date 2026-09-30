@@ -274,7 +274,7 @@ html.is-multiverse .cbx-ans__hud {
 }
 
 html.is-multiverse .cbx-ans__nbg {
-  background: linear-gradient(90deg, rgba(14, 16, 24, 0) 0%, #0e1018 28%);
+  background: linear-gradient(270deg, rgba(8, 10, 16, .95) 0, rgba(8, 10, 16, .9) 30%, rgba(8, 10, 16, .5) 38%, transparent 46%);
 }
 
 html.is-multiverse .cbx-ans__dim {

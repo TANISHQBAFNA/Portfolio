@@ -1624,6 +1624,12 @@ window.Cbx300Case = (function () {
       if (y <= st.start + 1 && dy < 0) return false;
       if (y >= st.end - 1 && dy > 0) return false;
       if (!inBand(st, y)) return false;
+      var rails = railStops(st);
+      var last = rails[rails.length - 1];
+      /* Past the last stage the pin still owns a spacer. Yield native
+         wheel so Section 03 can be reached; do not snap back. */
+      if (y > last + DOCK_PX && dy > 0) return false;
+      if (dockedAt(y, rails) >= rails.length - 1 && dy > 0) return false;
       noteInput();
       if (event.cancelable) event.preventDefault();
       if (!ctrl.locked && ctrl.tween) {
@@ -1634,7 +1640,6 @@ window.Cbx300Case = (function () {
         if (!ctrl.tween) armUnlock();
         return true;
       }
-      var rails = railStops(st);
       var dock = dockedAt(y, rails);
       if (y < rails[0] - 0.5) {
         scrubCurtain(st, rails, y, dy);
@@ -1644,11 +1649,8 @@ window.Cbx300Case = (function () {
         scrubCurtain(st, rails, y, dy);
         return true;
       }
-      if (dock >= rails.length - 1 && dy > 0) {
-        ctrl.active = false;
-        ctrl.travel = 0;
-        window.scrollTo(0, y + dy);
-        publishSectionStep();
+      if (y > last + DOCK_PX && dy < 0) {
+        animateTo(last);
         return true;
       }
       if (dock < 0) {
