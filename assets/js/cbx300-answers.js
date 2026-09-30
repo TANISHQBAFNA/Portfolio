@@ -549,7 +549,7 @@ window.Cbx300Answers = (function () {
     var y0;
     if (ch.hero === 'phone' && phoneEl) {
       R = stageRect(phoneEl, inner, scale);
-      hh = Math.max(1, R.b - R.y);
+      hh = Math.max(1, R.btm - R.y);
       s = Math.min(d.w / Math.max(1, R.r - R.x), (STAGE_H - 56) / hh);
       var deskR = deskEl ? stageRect(deskEl, inner, scale) : null;
       var worldLeft = deskR ? Math.min(R.x, deskR.x) : R.x;
