@@ -136,7 +136,7 @@ window.Cbx300Answers = (function () {
           gain: 'She says yes to her first hire, calmly.',
           t: '[data-ans-t="payday"]',
           device: 'phone',
-          a: 'l'
+          a: 'c'
         }
       ]
     },
