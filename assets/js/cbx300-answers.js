@@ -218,7 +218,7 @@ window.Cbx300Answers = (function () {
         '<section class="card c-inv" data-ans-region>' +
           '<header><h4>Invoices</h4><div class="seg"><span class="on is-on">All</span><span>Unpaid</span><span>Paid</span></div></header>' +
           '<div class="thead"><span>Client</span><span>Amount</span><span>Status</span><span></span></div>' +
-          '<div class="row hi is-hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Mehta Studio</b><span>INV-015</span></div><span class="amt cbx-amt">₹ ——</span><span class="st paid cbx-st is-paid">Paid</span><div class="act"><span class="match">Matched to INV-015</span></div></div>' +
+          '<div class="row hi is-hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Mehta Studio</b><span>INV-015</span></div><span class="amt cbx-amt">₹ ——</span><span class="st paid cbx-st is-paid">Paid</span><div class="act"><span class="match"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6l3 3 5-6"/></svg>Matched to INV-015</span></div></div>' +
           '<div class="row">' + ini('K', '#C8664A') + '<div class="who cbx-who"><b>Kapoor &amp; Co</b><span>INV-011</span></div><span class="amt cbx-amt">₹ ——</span><span class="st late cbx-st is-late">Overdue · oldest</span><div class="act"><span class="btn nudge cbx-btn">Nudge</span></div></div>' +
           '<div class="row">' + ini('R', '#7F95B0') + '<div class="who cbx-who"><b>Rao Interiors</b><span>INV-013</span></div><span class="amt cbx-amt">₹ ——</span><span class="st late cbx-st is-late">Overdue</span><div class="act"><span class="btn nudge cbx-btn">Nudge</span></div></div>' +
           '<div class="row">' + ini('S', '#8FA58A') + '<div class="who cbx-who"><b>Sen Foods</b><span>INV-016</span></div><span class="amt cbx-amt">₹ ——</span><span class="st due cbx-st is-due">Due Fri</span><div class="act"><span class="muted">Sent Mon</span></div></div>' +
@@ -238,7 +238,7 @@ window.Cbx300Answers = (function () {
         '<section class="card c-week">' +
           '<header><h4>This week</h4></header>' +
           '<div class="days7 cbx-days7"><div class="day"><span>Mon</span></div><div class="day"><span>Tue</span></div><div class="day"><span>Wed</span></div><div class="day"><span>Thu</span></div><div class="day pay"><span class="is-pay">Fri</span></div><div class="day"><span>Sat</span></div><div class="day"><span>Sun</span></div></div>' +
-          '<div class="paychip cbx-paychip">' + av('lina') + '<div><b>Lina’s salary</b><span>Payday · Friday</span></div><span class="ok cbx-ok">Covered</span></div>' +
+          '<div class="paychip cbx-paychip">' + av('lina') + '<div><b>Lina’s salary</b><span>Payday · Friday</span></div><span class="ok cbx-ok">Covered <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6l3 3 5-6"/></svg></span></div>' +
         '</section></div>';
     }
     return '<div class="view v3">' +
@@ -252,15 +252,20 @@ window.Cbx300Answers = (function () {
       '</section></div>';
   }
 
+  function matchMark() {
+    return '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6l3 3 5-6"/></svg>';
+  }
+
   function phoneScreen(ch) {
     if (ch.id === 'solo') {
       return '<div class="phd cbx-ph__head"><div><span class="crumb">Home</span><h3>Invoices</h3></div>' + av('aisha', 's is-s') + '</div>' +
-        '<div class="cbx-ph__body" data-ans-screen><div class="card c-inv">' +
+        '<div class="cbx-ph__body" data-ans-screen><div class="card c-inv" data-ans-region>' +
           '<header><h4>Invoices</h4><div class="seg"><span class="on">All</span><span>Unpaid</span><span>Paid</span></div></header>' +
-          '<div class="row hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Mehta Studio</b><span>INV-015</span></div><span class="amt">₹ ——</span><span class="st paid" data-ans-t="paid">Paid</span><div class="act"><span class="match" data-ans-t="match">Matched to INV-015</span></div></div>' +
+          '<div class="thead"><span>Client</span><span>Amount</span><span>Status</span><span></span></div>' +
+          '<div class="row hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Mehta Studio</b><span>INV-015</span></div><span class="amt">₹ ——</span><span class="st paid" data-ans-t="paid">Paid</span><div class="act"><span class="match" data-ans-t="match">' + matchMark() + 'Matched to INV-015</span></div></div>' +
           '<div class="row">' + ini('K', '#C8664A') + '<div class="who cbx-who"><b>Kapoor &amp; Co</b><span>INV-011</span></div><span class="amt">₹ ——</span><span class="st late" data-ans-t="owe">Overdue · oldest</span><div class="act"><span class="btn nudge cbx-btn" data-ans-t="nudge">Nudge</span></div></div>' +
           '<div class="row">' + ini('R', '#7F95B0') + '<div class="who cbx-who"><b>Rao Interiors</b><span>INV-013</span></div><span class="amt">₹ ——</span><span class="st late">Overdue</span><div class="act"><span class="btn nudge">Nudge</span></div></div>' +
-          '<div class="row">' + ini('S', '#8FA58A') + '<div class="who cbx-who"><b>Sen Foods</b><span>INV-016</span></div><span class="amt">₹ ——</span><span class="st due">Due Fri</span></div>' +
+          '<div class="row">' + ini('S', '#8FA58A') + '<div class="who cbx-who"><b>Sen Foods</b><span>INV-016</span></div><span class="amt">₹ ——</span><span class="st due">Due Fri</span><div class="act"><span class="muted">Sent Mon</span></div></div>' +
         '</div></div>';
     }
     if (ch.id === 'hire') {
@@ -278,7 +283,7 @@ window.Cbx300Answers = (function () {
         '<div class="card c-week">' +
           '<header><h4>This week</h4></header>' +
           '<div class="days7"><div class="day"><span>Mon</span></div><div class="day"><span>Tue</span></div><div class="day"><span>Wed</span></div><div class="day"><span>Thu</span></div><div class="day pay"><span>Fri</span></div><div class="day"><span>Sat</span></div><div class="day"><span>Sun</span></div></div>' +
-          '<div class="paychip">' + av('lina') + '<div><b>Lina’s salary</b><span>Payday · Friday</span></div><span class="ok" data-ans-t="payday">Covered</span></div>' +
+          '<div class="paychip">' + av('lina') + '<div><b>Lina’s salary</b><span>Payday · Friday</span></div><span class="ok" data-ans-t="payday">Covered <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6l3 3 5-6"/></svg></span></div>' +
         '</div></div>';
     }
     return '<div class="phd cbx-ph__head"><div><span class="crumb">Team</span><h3>Waiting on you</h3></div><span class="cnt">1</span></div>' +
@@ -326,10 +331,12 @@ window.Cbx300Answers = (function () {
     }).join('') + '</span>';
   }
 
-  function buildWorld(ch) {
+  function buildWorld(ch, layer) {
     var world = el('div', 'cbx-ans__world cbx-d1');
     world.appendChild(buildDesk(ch));
-    world.appendChild(buildPhone(ch));
+    if (layer !== 'blur' || ch.hero === 'both') {
+      world.appendChild(buildPhone(ch));
+    }
     return world;
   }
 
@@ -342,7 +349,7 @@ window.Cbx300Answers = (function () {
 
     var blur = el('div', 'cbx-ans__cam is-blur');
     var blurIn = el('div', 'cbx-ans__camin');
-    blurIn.appendChild(buildWorld(ch));
+    blurIn.appendChild(buildWorld(ch, 'blur'));
     blur.appendChild(blurIn);
 
     var dim = el('div', 'cbx-ans__dim');
@@ -350,7 +357,7 @@ window.Cbx300Answers = (function () {
 
     var sharp = el('div', 'cbx-ans__cam is-sharp');
     var sharpIn = el('div', 'cbx-ans__camin');
-    sharpIn.appendChild(buildWorld(ch));
+    sharpIn.appendChild(buildWorld(ch, 'sharp'));
     sharp.appendChild(sharpIn);
 
     var spot = el('div', 'cbx-ans__spot');

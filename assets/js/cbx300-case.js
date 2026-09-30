@@ -1622,7 +1622,7 @@ window.Cbx300Case = (function () {
       if (!st || !dy) return false;
       var y = yNow();
       if (y <= st.start + 1 && dy < 0) return false;
-      if (y >= st.end - 1 && dy > 0) return false;
+      if (y >= st.end - 1) return false;
       if (!inBand(st, y)) return false;
       var rails = railStops(st);
       var last = rails[rails.length - 1];
@@ -1685,6 +1685,9 @@ window.Cbx300Case = (function () {
 
     function onWheel(event) {
       if (event.ctrlKey || event.metaKey) return;
+      /* Section 03 owns the wheel while its pin is active. Past S02 the
+         native document scroller must keep moving — do not preventDefault. */
+      if (document.documentElement.classList.contains('is-cbx-ans-pin')) return;
       handleDelta(wheelPixels(event), event);
     }
 
