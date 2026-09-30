@@ -2379,6 +2379,7 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
   .cbx-phone__screen .c-inv .row .act { grid-area: x; align-items: flex-end; }
   .cbx-phone__screen .thead { display: none; }
   .cbx-phone__screen .c-inv .row .btn { height: 28px; padding: 0 12px; font-size: 12.5px; }
+  .cbx-phone__screen .c-inv .row:nth-child(n+5) { display: none; }
   .cbx-phone__screen .who b {
     white-space: nowrap;
     overflow: visible;

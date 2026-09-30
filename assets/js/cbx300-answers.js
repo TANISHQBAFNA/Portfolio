@@ -983,21 +983,20 @@ window.Cbx300Answers = (function () {
     var ScrollTrigger = window.ScrollTrigger;
     section.classList.add('is-narrow');
     var scenes = Array.prototype.slice.call(section.querySelectorAll('.cbx-ans__scene'));
-    scenes.forEach(function (scene, k) {
+    scenes.forEach(function (scene) {
       scene.removeAttribute('hidden');
       scene.style.visibility = 'visible';
       scene.style.opacity = '1';
-      if (k) {
-        scene.setAttribute('hidden', '');
-        scene.style.opacity = '0';
-      } else {
-        scene.removeAttribute('hidden');
-        scene.style.opacity = '1';
-      }
     });
     section.getBoundingClientRect();
     scenes.forEach(function (scene, k) {
       placeMarks(scene, CHAPTERS[k], 1);
+    });
+    scenes.forEach(function (scene, k) {
+      if (k) {
+        scene.setAttribute('hidden', '');
+        scene.style.opacity = '0';
+      }
     });
     var tl = gsap.timeline({ paused: true });
     var T = 0.2;
