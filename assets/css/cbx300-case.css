@@ -1143,8 +1143,9 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-ans__scene[hidden] {
-  visibility: hidden;
-  pointer-events: none;
+  /* Keep the node in the render tree. GSAP opacity is what paints.
+     The UA hidden attribute would otherwise take the chapter out. */
+  display: block !important;
 }
 
 .cbx-ans__cam {
