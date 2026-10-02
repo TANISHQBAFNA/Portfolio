@@ -60,10 +60,10 @@ window.Cbx300Answers = (function () {
       deskTitle: 'Invoices',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
-        { worry: 'Did Mehta pay?', does: 'Shows <b>Paid</b> the moment money lands.', gain: 'No awkward call to the client.', t: '[data-ans-t="paid"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Which invoice was that for?', does: 'Matches every payment to the invoice it settles.', gain: 'Books that balance without a spreadsheet.', t: '[data-ans-t="match"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Who still owes me?', does: 'Lists unpaid invoices, oldest first.', gain: 'She knows who to chase, and who to leave alone.', t: '[data-ans-t="owe"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Chasing feels rude.', does: 'Drafts a polite reminder, sent in one tap.', gain: 'The money comes in. The relationship stays warm.', t: '[data-ans-t="nudge"]', device: 'phone', a: 'l', off: 18 }
+        { worry: 'Did Mehta pay?', does: 'Status is the first thing on every row, in a colour she can read at a glance, and it flips the moment money lands.', gain: 'No awkward call to the client.', t: '[data-ans-t="paid"]', device: 'phone', a: 'l', off: 18 },
+        { worry: 'Which invoice was that for?', does: 'A payment arrives already tied to its invoice, so she never matches a bank line to a bill herself.', gain: 'Books that balance without a spreadsheet.', t: '[data-ans-t="match"]', device: 'phone', a: 'l', off: 18 },
+        { worry: 'Who still owes me?', does: 'The list puts the oldest overdue on top, so the order itself tells her where to look first.', gain: 'She knows who to chase, and who to leave alone.', t: '[data-ans-t="owe"]', device: 'phone', a: 'l', off: 18 },
+        { worry: 'Chasing feels rude.', does: 'The reminder is already written in a polite tone and one tap away, so the awkward part is done for her.', gain: 'The money comes in. The relationship stays warm.', t: '[data-ans-t="nudge"]', device: 'phone', a: 'l', off: 18 }
       ]
     },
     {
@@ -85,10 +85,10 @@ window.Cbx300Answers = (function () {
       deskTitle: 'Cash plan',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
-        { worry: 'Is this money really mine?', does: 'Splits the balance into safe to spend, set aside and coming in.', gain: 'One honest number to decide with.', t: '[data-ans-t="safe"]', device: 'phone', a: 'c', off: 0 },
-        { worry: 'Will GST and rent eat into it?', does: 'Puts salary, tax and rent aside before the month begins.', gain: 'No bill ambushes payday.', t: '[data-ans-t="aside"]', device: 'phone', a: 'l', off: 16 },
-        { worry: 'What if a client pays late?', does: 'Keeps expected money out of what’s safe to spend.', gain: 'She never spends money that hasn’t arrived.', t: '[data-ans-t="coming"]', device: 'phone', a: 'l', off: 16 },
-        { worry: 'Can I pay Lina on Friday?', does: 'Marks payday and checks the money is already there.', gain: 'She says yes to her first hire, calmly.', t: '[data-ans-t="payday"]', device: 'phone', a: 'l', off: 18 }
+        { worry: 'Is this money really mine?', does: 'One bar splits the balance into safe to spend, set aside and still coming, so the true answer is visible before any maths.', gain: 'One honest number to decide with.', t: '[data-ans-t="safe"]', device: 'phone', a: 'c', off: 0 },
+        { worry: 'Will GST and rent eat into it?', does: 'Bills that are certain are set aside as their own block, so they can’t hide inside the balance.', gain: 'No bill ambushes payday.', t: '[data-ans-t="aside"]', device: 'phone', a: 'l', off: 16 },
+        { worry: 'What if a client pays late?', does: 'Money that hasn’t arrived is shown but kept outside the safe number, so a late payment never changes what she thought she had.', gain: 'She never spends money that hasn’t arrived.', t: '[data-ans-t="coming"]', device: 'phone', a: 'l', off: 16 },
+        { worry: 'Can I pay Lina on Friday?', does: 'The question is answered on the day itself: Friday is marked and one ‘Covered’ badge says yes or no.', gain: 'She says yes to her first hire, calmly.', t: '[data-ans-t="payday"]', device: 'phone', a: 'l', off: 18 }
       ]
     },
     {
@@ -116,10 +116,10 @@ window.Cbx300Answers = (function () {
         desk: '[data-ans-device="desk"] [data-ans-region]'
       },
       pointers: [
-        { worry: 'What needs me right now?', does: 'Gathers approvals, payments and requests in one list.', gain: 'Nothing gets lost in a chat thread.', t: '[data-ans-t="waiting"]', device: 'desk', a: 'r', off: 22 },
-        { worry: 'I’m out meeting a client.', does: 'Approves in one tap, from her desk or her phone.', gain: 'Her team isn’t stuck waiting for her.', t: '[data-ans-t="approve"]', device: 'phone', a: 'tr', off: 0, dx: 2, dy: -2 },
-        { worry: 'Who approved that?', does: 'Logs every action with a name.', gain: 'Clear answers when the accountant asks.', t: '[data-ans-t="log"]', device: 'desk', a: 'tr', off: 0, dx: -14 },
-        { worry: 'Should everyone see everything?', does: 'Gives each person a role with the right access.', gain: 'Lina runs payments. The big calls stay with Aisha.', t: '[data-ans-t="role"]', device: 'desk', a: 'tr', off: 0, dx: 2, dy: -3 }
+        { worry: 'What needs me right now?', does: 'Everything waiting for her is gathered in one list with a count on the tab, so nothing depends on her remembering where to look.', gain: 'Nothing gets lost in a chat thread.', t: '[data-ans-t="waiting"]', device: 'desk', a: 'r', off: 22 },
+        { worry: 'I’m out meeting a client.', does: 'Approve is the biggest thing on the phone screen with the details above it, so a decision takes one thumb and a few seconds.', gain: 'Her team isn’t stuck waiting for her.', t: '[data-ans-t="approve"]', device: 'phone', a: 'tr', off: 0, dx: 2, dy: -2 },
+        { worry: 'Who approved that?', does: 'Every action is logged with a name and time right under the list, so the answer is where she is already looking.', gain: 'Clear answers when the accountant asks.', t: '[data-ans-t="log"]', device: 'desk', a: 'tr', off: 0, dx: -14 },
+        { worry: 'Should everyone see everything?', does: 'Each request carries a role tag, so she sees at a glance who it belongs to and what each person can do is limited by role.', gain: 'Lina runs payments. The big calls stay with Aisha.', t: '[data-ans-t="role"]', device: 'desk', a: 'tr', off: 0, dx: 2, dy: -3 }
       ]
     }
   ];

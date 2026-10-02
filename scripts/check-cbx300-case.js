@@ -16,6 +16,24 @@ function read(rel) {
   return fs.readFileSync(path.join(ROOT, rel), 'utf8');
 }
 
+function cssBlock(sheet, selector) {
+  var needle = selector + ' {';
+  var i = 0;
+  while (i < sheet.length) {
+    var found = sheet.indexOf(needle, i);
+    if (found === -1) return '';
+    var prev = found === 0 ? '\n' : sheet.charAt(found - 1);
+    if (prev === '\n' || prev === '}' ) {
+      var open = sheet.indexOf('{', found);
+      var close = sheet.indexOf('}', open);
+      if (open === -1 || close === -1) return '';
+      return sheet.slice(found, close + 1);
+    }
+    i = found + 1;
+  }
+  return '';
+}
+
 var index = read('index.html');
 var mvIndex = read('index-multiverse.html');
 var pages = read('assets/js/cbx300-case.js');
@@ -52,13 +70,13 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s98') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s99') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s86') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(index.indexOf('cbx300-answers.js?v=s17') !== -1, 'index.html missing answers module');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s18') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s98') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s99') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s86') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s17') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s18') !== -1, 'multiverse missing answers module');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv10') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s46') !== -1, 'index.html missing study cache-bust');
   assert.ok(mvIndex.indexOf('project-study.js?v=s46') !== -1, 'multiverse missing study cache-bust');
@@ -218,6 +236,71 @@ check('Section 03 camera into the screen, phone-hero then both', function () {
   assert.ok(mvCase.indexOf('.cbx-ph__row') === -1, 'Multiverse must not skin phone rows');
   assert.ok(mvCase.indexOf('.cbx-desk .cbx-btn') !== -1, 'Multiverse button skin must stay on the desktop');
   assert.ok(css.indexOf('html.is-study-wipe .study .cbx-ans') !== -1, 'wipe must hide answers');
+});
+
+check('released coffee stays 100vh so the SME hero cannot flash between S02 and S03', function () {
+  function assertAfter(rule, label) {
+    assert.ok(rule, label + ' missing');
+    assert.ok(!/height:\s*0/.test(rule), label + ' must not collapse height to 0 — that re-shows the SME hero');
+    assert.ok(!/min-height:\s*0/.test(rule), label + ' must not collapse min-height to 0');
+    assert.ok(/height:\s*100vh/.test(rule), label + ' must stay a 100vh in-flow curtain');
+    assert.ok(/min-height:\s*100vh/.test(rule), label + ' must keep min-height 100vh');
+    assert.ok(/margin-top:\s*-100vh/.test(rule), label + ' must overlap the unpinned cover so the hero cannot sit between S02 and S03');
+    assert.ok(/position:\s*relative/.test(rule), label + ' must be in-flow, not a zero-height leftover overlay');
+  }
+  var studyAfter = cssBlock(css, 'html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-after');
+  var after = cssBlock(css, '.cbx-growth.is-after');
+  assertAfter(studyAfter, 'study-page is-after');
+  assertAfter(after, '.cbx-growth.is-after');
+  assert.ok(/z-index:\s*8/.test(after), 'released coffee must paint over the unpinned cover');
+  assert.ok(/z-index:\s*12/.test(cssBlock(css, '.cbx-ans')), 'S03 must pin above the released coffee');
+  assert.ok(pages.indexOf('releaseGrowth(pin, self.progress >= 1)') !== -1,
+    'is-after must land when the S02 pin deactivates at the end, not on the way in');
+  assert.ok(pages.indexOf('releaseGrowth(pin, false)') !== -1,
+    'scrolling back into S02 must take is-after off so the curtain can pin again');
+});
+
+check('Section 03 pointer does-lines explain the UX, not the application', function () {
+  var does = [
+    'Status is the first thing on every row, in a colour she can read at a glance, and it flips the moment money lands.',
+    'A payment arrives already tied to its invoice, so she never matches a bank line to a bill herself.',
+    'The list puts the oldest overdue on top, so the order itself tells her where to look first.',
+    'The reminder is already written in a polite tone and one tap away, so the awkward part is done for her.',
+    'One bar splits the balance into safe to spend, set aside and still coming, so the true answer is visible before any maths.',
+    'Bills that are certain are set aside as their own block, so they can’t hide inside the balance.',
+    'Money that hasn’t arrived is shown but kept outside the safe number, so a late payment never changes what she thought she had.',
+    'The question is answered on the day itself: Friday is marked and one ‘Covered’ badge says yes or no.',
+    'Everything waiting for her is gathered in one list with a count on the tab, so nothing depends on her remembering where to look.',
+    'Approve is the biggest thing on the phone screen with the details above it, so a decision takes one thumb and a few seconds.',
+    'Every action is logged with a name and time right under the list, so the answer is where she is already looking.',
+    'Each request carries a role tag, so she sees at a glance who it belongs to and what each person can do is limited by role.'
+  ];
+  does.forEach(function (line) {
+    assert.ok(answers.indexOf(line) !== -1, 'missing UX does-line: ' + line.slice(0, 48));
+  });
+  [
+    'Shows <b>Paid</b> the moment money lands.',
+    'Matches every payment to the invoice it settles.',
+    'Lists unpaid invoices, oldest first.',
+    'Drafts a polite reminder, sent in one tap.',
+    'Splits the balance into safe to spend, set aside and coming in.',
+    'Puts salary, tax and rent aside before the month begins.',
+    'Keeps expected money out of what’s safe to spend.',
+    'Marks payday and checks the money is already there.',
+    'Gathers approvals, payments and requests in one list.',
+    'Approves in one tap, from her desk or her phone.',
+    'Logs every action with a name.',
+    'Gives each person a role with the right access.'
+  ].forEach(function (line) {
+    assert.ok(answers.indexOf(line) === -1, 'old application does-line leaked: ' + line);
+  });
+  assert.ok(answers.indexOf("worry: 'Did Mehta pay?'") !== -1, 'Ch1 worry 1 must stay');
+  assert.ok(answers.indexOf("gain: 'No awkward call to the client.'") !== -1, 'Ch1 gain 1 must stay');
+  assert.ok(answers.indexOf("worry: 'Can I pay Lina on Friday?'") !== -1, 'Ch2 worry 4 must stay');
+  assert.ok(answers.indexOf("gain: 'Lina runs payments. The big calls stay with Aisha.'") !== -1, 'Ch3 gain 4 must stay');
+  assert.ok(answers.indexOf('var g = 28') !== -1, 'pointer stack gap must stay 28px');
+  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 17px/.test(css), 'does line must stay 17px on the 1440 stage');
+  assert.ok(/rgba\(244, 239, 230, \.74\)/.test(cssBlock(css, '.cbx-ans__pd')), 'does line must keep readable cream contrast');
 });
 
 check('Section 02 growth field is coffee; cover stays cream', function () {
