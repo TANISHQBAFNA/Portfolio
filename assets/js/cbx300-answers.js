@@ -87,7 +87,7 @@ window.Cbx300Answers = (function () {
       pointers: [
         { worry: 'Is this money really mine?', does: 'One bar splits the balance into safe, set aside and still coming, so the true answer is visible.', gain: 'One honest number to decide with.', t: '[data-ans-t="safe"]', device: 'phone', a: 'c', off: 0 },
         { worry: 'Will GST and rent eat into it?', does: 'Bills that are certain are set aside as their own block, so they can’t hide inside the balance.', gain: 'No bill ambushes payday.', t: '[data-ans-t="aside"]', device: 'phone', a: 'l', off: 16 },
-        { worry: 'What if a client pays late?', does: 'Money still coming stays outside the safe number, so a late payment never changes what she had.', gain: 'She never spends money that hasn’t arrived.', t: '[data-ans-t="coming"]', device: 'phone', a: 'l', off: 16 },
+        { worry: 'What if a client pays late?', does: 'Money still to arrive stays out of the safe number, so a late payment changes nothing.', gain: 'She never spends money that hasn’t arrived.', t: '[data-ans-t="coming"]', device: 'phone', a: 'l', off: 16 },
         { worry: 'Can I pay Lina on Friday?', does: 'The question is answered on the day: Friday is marked and one ‘Covered’ badge says yes or no.', gain: 'She says yes to her first hire, calmly.', t: '[data-ans-t="payday"]', device: 'phone', a: 'l', off: 18 }
       ]
     },
@@ -117,7 +117,7 @@ window.Cbx300Answers = (function () {
       },
       pointers: [
         { worry: 'What needs me right now?', does: 'Everything waiting is in one list with a tab count, so she doesn’t have to remember where to look.', gain: 'Nothing gets lost in a chat thread.', t: '[data-ans-t="waiting"]', device: 'desk', a: 'r', off: 22 },
-        { worry: 'I’m out meeting a client.', does: 'Approve is the biggest thing on the phone screen, so a decision takes one thumb and a few seconds.', gain: 'Her team isn’t stuck waiting for her.', t: '[data-ans-t="approve"]', device: 'phone', a: 'tr', off: 0, dx: 2, dy: -2 },
+        { worry: 'I’m out meeting a client.', does: 'Approve is the biggest thing on the phone, so one thumb and a few seconds is enough.', gain: 'Her team isn’t stuck waiting for her.', t: '[data-ans-t="approve"]', device: 'phone', a: 'tr', off: 0, dx: 2, dy: -2 },
         { worry: 'Who approved that?', does: 'Every action is logged with a name and time under the list, so the answer is already in view.', gain: 'Clear answers when the accountant asks.', t: '[data-ans-t="log"]', device: 'desk', a: 'tr', off: 0, dx: -14 },
         { worry: 'Should everyone see everything?', does: 'Each request carries a role tag, so she sees who it belongs to and access is limited by role.', gain: 'Lina runs payments. The big calls stay with Aisha.', t: '[data-ans-t="role"]', device: 'desk', a: 'tr', off: 0, dx: 2, dy: -3 }
       ]
@@ -634,7 +634,9 @@ window.Cbx300Answers = (function () {
     gsap.set(cams, { x: Z.tx, y: Z.ty, scale: Z.s, transformOrigin: '0 0', force3D: false });
     if (cams[0]) cams[0].offsetWidth;
     placeMarks(scene, ch, scale, scene);
-    gsap.set(cams, { x: P.tx, y: P.ty, scale: P.s, force3D: true });
+    if (cams[0]) gsap.set(cams[0], { x: P.tx, y: P.ty, scale: P.s, force3D: false });
+    if (cams[1]) gsap.set(cams[1], { x: P.tx, y: P.ty, scale: P.s, force3D: true });
+    if (!cams[1] && cams[0]) gsap.set(cams[0], { x: P.tx, y: P.ty, scale: P.s, force3D: true });
     var sharp = scene.querySelector('.cbx-ans__cam.is-sharp');
     var spot = scene.querySelector('.cbx-ans__spot');
     gsap.set(sharp, { clipPath: insetPath(P.tx, P.ty, P.w, P.h, 16 * P.s) });
@@ -741,12 +743,16 @@ window.Cbx300Answers = (function () {
   var MKD = '#3a2a20';
 
   function applyBox(l) {
-    var b = l.box;
-    l.sharp.style.clipPath = insetPath(b.l, b.t, b.r - b.l, b.b - b.t, b.rad);
-    l.spot.style.left = b.l + 'px';
-    l.spot.style.top = b.t + 'px';
-    l.spot.style.width = (b.r - b.l) + 'px';
-    l.spot.style.height = (b.b - b.t) + 'px';
+    if (l._boxRaf) return;
+    l._boxRaf = window.requestAnimationFrame(function () {
+      l._boxRaf = 0;
+      var b = l.box;
+      l.sharp.style.clipPath = insetPath(b.l, b.t, b.r - b.l, b.b - b.t, b.rad);
+      l.spot.style.left = b.l + 'px';
+      l.spot.style.top = b.t + 'px';
+      l.spot.style.width = (b.r - b.l) + 'px';
+      l.spot.style.height = (b.b - b.t) + 'px';
+    });
   }
 
   function edges(tl, l, to, t, dur, zin) {
@@ -1045,7 +1051,14 @@ window.Cbx300Answers = (function () {
       }
       ptrs.forEach(function (p, i) {
         var t = T + i * 0.9;
+        if (i === 0) p.classList.add('is-current');
+        else p.classList.remove('is-current');
         if (mk[i]) tl.fromTo(mk[i], { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)' }, t);
+        tl.call(function () {
+          ptrs.forEach(function (node, n) {
+            node.classList.toggle('is-current', n === i);
+          });
+        }, null, t);
         tl.fromTo(p, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, t + 0.08);
       });
       T += 0.9 * 3 + 1.6;

@@ -916,13 +916,10 @@ window.Cbx300Case = (function () {
 
   function releaseGrowth(pin, on) {
     if (!pin) return;
-    var was = pin.classList.contains('is-after');
+    /* z-index only. Do not change layout or rebuild the pin —
+       that reflowed the pin end and trapped wheel-up at the last stage. */
     if (on) pin.classList.add('is-after');
     else pin.classList.remove('is-after');
-    if (was === !!on) return;
-    window.requestAnimationFrame(function () {
-      if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
-    });
   }
 
   function kill() {
@@ -1338,51 +1335,6 @@ window.Cbx300Case = (function () {
 
     /* Curtain is fully up from the dock line through stage 01.
        Resting there is stage 01, with the same lock as a full rise. */
-    function parkStage(st) {
-      var dock = railStops(st)[0];
-      ctrl.park = dock;
-      ctrl.settled = 0;
-      ctrl.origin = 0;
-      ctrl.originY = dock;
-      ctrl.kind = 'step';
-      lockStep();
-      window.scrollTo(0, dock);
-      publishSectionStep();
-      armUnlock();
-    }
-
-    function armSettle() {
-      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
-      ctrl.restTimer = window.setTimeout(function () {
-        ctrl.restTimer = 0;
-        if (ctrl.locked || ctrl.tween) return;
-        var st = pinTrigger();
-        if (!st) return;
-        var y = yNow();
-        var lo = st.start;
-        var hi = dockScrollY(st);
-        var dock = railStops(st)[0];
-        if (y > hi - 2 && y < dock - DOCK_PX) {
-          parkStage(st);
-          return;
-        }
-        if (y < lo - 2 || y > hi + 2) return;
-        if (y <= lo + 2 || y >= hi - 2) return;
-        var towardDock = (hi - y) <= (y - lo);
-        ctrl.settled = towardDock ? 0 : -1;
-        if (!towardDock) {
-          easeTo(lo);
-          return;
-        }
-        easeTo(dock, {
-          onComplete: function () {
-            var live = pinTrigger();
-            if (live) parkStage(live);
-          }
-        });
-      }, RISE_REST_MS);
-    }
-
     function scrubCurtain(st, rails, y, dy) {
       if (!ctrl.locked) killTween();
       ctrl.kind = 'rise';
@@ -1414,7 +1366,6 @@ window.Cbx300Case = (function () {
         return;
       }
       window.scrollTo(0, next);
-      armSettle();
     }
 
     function dockedAt(y, rails) {
@@ -1622,12 +1573,13 @@ window.Cbx300Case = (function () {
       if (!st || !dy) return false;
       var y = yNow();
       if (y <= st.start + 1 && dy < 0) return false;
-      if (y >= st.end - 1) return false;
+      /* Yield native wheel only going DOWN past the pin so S03 can be
+         reached. Yielding on the way UP trapped the last coffee stage:
+         one notch left the pin, the next snapped back to st.end. */
+      if (y >= st.end - 1 && dy > 0) return false;
       if (!inBand(st, y)) return false;
       var rails = railStops(st);
       var last = rails[rails.length - 1];
-      /* Past the last stage the pin still owns a spacer. Yield native
-         wheel so Section 03 can be reached; do not snap back. */
       if (y > last + DOCK_PX && dy > 0) return false;
       if (dockedAt(y, rails) >= rails.length - 1 && dy > 0) return false;
       noteInput();
@@ -1650,10 +1602,33 @@ window.Cbx300Case = (function () {
         return true;
       }
       if (y > last + DOCK_PX && dy < 0) {
-        animateTo(last);
+        window.scrollTo(0, last);
+        ctrl.active = true;
+        ctrl.kind = 'step';
+        ctrl.origin = rails.length - 1;
+        ctrl.originY = last;
+        ctrl.park = last;
+        ctrl.settled = rails.length - 1;
+        ctrl.travel = 0;
         return true;
       }
       if (dock < 0) {
+        if (dy < 0) {
+          var prev = -1;
+          var i;
+          for (i = rails.length - 1; i >= 0; i -= 1) {
+            if (rails[i] < y - DOCK_PX) {
+              prev = i;
+              break;
+            }
+          }
+          if (prev < 0) {
+            scrubCurtain(st, rails, y, dy);
+            return true;
+          }
+          commitStep(rails, Math.min(rails.length - 1, prev + 1), -1);
+          return true;
+        }
         var near = nearestRailIndex(y, rails);
         if (near > 2) near = 2;
         window.scrollTo(0, rails[near]);
@@ -1787,13 +1762,6 @@ window.Cbx300Case = (function () {
     ctrl.onTouchEnd = onTouchEnd;
     function onScroll() {
       publishSectionStep();
-      if (ctrl.tween || ctrl.locked) return;
-      var st = pinTrigger();
-      if (!st) return;
-      var y = yNow();
-      var hi = dockScrollY(st);
-      var dock = railStops(st)[0];
-      if (y > hi - 2 && y < dock - DOCK_PX) armSettle();
     }
 
     ctrl.onScroll = onScroll;

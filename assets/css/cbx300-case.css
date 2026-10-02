@@ -391,9 +391,9 @@ html.is-study-page .study[data-template="cbx300"] .cbx-growth {
 }
 
 html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-after {
-  position: relative;
-  inset: auto;
-  top: auto;
+  position: fixed;
+  inset: 0;
+  top: 0;
   z-index: 8;
   height: 100vh;
   height: 100svh;
@@ -401,9 +401,7 @@ html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-after {
   min-height: 100vh;
   min-height: 100svh;
   min-height: 100dvh;
-  margin-top: -100vh;
-  margin-top: -100svh;
-  margin-top: -100dvh;
+  margin-top: 0;
   transform: none;
   overflow: hidden;
   pointer-events: auto;
@@ -418,14 +416,14 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   pointer-events: auto;
 }
 
-/* After the morph pin, the coffee sheet becomes a 100vh in-flow block
-   so Section 03 can pin beneath it. Same pixels as the fixed overlay
-   at rise 0; only the positioning model changes. Negative margin pulls
-   it over the unpinned cover so the SME hero cannot flash between them. */
+/* After the morph pin, keep the coffee sheet fixed and covering.
+   Only the z-index drops (40 → 8) so Section 03 (z 12) can slide over
+   it like a curtain. No in-flow / negative-margin swap — that reflowed
+   the pin end and trapped wheel-up at the last stage. */
 .cbx-growth.is-after {
-  position: relative;
-  inset: auto;
-  top: auto;
+  position: fixed;
+  inset: 0;
+  top: 0;
   z-index: 8;
   width: 100%;
   height: 100vh;
@@ -434,9 +432,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   min-height: 100vh;
   min-height: 100svh;
   min-height: 100dvh;
-  margin-top: -100vh;
-  margin-top: -100svh;
-  margin-top: -100dvh;
+  margin-top: 0;
   transform: none;
   will-change: auto;
   border-radius: 0;
@@ -966,16 +962,23 @@ html.is-study-wipe .study__chrome {
 
 html.is-study.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__chrome,
 html.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__chrome,
-html.is-cbx-ans-pin .study[data-template="cbx300"] .study__chrome {
+html.is-cbx-ans-pin .study[data-template="cbx300"] .study__chrome,
+html.is-study.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__chrome,
+html.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__chrome,
+html.is-cbx-growth-in .study[data-template="cbx300"] .study__chrome {
   z-index: 80 !important;
   pointer-events: none;
   background: transparent;
 }
 html.is-study.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__close,
 html.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__close,
-html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close {
+html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close,
+html.is-study.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__close,
+html.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__close,
+html.is-cbx-growth-in .study[data-template="cbx300"] .study__close {
   pointer-events: auto;
   z-index: 81;
+  color: #f4efe6;
 }
 html.is-study.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark,
 html.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark,
@@ -985,7 +988,16 @@ html.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__count,
 html.is-cbx-ans-pin .study[data-template="cbx300"] .study__count,
 html.is-study.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word,
 html.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word,
-html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
+html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word,
+html.is-study.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__mark,
+html.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__mark,
+html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark,
+html.is-study.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__count,
+html.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__count,
+html.is-cbx-growth-in .study[data-template="cbx300"] .study__count,
+html.is-study.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word,
+html.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word,
+html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
@@ -1000,7 +1012,6 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
   margin: -450px 0 0 -720px;
   transform: scale(var(--ans-scale, min(100vw / 1440px, 100vh / 900px)));
   transform-origin: center center;
-  will-change: transform;
 }
 
 .cbx-ans__stage {
@@ -1123,21 +1134,18 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
   height: 900px;
   overflow: hidden;
   pointer-events: none;
-  transform: translateZ(0);
 }
 
 .cbx-ans__cam.is-blur {
   z-index: 1;
-  will-change: transform;
 }
 
 .cbx-ans__cam.is-blur .cbx-ans__camin {
-  filter: blur(3px) saturate(.7);
+  opacity: .55;
 }
 
 .cbx-ans__cam.is-sharp {
   z-index: 4;
-  will-change: transform, opacity;
 }
 
 .cbx-ans__camin {
@@ -1147,7 +1155,6 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
   width: 1440px;
   height: 900px;
   transform-origin: 0 0;
-  will-change: transform;
 }
 
 .cbx-ans__cam.is-sharp .cbx-ans__camin .cbx-desk,
@@ -1158,7 +1165,7 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-ans__cam.is-sharp .cbx-ans__camin .cbx-desk {
-  box-shadow: 0 60px 120px -50px rgba(42, 30, 23, .55), 0 20px 40px -24px rgba(42, 30, 23, .35);
+  box-shadow: 0 16px 28px -18px rgba(42, 30, 23, .4);
 }
 
 .cbx-ans__dim {
@@ -1254,7 +1261,6 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
 
 .cbx-ans__sline {
   font-family: "Outfit", system-ui, sans-serif;
-  will-change: transform;
 }
 
 .cbx-sline {
@@ -1305,7 +1311,6 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
   line-height: 1.04;
   letter-spacing: -.025em;
   color: #f4efe6;
-  will-change: transform;
 }
 
 .cbx-ans__ptrs {
@@ -2387,10 +2392,14 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 8;
     width: 100%;
-    height: 42%;
-    padding: 0 16px 10px;
-    background: linear-gradient(180deg, rgba(244, 239, 230, 0) 0%, var(--film-cream, #f4efe6) 12%);
+    height: auto;
+    max-height: min(36vh, 300px);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: var(--film-cream, #f4efe6);
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -12px 32px -16px rgba(30, 21, 16, .35);
     overflow: hidden;
   }
   .cbx-ans__ncol {
@@ -2401,12 +2410,18 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
     max-width: none;
   }
   .cbx-ans__ask {
-    font-size: 22px;
+    font-size: 20px;
+    line-height: 1.15;
     color: #1E1510;
     margin-top: 4px;
   }
   .cbx-sline > span { color: #54463c; font-size: 13px; }
-  .cbx-ans__ptrs { gap: 8px !important; margin-top: 6px; }
+  .cbx-ans__ptrs {
+    position: relative;
+    gap: 0 !important;
+    margin-top: 8px;
+    min-height: 6.8em;
+  }
   .cbx-ans__pw {
     font-size: 16px;
     color: #1E1510;
@@ -2421,23 +2436,38 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark .study__word {
   .cbx-ans__pd b { color: #1E1510; }
   .cbx-ans__pg { color: #9A6A1E; }
   .cbx-ans__ctag { display: none; }
-  .cbx-ans__ptr { padding-left: 36px; }
+  .cbx-ans.is-narrow:not(.is-static) .cbx-ans__ptr {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    padding-left: 36px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .cbx-ans.is-narrow:not(.is-static) .cbx-ans__ptr.is-current {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
   .cbx-ans__scene.is-phone .cbx-desk,
   .cbx-ans__scene.is-both .cbx-desk {
-    top: 12%;
+    top: 10%;
     left: 8%;
     width: 84%;
-    height: 28%;
-    opacity: .35;
+    height: 24%;
+    opacity: .28;
     transform: none;
     z-index: 1;
   }
   .cbx-ans__scene.is-phone .cbx-phone,
   .cbx-ans__scene.is-both .cbx-phone {
-    top: 8%;
+    top: 6%;
     left: 50%;
-    width: min(72vw, 280px);
-    height: 48%;
+    width: min(68vw, 260px);
+    height: 54%;
     transform: translateX(-50%);
     z-index: 3;
   }
