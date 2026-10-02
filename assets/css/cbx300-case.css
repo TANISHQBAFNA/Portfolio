@@ -980,15 +980,8 @@ html.is-cbx-close-light .study[data-template="cbx300"] .study__close {
   pointer-events: auto;
   z-index: 81;
 }
-/* Light Close only while the dark coffee sheet is the surface behind it.
-   Cream S03, the hero, and anything after the pin stay dark. */
-html.is-cbx-close-light .study[data-template="cbx300"] .study__close {
-  color: #f4efe6;
-  background: rgba(30, 21, 16, .78);
-  border-radius: 999px;
-  padding: 5px 11px 7px;
-  box-shadow: 0 0 0 1px rgba(30, 21, 16, .18);
-}
+/* Dark Close on cream: S03, hero, and the page after the pin. */
+html.is-study-page .study[data-template="cbx300"] .study__close,
 html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close {
   color: #1e1510;
   background: rgba(244, 239, 230, .92);
@@ -996,8 +989,19 @@ html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close {
   padding: 5px 11px 7px;
   box-shadow: 0 0 0 1px rgba(30, 21, 16, .08);
 }
+/* Light Close only while the dark coffee sheet is the surface behind it. */
+html.is-cbx-close-light .study[data-template="cbx300"] .study__close {
+  pointer-events: auto;
+  z-index: 81;
+  color: #f4efe6;
+  background: rgba(30, 21, 16, .78);
+  border-radius: 999px;
+  padding: 5px 11px 7px;
+  box-shadow: 0 0 0 1px rgba(30, 21, 16, .18);
+}
 html.is-cbx-close-light .study[data-template="cbx300"] .study__close::after,
-html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close::after {
+html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close::after,
+html.is-study-page .study[data-template="cbx300"] .study__close::after {
   display: none;
 }
 html.is-study.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark,

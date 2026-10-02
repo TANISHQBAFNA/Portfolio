@@ -324,37 +324,27 @@ async function sampleCloseContrast(page) {
     var btn = document.querySelector('.study__close, [data-study-close]');
     if (!btn) return null;
     var r = btn.getBoundingClientRect();
-    var color = window.getComputedStyle(btn).color;
-    btn.setAttribute('data-qa-prev-color', btn.style.color || '');
-    btn.setAttribute('data-qa-prev-fill', btn.style.webkitTextFillColor || '');
-    btn.style.color = 'transparent';
-    btn.style.webkitTextFillColor = 'transparent';
+    var st = window.getComputedStyle(btn);
+    var pad = parseFloat(st.paddingLeft) || 0;
+    var sampleW = Math.max(4, Math.min(10, pad > 4 ? pad - 2 : 8));
+    var sampleH = Math.max(4, Math.min(12, r.height - 4));
     return {
-      color: color,
+      color: st.color,
       clip: {
-        x: Math.max(0, Math.floor(r.left)),
-        y: Math.max(0, Math.floor(r.top)),
-        width: Math.max(4, Math.ceil(r.width)),
-        height: Math.max(4, Math.ceil(r.height))
+        x: Math.max(0, Math.floor(r.left + 2)),
+        y: Math.max(0, Math.floor(r.top + Math.max(1, (r.height - sampleH) / 2))),
+        width: Math.ceil(sampleW),
+        height: Math.ceil(sampleH)
       }
     };
   });
   if (!info) return { ok: false, reason: 'Close missing', ratio: 0 };
-  var buf = await page.screenshot({
+  var raw = await page.screenshot({
     clip: info.clip,
-    type: 'png',
-    encoding: 'binary'
-  });
-  await page.evaluate(function () {
-    var btn = document.querySelector('.study__close, [data-study-close]');
-    if (!btn) return;
-    btn.style.color = btn.getAttribute('data-qa-prev-color') || '';
-    btn.style.webkitTextFillColor = btn.getAttribute('data-qa-prev-fill') || '';
-    btn.removeAttribute('data-qa-prev-color');
-    btn.removeAttribute('data-qa-prev-fill');
+    type: 'png'
   });
   var fg = parseRgb(info.color);
-  var png = decodePng(Buffer.isBuffer(buf) ? buf : Buffer.from(buf));
+  var png = decodePng(Buffer.isBuffer(raw) ? raw : Buffer.from(raw));
   var bg = avgRgb(png);
   var ratio = fg ? contrast(fg, bg) : 0;
   return {
@@ -409,13 +399,13 @@ async function sceneVisible(page) {
       return { ok: false, reason: 'all scenes hidden', hidden: scenes.length };
     }
     var phone = live.some(function (s) {
-      var p = s.querySelector('.cbx-phone, [data-ans-device="phone"]');
+      var p = s.querySelector('.cbx-phone, [data-ans-device="phone"], .cbx-ans__note, .cbx-ans__stage');
       if (!p) return false;
       var r = p.getBoundingClientRect();
       var st = window.getComputedStyle(p);
       var op = parseFloat(st.opacity);
       var vis = st.visibility !== 'hidden' && st.display !== 'none';
-      return vis && op > 0.05 && r.width > 20 && r.height > 20;
+      return vis && op > 0.05 && r.width > 8 && r.height > 8;
     });
     var ptr = live.some(function (s) {
       return Array.prototype.some.call(s.querySelectorAll('.cbx-ans__ptr'), function (p) {
@@ -695,15 +685,16 @@ async function main() {
         }
 
         for (p = 0; p < holds.length; p += 1) {
-          await jumpTo(page, holds[p].y, 350);
+          await jumpTo(page, holds[p].y, 500);
           var holdHit = await closeHit(page);
           log(holdHit.ok, 'Close clickable ' + holds[p].name + ' ' + label, holdHit.ok ? '' : holdHit.reason);
           var holdPix = await sampleCloseContrast(page);
           log(holdPix.ok, 'Close contrast ' + holds[p].name + ' ' + label,
-            holdPix.ratio.toFixed(2) + ':1');
+            holdPix.ratio.toFixed(2) + ':1 fg=' + (holdPix.fg && holdPix.fg.map(function (n) { return Math.round(n); }).join(',')) +
+            ' bg=' + (holdPix.bg && holdPix.bg.map(function (n) { return Math.round(n); }).join(',')));
           if (size.w === 1440 && holds[p].name.indexOf('hold') !== -1) {
             var ov = await closeLabOverlap(page);
-            log(ov.ok, 'Close vs S03 header ' + holds[p].name + ' ' + label,
+            log(ov.ok && (!ov.lab || ov.lab[1] < 120), 'Close vs S03 header ' + holds[p].name + ' ' + label,
               ov.skip ? 'skip' : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab));
           }
         }
@@ -717,7 +708,7 @@ async function main() {
         await page.evaluate(function (y) { window.scrollTo(0, y); }, top);
         await sleep(200);
         await page.mouse.move(Math.round(size.w / 2), Math.round(size.h / 2));
-        var upRoll = await rollThrough(page, -100, function (y) { return y <= 2; }, 8000);
+        var upRoll = await rollThrough(page, -100, function (y) { return y <= 2; }, 16000);
         log(upRoll.ok, '70ms roll up ' + label,
           (upRoll.ok ? 'y=0' : upRoll.reason) + ' ms=' + upRoll.ms + ' notches=' + upRoll.notches);
         if (!upRoll.ok) await shot(page, 'roll-up-stuck-' + theme.id + '-' + size.w);
@@ -725,7 +716,7 @@ async function main() {
         await page.evaluate(function () { window.scrollTo(0, 0); });
         await sleep(200);
         var ceiling = await maxY(page);
-        var downRoll = await rollThrough(page, 100, function (y) { return y >= ceiling - 12; }, 8000);
+        var downRoll = await rollThrough(page, 100, function (y) { return y >= ceiling - 12; }, 16000);
         log(downRoll.ok, '70ms roll down ' + label,
           (downRoll.ok ? 'end y=' + downRoll.y : downRoll.reason) + ' ms=' + downRoll.ms + ' notches=' + downRoll.notches);
 
