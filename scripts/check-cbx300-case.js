@@ -72,11 +72,11 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
   assert.ok(index.indexOf('cbx300-case.css?v=s99') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s86') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(index.indexOf('cbx300-answers.js?v=s18') !== -1, 'index.html missing answers module');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s19') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
   assert.ok(mvIndex.indexOf('cbx300-case.css?v=s99') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s86') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s18') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s19') !== -1, 'multiverse missing answers module');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv10') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s46') !== -1, 'index.html missing study cache-bust');
   assert.ok(mvIndex.indexOf('project-study.js?v=s46') !== -1, 'multiverse missing study cache-bust');
@@ -262,18 +262,18 @@ check('released coffee stays 100vh so the SME hero cannot flash between S02 and 
 
 check('Section 03 pointer does-lines explain the UX, not the application', function () {
   var does = [
-    'Status is the first thing on every row, in a colour she can read at a glance, and it flips the moment money lands.',
+    'Status is first on every row, in a colour she can read at a glance, and it flips when money lands.',
     'A payment arrives already tied to its invoice, so she never matches a bank line to a bill herself.',
     'The list puts the oldest overdue on top, so the order itself tells her where to look first.',
-    'The reminder is already written in a polite tone and one tap away, so the awkward part is done for her.',
-    'One bar splits the balance into safe to spend, set aside and still coming, so the true answer is visible before any maths.',
+    'The reminder is already written politely and one tap away, so the awkward part is done for her.',
+    'One bar splits the balance into safe, set aside and still coming, so the true answer is visible.',
     'Bills that are certain are set aside as their own block, so they can’t hide inside the balance.',
-    'Money that hasn’t arrived is shown but kept outside the safe number, so a late payment never changes what she thought she had.',
-    'The question is answered on the day itself: Friday is marked and one ‘Covered’ badge says yes or no.',
-    'Everything waiting for her is gathered in one list with a count on the tab, so nothing depends on her remembering where to look.',
-    'Approve is the biggest thing on the phone screen with the details above it, so a decision takes one thumb and a few seconds.',
-    'Every action is logged with a name and time right under the list, so the answer is where she is already looking.',
-    'Each request carries a role tag, so she sees at a glance who it belongs to and what each person can do is limited by role.'
+    'Money still coming stays outside the safe number, so a late payment never changes what she had.',
+    'The question is answered on the day: Friday is marked and one ‘Covered’ badge says yes or no.',
+    'Everything waiting is in one list with a tab count, so she doesn’t have to remember where to look.',
+    'Approve is the biggest thing on the phone screen, so a decision takes one thumb and a few seconds.',
+    'Every action is logged with a name and time under the list, so the answer is already in view.',
+    'Each request carries a role tag, so she sees who it belongs to and access is limited by role.'
   ];
   does.forEach(function (line) {
     assert.ok(answers.indexOf(line) !== -1, 'missing UX does-line: ' + line.slice(0, 48));
