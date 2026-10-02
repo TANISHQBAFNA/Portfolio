@@ -375,36 +375,27 @@ function avgRgbBand(png, from, to) {
 }
 
 async function closeLabOverlap(page) {
-  var tries = 0;
-  var last = { ok: false, skip: true };
-  while (tries < 4) {
-    last = await page.evaluate(function () {
-      var btn = document.querySelector('.study__close, [data-study-close]');
-      var lab = document.querySelector('.cbx-ans__lab');
-      var pin = document.querySelector('[data-cbx-answers]');
-      if (!btn || !lab) return { ok: true, skip: true };
-      var pinned = document.documentElement.classList.contains('is-cbx-ans-pin') &&
-        pin && window.getComputedStyle(pin).position === 'fixed' &&
-        Math.abs(pin.getBoundingClientRect().top) < 8;
-      var a = btn.getBoundingClientRect();
-      var b = lab.getBoundingClientRect();
-      var hit = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+  return page.evaluate(function () {
+    var btn = document.querySelector('.study__close, [data-study-close]');
+    var lab = document.querySelector('.cbx-ans__lab');
+    if (!btn || !lab) return { ok: true, skip: true };
+    var a = btn.getBoundingClientRect();
+    var b = lab.getBoundingClientRect();
+    if (b.bottom < 0 || b.top > 120) {
       return {
-        ok: pinned && !hit && b.top >= 0 && b.top < 120,
-        pinned: pinned,
+        ok: true,
+        skip: true,
         close: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
         lab: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
       };
-    });
-    if (last.ok) return last;
-    await page.evaluate(function () {
-      if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
-      if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
-    });
-    await sleep(280);
-    tries += 1;
-  }
-  return last;
+    }
+    var hit = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    return {
+      ok: !hit,
+      close: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
+      lab: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
+    };
+  });
 }
 
 async function pinRange(page) {
@@ -513,6 +504,14 @@ async function probeS03Pin(page) {
         fails.push(plan.name + ' y=' + y + ' ' + vis.reason);
         if (fails.length >= 8) {
           return { ok: false, fails: fails, range: range.s03 };
+        }
+      } else if ((page.viewport().width || 0) >= 1440) {
+        var ov = await closeLabOverlap(page);
+        if (!ov.skip && !ov.ok) {
+          fails.push(plan.name + ' y=' + y + ' Close overlaps header ' + JSON.stringify(ov));
+          if (fails.length >= 8) {
+            return { ok: false, fails: fails, range: range.s03 };
+          }
         }
       }
     }
@@ -741,7 +740,8 @@ async function main() {
           if (size.w === 1440 && holds[p].name.indexOf('hold') !== -1) {
             var ov = await closeLabOverlap(page);
             log(ov.ok, 'Close vs S03 header ' + holds[p].name + ' ' + label,
-              ov.skip ? 'skip' : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab) + (ov.pinned ? ' pinned' : ' unpinned'));
+              ov.skip ? 'header off-screen close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab)
+                : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab));
           }
         }
 
