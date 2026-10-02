@@ -984,20 +984,21 @@ html.is-cbx-close-light .study[data-template="cbx300"] .study__close {
 html.is-study-page .study[data-template="cbx300"] .study__close,
 html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close {
   color: #1e1510;
-  background: rgba(244, 239, 230, .92);
+  background: rgba(244, 239, 230, .92) !important;
   border-radius: 999px;
   padding: 5px 11px 7px;
   box-shadow: 0 0 0 1px rgba(30, 21, 16, .08);
+  isolation: isolate;
 }
-/* Light Close only while the dark coffee sheet is the surface behind it. */
 html.is-cbx-close-light .study[data-template="cbx300"] .study__close {
   pointer-events: auto;
   z-index: 81;
   color: #f4efe6;
-  background: rgba(30, 21, 16, .78);
+  background: rgba(30, 21, 16, .78) !important;
   border-radius: 999px;
   padding: 5px 11px 7px;
   box-shadow: 0 0 0 1px rgba(30, 21, 16, .18);
+  isolation: isolate;
 }
 html.is-cbx-close-light .study[data-template="cbx300"] .study__close::after,
 html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close::after,

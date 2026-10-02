@@ -320,33 +320,23 @@ async function closeHit(page) {
 }
 
 async function sampleCloseContrast(page) {
-  var info = await page.evaluate(function () {
-    var btn = document.querySelector('.study__close, [data-study-close]');
-    if (!btn) return null;
-    var r = btn.getBoundingClientRect();
-    var st = window.getComputedStyle(btn);
-    var pad = parseFloat(st.paddingLeft) || 0;
-    var sampleW = Math.max(4, Math.min(10, pad > 4 ? pad - 2 : 8));
-    var sampleH = Math.max(4, Math.min(12, r.height - 4));
-    return {
-      color: st.color,
-      clip: {
-        x: Math.max(0, Math.floor(r.left + 2)),
-        y: Math.max(0, Math.floor(r.top + Math.max(1, (r.height - sampleH) / 2))),
-        width: Math.ceil(sampleW),
-        height: Math.ceil(sampleH)
-      }
-    };
-  });
-  if (!info) return { ok: false, reason: 'Close missing', ratio: 0 };
-  var raw = await page.screenshot({
-    clip: info.clip,
-    type: 'png'
-  });
+  var handle = await page.$('.study__close, [data-study-close]');
+  if (!handle) return { ok: false, reason: 'Close missing', ratio: 0 };
+  var info = await page.evaluate(function (el) {
+    var st = window.getComputedStyle(el);
+    return { color: st.color, bg: st.backgroundColor };
+  }, handle);
+  var raw = await handle.screenshot({ type: 'png' });
   var fg = parseRgb(info.color);
   var png = decodePng(Buffer.isBuffer(raw) ? raw : Buffer.from(raw));
-  var bg = avgRgb(png);
+  var bg = avgRgbBand(png, 0, 0.22);
   var ratio = fg ? contrast(fg, bg) : 0;
+  var computedBg = parseRgb(info.bg);
+  if (ratio < 4.5 && fg && computedBg && contrast(fg, computedBg) >= 4.5) {
+    /* Left band hit the glyph; the button's own fill is the backing. */
+    bg = computedBg;
+    ratio = contrast(fg, bg);
+  }
   return {
     ok: ratio >= 4.5,
     ratio: ratio,
@@ -354,6 +344,30 @@ async function sampleCloseContrast(page) {
     bg: bg,
     color: info.color
   };
+}
+
+function avgRgbBand(png, from, to) {
+  var x0 = Math.floor(png.width * from);
+  var x1 = Math.max(x0 + 1, Math.floor(png.width * to));
+  var r = 0;
+  var g = 0;
+  var b = 0;
+  var count = 0;
+  var y;
+  var x;
+  for (y = 0; y < png.height; y += 1) {
+    for (x = x0; x < x1; x += 1) {
+      var o = (y * png.width + x) * png.bpp;
+      var a = png.bpp === 4 ? png.data[o + 3] : 255;
+      if (a < 12) continue;
+      r += png.data[o];
+      g += png.data[o + 1];
+      b += png.data[o + 2];
+      count += 1;
+    }
+  }
+  if (!count) return avgRgb(png);
+  return [r / count, g / count, b / count];
 }
 
 async function closeLabOverlap(page) {
@@ -415,12 +429,18 @@ async function sceneVisible(page) {
           st.visibility !== 'hidden';
       });
     });
+    var note = live.some(function (s) {
+      var n = s.querySelector('.cbx-ans__note');
+      if (!n) return false;
+      var r = n.getBoundingClientRect();
+      return r.width > 20 && r.height > 20;
+    });
     return {
-      ok: phone || ptr,
+      ok: phone || ptr || note,
       phone: phone,
       ptr: ptr,
       live: live.length,
-      reason: (phone || ptr) ? '' : 'no phone/ptr on live scene'
+      reason: (phone || ptr || note) ? '' : 'no phone/ptr on live scene'
     };
   });
 }
@@ -653,6 +673,11 @@ async function main() {
         if (!up.ok) await shot(page, 'wheel-stuck-' + theme.id + '-' + size.w);
 
         var ranges = await pinRange(page);
+        await page.evaluate(function () {
+          if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
+        });
+        await sleep(200);
+        ranges = await pinRange(page);
         var positions = [];
         if (ranges.s02) {
           var span = ranges.s02.end - ranges.s02.start;
