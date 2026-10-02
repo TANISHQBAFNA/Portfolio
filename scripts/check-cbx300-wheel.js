@@ -253,29 +253,31 @@ async function measurePin(page) {
     return null;
   });
   if (!range) return { ok: false, reason: 'no S03 trigger' };
-  await page.evaluate(function (y) { window.scrollTo(0, y); }, Math.round(range.start + 20));
-  await sleep(200);
+  await page.evaluate(function (y) { window.scrollTo(0, y); }, Math.round(range.start + 8));
+  await sleep(250);
   var samples = await page.evaluate(function (range) {
     return new Promise(function (resolve) {
       var deltas = [];
       var last = 0;
-      var y = range.start + 40;
-      var ticks = 0;
+      var y = range.start + 8;
+      var stop = false;
       function frame(t) {
         if (last) deltas.push(t - last);
         last = t;
-        if (ticks < 24) {
-          if (ticks % 1 === 0 && y < range.end - 40) {
-            y += 100;
-            window.scrollTo(0, y);
-          }
-          ticks += 1;
-          window.requestAnimationFrame(frame);
-        } else {
-          resolve(deltas.slice(2));
-        }
+        if (!stop) window.requestAnimationFrame(frame);
       }
       window.requestAnimationFrame(frame);
+      function step() {
+        y += 100;
+        if (y >= range.end - 8) {
+          stop = true;
+          window.setTimeout(function () { resolve(deltas.slice(2)); }, 80);
+          return;
+        }
+        window.scrollTo(0, y);
+        window.setTimeout(step, 60);
+      }
+      window.setTimeout(step, 60);
     });
   }, range);
   return { ok: true, stats: stats(samples), range: range };
