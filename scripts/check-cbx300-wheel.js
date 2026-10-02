@@ -374,6 +374,147 @@ function avgRgbBand(png, from, to) {
   return [r / count, g / count, b / count];
 }
 
+function lumOf(rgb) {
+  function lin(c) {
+    var x = c / 255;
+    return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+  }
+  return 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2]);
+}
+
+function clusterContrast(png) {
+  var dark = [0, 0, 0, 0];
+  var light = [0, 0, 0, 0];
+  var n = png.width * png.height;
+  var i;
+  for (i = 0; i < n; i += 1) {
+    var o = i * png.bpp;
+    var a = png.bpp === 4 ? png.data[o + 3] : 255;
+    if (a < 12) continue;
+    var rgb = [png.data[o], png.data[o + 1], png.data[o + 2]];
+    var bucket = lumOf(rgb) < 0.35 ? dark : light;
+    bucket[0] += rgb[0];
+    bucket[1] += rgb[1];
+    bucket[2] += rgb[2];
+    bucket[3] += 1;
+  }
+  if (dark[3] < 6 || light[3] < 6) return null;
+  var d = [dark[0] / dark[3], dark[1] / dark[3], dark[2] / dark[3]];
+  var l = [light[0] / light[3], light[1] / light[3], light[2] / light[3]];
+  return { ratio: contrast(l, d), fg: l, bg: d, darkN: dark[3], lightN: light[3] };
+}
+
+async function sampleTextContrast(page, selector) {
+  var found = await page.evaluateHandle(function (sel) {
+    var nodes = document.querySelectorAll(sel);
+    var i;
+    var fallback = null;
+    for (i = 0; i < nodes.length; i += 1) {
+      var el = nodes[i];
+      var st = window.getComputedStyle(el);
+      var r = el.getBoundingClientRect();
+      if (!fallback) fallback = el;
+      if (st.display === 'none' || st.visibility === 'hidden' || parseFloat(st.opacity) < 0.15) continue;
+      if (r.width < 4 || r.height < 4 || r.bottom < 0 || r.top > window.innerHeight) continue;
+      return el;
+    }
+    return fallback;
+  }, selector);
+  var handle = found && found.asElement && found.asElement();
+  if (!handle) return { ok: true, skip: true, reason: 'missing', ratio: 0, selector: selector };
+  var info = await page.evaluate(function (el) {
+    var st = window.getComputedStyle(el);
+    var r = el.getBoundingClientRect();
+    return {
+      color: st.color,
+      bg: st.backgroundColor,
+      display: st.display,
+      visibility: st.visibility,
+      opacity: parseFloat(st.opacity),
+      top: r.top,
+      bottom: r.bottom,
+      width: r.width,
+      height: r.height,
+      vh: window.innerHeight
+    };
+  }, handle);
+  if (info.display === 'none' || info.visibility === 'hidden' || info.opacity < 0.15) {
+    return { ok: true, skip: true, reason: 'hidden', ratio: 0, selector: selector };
+  }
+  if (info.width < 4 || info.height < 4 || info.bottom < 0 || info.top > info.vh) {
+    return { ok: true, skip: true, reason: 'offscreen', ratio: 0, selector: selector };
+  }
+  var raw;
+  try {
+    raw = await handle.screenshot({ type: 'png' });
+  } catch (err) {
+    return { ok: true, skip: true, reason: 'shot-fail', ratio: 0, selector: selector };
+  }
+  var png = decodePng(Buffer.isBuffer(raw) ? raw : Buffer.from(raw));
+  var clustered = clusterContrast(png);
+  var fg = parseRgb(info.color);
+  var ratio = clustered ? clustered.ratio : 0;
+  var bg = clustered ? clustered.bg : avgRgb(png);
+  var ink = clustered ? clustered.fg : fg;
+  if (ratio < 4.5 && fg && clustered) {
+    ratio = contrast(fg, clustered.bg);
+    ink = fg;
+    bg = clustered.bg;
+  }
+  return {
+    ok: ratio >= 4.5,
+    skip: false,
+    ratio: ratio,
+    fg: ink,
+    bg: bg,
+    color: info.color,
+    selector: selector
+  };
+}
+
+async function headerPhoneGap(page) {
+  return page.evaluate(function () {
+    var lab = document.querySelector('.cbx-ans__lab');
+    var pin = document.querySelector('[data-cbx-answers]');
+    var phone = pin && pin.querySelector('.cbx-ans__scene:not([hidden]) .cbx-phone');
+    if (!lab || !phone) return { ok: true, skip: true };
+    var a = lab.getBoundingClientRect();
+    var b = phone.getBoundingClientRect();
+    if (a.height < 4 || b.height < 8 || a.bottom < 0 || a.top > 160) {
+      return { ok: true, skip: true };
+    }
+    var gap = b.top - a.bottom;
+    return {
+      ok: gap >= 6,
+      gap: Math.round(gap),
+      lab: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
+      phone: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
+    };
+  });
+}
+
+async function closeCovers(page, selector) {
+  return page.evaluate(function (sel) {
+    var btn = document.querySelector('.study__close, [data-study-close]');
+    var node = document.querySelector(sel);
+    if (!btn || !node) return { ok: true, skip: true, reason: 'missing' };
+    var st = window.getComputedStyle(node);
+    if (st.display === 'none' || st.visibility === 'hidden' || parseFloat(st.opacity) < 0.1) {
+      return { ok: true, skip: true, reason: 'hidden' };
+    }
+    var a = btn.getBoundingClientRect();
+    var b = node.getBoundingClientRect();
+    if (b.width < 2 || b.height < 2) return { ok: true, skip: true, reason: 'empty' };
+    var hit = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    return {
+      ok: !hit,
+      skip: false,
+      close: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
+      el: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
+    };
+  }, selector);
+}
+
 async function closeLabOverlap(page) {
   return page.evaluate(function () {
     var btn = document.querySelector('.study__close, [data-study-close]');
@@ -685,6 +826,14 @@ async function main() {
         var label = theme.id + ' ' + size.w + 'x' + size.h;
         await openStudy(page, theme, size);
 
+        if (size.w === 390) {
+          await jumpTo(page, 0, 250);
+          var heroHit = await closeCovers(page, '.study__mark .study__word');
+          log(heroHit.ok, 'Close vs hero title 390 ' + theme.id,
+            heroHit.skip ? heroHit.reason : 'close=' + JSON.stringify(heroHit.close) + ' el=' + JSON.stringify(heroHit.el));
+          await shot(page, 'close-390-hero-' + theme.id);
+        }
+
         var down = await walkDown(page, 200);
         log(down.ok, 'wheel down ' + label, down.ok ? 'end y=' + down.end : down.reason);
 
@@ -737,6 +886,24 @@ async function main() {
           log(holdPix.ok, 'Close contrast ' + holds[p].name + ' ' + label,
             holdPix.ratio.toFixed(2) + ':1 fg=' + (holdPix.fg && holdPix.fg.map(function (n) { return Math.round(n); }).join(',')) +
             ' bg=' + (holdPix.bg && holdPix.bg.map(function (n) { return Math.round(n); }).join(',')));
+          var labels = [
+            { sel: '.cbx-ans__title', name: 'S03 title' },
+            { sel: '.cbx-ans__num', name: 'S03 03' },
+            { sel: '.cbx-ans__xtag', name: 'example UI' },
+            { sel: '.cbx-vfl', name: 'in focus' },
+            { sel: '.cbx-ans__ctag .tag, .cbx-ans__ctag span', name: 'example copy' }
+          ];
+          var li;
+          for (li = 0; li < labels.length; li += 1) {
+            var labPix = await sampleTextContrast(page, labels[li].sel);
+            if (labPix.skip) {
+              log(true, labels[li].name + ' contrast ' + holds[p].name + ' ' + label, 'skip ' + labPix.reason);
+            } else {
+              log(labPix.ok, labels[li].name + ' contrast ' + holds[p].name + ' ' + label,
+                labPix.ratio.toFixed(2) + ':1 fg=' + (labPix.fg && labPix.fg.map(function (n) { return Math.round(n); }).join(',')) +
+                ' bg=' + (labPix.bg && labPix.bg.map(function (n) { return Math.round(n); }).join(',')));
+            }
+          }
           if (size.w === 1440 && holds[p].name.indexOf('hold') !== -1) {
             var ov = await closeLabOverlap(page);
             log(ov.ok, 'Close vs S03 header ' + holds[p].name + ' ' + label,
@@ -779,11 +946,17 @@ async function main() {
           var sheet = await pointerSheet(page);
           log(sheet.ok, '390 one-card sheet ' + theme.id,
             'visible=' + sheet.visible + ' bottoms=' + JSON.stringify(sheet.bottoms) + ' font=' + sheet.font + ' y=' + holdY);
+          var gap = await headerPhoneGap(page);
+          log(gap.ok, '390 header vs phone ' + theme.id,
+            gap.skip ? 'skip' : 'gap=' + gap.gap + ' lab=' + JSON.stringify(gap.lab) + ' phone=' + JSON.stringify(gap.phone));
           await shot(page, 's03-390-sheet-' + theme.id);
           if (ranges.s02) {
             await jumpTo(page, Math.round(ranges.s02.start + (ranges.s02.end - ranges.s02.start) * 0.28), 300);
             var s1pix = await sampleCloseContrast(page);
             log(s1pix.ok, 'Close contrast 390 stage-1 ' + theme.id, s1pix.ratio.toFixed(2) + ':1');
+            var navHit = await closeCovers(page, '.cbx-growth__step.is-on');
+            log(navHit.ok, 'Close vs coffee nav 390 ' + theme.id,
+              navHit.skip ? navHit.reason : 'close=' + JSON.stringify(navHit.close) + ' el=' + JSON.stringify(navHit.el));
             await shot(page, 'close-390-stage1-' + theme.id);
           }
         }

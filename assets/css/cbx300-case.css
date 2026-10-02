@@ -827,8 +827,17 @@ html.is-light-home .study[data-template="cbx300"] .cbx-growth {
 }
 
 @media (max-width: 820px) {
+  html.is-study-page .study[data-template="cbx300"] .study__chrome-row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  html.is-study-page .study[data-template="cbx300"] .study__mark {
+    min-width: 0;
+    justify-self: start;
+    padding-left: 4px;
+  }
   .cbx-growth__scene {
-    padding: var(--gutter, 20px) 6% 22px;
+    padding: calc(var(--study-head, 64px) + 12px) 6% 22px;
   }
   .cbx-growth__board {
     display: flex;
@@ -1075,6 +1084,10 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   display: flex;
   align-items: baseline;
   gap: 12px;
+  padding: 6px 14px 7px 12px;
+  border-radius: 999px;
+  background: #1E1510;
+  box-shadow: 0 0 0 1px rgba(30, 21, 16, 0.2);
 }
 
 .cbx-ans__num {
@@ -1091,7 +1104,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--hc);
+  color: #f4efe6;
 }
 
 .cbx-ans__prog {
@@ -1133,7 +1146,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   padding: 5px 9px;
   border: 1px dashed var(--hb);
   border-radius: 999px;
-  color: var(--hc);
+  color: #f4efe6;
+  background: #1E1510;
   white-space: nowrap;
 }
 
@@ -1436,9 +1450,10 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   text-transform: uppercase;
   line-height: 1;
   padding: 5px 9px;
-  border: 1px dashed currentColor;
+  border: 1px dashed rgba(244, 239, 230, .28);
   border-radius: 999px;
-  color: rgba(244, 239, 230, .6);
+  color: #f4efe6;
+  background: #1E1510;
   white-space: nowrap;
 }
 
@@ -2404,7 +2419,13 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
     height: auto;
     padding: calc(var(--study-head, 64px) + 4px) 16px 0;
   }
-  .cbx-ans__lab { position: relative; left: auto; top: auto; }
+  .cbx-ans__lab {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin-left: 88px;
+    max-width: calc(100% - 88px);
+  }
   .cbx-ans__num { font-size: 18px; }
   .cbx-ans__title { font-size: 11px; }
   .cbx-ans__prog,
@@ -2491,7 +2512,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   }
   .cbx-ans__scene.is-phone .cbx-phone,
   .cbx-ans__scene.is-both .cbx-phone {
-    top: 6%;
+    top: calc(var(--study-head, 64px) + 40px);
     left: 50%;
     width: min(68vw, 260px);
     height: 54%;

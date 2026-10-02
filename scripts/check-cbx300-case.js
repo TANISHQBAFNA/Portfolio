@@ -70,11 +70,11 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s104') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s105') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s88') !== -1, 'index.html missing growth js cache-bust');
   assert.ok(index.indexOf('cbx300-answers.js?v=s23') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s104') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s105') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s88') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s23') !== -1, 'multiverse missing answers module');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv10') !== -1, 'multiverse missing case skin');
@@ -903,6 +903,28 @@ check('S03 header does not sit under Close at 1440', function () {
   assert.ok(!/left:\s*60px/.test(lab), 'lab at 60px overlaps Close at 1440');
   var wheel = read('scripts/check-cbx300-wheel.js');
   assert.ok(wheel.indexOf('closeLabOverlap') !== -1, 'wheel check must fail if Close overlaps the S03 header');
+});
+
+check('S03 header title and labels sit on a dark scrim with solid cream ink', function () {
+  var lab = cssBlock(css, '.cbx-ans__lab');
+  var title = cssBlock(css, '.cbx-ans__title');
+  var xtag = cssBlock(css, '.cbx-ans__xtag');
+  var vfl = cssBlock(css, '.cbx-vfl');
+  assert.ok(/background:\s*#1E1510/.test(lab), 'header lab must paint a solid dark scrim');
+  assert.ok(title.indexOf('color: #f4efe6') !== -1, 'title must be solid cream, not translucent --hc');
+  assert.ok(title.indexOf('var(--hc)') === -1, 'title must not follow animated HUD ink');
+  assert.ok(xtag.indexOf('color: #f4efe6') !== -1, 'example-UI tag must be solid cream');
+  assert.ok(/background:\s*#1E1510/.test(xtag), 'example-UI tag must sit on a dark fill');
+  assert.ok(css.indexOf('color: rgba(244, 239, 230, .6)') === -1, 'example-copy tag must not stay at 60% cream');
+  assert.ok(/background:\s*#1E1510/.test(vfl), 'in-focus pill must keep its dark fill');
+  var phone390 = css.indexOf('.cbx-ans__scene.is-phone .cbx-phone,');
+  var phoneBlock = css.slice(phone390, phone390 + 420);
+  assert.ok(phoneBlock.indexOf('top: 6%') === -1, '390 phone must not sit under the S03 header');
+  assert.ok(phoneBlock.indexOf('var(--study-head') !== -1, '390 phone must clear the study head');
+  var wheel = read('scripts/check-cbx300-wheel.js');
+  assert.ok(wheel.indexOf('sampleTextContrast') !== -1, 'wheel check must pixel-sample S03 header contrast');
+  assert.ok(wheel.indexOf('headerPhoneGap') !== -1, 'wheel check must fail if the 390 header sits on the phone');
+  assert.ok(wheel.indexOf('closeCovers') !== -1, 'wheel check must fail if Close covers hero or coffee nav at 390');
 });
 
 check('continuous wheel steps coffee stages without a quiet pause', function () {
