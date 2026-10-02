@@ -553,7 +553,7 @@ window.Cbx300Answers = (function () {
       /* Header pill bottom is 74 on the 1440 stage. Keep ≥12px of
          viewport gap under it (same as 390) so 9:41 is not covered.
          NCOL pointers stay put; only the zoom dest drops. */
-      var minTop = 74 + 12 / Math.max(scale, 0.01);
+      var minTop = 74 + 12 / Math.max(scale, 0.01) + 2;
       var maxH = STAGE_H - 12 - minTop;
       s = Math.min(d.w / Math.max(1, R.r - R.x), maxH / hh, (STAGE_H - 56) / hh);
       var deskR = deskEl ? stageRect(deskEl, inner, scale) : null;

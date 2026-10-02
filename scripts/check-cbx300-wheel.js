@@ -561,11 +561,12 @@ async function headerPhoneGap(page) {
     }
     var overlapX = a.left < b.right && a.right > b.left;
     var gap = b.top - a.bottom;
+    var gapPx = Math.round(gap * 10) / 10;
     return {
       ok: !overlapX || gap >= 12,
       skip: false,
       overlapX: overlapX,
-      gap: Math.round(gap),
+      gap: gapPx,
       lab: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
       phone: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
     };
