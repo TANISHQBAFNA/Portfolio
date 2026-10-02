@@ -9,6 +9,7 @@
 var path = require('path');
 var fs = require('fs');
 var http = require('http');
+var zlib = require('zlib');
 
 var puppeteer;
 try {
@@ -93,6 +94,108 @@ function parseRgb(str) {
   var m = /rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/.exec(str || '');
   if (!m) return null;
   return [Number(m[1]), Number(m[2]), Number(m[3])];
+}
+
+function paeth(a, b, c) {
+  var p = a + b - c;
+  var pa = Math.abs(p - a);
+  var pb = Math.abs(p - b);
+  var pc = Math.abs(p - c);
+  if (pa <= pb && pa <= pc) return a;
+  if (pb <= pc) return b;
+  return c;
+}
+
+function decodePng(buf) {
+  if (buf[0] !== 0x89 || buf.toString('ascii', 1, 4) !== 'PNG') {
+    throw new Error('not a png');
+  }
+  var offset = 8;
+  var width = 0;
+  var height = 0;
+  var colorType = 6;
+  var idats = [];
+  while (offset + 12 <= buf.length) {
+    var len = buf.readUInt32BE(offset);
+    var type = buf.toString('ascii', offset + 4, offset + 8);
+    var data = buf.slice(offset + 8, offset + 8 + len);
+    if (type === 'IHDR') {
+      width = data.readUInt32BE(0);
+      height = data.readUInt32BE(4);
+      colorType = data[9];
+    } else if (type === 'IDAT') {
+      idats.push(data);
+    } else if (type === 'IEND') {
+      break;
+    }
+    offset += 12 + len;
+  }
+  var bpp = colorType === 2 ? 3 : 4;
+  var inflated = zlib.inflateSync(Buffer.concat(idats));
+  var stride = width * bpp;
+  var out = Buffer.alloc(height * stride);
+  var src = 0;
+  var y;
+  for (y = 0; y < height; y += 1) {
+    var filter = inflated[src];
+    src += 1;
+    var x;
+    for (x = 0; x < stride; x += 1) {
+      var raw = inflated[src + x];
+      var a = x >= bpp ? out[y * stride + x - bpp] : 0;
+      var b = y > 0 ? out[(y - 1) * stride + x] : 0;
+      var c = y > 0 && x >= bpp ? out[(y - 1) * stride + x - bpp] : 0;
+      var val = raw;
+      if (filter === 1) val = (raw + a) & 255;
+      else if (filter === 2) val = (raw + b) & 255;
+      else if (filter === 3) val = (raw + Math.floor((a + b) / 2)) & 255;
+      else if (filter === 4) val = (raw + paeth(a, b, c)) & 255;
+      out[y * stride + x] = val;
+    }
+    src += stride;
+  }
+  return { width: width, height: height, bpp: bpp, data: out };
+}
+
+function avgRgb(png) {
+  var n = png.width * png.height;
+  var r = 0;
+  var g = 0;
+  var b = 0;
+  var count = 0;
+  var i;
+  for (i = 0; i < n; i += 1) {
+    var o = i * png.bpp;
+    var a = png.bpp === 4 ? png.data[o + 3] : 255;
+    if (a < 12) continue;
+    r += png.data[o];
+    g += png.data[o + 1];
+    b += png.data[o + 2];
+    count += 1;
+  }
+  if (!count) return [0, 0, 0];
+  return [r / count, g / count, b / count];
+}
+
+function mulberry(seed) {
+  var t = seed >>> 0;
+  return function () {
+    t += 0x6D2B79F5;
+    var x = Math.imul(t ^ (t >>> 15), 1 | t);
+    x ^= x + Math.imul(x ^ (x >>> 7), 61 | x);
+    return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffle(arr, rand) {
+  var i;
+  for (i = arr.length - 1; i > 0; i -= 1) {
+    var j = Math.floor(rand() * (i + 1));
+    var tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  return arr;
 }
 
 async function waitForStudy(page) {
@@ -211,9 +314,212 @@ async function closeHit(page) {
       reason: ok ? '' : 'hit ' + (hit && hit.className ? String(hit.className).slice(0, 80) : hit && hit.tagName),
       y: Math.round(window.scrollY),
       color: window.getComputedStyle(btn).color,
-      bg: window.getComputedStyle(document.querySelector('.cbx-growth') || document.body).backgroundColor
+      box: { x: r.left, y: r.top, w: r.width, h: r.height }
     };
   });
+}
+
+async function sampleCloseContrast(page) {
+  var info = await page.evaluate(function () {
+    var btn = document.querySelector('.study__close, [data-study-close]');
+    if (!btn) return null;
+    var r = btn.getBoundingClientRect();
+    var color = window.getComputedStyle(btn).color;
+    btn.setAttribute('data-qa-prev-color', btn.style.color || '');
+    btn.setAttribute('data-qa-prev-fill', btn.style.webkitTextFillColor || '');
+    btn.style.color = 'transparent';
+    btn.style.webkitTextFillColor = 'transparent';
+    return {
+      color: color,
+      clip: {
+        x: Math.max(0, Math.floor(r.left)),
+        y: Math.max(0, Math.floor(r.top)),
+        width: Math.max(4, Math.ceil(r.width)),
+        height: Math.max(4, Math.ceil(r.height))
+      }
+    };
+  });
+  if (!info) return { ok: false, reason: 'Close missing', ratio: 0 };
+  var buf = await page.screenshot({
+    clip: info.clip,
+    type: 'png',
+    encoding: 'binary'
+  });
+  await page.evaluate(function () {
+    var btn = document.querySelector('.study__close, [data-study-close]');
+    if (!btn) return;
+    btn.style.color = btn.getAttribute('data-qa-prev-color') || '';
+    btn.style.webkitTextFillColor = btn.getAttribute('data-qa-prev-fill') || '';
+    btn.removeAttribute('data-qa-prev-color');
+    btn.removeAttribute('data-qa-prev-fill');
+  });
+  var fg = parseRgb(info.color);
+  var png = decodePng(Buffer.isBuffer(buf) ? buf : Buffer.from(buf));
+  var bg = avgRgb(png);
+  var ratio = fg ? contrast(fg, bg) : 0;
+  return {
+    ok: ratio >= 4.5,
+    ratio: ratio,
+    fg: fg,
+    bg: bg,
+    color: info.color
+  };
+}
+
+async function closeLabOverlap(page) {
+  return page.evaluate(function () {
+    var btn = document.querySelector('.study__close, [data-study-close]');
+    var lab = document.querySelector('.cbx-ans__lab');
+    if (!btn || !lab) return { ok: true, skip: true };
+    var a = btn.getBoundingClientRect();
+    var b = lab.getBoundingClientRect();
+    var hit = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    return {
+      ok: !hit,
+      close: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
+      lab: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
+    };
+  });
+}
+
+async function pinRange(page) {
+  return page.evaluate(function () {
+    var ScrollTrigger = window.ScrollTrigger;
+    var all = ScrollTrigger && ScrollTrigger.getAll ? ScrollTrigger.getAll() : [];
+    var i;
+    var s02 = null;
+    var s03 = null;
+    for (i = 0; i < all.length; i += 1) {
+      var t = all[i].trigger;
+      if (!t || !t.hasAttribute) continue;
+      if (t.hasAttribute('data-cbx-stage')) s02 = { start: all[i].start, end: all[i].end };
+      if (t.hasAttribute('data-cbx-answers')) s03 = { start: all[i].start, end: all[i].end };
+    }
+    return { s02: s02, s03: s03 };
+  });
+}
+
+async function sceneVisible(page) {
+  return page.evaluate(function () {
+    var pin = document.querySelector('[data-cbx-answers]');
+    if (!pin) return { ok: false, reason: 'no pin' };
+    var scenes = Array.prototype.slice.call(pin.querySelectorAll('.cbx-ans__scene'));
+    var live = scenes.filter(function (s) { return !s.hasAttribute('hidden'); });
+    if (!live.length) {
+      return { ok: false, reason: 'all scenes hidden', hidden: scenes.length };
+    }
+    var phone = live.some(function (s) {
+      var p = s.querySelector('.cbx-phone, [data-ans-device="phone"]');
+      if (!p) return false;
+      var r = p.getBoundingClientRect();
+      var st = window.getComputedStyle(p);
+      var op = parseFloat(st.opacity);
+      var vis = st.visibility !== 'hidden' && st.display !== 'none';
+      return vis && op > 0.05 && r.width > 20 && r.height > 20;
+    });
+    var ptr = live.some(function (s) {
+      return Array.prototype.some.call(s.querySelectorAll('.cbx-ans__ptr'), function (p) {
+        var r = p.getBoundingClientRect();
+        var st = window.getComputedStyle(p);
+        return parseFloat(st.opacity) > 0.15 && r.height > 8 && r.width > 8 &&
+          st.visibility !== 'hidden';
+      });
+    });
+    return {
+      ok: phone || ptr,
+      phone: phone,
+      ptr: ptr,
+      live: live.length,
+      reason: (phone || ptr) ? '' : 'no phone/ptr on live scene'
+    };
+  });
+}
+
+async function jumpTo(page, y, waitMs) {
+  await page.evaluate(function (pos) {
+    window.scrollTo(0, pos);
+    if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
+  }, y);
+  if (waitMs) await sleep(waitMs);
+  else {
+    await page.evaluate(function () {
+      return new Promise(function (resolve) {
+        window.requestAnimationFrame(function () { window.requestAnimationFrame(resolve); });
+      });
+    });
+  }
+}
+
+async function probeS03Pin(page) {
+  var range = await pinRange(page);
+  if (!range.s03) return { ok: false, reason: 'no S03 trigger', fails: ['no trigger'] };
+  var start = range.s03.start + 24;
+  var end = range.s03.end - 24;
+  var span = end - start;
+  if (span < 200) return { ok: false, reason: 'S03 pin too short', fails: [] };
+  var even = [];
+  var i;
+  for (i = 0; i < 40; i += 1) {
+    even.push(Math.round(start + span * (i / 39)));
+  }
+  var rand = mulberry(7056);
+  var random = shuffle(even.slice(), rand);
+  var reverse = even.slice().reverse();
+  var plans = [
+    { name: 'random-wait', list: random, wait: 80 },
+    { name: 'reverse-nowait', list: reverse, wait: 0 }
+  ];
+  var fails = [];
+  var p;
+  var q;
+  for (p = 0; p < plans.length; p += 1) {
+    var plan = plans[p];
+    for (q = 0; q < plan.list.length; q += 1) {
+      var y = plan.list[q];
+      await jumpTo(page, y, plan.wait);
+      var vis = await sceneVisible(page);
+      if (!vis.ok) {
+        fails.push(plan.name + ' y=' + y + ' ' + vis.reason);
+        if (fails.length >= 8) {
+          return { ok: false, fails: fails, range: range.s03 };
+        }
+      }
+    }
+  }
+  return { ok: fails.length === 0, fails: fails, range: range.s03, n: 80 };
+}
+
+async function rollThrough(page, dy, until, budgetMs) {
+  var t0 = Date.now();
+  var hist = [await yNow(page)];
+  var i;
+  var maxNotches = 500;
+  for (i = 0; i < maxNotches; i += 1) {
+    if (Date.now() - t0 > budgetMs) {
+      return { ok: false, reason: 'over ' + budgetMs + 'ms at y=' + hist[hist.length - 1], hist: hist, ms: Date.now() - t0, notches: i };
+    }
+    await page.mouse.wheel({ deltaY: dy });
+    await sleep(70);
+    var y = await yNow(page);
+    hist.push(y);
+    if (until(y, hist)) {
+      return { ok: true, hist: hist, ms: Date.now() - t0, notches: i + 1, y: y };
+    }
+    if (oscillating(hist)) {
+      return { ok: false, reason: 'oscillated at ' + y, hist: hist, ms: Date.now() - t0, notches: i + 1 };
+    }
+    if (i > 10) {
+      var stuck = 0;
+      var k;
+      for (k = hist.length - 1; k >= 1 && k >= hist.length - 8; k -= 1) {
+        if (Math.abs(hist[k] - y) <= 2) stuck += 1;
+      }
+      if (stuck >= 8) {
+        return { ok: false, reason: 'stalled at y=' + y + ' for ' + stuck + ' notches', hist: hist, ms: Date.now() - t0, notches: i + 1 };
+      }
+    }
+  }
+  return { ok: false, reason: 'did not finish (y=' + hist[hist.length - 1] + ')', hist: hist, ms: Date.now() - t0, notches: i };
 }
 
 async function pointerSheet(page) {
@@ -356,76 +662,93 @@ async function main() {
         log(up.ok, 'wheel up to 0 ' + label, up.ok ? 'notches=' + up.notches + ' from ' + up.start : up.reason);
         if (!up.ok) await shot(page, 'wheel-stuck-' + theme.id + '-' + size.w);
 
-        var pinRange = await page.evaluate(function () {
-          var ScrollTrigger = window.ScrollTrigger;
-          var all = ScrollTrigger && ScrollTrigger.getAll ? ScrollTrigger.getAll() : [];
-          var i;
-          var s02 = null;
-          var s03 = null;
-          for (i = 0; i < all.length; i += 1) {
-            var t = all[i].trigger;
-            if (!t || !t.hasAttribute) continue;
-            if (t.hasAttribute('data-cbx-stage')) s02 = { start: all[i].start, end: all[i].end };
-            if (t.hasAttribute('data-cbx-answers')) s03 = { start: all[i].start, end: all[i].end };
-          }
-          return { s02: s02, s03: s03 };
-        });
+        var ranges = await pinRange(page);
         var positions = [];
-        if (pinRange.s02) {
-          var span = pinRange.s02.end - pinRange.s02.start;
+        if (ranges.s02) {
+          var span = ranges.s02.end - ranges.s02.start;
           positions = [
-            Math.round(pinRange.s02.start + span * 0.28),
-            Math.round(pinRange.s02.start + span * 0.55),
-            Math.round(pinRange.s02.end - 8)
+            Math.round(ranges.s02.start + span * 0.28),
+            Math.round(ranges.s02.start + span * 0.55),
+            Math.round(ranges.s02.end - 8)
+          ];
+        }
+        var holds = [];
+        if (ranges.s03) {
+          var s03span = ranges.s03.end - ranges.s03.start;
+          holds = [
+            { name: 'handoff-end', y: Math.round(ranges.s03.start + 12) },
+            { name: 'ch1-hold', y: Math.round(ranges.s03.start + s03span * 0.18) },
+            { name: 'ch2-hold', y: Math.round(ranges.s03.start + s03span * 0.5) },
+            { name: 'ch3-hold', y: Math.round(ranges.s03.start + s03span * 0.82) },
+            { name: 'page-end', y: Math.round(ranges.s03.end + 24) }
           ];
         }
         var p;
         for (p = 0; p < positions.length; p += 1) {
-          await page.evaluate(function (y) { window.scrollTo(0, y); }, positions[p]);
-          await sleep(250);
+          await jumpTo(page, positions[p], 250);
           var hit = await closeHit(page);
-          var fg = parseRgb(hit.color);
-          var bg = parseRgb(hit.bg);
-          var ratio = fg && bg ? contrast(fg, bg) : 0;
           log(hit.ok, 'Close clickable ' + label + ' y=' + positions[p], hit.ok ? '' : hit.reason);
-          if (theme.id === 'cream') {
-            log(ratio >= 4.5, 'Close contrast ' + label + ' y=' + positions[p], ratio.toFixed(2) + ':1 ' + hit.color);
-          } else {
-            log(true, 'Close contrast skipped on Multiverse ' + label, hit.color);
+          var pix = await sampleCloseContrast(page);
+          log(pix.ok, 'Close contrast ' + label + ' y=' + positions[p],
+            pix.ratio.toFixed(2) + ':1 fg=' + (pix.fg && pix.fg.map(function (n) { return Math.round(n); }).join(',') ) +
+            ' bg=' + (pix.bg && pix.bg.map(function (n) { return Math.round(n); }).join(',')));
+        }
+
+        for (p = 0; p < holds.length; p += 1) {
+          await jumpTo(page, holds[p].y, 350);
+          var holdHit = await closeHit(page);
+          log(holdHit.ok, 'Close clickable ' + holds[p].name + ' ' + label, holdHit.ok ? '' : holdHit.reason);
+          var holdPix = await sampleCloseContrast(page);
+          log(holdPix.ok, 'Close contrast ' + holds[p].name + ' ' + label,
+            holdPix.ratio.toFixed(2) + ':1');
+          if (size.w === 1440 && holds[p].name.indexOf('hold') !== -1) {
+            var ov = await closeLabOverlap(page);
+            log(ov.ok, 'Close vs S03 header ' + holds[p].name + ' ' + label,
+              ov.skip ? 'skip' : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab));
           }
         }
 
+        var probe = await probeS03Pin(page);
+        log(probe.ok, 'S03 pin samples ' + label,
+          probe.ok ? 'n=' + probe.n : (probe.fails || []).slice(0, 4).join(' | '));
+        if (!probe.ok) await shot(page, 's03-blank-' + theme.id + '-' + size.w);
+
+        var top = await maxY(page);
+        await page.evaluate(function (y) { window.scrollTo(0, y); }, top);
+        await sleep(200);
+        await page.mouse.move(Math.round(size.w / 2), Math.round(size.h / 2));
+        var upRoll = await rollThrough(page, -100, function (y) { return y <= 2; }, 8000);
+        log(upRoll.ok, '70ms roll up ' + label,
+          (upRoll.ok ? 'y=0' : upRoll.reason) + ' ms=' + upRoll.ms + ' notches=' + upRoll.notches);
+        if (!upRoll.ok) await shot(page, 'roll-up-stuck-' + theme.id + '-' + size.w);
+
+        await page.evaluate(function () { window.scrollTo(0, 0); });
+        await sleep(200);
+        var ceiling = await maxY(page);
+        var downRoll = await rollThrough(page, 100, function (y) { return y >= ceiling - 12; }, 8000);
+        log(downRoll.ok, '70ms roll down ' + label,
+          (downRoll.ok ? 'end y=' + downRoll.y : downRoll.reason) + ' ms=' + downRoll.ms + ' notches=' + downRoll.notches);
+
         if (size.w === 1440) {
-          var pinY = await page.evaluate(function () {
-            var el = document.querySelector('[data-cbx-answers]');
-            if (!el) return 0;
-            var r = el.getBoundingClientRect();
-            return Math.round(window.scrollY + r.top + 80);
-          });
-          await page.evaluate(function (y) { window.scrollTo(0, y); }, pinY);
-          await sleep(400);
-          var hold = await closeHit(page);
-          var hfg = parseRgb(hold.color);
-          var hbg = parseRgb(hold.bg) || [36, 25, 19];
-          var hr = hfg ? contrast(hfg, hbg) : 0;
-          log(hold.ok, 'Close clickable S03 hold ' + label, hold.ok ? '' : hold.reason);
-          if (theme.id === 'cream') {
-            log(hr >= 4.5, 'Close contrast S03 hold ' + label, hr.toFixed(2) + ':1');
-          }
+          await jumpTo(page, holds[1] ? holds[1].y : 0, 400);
           await shot(page, 's03-hold-' + theme.id + '-' + size.w);
         }
 
         if (size.w === 390) {
-          var s03 = pinRange.s03;
-          var holdY = s03
-            ? Math.round(s03.start + (s03.end - s03.start) * 0.22)
+          var holdY = ranges.s03
+            ? Math.round(ranges.s03.start + (ranges.s03.end - ranges.s03.start) * 0.22)
             : 0;
-          await page.evaluate(function (y) { window.scrollTo(0, y); }, holdY);
-          await sleep(700);
+          await jumpTo(page, holdY, 700);
           var sheet = await pointerSheet(page);
           log(sheet.ok, '390 one-card sheet ' + theme.id,
             'visible=' + sheet.visible + ' bottoms=' + JSON.stringify(sheet.bottoms) + ' font=' + sheet.font + ' y=' + holdY);
           await shot(page, 's03-390-sheet-' + theme.id);
+          if (ranges.s02) {
+            await jumpTo(page, Math.round(ranges.s02.start + (ranges.s02.end - ranges.s02.start) * 0.28), 300);
+            var s1pix = await sampleCloseContrast(page);
+            log(s1pix.ok, 'Close contrast 390 stage-1 ' + theme.id, s1pix.ratio.toFixed(2) + ':1');
+            await shot(page, 'close-390-stage1-' + theme.id);
+          }
         }
       }
     }

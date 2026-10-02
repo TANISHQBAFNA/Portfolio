@@ -70,13 +70,13 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s100') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s87') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(index.indexOf('cbx300-answers.js?v=s22') !== -1, 'index.html missing answers module');
+  assert.ok(index.indexOf('cbx300-case.css?v=s101') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s88') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s23') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s100') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s87') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s22') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s101') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s88') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s23') !== -1, 'multiverse missing answers module');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv10') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s46') !== -1, 'index.html missing study cache-bust');
   assert.ok(mvIndex.indexOf('project-study.js?v=s46') !== -1, 'multiverse missing study cache-bust');
@@ -841,11 +841,22 @@ check('Close stays clickable and readable over coffee and S03', function () {
   assert.ok(css.indexOf('html.is-cbx-growth-in .study[data-template="cbx300"] .study__close') !== -1,
     'Close must keep pointer-events over the coffee sheet');
   assert.ok(css.indexOf('z-index: 81') !== -1, 'Close must sit above the coffee scene');
-  assert.ok(css.indexOf('color: #f4efe6') !== -1,
+  assert.ok(pages.indexOf('function syncCloseInk') !== -1,
+    'Close colour must be a function of the surface behind it');
+  assert.ok(css.indexOf('is-cbx-close-light') !== -1,
+    'light Close must be gated on the coffee-covering class, not ans-pin');
+  assert.ok(css.indexOf('html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close') !== -1,
+    'S03 Close must have its own ink rule');
+  assert.ok(/html\.is-cbx-close-light \.study\[data-template="cbx300"\] \.study__close \{[\s\S]{0,220}color: #f4efe6/.test(css),
     'Close must switch to cream on the dark coffee panel');
+  assert.ok(/html\.is-cbx-ans-pin \.study\[data-template="cbx300"\] \.study__close \{[\s\S]{0,220}color: #1e1510/.test(css),
+    'Close must be dark on cream S03');
+  assert.ok(/html\.is-cbx-close-light \.study\[data-template="cbx300"\] \.study__close \{[\s\S]{0,400}border-radius: 999px/.test(css),
+    'coffee Close needs a dark pill so 390 stage-1 art does not wash it out');
+  assert.ok(/html\.is-cbx-ans-pin \.study\[data-template="cbx300"\] \.study__close \{[\s\S]{0,400}border-radius: 999px/.test(css),
+    'S03 Close needs a cream pill over the chapter art');
   var cream = [244, 239, 230];
   var coffee = [30, 21, 16];
-  var s03 = [36, 25, 19];
   function srgbToLin(c) {
     var x = c / 255;
     return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
@@ -859,9 +870,55 @@ check('Close stays clickable and readable over coffee and S03', function () {
     return (hi + 0.05) / (lo + 0.05);
   }
   var onCoffee = contrast(cream, coffee);
-  var onS03 = contrast(cream, s03);
+  var onS03 = contrast(coffee, cream);
   assert.ok(onCoffee >= 4.5, 'cream Close on coffee must be >= 4.5:1 (' + onCoffee.toFixed(2) + ')');
-  assert.ok(onS03 >= 4.5, 'cream Close on S03 must be >= 4.5:1 (' + onS03.toFixed(2) + ')');
+  assert.ok(onS03 >= 4.5, 'dark Close on cream S03 must be >= 4.5:1 (' + onS03.toFixed(2) + ')');
+  var wheel = read('scripts/check-cbx300-wheel.js');
+  assert.ok(wheel.indexOf('sampleCloseContrast') !== -1,
+    'wheel check must sample screenshot pixels behind Close, not a hard-coded background');
+  assert.ok(wheel.indexOf('[36, 25, 19]') === -1 && wheel.indexOf('parseRgb(hit.bg)') === -1,
+    'must not use a hard-coded coffee/S03 fill as the Close contrast background');
+});
+
+check('S03 scene visibility is a function of scroll progress', function () {
+  assert.ok(answers.indexOf('function applySceneVisibility') !== -1,
+    'chapter visibility must be applied from current time/progress');
+  assert.ok(answers.indexOf('function syncSceneFromTrigger') !== -1,
+    'jumps must seek the timeline and restamp hidden from progress');
+  assert.ok(answers.indexOf("tl.call(function () { n.scene.removeAttribute('hidden')") === -1,
+    'must not toggle scene hidden from tl.call (does not reverse on scrub)');
+  assert.ok(answers.indexOf("tl.call(function () { l.scene.setAttribute('hidden'") === -1,
+    'must not hide the outgoing scene from tl.call');
+  var sceneHidden = cssBlock(css, '.cbx-ans__scene[hidden]');
+  assert.ok(sceneHidden.indexOf('display: none') === -1,
+    'display:none on [hidden] blanks a chapter whose opacity is still 1');
+  var wheel = read('scripts/check-cbx300-wheel.js');
+  assert.ok(wheel.indexOf('probeS03Pin') !== -1,
+    'wheel check must sample S03 pin positions in random and reverse order');
+});
+
+check('S03 header does not sit under Close at 1440', function () {
+  var lab = cssBlock(css, '.cbx-ans__lab');
+  assert.ok(/left:\s*168px/.test(lab), 'lab must clear the Close hit box at unscaled 1440');
+  assert.ok(!/left:\s*60px/.test(lab), 'lab at 60px overlaps Close at 1440');
+  var wheel = read('scripts/check-cbx300-wheel.js');
+  assert.ok(wheel.indexOf('closeLabOverlap') !== -1, 'wheel check must fail if Close overlaps the S03 header');
+});
+
+check('continuous wheel steps coffee stages without a quiet pause', function () {
+  assert.ok(pages.indexOf('var STEP_LOCK_MS = 40') !== -1,
+    'stage lock must not require a 180ms quiet gap');
+  assert.ok(pages.indexOf('var ROLL_ARM_MS = 280') !== -1,
+    'a continuing roll must arm pendingDir mid-shift');
+  assert.ok(pages.indexOf('ctrl.pendingDir = dy > 0 ? 1 : -1') !== -1,
+    'wheel must queue the next stage the way keyboard already does');
+  var handle = pages.slice(pages.indexOf('function handleDelta'), pages.indexOf('function onWheel'));
+  var noteAt = handle.indexOf('noteInput()');
+  var lockAt = handle.indexOf('if (ctrl.locked)');
+  assert.ok(noteAt !== -1 && lockAt !== -1 && lockAt < noteAt,
+    'must not stamp lastInput while the stage lock is held');
+  var wheel = read('scripts/check-cbx300-wheel.js');
+  assert.ok(wheel.indexOf('rollThrough') !== -1, 'wheel check must time a 70ms continuous roll');
 });
 
 check('wheel-up through coffee is hysteresis-free; one notch stays put', function () {

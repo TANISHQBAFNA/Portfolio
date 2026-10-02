@@ -810,6 +810,9 @@ window.Cbx300Answers = (function () {
     var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
     var T = START;
     var k;
+    var chWin = scenes.map(function () {
+      return { appear: 0, gone: 1e6 };
+    });
     for (k = 0; k < layers.length; k += 1) {
       (function (k) {
         var l = layers[k];
@@ -861,7 +864,8 @@ window.Cbx300Answers = (function () {
           tl.to([l.sl, l.q], { opacity: 0.55, duration: 0.28, ease: 'sine.in' }, W);
           tl.set(n.layers, { opacity: 0 }, W - 0.2);
           tl.set(n.scene, { opacity: 1 }, W - 0.2);
-          tl.call(function () { n.scene.removeAttribute('hidden'); }, null, W - 0.2);
+          chWin[k + 1].appear = W - 0.2;
+          chWin[k].gone = W + 0.5;
           tl.fromTo([n.sl, n.q], { opacity: 0.55, y: function (i) { return (i ? n.qdy : n.sdy) + 10; } }, {
             opacity: 1, y: function (i) { return i ? n.qdy : n.sdy; }, duration: 0.55, ease: 'sine.out', immediateRender: false
           }, W);
@@ -872,7 +876,6 @@ window.Cbx300Answers = (function () {
           tl.fromTo(n.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'sine.out' }, W + 0.4);
           tl.fromTo(n.scene.querySelectorAll('.si.new, .cbx-si.is-new'), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.45, stagger: 0.1, ease: 'power2.out' }, W + 0.45);
           tl.set(n.scene.querySelectorAll('.cbx-ans__dim, .cbx-ans__nbg'), { opacity: 0 }, W + 0.4);
-          tl.call(function () { l.scene.setAttribute('hidden', ''); }, null, W + 0.5);
           T = W + 1.2;
         } else {
           T = B + BACK + 0.6;
@@ -880,7 +883,44 @@ window.Cbx300Answers = (function () {
       }(k));
     }
     tl.to({}, { duration: 0.6 }, T);
+    section._cbxWins = chWin;
+    section._cbxScenes = scenes;
     return tl;
+  }
+
+  /* Scene [hidden] is a pure function of timeline time (or the matching
+     scroll progress). GSAP tl.call does not reverse on scrub, so driving
+     display from onEnter/onLeave/call blanks a chapter on the way back
+     or after a jump. Never hide a scene that is still painting. */
+  function applySceneVisibility(section, time) {
+    var scenes = section._cbxScenes ||
+      (section._cbxScenes = Array.prototype.slice.call(section.querySelectorAll('.cbx-ans__scene')));
+    var wins = section._cbxWins;
+    var t = time;
+    if (t == null && motion.tween && typeof motion.tween.time === 'function') {
+      t = motion.tween.time();
+    }
+    t = +t || 0;
+    var i;
+    var shown = 0;
+    var best = 0;
+    for (i = 0; i < scenes.length; i += 1) {
+      var scene = scenes[i];
+      var win = wins && wins[i];
+      var op = parseFloat(scene.style.opacity || '0');
+      var inWin = win ? (t + 0.03 >= win.appear && t - 0.03 < win.gone) : op > 0.04;
+      var on = inWin || op > 0.04;
+      if (on) {
+        if (scene.hasAttribute('hidden')) scene.removeAttribute('hidden');
+        shown += 1;
+      } else if (!scene.hasAttribute('hidden')) {
+        scene.setAttribute('hidden', '');
+      }
+      if (win && t >= win.appear) best = i;
+    }
+    if (!shown && scenes.length) {
+      scenes[best].removeAttribute('hidden');
+    }
   }
 
   function withSectionInView(section, fn) {
@@ -934,6 +974,18 @@ window.Cbx300Answers = (function () {
 
   function pinActive(on) {
     document.documentElement.classList.toggle('is-cbx-ans-pin', !!on);
+    if (window.Cbx300Case && window.Cbx300Case.syncCloseInk) {
+      window.Cbx300Case.syncCloseInk();
+    }
+  }
+
+  function syncSceneFromTrigger(section, tl, progress) {
+    var d = tl && tl.duration ? tl.duration() : 0;
+    var target = Math.max(0, (progress || 0) * d);
+    var now = tl && typeof tl.time === 'function' ? tl.time() : target;
+    var jump = d > 0 && Math.abs(now / d - (progress || 0)) > 0.03;
+    if (jump && typeof tl.time === 'function') tl.time(target);
+    applySceneVisibility(section, target);
   }
 
   function bindCamera(section) {
@@ -957,10 +1009,12 @@ window.Cbx300Answers = (function () {
       anticipatePin: 1,
       refreshPriority: -1,
       onUpdate: function (self) {
+        syncSceneFromTrigger(section, tl, self.progress);
         if (motion.onStep) motion.onStep(self.progress > 0.02 ? 2 : 1);
       },
       onToggle: function (self) {
         pinActive(self.isActive);
+        syncSceneFromTrigger(section, tl, self.progress);
         if (self.isActive && motion.onStep) motion.onStep(2);
       },
       onRefresh: function () {
@@ -1000,9 +1054,12 @@ window.Cbx300Answers = (function () {
           var i = Math.min(2, Math.floor(self.progress * 3));
           Array.prototype.forEach.call(scenes, function (scene, n) {
             var on = n === i;
-            scene.hidden = !on;
             scene.style.opacity = on ? '1' : '0';
+            if (on) scene.removeAttribute('hidden');
+            else scene.setAttribute('hidden', '');
           });
+          var shown = section.querySelector('.cbx-ans__scene:not([hidden])');
+          if (!shown && scenes[i]) scenes[i].removeAttribute('hidden');
           if (motion.onStep) motion.onStep(2);
         }
       }
@@ -1034,6 +1091,9 @@ window.Cbx300Answers = (function () {
     });
     var tl = gsap.timeline({ paused: true });
     var T = 0.2;
+    var chWin = scenes.map(function (_, k) {
+      return { appear: k ? 1e6 : 0, gone: 1e6 };
+    });
     scenes.forEach(function (scene, k) {
       var ptrs = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__ptr'));
       var mk = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__mkr'));
@@ -1047,8 +1107,10 @@ window.Cbx300Answers = (function () {
         if (!k) gsap.set(ptrs[0], { opacity: 1, y: 0 });
       }
       if (k) {
+        chWin[k].appear = T;
+        chWin[k - 1].gone = T + 0.15;
         tl.set(scene, { opacity: 1 }, T);
-        if (k) tl.set(scenes[k - 1], { opacity: 0 }, T + 0.15);
+        tl.set(scenes[k - 1], { opacity: 0 }, T + 0.15);
         T += 0.25;
       }
       ptrs.forEach(function (p, i) {
@@ -1068,6 +1130,8 @@ window.Cbx300Answers = (function () {
       T += 0.9 * 3 + 1.6;
     });
     tl.to({}, { duration: 0.4 }, T);
+    section._cbxWins = chWin;
+    section._cbxScenes = scenes;
     var st = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
@@ -1078,14 +1142,13 @@ window.Cbx300Answers = (function () {
       scrub: 0.8,
       animation: tl,
       refreshPriority: -1,
-      onToggle: function (self) { pinActive(self.isActive); },
+      onToggle: function (self) {
+        pinActive(self.isActive);
+        syncSceneFromTrigger(section, tl, self.progress);
+      },
       onUpdate: function (self) {
+        syncSceneFromTrigger(section, tl, self.progress);
         if (motion.onStep) motion.onStep(self.progress > 0.02 ? 2 : 1);
-        scenes.forEach(function (scene) {
-          var on = parseFloat(scene.style.opacity || '0') > 0.05;
-          if (on) scene.removeAttribute('hidden');
-          else scene.setAttribute('hidden', '');
-        });
       }
     });
     motion.tween = tl;
@@ -1110,6 +1173,10 @@ window.Cbx300Answers = (function () {
     window.requestAnimationFrame(function () {
       window.scrollTo(0, st.start + 8);
       if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
+      if (motion.pin && motion.tween) {
+        var p = (st.start + 8 - st.start) / Math.max(1, st.end - st.start);
+        syncSceneFromTrigger(motion.pin, motion.tween, p);
+      }
     });
   }
 

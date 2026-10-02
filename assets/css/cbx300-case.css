@@ -975,10 +975,30 @@ html.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__close,
 html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close,
 html.is-study.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__close,
 html.is-study-page.is-cbx-growth-in .study[data-template="cbx300"] .study__close,
-html.is-cbx-growth-in .study[data-template="cbx300"] .study__close {
+html.is-cbx-growth-in .study[data-template="cbx300"] .study__close,
+html.is-cbx-close-light .study[data-template="cbx300"] .study__close {
   pointer-events: auto;
   z-index: 81;
+}
+/* Light Close only while the dark coffee sheet is the surface behind it.
+   Cream S03, the hero, and anything after the pin stay dark. */
+html.is-cbx-close-light .study[data-template="cbx300"] .study__close {
   color: #f4efe6;
+  background: rgba(30, 21, 16, .78);
+  border-radius: 999px;
+  padding: 5px 11px 7px;
+  box-shadow: 0 0 0 1px rgba(30, 21, 16, .18);
+}
+html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close {
+  color: #1e1510;
+  background: rgba(244, 239, 230, .92);
+  border-radius: 999px;
+  padding: 5px 11px 7px;
+  box-shadow: 0 0 0 1px rgba(30, 21, 16, .08);
+}
+html.is-cbx-close-light .study[data-template="cbx300"] .study__close::after,
+html.is-cbx-ans-pin .study[data-template="cbx300"] .study__close::after {
+  display: none;
 }
 html.is-study.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark,
 html.is-study-page.is-cbx-ans-pin .study[data-template="cbx300"] .study__mark,
@@ -1045,7 +1065,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 
 .cbx-ans__lab {
   position: absolute;
-  left: 60px;
+  left: 168px;
   top: 28px;
   display: flex;
   align-items: baseline;
@@ -1123,7 +1143,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-ans__scene[hidden] {
-  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .cbx-ans__cam {
