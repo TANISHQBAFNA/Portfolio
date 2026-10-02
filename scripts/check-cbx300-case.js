@@ -70,11 +70,11 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s105') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s106') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s88') !== -1, 'index.html missing growth js cache-bust');
   assert.ok(index.indexOf('cbx300-answers.js?v=s23') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s105') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s106') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s88') !== -1, 'multiverse missing growth cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s23') !== -1, 'multiverse missing answers module');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv10') !== -1, 'multiverse missing case skin');

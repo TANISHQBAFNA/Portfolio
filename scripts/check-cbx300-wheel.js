@@ -453,14 +453,11 @@ async function sampleTextContrast(page, selector) {
   var png = decodePng(Buffer.isBuffer(raw) ? raw : Buffer.from(raw));
   var clustered = clusterContrast(png);
   var fg = parseRgb(info.color);
-  var ratio = clustered ? clustered.ratio : 0;
   var bg = clustered ? clustered.bg : avgRgb(png);
-  var ink = clustered ? clustered.fg : fg;
-  if (ratio < 4.5 && fg && clustered) {
-    ratio = contrast(fg, clustered.bg);
-    ink = fg;
-    bg = clustered.bg;
-  }
+  var ink = fg || (clustered && clustered.fg);
+  var ratio = 0;
+  if (ink && bg) ratio = contrast(ink, bg);
+  else if (clustered) ratio = clustered.ratio;
   return {
     ok: ratio >= 4.5,
     skip: false,
@@ -470,6 +467,38 @@ async function sampleTextContrast(page, selector) {
     color: info.color,
     selector: selector
   };
+}
+
+async function jumpToHold(page, y) {
+  await page.evaluate(function () {
+    window.scrollTo(0, 0);
+    if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
+  });
+  await sleep(80);
+  await jumpTo(page, y, 450);
+  var top = await page.evaluate(function () {
+    var lab = document.querySelector('.cbx-ans__lab');
+    return lab ? lab.getBoundingClientRect().top : -1;
+  });
+  if (top >= 0 && top < 140) return;
+  await page.evaluate(function (pos) {
+    var ScrollTrigger = window.ScrollTrigger;
+    if (ScrollTrigger && ScrollTrigger.refresh) ScrollTrigger.refresh();
+    window.scrollTo(0, 0);
+    if (ScrollTrigger && ScrollTrigger.update) ScrollTrigger.update();
+    window.scrollTo(0, pos);
+    if (ScrollTrigger && ScrollTrigger.update) ScrollTrigger.update();
+    var all = ScrollTrigger && ScrollTrigger.getAll ? ScrollTrigger.getAll() : [];
+    var i;
+    for (i = 0; i < all.length; i += 1) {
+      var t = all[i];
+      if (t.trigger && t.trigger.hasAttribute && t.trigger.hasAttribute('data-cbx-answers') &&
+          typeof t.scroll === 'function') {
+        t.scroll(pos);
+      }
+    }
+  }, y);
+  await sleep(400);
 }
 
 async function headerPhoneGap(page) {
@@ -879,7 +908,7 @@ async function main() {
         }
 
         for (p = 0; p < holds.length; p += 1) {
-          await jumpTo(page, holds[p].y, 500);
+          await jumpToHold(page, holds[p].y);
           var holdHit = await closeHit(page);
           log(holdHit.ok, 'Close clickable ' + holds[p].name + ' ' + label, holdHit.ok ? '' : holdHit.reason);
           var holdPix = await sampleCloseContrast(page);
@@ -887,8 +916,8 @@ async function main() {
             holdPix.ratio.toFixed(2) + ':1 fg=' + (holdPix.fg && holdPix.fg.map(function (n) { return Math.round(n); }).join(',')) +
             ' bg=' + (holdPix.bg && holdPix.bg.map(function (n) { return Math.round(n); }).join(',')));
           var labels = [
-            { sel: '.cbx-ans__title', name: 'S03 title' },
-            { sel: '.cbx-ans__num', name: 'S03 03' },
+            { sel: '.cbx-ans__lab', name: 'S03 title', ink: '.cbx-ans__title' },
+            { sel: '.cbx-ans__lab', name: 'S03 03', ink: '.cbx-ans__num' },
             { sel: '.cbx-ans__xtag', name: 'example UI' },
             { sel: '.cbx-vfl', name: 'in focus' },
             { sel: '.cbx-ans__ctag .tag, .cbx-ans__ctag span', name: 'example copy' }
@@ -896,8 +925,23 @@ async function main() {
           var li;
           for (li = 0; li < labels.length; li += 1) {
             var labPix = await sampleTextContrast(page, labels[li].sel);
+            if (labels[li].ink && !labPix.skip && labPix.bg) {
+              var inkEl = await page.$(labels[li].ink);
+              if (inkEl) {
+                var inkCol = await page.evaluate(function (el) {
+                  return window.getComputedStyle(el).color;
+                }, inkEl);
+                var inkRgb = parseRgb(inkCol);
+                if (inkRgb) {
+                  labPix.fg = inkRgb;
+                  labPix.ratio = contrast(inkRgb, labPix.bg);
+                  labPix.ok = labPix.ratio >= 4.5;
+                }
+              }
+            }
+            var must = holds[p].name.indexOf('hold') !== -1 && labels[li].name.indexOf('S03') === 0;
             if (labPix.skip) {
-              log(true, labels[li].name + ' contrast ' + holds[p].name + ' ' + label, 'skip ' + labPix.reason);
+              log(!must, labels[li].name + ' contrast ' + holds[p].name + ' ' + label, 'skip ' + labPix.reason);
             } else {
               log(labPix.ok, labels[li].name + ' contrast ' + holds[p].name + ' ' + label,
                 labPix.ratio.toFixed(2) + ':1 fg=' + (labPix.fg && labPix.fg.map(function (n) { return Math.round(n); }).join(',')) +
@@ -909,6 +953,7 @@ async function main() {
             log(ov.ok, 'Close vs S03 header ' + holds[p].name + ' ' + label,
               ov.skip ? 'header off-screen close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab)
                 : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab));
+            await shot(page, 's03-' + holds[p].name + '-' + theme.id + '-' + size.w);
           }
         }
 

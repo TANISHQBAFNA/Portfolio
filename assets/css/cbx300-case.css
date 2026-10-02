@@ -2512,7 +2512,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   }
   .cbx-ans__scene.is-phone .cbx-phone,
   .cbx-ans__scene.is-both .cbx-phone {
-    top: calc(var(--study-head, 64px) + 40px);
+    top: calc(var(--study-head, 64px) + 56px);
     left: 50%;
     width: min(68vw, 260px);
     height: 54%;
