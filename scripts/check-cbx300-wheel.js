@@ -863,19 +863,11 @@ async function main() {
           await shot(page, 'close-390-hero-' + theme.id);
         }
 
-        var down = await walkDown(page, 200);
-        log(down.ok, 'wheel down ' + label, down.ok ? 'end y=' + down.end : down.reason);
-
-        var up = await walkUp(page, 200);
-        log(up.ok, 'wheel up to 0 ' + label, up.ok ? 'notches=' + up.notches + ' from ' + up.start : up.reason);
-        if (!up.ok) await shot(page, 'wheel-stuck-' + theme.id + '-' + size.w);
-
-        var ranges = await pinRange(page);
         await page.evaluate(function () {
           if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
         });
         await sleep(200);
-        ranges = await pinRange(page);
+        var ranges = await pinRange(page);
         var positions = [];
         if (ranges.s02) {
           var span = ranges.s02.end - ranges.s02.start;
@@ -897,16 +889,6 @@ async function main() {
           ];
         }
         var p;
-        for (p = 0; p < positions.length; p += 1) {
-          await jumpTo(page, positions[p], 250);
-          var hit = await closeHit(page);
-          log(hit.ok, 'Close clickable ' + label + ' y=' + positions[p], hit.ok ? '' : hit.reason);
-          var pix = await sampleCloseContrast(page);
-          log(pix.ok, 'Close contrast ' + label + ' y=' + positions[p],
-            pix.ratio.toFixed(2) + ':1 fg=' + (pix.fg && pix.fg.map(function (n) { return Math.round(n); }).join(',') ) +
-            ' bg=' + (pix.bg && pix.bg.map(function (n) { return Math.round(n); }).join(',')));
-        }
-
         for (p = 0; p < holds.length; p += 1) {
           await jumpToHold(page, holds[p].y);
           var holdHit = await closeHit(page);
@@ -957,6 +939,46 @@ async function main() {
           }
         }
 
+        if (size.w === 390) {
+          var holdY = ranges.s03
+            ? Math.round(ranges.s03.start + (ranges.s03.end - ranges.s03.start) * 0.22)
+            : 0;
+          await jumpToHold(page, holdY);
+          var sheet = await pointerSheet(page);
+          log(sheet.ok, '390 one-card sheet ' + theme.id,
+            'visible=' + sheet.visible + ' bottoms=' + JSON.stringify(sheet.bottoms) + ' font=' + sheet.font + ' y=' + holdY);
+          var gap = await headerPhoneGap(page);
+          log(gap.ok, '390 header vs phone ' + theme.id,
+            gap.skip ? 'skip' : 'gap=' + gap.gap + ' lab=' + JSON.stringify(gap.lab) + ' phone=' + JSON.stringify(gap.phone));
+          await shot(page, 's03-390-sheet-' + theme.id);
+          if (ranges.s02) {
+            await jumpTo(page, Math.round(ranges.s02.start + (ranges.s02.end - ranges.s02.start) * 0.28), 300);
+            var s1pix = await sampleCloseContrast(page);
+            log(s1pix.ok, 'Close contrast 390 stage-1 ' + theme.id, s1pix.ratio.toFixed(2) + ':1');
+            var navHit = await closeCovers(page, '.cbx-growth__step.is-on');
+            log(navHit.ok, 'Close vs coffee nav 390 ' + theme.id,
+              navHit.skip ? navHit.reason : 'close=' + JSON.stringify(navHit.close) + ' el=' + JSON.stringify(navHit.el));
+            await shot(page, 'close-390-stage1-' + theme.id);
+          }
+        }
+
+        var down = await walkDown(page, 200);
+        log(down.ok, 'wheel down ' + label, down.ok ? 'end y=' + down.end : down.reason);
+
+        var up = await walkUp(page, 200);
+        log(up.ok, 'wheel up to 0 ' + label, up.ok ? 'notches=' + up.notches + ' from ' + up.start : up.reason);
+        if (!up.ok) await shot(page, 'wheel-stuck-' + theme.id + '-' + size.w);
+
+        for (p = 0; p < positions.length; p += 1) {
+          await jumpTo(page, positions[p], 250);
+          var hit = await closeHit(page);
+          log(hit.ok, 'Close clickable ' + label + ' y=' + positions[p], hit.ok ? '' : hit.reason);
+          var pix = await sampleCloseContrast(page);
+          log(pix.ok, 'Close contrast ' + label + ' y=' + positions[p],
+            pix.ratio.toFixed(2) + ':1 fg=' + (pix.fg && pix.fg.map(function (n) { return Math.round(n); }).join(',') ) +
+            ' bg=' + (pix.bg && pix.bg.map(function (n) { return Math.round(n); }).join(',')));
+        }
+
         var probe = await probeS03Pin(page);
         log(probe.ok, 'S03 pin samples ' + label,
           probe.ok ? 'n=' + probe.n : (probe.fails || []).slice(0, 4).join(' | '));
@@ -979,31 +1001,8 @@ async function main() {
           (downRoll.ok ? 'end y=' + downRoll.y : downRoll.reason) + ' ms=' + downRoll.ms + ' notches=' + downRoll.notches);
 
         if (size.w === 1440) {
-          await jumpTo(page, holds[1] ? holds[1].y : 0, 400);
+          await jumpToHold(page, holds[1] ? holds[1].y : 0);
           await shot(page, 's03-hold-' + theme.id + '-' + size.w);
-        }
-
-        if (size.w === 390) {
-          var holdY = ranges.s03
-            ? Math.round(ranges.s03.start + (ranges.s03.end - ranges.s03.start) * 0.22)
-            : 0;
-          await jumpTo(page, holdY, 700);
-          var sheet = await pointerSheet(page);
-          log(sheet.ok, '390 one-card sheet ' + theme.id,
-            'visible=' + sheet.visible + ' bottoms=' + JSON.stringify(sheet.bottoms) + ' font=' + sheet.font + ' y=' + holdY);
-          var gap = await headerPhoneGap(page);
-          log(gap.ok, '390 header vs phone ' + theme.id,
-            gap.skip ? 'skip' : 'gap=' + gap.gap + ' lab=' + JSON.stringify(gap.lab) + ' phone=' + JSON.stringify(gap.phone));
-          await shot(page, 's03-390-sheet-' + theme.id);
-          if (ranges.s02) {
-            await jumpTo(page, Math.round(ranges.s02.start + (ranges.s02.end - ranges.s02.start) * 0.28), 300);
-            var s1pix = await sampleCloseContrast(page);
-            log(s1pix.ok, 'Close contrast 390 stage-1 ' + theme.id, s1pix.ratio.toFixed(2) + ':1');
-            var navHit = await closeCovers(page, '.cbx-growth__step.is-on');
-            log(navHit.ok, 'Close vs coffee nav 390 ' + theme.id,
-              navHit.skip ? navHit.reason : 'close=' + JSON.stringify(navHit.close) + ' el=' + JSON.stringify(navHit.el));
-            await shot(page, 'close-390-stage1-' + theme.id);
-          }
         }
       }
     }
