@@ -404,6 +404,63 @@ function clusterContrast(png) {
   return { ratio: contrast(l, d), fg: l, bg: d, darkN: dark[3], lightN: light[3] };
 }
 
+function cropPng(png, x, y, w, h) {
+  x = Math.max(0, Math.floor(x));
+  y = Math.max(0, Math.floor(y));
+  w = Math.max(1, Math.min(png.width - x, Math.ceil(w)));
+  h = Math.max(1, Math.min(png.height - y, Math.ceil(h)));
+  var out = Buffer.alloc(w * h * png.bpp);
+  var row;
+  for (row = 0; row < h; row += 1) {
+    var src = ((y + row) * png.width + x) * png.bpp;
+    png.data.copy(out, row * w * png.bpp, src, src + w * png.bpp);
+  }
+  return { width: w, height: h, bpp: png.bpp, data: out };
+}
+
+async function sampleHudFromView(page, specs) {
+  var boxes = await page.evaluate(function (list) {
+    return list.map(function (spec) {
+      var nodes = document.querySelectorAll(spec.sel);
+      var i;
+      var el = null;
+      for (i = 0; i < nodes.length; i += 1) {
+        var st = window.getComputedStyle(nodes[i]);
+        var r = nodes[i].getBoundingClientRect();
+        if (st.display === 'none' || st.visibility === 'hidden' || parseFloat(st.opacity) < 0.15) continue;
+        if (r.width < 4 || r.height < 4 || r.bottom < 0 || r.top > window.innerHeight) continue;
+        el = nodes[i];
+        break;
+      }
+      if (!el) return { skip: true, reason: 'hidden' };
+      var box = el.getBoundingClientRect();
+      var ink = spec.ink ? document.querySelector(spec.ink) : el;
+      return {
+        skip: false,
+        color: window.getComputedStyle(ink || el).color,
+        left: box.left,
+        top: box.top,
+        width: box.width,
+        height: box.height
+      };
+    });
+  }, specs);
+  var raw = await page.screenshot({ type: 'png' });
+  var png = decodePng(Buffer.isBuffer(raw) ? raw : Buffer.from(raw));
+  return boxes.map(function (box) {
+    if (box.skip) return { ok: true, skip: true, reason: box.reason || 'hidden', ratio: 0 };
+    var crop = cropPng(png, box.left, box.top, box.width, box.height);
+    var clustered = clusterContrast(crop);
+    var fg = parseRgb(box.color);
+    var bg = clustered ? clustered.bg : avgRgb(crop);
+    if (bg && lumOf(bg) > 0.35) {
+      return { ok: true, skip: true, reason: 'not-scrim', ratio: 0 };
+    }
+    var ratio = fg && bg ? contrast(fg, bg) : (clustered ? clustered.ratio : 0);
+    return { ok: ratio >= 4.5, skip: false, ratio: ratio, fg: fg, bg: bg, color: box.color };
+  });
+}
+
 async function sampleTextContrast(page, selector) {
   var found = await page.evaluateHandle(function (sel) {
     var nodes = document.querySelectorAll(sel);
@@ -432,10 +489,12 @@ async function sampleTextContrast(page, selector) {
       visibility: st.visibility,
       opacity: parseFloat(st.opacity),
       top: r.top,
+      left: r.left,
       bottom: r.bottom,
       width: r.width,
       height: r.height,
-      vh: window.innerHeight
+      vh: window.innerHeight,
+      vw: window.innerWidth
     };
   }, handle);
   if (info.display === 'none' || info.visibility === 'hidden' || info.opacity < 0.15) {
@@ -470,35 +529,23 @@ async function sampleTextContrast(page, selector) {
 }
 
 async function jumpToHold(page, y) {
-  await page.evaluate(function () {
-    window.scrollTo(0, 0);
-    if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
-  });
-  await sleep(80);
-  await jumpTo(page, y, 450);
-  var top = await page.evaluate(function () {
+  await jumpTo(page, y, 500);
+  var loc = await page.evaluate(function () {
     var lab = document.querySelector('.cbx-ans__lab');
-    return lab ? lab.getBoundingClientRect().top : -1;
+    var pin = document.querySelector('[data-cbx-answers]');
+    return {
+      top: lab ? lab.getBoundingClientRect().top : -1,
+      y: Math.round(window.scrollY || 0),
+      pinPos: pin ? window.getComputedStyle(pin).position : '',
+      active: document.documentElement.classList.contains('is-cbx-ans-pin')
+    };
   });
-  if (top >= 0 && top < 140) return;
+  if (loc.top >= 0 && loc.top < 140) return;
   await page.evaluate(function (pos) {
-    var ScrollTrigger = window.ScrollTrigger;
-    if (ScrollTrigger && ScrollTrigger.refresh) ScrollTrigger.refresh();
-    window.scrollTo(0, 0);
-    if (ScrollTrigger && ScrollTrigger.update) ScrollTrigger.update();
     window.scrollTo(0, pos);
-    if (ScrollTrigger && ScrollTrigger.update) ScrollTrigger.update();
-    var all = ScrollTrigger && ScrollTrigger.getAll ? ScrollTrigger.getAll() : [];
-    var i;
-    for (i = 0; i < all.length; i += 1) {
-      var t = all[i];
-      if (t.trigger && t.trigger.hasAttribute && t.trigger.hasAttribute('data-cbx-answers') &&
-          typeof t.scroll === 'function') {
-        t.scroll(pos);
-      }
-    }
+    if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
   }, y);
-  await sleep(400);
+  await sleep(500);
 }
 
 async function headerPhoneGap(page) {
@@ -891,12 +938,6 @@ async function main() {
         var p;
         for (p = 0; p < holds.length; p += 1) {
           await jumpToHold(page, holds[p].y);
-          var holdHit = await closeHit(page);
-          log(holdHit.ok, 'Close clickable ' + holds[p].name + ' ' + label, holdHit.ok ? '' : holdHit.reason);
-          var holdPix = await sampleCloseContrast(page);
-          log(holdPix.ok, 'Close contrast ' + holds[p].name + ' ' + label,
-            holdPix.ratio.toFixed(2) + ':1 fg=' + (holdPix.fg && holdPix.fg.map(function (n) { return Math.round(n); }).join(',')) +
-            ' bg=' + (holdPix.bg && holdPix.bg.map(function (n) { return Math.round(n); }).join(',')));
           var labels = [
             { sel: '.cbx-ans__lab', name: 'S03 title', ink: '.cbx-ans__title' },
             { sel: '.cbx-ans__lab', name: 'S03 03', ink: '.cbx-ans__num' },
@@ -904,23 +945,10 @@ async function main() {
             { sel: '.cbx-vfl', name: 'in focus' },
             { sel: '.cbx-ans__ctag .tag, .cbx-ans__ctag span', name: 'example copy' }
           ];
+          var hudPix = await sampleHudFromView(page, labels);
           var li;
           for (li = 0; li < labels.length; li += 1) {
-            var labPix = await sampleTextContrast(page, labels[li].sel);
-            if (labels[li].ink && !labPix.skip && labPix.bg) {
-              var inkEl = await page.$(labels[li].ink);
-              if (inkEl) {
-                var inkCol = await page.evaluate(function (el) {
-                  return window.getComputedStyle(el).color;
-                }, inkEl);
-                var inkRgb = parseRgb(inkCol);
-                if (inkRgb) {
-                  labPix.fg = inkRgb;
-                  labPix.ratio = contrast(inkRgb, labPix.bg);
-                  labPix.ok = labPix.ratio >= 4.5;
-                }
-              }
-            }
+            var labPix = hudPix[li];
             var must = holds[p].name.indexOf('hold') !== -1 && labels[li].name.indexOf('S03') === 0;
             if (labPix.skip) {
               log(!must, labels[li].name + ' contrast ' + holds[p].name + ' ' + label, 'skip ' + labPix.reason);
@@ -937,6 +965,12 @@ async function main() {
                 : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab));
             await shot(page, 's03-' + holds[p].name + '-' + theme.id + '-' + size.w);
           }
+          var holdHit = await closeHit(page);
+          log(holdHit.ok, 'Close clickable ' + holds[p].name + ' ' + label, holdHit.ok ? '' : holdHit.reason);
+          var holdPix = await sampleCloseContrast(page);
+          log(holdPix.ok, 'Close contrast ' + holds[p].name + ' ' + label,
+            holdPix.ratio.toFixed(2) + ':1 fg=' + (holdPix.fg && holdPix.fg.map(function (n) { return Math.round(n); }).join(',')) +
+            ' bg=' + (holdPix.bg && holdPix.bg.map(function (n) { return Math.round(n); }).join(',')));
         }
 
         if (size.w === 390) {
