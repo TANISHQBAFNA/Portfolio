@@ -8,6 +8,7 @@
  * glanceable three-stage rail (kept), worry question + subtext,
  * inline SVG illustration. No clay cast. No product chip.
  * Cream stays calm. Multiverse uses glitch plates on chrome + type.
+ * Section 03 (How our bank answers her) mounts after the coffee pin.
  * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
  */
@@ -55,7 +56,6 @@ window.Cbx300Case = (function () {
   ];
 
   var STUBS = [
-    { id: 'roles', num: '03', title: 'I designed for roles, not one user.' },
     { id: 'approvals', num: '04', title: 'My team can prepare. I need to approve.' },
     { id: 'money', num: '05', title: 'Can I afford to pay this supplier today?' },
     { id: 'permissions', num: '06', title: 'My team needs access, but not all access.' },
@@ -74,10 +74,11 @@ window.Cbx300Case = (function () {
      projects curtain. They are not a threshold snap. */
   var STEP_PX = 72;
   var GESTURE_QUIET = 80;
-  /* After a docked stage change, ignore input until the wheel has been
-     quiet this long. The quiet window starts when the in-place transition
-     ends. 180ms sits in the 150–200ms band that eats a flick's tail. */
-  var STEP_LOCK_MS = 180;
+  /* After a docked stage change, swallow the flick tail (~40ms) then
+     yield. A continuing roll must not wait for a quiet gap — pendingDir
+     carries the next stage as soon as the shift tween ends. */
+  var STEP_LOCK_MS = 40;
+  var ROLL_ARM_MS = 280;
   /* Idle in the curtain band, then ease to the nearer end (cover or 01). */
   var RISE_REST_MS = 220;
   var DOCK_PX = 4;
@@ -204,7 +205,19 @@ window.Cbx300Case = (function () {
        owns html --panel-flush for the projects rail (flush 1 after open). */
     if (pane) pane.style.setProperty('--panel-flush', flush);
     html.classList.toggle('is-cbx-growth-in', p > 0.08);
+    syncCloseInk();
     syncCoverParticles(rise);
+  }
+
+  /* Close ink is a function of the surface behind it: light on the dark
+     coffee sheet, dark on cream S03 / hero / anything after the pin. */
+  function syncCloseInk() {
+    var html = document.documentElement;
+    var pin = motion.pin || document.querySelector('[data-cbx-growth]');
+    var after = !!(pin && pin.classList.contains('is-after'));
+    var growth = html.classList.contains('is-cbx-growth-in');
+    var ans = html.classList.contains('is-cbx-ans-pin');
+    html.classList.toggle('is-cbx-close-light', growth && !ans && !after);
   }
 
   /* The constellation canvas sits under the docked curtain. Pause it
@@ -255,6 +268,7 @@ window.Cbx300Case = (function () {
     if (motion.riseTween && motion.riseTween.kill) motion.riseTween.kill();
     motion.riseTween = null;
     html.classList.remove('is-cbx-growth-in');
+    html.classList.remove('is-cbx-close-light');
     html.style.removeProperty('--cbx-rise');
     if (pane) pane.style.removeProperty('--panel-flush');
     motion.riseState.p = 0;
@@ -914,9 +928,19 @@ window.Cbx300Case = (function () {
     setIdlePlaying(!!(self && self.isActive) && riseTarget >= 0.92 && !motion.reduce);
   }
 
+  function releaseGrowth(pin, on) {
+    if (!pin) return;
+    /* z-index only. Do not change layout or rebuild the pin —
+       that reflowed the pin end and trapped wheel-up at the last stage. */
+    if (on) pin.classList.add('is-after');
+    else pin.classList.remove('is-after');
+    syncCloseInk();
+  }
+
   function kill() {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
+    if (window.Cbx300Answers && window.Cbx300Answers.kill) window.Cbx300Answers.kill();
     unbindStageStep();
     clearTimers();
     killIdle();
@@ -936,7 +960,7 @@ window.Cbx300Case = (function () {
     }
     motion.stage = null;
     if (motion.pin) {
-      motion.pin.classList.remove('is-static', 'is-cinematic', 'is-reduce');
+      motion.pin.classList.remove('is-static', 'is-cinematic', 'is-reduce', 'is-after');
       motion.pin.style.height = '';
       if (gsap) {
         morphNodes(motion.pin).forEach(function (node) {
@@ -1255,6 +1279,7 @@ window.Cbx300Case = (function () {
 
     function lockStep() {
       ctrl.locked = true;
+      ctrl.lockAt = Date.now();
       ctrl.travel = 0;
       ctrl.active = true;
       ctrl.committed = true;
@@ -1326,51 +1351,6 @@ window.Cbx300Case = (function () {
 
     /* Curtain is fully up from the dock line through stage 01.
        Resting there is stage 01, with the same lock as a full rise. */
-    function parkStage(st) {
-      var dock = railStops(st)[0];
-      ctrl.park = dock;
-      ctrl.settled = 0;
-      ctrl.origin = 0;
-      ctrl.originY = dock;
-      ctrl.kind = 'step';
-      lockStep();
-      window.scrollTo(0, dock);
-      publishSectionStep();
-      armUnlock();
-    }
-
-    function armSettle() {
-      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
-      ctrl.restTimer = window.setTimeout(function () {
-        ctrl.restTimer = 0;
-        if (ctrl.locked || ctrl.tween) return;
-        var st = pinTrigger();
-        if (!st) return;
-        var y = yNow();
-        var lo = st.start;
-        var hi = dockScrollY(st);
-        var dock = railStops(st)[0];
-        if (y > hi - 2 && y < dock - DOCK_PX) {
-          parkStage(st);
-          return;
-        }
-        if (y < lo - 2 || y > hi + 2) return;
-        if (y <= lo + 2 || y >= hi - 2) return;
-        var towardDock = (hi - y) <= (y - lo);
-        ctrl.settled = towardDock ? 0 : -1;
-        if (!towardDock) {
-          easeTo(lo);
-          return;
-        }
-        easeTo(dock, {
-          onComplete: function () {
-            var live = pinTrigger();
-            if (live) parkStage(live);
-          }
-        });
-      }, RISE_REST_MS);
-    }
-
     function scrubCurtain(st, rails, y, dy) {
       if (!ctrl.locked) killTween();
       ctrl.kind = 'rise';
@@ -1402,7 +1382,6 @@ window.Cbx300Case = (function () {
         return;
       }
       window.scrollTo(0, next);
-      armSettle();
     }
 
     function dockedAt(y, rails) {
@@ -1502,11 +1481,18 @@ window.Cbx300Case = (function () {
           syncScrubPose();
           resumeIdle();
           publishSectionStep();
-          ctrl.lastInput = Date.now();
-          armUnlock();
           if (dir) {
             var st = pinTrigger();
             if (st) commitStep(railStops(st), ctrl.settled, dir);
+            return;
+          }
+          ctrl.locked = false;
+          ctrl.travel = 0;
+          ctrl.active = false;
+          ctrl.committed = false;
+          if (ctrl.unlockTimer) {
+            window.clearTimeout(ctrl.unlockTimer);
+            ctrl.unlockTimer = 0;
           }
         }
       });
@@ -1610,19 +1596,39 @@ window.Cbx300Case = (function () {
       if (!st || !dy) return false;
       var y = yNow();
       if (y <= st.start + 1 && dy < 0) return false;
+      /* Yield native wheel only going DOWN past the pin so S03 can be
+         reached. Yielding on the way UP trapped the last coffee stage:
+         one notch left the pin, the next snapped back to st.end. */
       if (y >= st.end - 1 && dy > 0) return false;
       if (!inBand(st, y)) return false;
-      noteInput();
+      var rails = railStops(st);
+      var last = rails[rails.length - 1];
+      if (y > last + DOCK_PX && dy > 0) return false;
+      if (dockedAt(y, rails) >= rails.length - 1 && dy > 0) return false;
       if (event.cancelable) event.preventDefault();
-      if (!ctrl.locked && ctrl.tween) {
+      if (ctrl.locked) {
+        if (ctrl.tween) {
+          /* A continuing roll (events still arriving after the flick
+             tail) queues the next stage so there is no quiet gap. */
+          if (Date.now() - (ctrl.lockAt || 0) > ROLL_ARM_MS) {
+            ctrl.pendingDir = dy > 0 ? 1 : -1;
+          }
+          return true;
+        }
+        ctrl.locked = false;
+        ctrl.travel = 0;
+        ctrl.active = false;
+        ctrl.committed = false;
+        if (ctrl.unlockTimer) {
+          window.clearTimeout(ctrl.unlockTimer);
+          ctrl.unlockTimer = 0;
+        }
+      }
+      noteInput();
+      if (ctrl.tween) {
         killTween();
         y = yNow();
       }
-      if (ctrl.locked) {
-        if (!ctrl.tween) armUnlock();
-        return true;
-      }
-      var rails = railStops(st);
       var dock = dockedAt(y, rails);
       if (y < rails[0] - 0.5) {
         scrubCurtain(st, rails, y, dy);
@@ -1632,7 +1638,34 @@ window.Cbx300Case = (function () {
         scrubCurtain(st, rails, y, dy);
         return true;
       }
+      if (y > last + DOCK_PX && dy < 0) {
+        window.scrollTo(0, last);
+        ctrl.active = true;
+        ctrl.kind = 'step';
+        ctrl.origin = rails.length - 1;
+        ctrl.originY = last;
+        ctrl.park = last;
+        ctrl.settled = rails.length - 1;
+        ctrl.travel = 0;
+        return true;
+      }
       if (dock < 0) {
+        if (dy < 0) {
+          var prev = -1;
+          var i;
+          for (i = rails.length - 1; i >= 0; i -= 1) {
+            if (rails[i] < y - DOCK_PX) {
+              prev = i;
+              break;
+            }
+          }
+          if (prev < 0) {
+            scrubCurtain(st, rails, y, dy);
+            return true;
+          }
+          commitStep(rails, Math.min(rails.length - 1, prev + 1), -1);
+          return true;
+        }
         var near = nearestRailIndex(y, rails);
         if (near > 2) near = 2;
         window.scrollTo(0, rails[near]);
@@ -1664,6 +1697,9 @@ window.Cbx300Case = (function () {
 
     function onWheel(event) {
       if (event.ctrlKey || event.metaKey) return;
+      /* Section 03 owns the wheel while its pin is active. Past S02 the
+         native document scroller must keep moving — do not preventDefault. */
+      if (document.documentElement.classList.contains('is-cbx-ans-pin')) return;
       handleDelta(wheelPixels(event), event);
     }
 
@@ -1726,6 +1762,7 @@ window.Cbx300Case = (function () {
       }
       if (dock >= rails.length - 1 && dir > 0) {
         if (event.cancelable) event.preventDefault();
+        animateTo(st.end + 8);
         return;
       }
       if (event.cancelable) event.preventDefault();
@@ -1762,13 +1799,6 @@ window.Cbx300Case = (function () {
     ctrl.onTouchEnd = onTouchEnd;
     function onScroll() {
       publishSectionStep();
-      if (ctrl.tween || ctrl.locked) return;
-      var st = pinTrigger();
-      if (!st) return;
-      var y = yNow();
-      var hi = dockScrollY(st);
-      var dock = railStops(st)[0];
-      if (y > hi - 2 && y < dock - DOCK_PX) armSettle();
     }
 
     ctrl.onScroll = onScroll;
@@ -1895,6 +1925,9 @@ window.Cbx300Case = (function () {
           if (!self.isActive) {
             tweenCbxRise(self.progress >= 1 ? 1 : 0, true);
             setIdlePlaying(false);
+            releaseGrowth(pin, self.progress >= 1);
+          } else {
+            releaseGrowth(pin, false);
           }
           if (self.isActive) publishSectionStep();
         },
@@ -1989,6 +2022,7 @@ window.Cbx300Case = (function () {
         if (ScrollTrigger) {
           watchSteps(cover, pin, opts.onStep);
         }
+        bindAnswers(world, opts);
         return;
       }
 
@@ -2003,16 +2037,26 @@ window.Cbx300Case = (function () {
 
       bindCinematic(world, opts);
       if (!motion.reduce) armIdle(pin);
+      bindAnswers(world, opts);
       whenImages(pin, refreshSoon);
     }
 
     fillIllos(pin, afterIllos);
   }
 
+  function bindAnswers(world, opts) {
+    if (!window.Cbx300Answers || !window.Cbx300Answers.bind) return;
+    window.Cbx300Answers.bind(world, {
+      onStep: opts && opts.onStep,
+      page: opts && opts.page,
+      reduce: motion.reduce
+    });
+  }
+
   function liveCount(world) {
-    if (!world) return 2;
+    if (!world) return 3;
     var n = world.querySelectorAll('[data-cbx-live]').length;
-    return n || 2;
+    return n || 3;
   }
 
   function mount(world, project) {
@@ -2026,6 +2070,9 @@ window.Cbx300Case = (function () {
     stage.appendChild(buildCover(project));
     world.appendChild(stage);
     world.appendChild(buildGrowth());
+    if (window.Cbx300Answers && window.Cbx300Answers.build) {
+      world.appendChild(window.Cbx300Answers.build());
+    }
     world.appendChild(buildStubs());
     fillIllos(world, function () { armGlitch(world, { chrome: false }); });
     armGlitch(world, { chrome: false });
@@ -2043,6 +2090,7 @@ window.Cbx300Case = (function () {
     kill: kill,
     armGlitch: armGlitch,
     applyCbxRise: applyCbxRise,
+    syncCloseInk: syncCloseInk,
     applyBeat: applyBeat,
     beatIndexFromProgress: beatIndexFromProgress,
     pinSnapProgress: pinSnapProgress,

@@ -796,7 +796,7 @@ window.ProjectStudy = (function () {
       if (window.Cbx300Case && window.Cbx300Case.armGlitch) {
         window.Cbx300Case.armGlitch(world);
       }
-      var bindOpts = { onStep: setStep, headerOffset: headPx };
+      var bindOpts = { onStep: setStep, headerOffset: headPx, page: pendingPage };
       if (caseMount && caseMount.bind) caseMount.bind(bindOpts);
       else if (window.Cbx300Case && window.Cbx300Case.bind) window.Cbx300Case.bind(world, bindOpts);
     }
