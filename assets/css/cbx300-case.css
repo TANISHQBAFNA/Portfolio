@@ -1543,6 +1543,14 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   height: 780px;
 }
 
+/* Spot Y is ~12–32 during the phone-hero hold, so the default
+   top:-14 hangs the In focus pill into Close and the 03 header.
+   Drop it below the header row. Ch3 .is-both stays put. */
+.cbx-ans__scene.is-phone .cbx-vfl {
+  left: 16px;
+  top: 72px;
+}
+
 .cbx-ans__scene.is-both .cbx-desk {
   z-index: 2;
   left: 48px;

@@ -550,7 +550,12 @@ window.Cbx300Answers = (function () {
     if (ch.hero === 'phone' && phoneEl) {
       R = stageRect(phoneEl, inner, scale);
       hh = Math.max(1, R.btm - R.y);
-      s = Math.min(d.w / Math.max(1, R.r - R.x), (STAGE_H - 56) / hh);
+      /* Header pill bottom is 74 on the 1440 stage. Keep ≥12px of
+         viewport gap under it (same as 390) so 9:41 is not covered.
+         NCOL pointers stay put; only the zoom dest drops. */
+      var minTop = 74 + 12 / Math.max(scale, 0.01);
+      var maxH = STAGE_H - 12 - minTop;
+      s = Math.min(d.w / Math.max(1, R.r - R.x), maxH / hh, (STAGE_H - 56) / hh);
       var deskR = deskEl ? stageRect(deskEl, inner, scale) : null;
       var worldLeft = deskR ? Math.min(R.x, deskR.x) : R.x;
       tx = d.x - worldLeft * s;
@@ -561,6 +566,7 @@ window.Cbx300Answers = (function () {
       if (mappedPhoneLeft < d.x) tx += d.x - mappedPhoneLeft;
       hh *= s;
       y0 = d.cy - hh / 2;
+      if (y0 < minTop) y0 = minTop;
       ty = y0 - R.y * s;
     } else {
       var nodes = [];

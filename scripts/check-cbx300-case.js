@@ -70,13 +70,13 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s106') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s107') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s88') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(index.indexOf('cbx300-answers.js?v=s23') !== -1, 'index.html missing answers module');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s24') !== -1, 'index.html missing answers module');
   assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s106') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s107') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s88') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s23') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s24') !== -1, 'multiverse missing answers module');
   assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv10') !== -1, 'multiverse missing case skin');
   assert.ok(index.indexOf('project-study.js?v=s46') !== -1, 'index.html missing study cache-bust');
   assert.ok(mvIndex.indexOf('project-study.js?v=s46') !== -1, 'multiverse missing study cache-bust');
@@ -923,8 +923,16 @@ check('S03 header title and labels sit on a dark scrim with solid cream ink', fu
   assert.ok(phoneBlock.indexOf('var(--study-head') !== -1, '390 phone must clear the study head');
   var wheel = read('scripts/check-cbx300-wheel.js');
   assert.ok(wheel.indexOf('sampleTextContrast') !== -1, 'wheel check must pixel-sample S03 header contrast');
-  assert.ok(wheel.indexOf('headerPhoneGap') !== -1, 'wheel check must fail if the 390 header sits on the phone');
+  assert.ok(wheel.indexOf('headerPhoneGap') !== -1, 'wheel check must fail if the header sits on the phone');
+  assert.ok(wheel.indexOf('vflCollisions') !== -1, 'wheel check must bbox-check In focus vs Close and the header pill');
+  assert.ok(wheel.indexOf('gap >= 12') !== -1, 'header vs phone gap must be 12px at every hold');
   assert.ok(wheel.indexOf('closeCovers') !== -1, 'wheel check must fail if Close covers hero or coffee nav at 390');
+  var phoneVfl = cssBlock(css, '.cbx-ans__scene.is-phone .cbx-vfl');
+  assert.ok(phoneVfl, 'phone-hero In focus must have its own offset');
+  assert.ok(/top:\s*72px/.test(phoneVfl), 'In focus must sit below the header pill on phone-hero holds');
+  assert.ok(!/top:\s*-14px/.test(phoneVfl), 'In focus must not hang into Close / 03');
+  assert.ok(answers.indexOf('74 + 12 / Math.max(scale') !== -1,
+    'phone-hero zoom must keep 12px viewport gap under the header pill');
 });
 
 check('continuous wheel steps coffee stages without a quiet pause', function () {

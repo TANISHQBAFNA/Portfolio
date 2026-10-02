@@ -559,12 +559,71 @@ async function headerPhoneGap(page) {
     if (a.height < 4 || b.height < 8 || a.bottom < 0 || a.top > 160) {
       return { ok: true, skip: true };
     }
+    var overlapX = a.left < b.right && a.right > b.left;
     var gap = b.top - a.bottom;
     return {
-      ok: gap >= 6,
+      ok: !overlapX || gap >= 12,
+      skip: false,
+      overlapX: overlapX,
       gap: Math.round(gap),
       lab: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
       phone: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
+    };
+  });
+}
+
+async function vflCollisions(page) {
+  return page.evaluate(function () {
+    function box(el) {
+      if (!el) return null;
+      var r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return null;
+      return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height };
+    }
+    function hit(a, b) {
+      return !!(a && b && a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t);
+    }
+    function area(a, b) {
+      if (!hit(a, b)) return 0;
+      return (Math.min(a.r, b.r) - Math.max(a.l, b.l)) * (Math.min(a.b, b.b) - Math.max(a.t, b.t));
+    }
+    function roundBox(b) {
+      return b ? [Math.round(b.l), Math.round(b.t), Math.round(b.r), Math.round(b.b)] : null;
+    }
+    var pin = document.querySelector('[data-cbx-answers]');
+    var scene = pin && pin.querySelector('.cbx-ans__scene:not([hidden])');
+    var vfl = scene && scene.querySelector('.cbx-vfl');
+    var st = vfl && window.getComputedStyle(vfl);
+    if (!vfl || !st || st.display === 'none' || st.visibility === 'hidden' || parseFloat(st.opacity) < 0.1) {
+      return { ok: true, skip: true, reason: 'hidden' };
+    }
+    var vb = box(vfl);
+    if (!vb) return { ok: true, skip: true, reason: 'empty' };
+    var closeB = box(document.querySelector('.study__close, [data-study-close]'));
+    var labEl = document.querySelector('.cbx-ans__lab');
+    var labB = box(labEl);
+    var numB = box(labEl && labEl.querySelector('.cbx-ans__num'));
+    var titleB = box(labEl && labEl.querySelector('.cbx-ans__title'));
+    var phoneB = box(scene.querySelector('.cbx-phone'));
+    var closeHit = hit(vb, closeB);
+    var labHit = hit(vb, labB);
+    var numHit = hit(vb, numB);
+    var titleHit = hit(vb, titleB);
+    var va = vb.w * vb.h;
+    return {
+      ok: !closeHit && !labHit && !numHit && !titleHit,
+      skip: false,
+      vfl: roundBox(vb),
+      close: roundBox(closeB),
+      lab: roundBox(labB),
+      num: roundBox(numB),
+      title: roundBox(titleB),
+      phone: roundBox(phoneB),
+      closePct: va ? Math.round(area(vb, closeB) / va * 100) : 0,
+      labPct: va ? Math.round(area(vb, labB) / va * 100) : 0,
+      numPct: va ? Math.round(area(vb, numB) / va * 100) : 0,
+      titlePct: va ? Math.round(area(vb, titleB) / va * 100) : 0,
+      phonePct: va ? Math.round(area(vb, phoneB) / va * 100) : 0
     };
   });
 }
@@ -958,11 +1017,25 @@ async function main() {
                 ' bg=' + (labPix.bg && labPix.bg.map(function (n) { return Math.round(n); }).join(',')));
             }
           }
-          if (size.w === 1440 && holds[p].name.indexOf('hold') !== -1) {
+          if (holds[p].name.indexOf('hold') !== -1 && size.w !== 390) {
             var ov = await closeLabOverlap(page);
             log(ov.ok, 'Close vs S03 header ' + holds[p].name + ' ' + label,
               ov.skip ? 'header off-screen close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab)
                 : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab));
+            var vflHit = await vflCollisions(page);
+            log(vflHit.ok, 'In focus vs Close/header ' + holds[p].name + ' ' + label,
+              vflHit.skip ? vflHit.reason
+                : 'vfl=' + JSON.stringify(vflHit.vfl) +
+                  ' close=' + JSON.stringify(vflHit.close) + ' ' + vflHit.closePct + '%' +
+                  ' lab=' + JSON.stringify(vflHit.lab) + ' ' + vflHit.labPct + '%' +
+                  ' num=' + JSON.stringify(vflHit.num) + ' ' + vflHit.numPct + '%' +
+                  ' title=' + JSON.stringify(vflHit.title) + ' ' + vflHit.titlePct + '%' +
+                  ' phone=' + JSON.stringify(vflHit.phone) + ' ' + vflHit.phonePct + '%');
+            var deskGap = await headerPhoneGap(page);
+            log(deskGap.ok, 'header vs phone ' + holds[p].name + ' ' + label,
+              deskGap.skip ? 'skip'
+                : 'gap=' + deskGap.gap + ' overlapX=' + deskGap.overlapX +
+                  ' lab=' + JSON.stringify(deskGap.lab) + ' phone=' + JSON.stringify(deskGap.phone));
             await shot(page, 's03-' + holds[p].name + '-' + theme.id + '-' + size.w);
           }
           var holdHit = await closeHit(page);
