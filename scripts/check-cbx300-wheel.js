@@ -26,11 +26,15 @@ var SIZES = [
   { w: 1440, h: 900 },
   { w: 1280, h: 720 },
   { w: 390, h: 844 }
-];
+].filter(function (s) {
+  return !process.env.CBX_W || String(s.w) === process.env.CBX_W;
+});
 var THEMES = [
   { id: 'cream', file: 'index.html' },
   { id: 'multiverse', file: 'index-multiverse.html' }
-];
+].filter(function (t) {
+  return !process.env.CBX_THEME || t.id === process.env.CBX_THEME;
+});
 
 var failed = 0;
 var passed = 0;
@@ -371,19 +375,36 @@ function avgRgbBand(png, from, to) {
 }
 
 async function closeLabOverlap(page) {
-  return page.evaluate(function () {
-    var btn = document.querySelector('.study__close, [data-study-close]');
-    var lab = document.querySelector('.cbx-ans__lab');
-    if (!btn || !lab) return { ok: true, skip: true };
-    var a = btn.getBoundingClientRect();
-    var b = lab.getBoundingClientRect();
-    var hit = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-    return {
-      ok: !hit,
-      close: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
-      lab: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
-    };
-  });
+  var tries = 0;
+  var last = { ok: false, skip: true };
+  while (tries < 4) {
+    last = await page.evaluate(function () {
+      var btn = document.querySelector('.study__close, [data-study-close]');
+      var lab = document.querySelector('.cbx-ans__lab');
+      var pin = document.querySelector('[data-cbx-answers]');
+      if (!btn || !lab) return { ok: true, skip: true };
+      var pinned = document.documentElement.classList.contains('is-cbx-ans-pin') &&
+        pin && window.getComputedStyle(pin).position === 'fixed' &&
+        Math.abs(pin.getBoundingClientRect().top) < 8;
+      var a = btn.getBoundingClientRect();
+      var b = lab.getBoundingClientRect();
+      var hit = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      return {
+        ok: pinned && !hit && b.top >= 0 && b.top < 120,
+        pinned: pinned,
+        close: [Math.round(a.left), Math.round(a.top), Math.round(a.right), Math.round(a.bottom)],
+        lab: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]
+      };
+    });
+    if (last.ok) return last;
+    await page.evaluate(function () {
+      if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
+      if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
+    });
+    await sleep(280);
+    tries += 1;
+  }
+  return last;
 }
 
 async function pinRange(page) {
@@ -719,8 +740,8 @@ async function main() {
             ' bg=' + (holdPix.bg && holdPix.bg.map(function (n) { return Math.round(n); }).join(',')));
           if (size.w === 1440 && holds[p].name.indexOf('hold') !== -1) {
             var ov = await closeLabOverlap(page);
-            log(ov.ok && (!ov.lab || ov.lab[1] < 120), 'Close vs S03 header ' + holds[p].name + ' ' + label,
-              ov.skip ? 'skip' : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab));
+            log(ov.ok, 'Close vs S03 header ' + holds[p].name + ' ' + label,
+              ov.skip ? 'skip' : 'close=' + JSON.stringify(ov.close) + ' lab=' + JSON.stringify(ov.lab) + (ov.pinned ? ' pinned' : ' unpinned'));
           }
         }
 
