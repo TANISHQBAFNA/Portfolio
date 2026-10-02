@@ -97,11 +97,17 @@ function parseRgb(str) {
 
 async function waitForStudy(page) {
   await page.waitForFunction(function () {
+    var ans = document.querySelector('[data-cbx-answers]');
+    var st = window.ScrollTrigger && window.ScrollTrigger.getAll && window.ScrollTrigger.getAll();
     return document.documentElement.classList.contains('is-study-page') &&
-      document.querySelector('[data-cbx-growth]') &&
-      document.querySelector('[data-cbx-answers]');
-  }, { timeout: 20000 });
-  await sleep(600);
+      ans && ans.getAttribute('data-ready') === '1' &&
+      st && st.length >= 2 &&
+      st.some(function (t) {
+        return t.trigger && t.trigger.hasAttribute && t.trigger.hasAttribute('data-cbx-answers') &&
+          t.end > t.start + 200;
+      });
+  }, { timeout: 25000 });
+  await sleep(200);
 }
 
 async function openStudy(page, theme, size) {
@@ -137,7 +143,7 @@ async function walkUp(page, gapMs) {
   await sleep(200);
   var hist = [await yNow(page)];
   var i;
-  var maxNotches = Math.max(80, Math.ceil(hist[0] / 40) + 40);
+  var maxNotches = 400;
   for (i = 0; i < maxNotches; i += 1) {
     var before = hist[hist.length - 1];
     if (before <= 1) break;
@@ -169,12 +175,12 @@ async function walkUp(page, gapMs) {
 async function walkDown(page, gapMs) {
   await page.evaluate(function () { window.scrollTo(0, 0); });
   await sleep(200);
-  var ceiling = await maxY(page);
   var hist = [await yNow(page)];
   var i;
-  var maxNotches = Math.max(80, Math.ceil(ceiling / 40) + 40);
+  var maxNotches = 400;
   for (i = 0; i < maxNotches; i += 1) {
     var before = hist[hist.length - 1];
+    var ceiling = await maxY(page);
     if (before >= ceiling - 8) break;
     await wheel(page, 100);
     await sleep(gapMs);
@@ -185,7 +191,7 @@ async function walkDown(page, gapMs) {
     }
   }
   var last = hist[hist.length - 1];
-  if (last < 80) {
+  if (last < 400) {
     return { ok: false, reason: 'did not leave the hero (y=' + last + ')', hist: hist };
   }
   return { ok: true, hist: hist, end: last };
@@ -213,21 +219,26 @@ async function closeHit(page) {
 async function pointerSheet(page) {
   return page.evaluate(function () {
     var vh = window.innerHeight;
-    var scene = document.querySelector('.cbx-ans__scene:not([hidden])') || document.querySelector('.cbx-ans__scene');
+    var scene = document.querySelector('.cbx-ans__scene:not([hidden])') ||
+      document.querySelector('.cbx-ans__scene');
     if (!scene) return { ok: false, reason: 'no scene' };
-    var ptrs = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__ptr'));
-    var current = ptrs.filter(function (p) { return p.classList.contains('is-current'); });
+    var ptrs = Array.prototype.slice.call(document.querySelectorAll('.cbx-ans__ptr'));
+    var current = ptrs.filter(function (p) {
+      var sc = p.closest && p.closest('.cbx-ans__scene');
+      return p.classList.contains('is-current') && sc && !sc.hasAttribute('hidden');
+    });
     var visible = ptrs.filter(function (p) {
       var r = p.getBoundingClientRect();
       var st = window.getComputedStyle(p);
-      return st.visibility !== 'hidden' && st.opacity !== '0' && r.height > 8;
+      var op = parseFloat(st.opacity);
+      return st.visibility !== 'hidden' && op > 0.2 && r.height > 8 && r.bottom > 0 && r.top < vh;
     });
     var bottoms = visible.map(function (p) { return Math.round(p.getBoundingClientRect().bottom); });
     var copy = visible[0] && visible[0].querySelector('.cbx-ans__pd');
     var fs = copy ? parseFloat(window.getComputedStyle(copy).fontSize) : 0;
     var overflow = bottoms.some(function (b) { return b > vh + 1; });
     return {
-      ok: current.length <= 1 && visible.length <= 1 && !overflow && fs >= 15,
+      ok: visible.length === 1 && current.length <= 1 && !overflow && fs >= 15,
       current: current.length,
       visible: visible.length,
       bottoms: bottoms,
@@ -338,14 +349,36 @@ async function main() {
         var label = theme.id + ' ' + size.w + 'x' + size.h;
         await openStudy(page, theme, size);
 
-        var down = await walkDown(page, 120);
+        var down = await walkDown(page, 200);
         log(down.ok, 'wheel down ' + label, down.ok ? 'end y=' + down.end : down.reason);
 
-        var up = await walkUp(page, 120);
+        var up = await walkUp(page, 200);
         log(up.ok, 'wheel up to 0 ' + label, up.ok ? 'notches=' + up.notches + ' from ' + up.start : up.reason);
         if (!up.ok) await shot(page, 'wheel-stuck-' + theme.id + '-' + size.w);
 
-        var positions = size.w === 1440 ? [1148, 2219] : size.w === 1280 ? [1775] : [];
+        var pinRange = await page.evaluate(function () {
+          var ScrollTrigger = window.ScrollTrigger;
+          var all = ScrollTrigger && ScrollTrigger.getAll ? ScrollTrigger.getAll() : [];
+          var i;
+          var s02 = null;
+          var s03 = null;
+          for (i = 0; i < all.length; i += 1) {
+            var t = all[i].trigger;
+            if (!t || !t.hasAttribute) continue;
+            if (t.hasAttribute('data-cbx-stage')) s02 = { start: all[i].start, end: all[i].end };
+            if (t.hasAttribute('data-cbx-answers')) s03 = { start: all[i].start, end: all[i].end };
+          }
+          return { s02: s02, s03: s03 };
+        });
+        var positions = [];
+        if (pinRange.s02) {
+          var span = pinRange.s02.end - pinRange.s02.start;
+          positions = [
+            Math.round(pinRange.s02.start + span * 0.28),
+            Math.round(pinRange.s02.start + span * 0.55),
+            Math.round(pinRange.s02.end - 8)
+          ];
+        }
         var p;
         for (p = 0; p < positions.length; p += 1) {
           await page.evaluate(function (y) { window.scrollTo(0, y); }, positions[p]);
@@ -383,28 +416,15 @@ async function main() {
         }
 
         if (size.w === 390) {
-          var ansTop = await page.evaluate(function () {
-            var el = document.querySelector('[data-cbx-answers]');
-            return el ? Math.round(window.scrollY + el.getBoundingClientRect().top + 40) : 0;
-          });
-          await page.evaluate(function (y) { window.scrollTo(0, y); }, ansTop);
-          await sleep(500);
-          var mid = await page.evaluate(function () {
-            var st = window.ScrollTrigger && window.ScrollTrigger.getAll
-              ? window.ScrollTrigger.getAll() : [];
-            var i;
-            for (i = 0; i < st.length; i += 1) {
-              if (st[i].trigger && st[i].trigger.hasAttribute('data-cbx-answers')) {
-                return Math.round(st[i].start + (st[i].end - st[i].start) * 0.35);
-              }
-            }
-            return Math.round(window.scrollY + 400);
-          });
-          await page.evaluate(function (y) { window.scrollTo(0, y); }, mid);
-          await sleep(400);
+          var s03 = pinRange.s03;
+          var holdY = s03
+            ? Math.round(s03.start + (s03.end - s03.start) * 0.22)
+            : 0;
+          await page.evaluate(function (y) { window.scrollTo(0, y); }, holdY);
+          await sleep(700);
           var sheet = await pointerSheet(page);
           log(sheet.ok, '390 one-card sheet ' + theme.id,
-            'visible=' + sheet.visible + ' bottoms=' + JSON.stringify(sheet.bottoms) + ' font=' + sheet.font);
+            'visible=' + sheet.visible + ' bottoms=' + JSON.stringify(sheet.bottoms) + ' font=' + sheet.font + ' y=' + holdY);
           await shot(page, 's03-390-sheet-' + theme.id);
         }
       }

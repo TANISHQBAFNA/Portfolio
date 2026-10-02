@@ -1042,24 +1042,28 @@ window.Cbx300Answers = (function () {
       gsap.set(scene, { opacity: k ? 0 : 1 });
       if (k) scene.setAttribute('hidden', '');
       else scene.removeAttribute('hidden');
+      if (ptrs[0]) {
+        ptrs[0].classList.add('is-current');
+        if (!k) gsap.set(ptrs[0], { opacity: 1, y: 0 });
+      }
       if (k) {
         tl.set(scene, { opacity: 1 }, T);
-        tl.call(function () { scene.removeAttribute('hidden'); }, null, T);
         if (k) tl.set(scenes[k - 1], { opacity: 0 }, T + 0.15);
-        if (k) tl.call(function () { scenes[k - 1].setAttribute('hidden', ''); }, null, T + 0.2);
         T += 0.25;
       }
       ptrs.forEach(function (p, i) {
         var t = T + i * 0.9;
-        if (i === 0) p.classList.add('is-current');
-        else p.classList.remove('is-current');
         if (mk[i]) tl.fromTo(mk[i], { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)' }, t);
         tl.call(function () {
           ptrs.forEach(function (node, n) {
             node.classList.toggle('is-current', n === i);
           });
         }, null, t);
-        tl.fromTo(p, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, t + 0.08);
+        if (k === 0 && i === 0) {
+          gsap.set(p, { opacity: 1, y: 0 });
+        } else {
+          tl.fromTo(p, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, t + 0.08);
+        }
       });
       T += 0.9 * 3 + 1.6;
     });
@@ -1077,6 +1081,11 @@ window.Cbx300Answers = (function () {
       onToggle: function (self) { pinActive(self.isActive); },
       onUpdate: function (self) {
         if (motion.onStep) motion.onStep(self.progress > 0.02 ? 2 : 1);
+        scenes.forEach(function (scene) {
+          var on = parseFloat(scene.style.opacity || '0') > 0.05;
+          if (on) scene.removeAttribute('hidden');
+          else scene.setAttribute('hidden', '');
+        });
       }
     });
     motion.tween = tl;
