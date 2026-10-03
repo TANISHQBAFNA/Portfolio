@@ -2479,6 +2479,9 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-ans.is-static .cbx-ans__mkr {
   opacity: 0;
   transition: opacity .22s linear;
+  /* The site-wide reduced-motion reset sets 0.001ms !important; this is the
+     one deliberate short fade, so it has to out-rank it. */
+  transition-duration: .22s !important;
 }
 .cbx-ans.is-static .cbx-ans__step.is-current,
 .cbx-ans.is-static .cbx-ans__cn.is-current,
