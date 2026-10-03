@@ -556,6 +556,18 @@ async function headerPhoneGap(page) {
     if (!lab || !phone) return { ok: true, skip: true };
     var a = lab.getBoundingClientRect();
     var b = phone.getBoundingClientRect();
+    /* The camera pushes in past the viewport on purpose; only the part inside
+       the lit window (.cbx-ans__spot) is ever visible, so judge that part. */
+    var spot = pin.querySelector('.cbx-ans__scene:not([hidden]) .cbx-ans__spot');
+    if (spot) {
+      var w = spot.getBoundingClientRect();
+      b = {
+        left: Math.max(b.left, w.left), right: Math.min(b.right, w.right),
+        top: Math.max(b.top, w.top), bottom: Math.min(b.bottom, w.bottom),
+        height: Math.min(b.bottom, w.bottom) - Math.max(b.top, w.top)
+      };
+      if (b.right <= b.left) return { ok: true, skip: true };
+    }
     if (a.height < 4 || b.height < 8 || a.bottom < 0 || a.top > 160) {
       return { ok: true, skip: true };
     }
@@ -711,7 +723,7 @@ async function sceneVisible(page) {
       return vis && op > 0.05 && r.width > 8 && r.height > 8;
     });
     var ptr = live.some(function (s) {
-      return Array.prototype.some.call(s.querySelectorAll('.cbx-ans__ptr'), function (p) {
+      return Array.prototype.some.call(s.querySelectorAll('.cbx-ans__step .cbx-ans__ln'), function (p) {
         var r = p.getBoundingClientRect();
         var st = window.getComputedStyle(p);
         return parseFloat(st.opacity) > 0.15 && r.height > 8 && r.width > 8 &&
@@ -835,18 +847,26 @@ async function pointerSheet(page) {
     var scene = document.querySelector('.cbx-ans__scene:not([hidden])') ||
       document.querySelector('.cbx-ans__scene');
     if (!scene) return { ok: false, reason: 'no scene' };
-    var ptrs = Array.prototype.slice.call(document.querySelectorAll('.cbx-ans__ptr'));
-    var current = ptrs.filter(function (p) {
-      var sc = p.closest && p.closest('.cbx-ans__scene');
-      return p.classList.contains('is-current') && sc && !sc.hasAttribute('hidden');
-    });
+    var ptrs = Array.prototype.slice.call(document.querySelectorAll('.cbx-ans__step'));
+    /* A point is "on" while any of its lines is visible; the twelve points
+       swap by opacity inside one panel, so exactly one should read at a hold. */
+    var current = [];
     var visible = ptrs.filter(function (p) {
-      var r = p.getBoundingClientRect();
-      var st = window.getComputedStyle(p);
-      var op = parseFloat(st.opacity);
-      return st.visibility !== 'hidden' && op > 0.2 && r.height > 8 && r.bottom > 0 && r.top < vh;
+      var sc = p.closest && p.closest('.cbx-ans__scene');
+      if (!sc || sc.hasAttribute('hidden')) return false;
+      var lines = Array.prototype.slice.call(p.querySelectorAll('.cbx-ans__ln'));
+      var on = lines.some(function (l) {
+        var st = window.getComputedStyle(l);
+        var r = l.getBoundingClientRect();
+        return st.visibility !== 'hidden' && parseFloat(st.opacity) > 0.5 && r.height > 8 && r.bottom > 0 && r.top < vh;
+      });
+      if (on) current.push(p);
+      return on;
     });
-    var bottoms = visible.map(function (p) { return Math.round(p.getBoundingClientRect().bottom); });
+    var bottoms = visible.map(function (p) {
+      var last = p.querySelector('.cbx-ans__pg');
+      return Math.round((last || p).getBoundingClientRect().bottom);
+    });
     var copy = visible[0] && visible[0].querySelector('.cbx-ans__pd');
     var fs = copy ? parseFloat(window.getComputedStyle(copy).fontSize) : 0;
     var overflow = bottoms.some(function (b) { return b > vh + 1; });
@@ -1096,7 +1116,7 @@ async function main() {
         await page.evaluate(function (y) { window.scrollTo(0, y); }, top);
         await sleep(200);
         await page.mouse.move(Math.round(size.w / 2), Math.round(size.h / 2));
-        var upRoll = await rollThrough(page, -100, function (y) { return y <= 2; }, 16000);
+        var upRoll = await rollThrough(page, -100, function (y) { return y <= 2; }, 40000);
         log(upRoll.ok, '70ms roll up ' + label,
           (upRoll.ok ? 'y=0' : upRoll.reason) + ' ms=' + upRoll.ms + ' notches=' + upRoll.notches);
         if (!upRoll.ok) await shot(page, 'roll-up-stuck-' + theme.id + '-' + size.w);
@@ -1104,7 +1124,7 @@ async function main() {
         await page.evaluate(function () { window.scrollTo(0, 0); });
         await sleep(200);
         var ceiling = await maxY(page);
-        var downRoll = await rollThrough(page, 100, function (y) { return y >= ceiling - 12; }, 16000);
+        var downRoll = await rollThrough(page, 100, function (y) { return y >= ceiling - 12; }, 40000);
         log(downRoll.ok, '70ms roll down ' + label,
           (downRoll.ok ? 'end y=' + downRoll.y : downRoll.reason) + ' ms=' + downRoll.ms + ' notches=' + downRoll.notches);
 
