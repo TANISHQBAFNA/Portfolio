@@ -228,7 +228,8 @@ check('Section 03 camera into the screen, phone-hero then both', function () {
   assert.ok(css.indexOf('font-size: 26px') !== -1, 'pointer worry must be 26px Newsreader on the stage');
   assert.ok(css.indexOf('font-size: 44px') !== -1, 'chapter title must be 44px Newsreader on the stage');
   assert.ok(css.indexOf('text-overflow: ellipsis') === -1, 'client names must not ellipsize');
-  assert.ok(answers.indexOf('var SCRUB = 0.8') !== -1, 'timeline scrub must be 0.6–1');
+  assert.ok(/var SCRUB = (0\.[6-9]\d*|1(\.0)?);/.test(answers), 'timeline scrub must be 0.6–1');
+  assert.ok(answers.indexOf('function settleSnap') !== -1 && /snap: settleSnap\(section, tl\)/.test(answers), 'scroll-end settle must be wired to both triggers');
   assert.ok(answers.indexOf('BACK') !== -1 && answers.indexOf('k < 2') !== -1, 'Ch3 must share the pull-back');
   assert.ok(pages.indexOf('y >= st.end - 1 && dy > 0') !== -1, 'S02 wheel must yield downward only, after the last stage');
   assert.ok(mvCase.indexOf('html.is-multiverse .cbx-ans {') !== -1, 'Multiverse answers skin missing');

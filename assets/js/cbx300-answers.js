@@ -26,7 +26,7 @@ window.Cbx300Answers = (function () {
   var ZOOM = 2.1;
   var GAP = 1.0;
   var OUT = 1.2;
-  var BACK = 2.1;
+  var BACK = 2.5;
   var HOLD = 5.3;
   var STEP = 5.0;
   var IN_DY = 30;
@@ -36,7 +36,11 @@ window.Cbx300Answers = (function () {
   var CURTAIN = 0.55;
   var DEST = { x: 48, w: 880, cy: 470 };
   var NCOL = { left: 984, width: 416 };
-  var SCRUB = 0.8;
+  var SCRUB = 1.0;
+  /* Scrub smoothing is bypassed only for a true jump (deep link, anchor);
+     a fast wheel stays smoothed so the glide never turns into a cut. */
+  var JUMP = 0.2;
+  var SETTLE_IN = 2.2;
 
   var motion = {
     mm: null,
@@ -865,11 +869,13 @@ window.Cbx300Answers = (function () {
      four pointers. Every tween is a fromTo with immediateRender:false so a
      scrub, a jump or a reverse always lands on the same pixels. Only
      transform and opacity animate (gsap-performance). Returns the end time. */
-  function addSteps(tl, l, bar, R0, start, stepTimes, hook) {
+  function addSteps(tl, l, bar, R0, start, stepTimes, hook, wins) {
     var cur = start;
     l.poses.forEach(function (q, i) {
       var t = R0 + i * STEP;
       if (stepTimes) stepTimes.push(+t.toFixed(3));
+      /* text of this point is still arriving until t + SETTLE_IN */
+      if (wins) wins.push([t, t + SETTLE_IN]);
       if (hook) hook(i, t);
       /* camera glide: previous pose to this one. Only the sharp camera moves;
          the dimmed duplicate behind it stays at the chapter pose so it is
@@ -897,6 +903,7 @@ window.Cbx300Answers = (function () {
     });
     var E = R0 + l.poses.length * STEP + 0.1;
     var last = l.poses.length - 1;
+    if (wins) wins.push([E, E + 1.25]);
     tl.fromTo(l.lines[last], { opacity: 1, y: 0, scale: 1 },
       { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, E);
     tl.fromTo([l.mk[last], l.rg[last]], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, E);
@@ -925,6 +932,7 @@ window.Cbx300Answers = (function () {
     var T = START;
     var k;
     var stepTimes = [];
+    var snapWins = [];
     var chWin = scenes.map(function () {
       return { appear: 0, gone: 1e6 };
     });
@@ -945,7 +953,8 @@ window.Cbx300Answers = (function () {
         tl.to(l.ctag, { opacity: 1, duration: 0.8, ease: 'sine.out' }, S0 + ZOOM - 0.3);
         var R0 = S0 + ZOOM + 0.1;
         tl.fromTo(l.panel, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', immediateRender: false }, S0 + ZOOM - 0.3);
-        var E = addSteps(tl, l, bars[k], R0, { x: Z.tx, y: Z.ty, s: Z.s }, stepTimes);
+        snapWins.push([S0 + ZOOM - 0.6, R0]);
+        var E = addSteps(tl, l, bars[k], R0, { x: Z.tx, y: Z.ty, s: Z.s }, stepTimes, null, snapWins);
         tl.to(l.ctag, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.5);
         tl.to(l.vf, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.7);
         var B = E + OUT + 0.05;
@@ -953,22 +962,26 @@ window.Cbx300Answers = (function () {
         if (k < 2) {
           var W = B + BACK + 0.1;
           var n = layers[k + 1];
-          tl.to(l.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0, duration: 0.4, ease: 'sine.in' }, W);
-          tl.to([l.sl, l.q], { opacity: 0.55, duration: 0.28, ease: 'sine.in' }, W);
+          /* Handoff, soft: the old device content and the old question
+             glide up and out; the new chapter is already on the same
+             pulled-back pose and its content and question glide in. The two
+             questions never overlap (old is gone before new has started). */
+          var dyOf = function (c) { return function (i) { return i ? c.qdy : c.sdy; }; };
+          tl.to(l.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0, duration: 0.7, ease: 'sine.inOut' }, W);
+          tl.fromTo([l.sl, l.q], { opacity: 1, y: dyOf(l) },
+            { opacity: 0, y: function (i) { return dyOf(l)(i) - 24; }, duration: 0.6, ease: 'power2.inOut', stagger: 0.06, immediateRender: false }, W - 0.15);
           tl.set(n.layers, { opacity: 0 }, W - 0.2);
           tl.set(n.scene, { opacity: 1 }, W - 0.2);
           chWin[k + 1].appear = W - 0.2;
-          chWin[k].gone = W + 0.5;
-          tl.fromTo([n.sl, n.q], { opacity: 0.55, y: function (i) { return (i ? n.qdy : n.sdy) + 10; } }, {
-            opacity: 1, y: function (i) { return i ? n.qdy : n.sdy; }, duration: 0.55, ease: 'sine.out', immediateRender: false
-          }, W);
-          tl.to([l.sl, l.q], { opacity: 0, duration: 0.25, ease: 'sine.in' }, W + 0.28);
-          tl.set(l.scene, { opacity: 0 }, W + 0.45);
-          tl.set(n.scene.querySelectorAll('.cbx-ans__cam'), { opacity: 1 }, W + 0.4);
-          tl.set(n.spot, { opacity: 0 }, W + 0.4);
-          tl.fromTo(n.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'sine.out' }, W + 0.4);
-          tl.fromTo(n.scene.querySelectorAll('.si.new, .cbx-si.is-new'), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.45, stagger: 0.1, ease: 'power2.out' }, W + 0.45);
-          tl.set(n.scene.querySelectorAll('.cbx-ans__dim, .cbx-ans__nbg'), { opacity: 0 }, W + 0.4);
+          chWin[k].gone = W + 0.95;
+          tl.fromTo([n.sl, n.q], { opacity: 0, y: function (i) { return dyOf(n)(i) + 26; } },
+            { opacity: 1, y: dyOf(n), duration: 0.85, ease: 'power3.out', stagger: 0.07, immediateRender: false }, W + 0.3);
+          tl.set(l.scene, { opacity: 0 }, W + 0.9);
+          tl.fromTo(n.scene.querySelectorAll('.cbx-ans__cam'), { opacity: 0 }, { opacity: 1, duration: 0.7, ease: 'sine.inOut', immediateRender: false }, W + 0.1);
+          tl.set(n.spot, { opacity: 0 }, W);
+          tl.fromTo(n.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'sine.inOut' }, W + 0.2);
+          tl.fromTo(n.scene.querySelectorAll('.si.new, .cbx-si.is-new'), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.55, stagger: 0.1, ease: 'power2.out' }, W + 0.55);
+          tl.set(n.scene.querySelectorAll('.cbx-ans__dim, .cbx-ans__nbg'), { opacity: 0 }, W);
           T = W + 1.2;
         } else {
           T = B + BACK + 0.6;
@@ -977,6 +990,7 @@ window.Cbx300Answers = (function () {
     }
     tl.to({}, { duration: 0.6 }, T);
     section._cbxWins = chWin;
+    section._cbxSnapWins = snapWins;
     section._cbxScenes = scenes;
     section.dataset.steps = JSON.stringify(stepTimes);
     return tl;
@@ -1077,9 +1091,47 @@ window.Cbx300Answers = (function () {
     var d = tl && tl.duration ? tl.duration() : 0;
     var target = Math.max(0, (progress || 0) * d);
     var now = tl && typeof tl.time === 'function' ? tl.time() : target;
-    var jump = d > 0 && Math.abs(now / d - (progress || 0)) > 0.03;
+    var jump = d > 0 && Math.abs(now / d - (progress || 0)) > JUMP;
     if (jump && typeof tl.time === 'function') tl.time(target);
     applySceneVisibility(section, target);
+  }
+
+  /* Scroll-end settle. The glide is scrubbed, so a reader who stops while a
+     point is still arriving would leave its text half-faded. When scrolling
+     ends inside one of those windows, ease on to the nearest settled state
+     in the direction they were travelling. Scrubbing and reversal are
+     untouched: any new scroll input cancels the settle. */
+  function settleSnap(section, tl) {
+    var merged = null;
+    function build() {
+      var w = (section._cbxSnapWins || []).slice().sort(function (a, b) { return a[0] - b[0]; });
+      merged = [];
+      w.forEach(function (x) {
+        var last = merged[merged.length - 1];
+        if (last && x[0] <= last[1] + 0.05) last[1] = Math.max(last[1], x[1]);
+        else merged.push([x[0], x[1]]);
+      });
+    }
+    return {
+      snapTo: function (value, self) {
+        if (!merged) build();
+        var d = tl.duration();
+        var t = value * d;
+        for (var i = 0; i < merged.length; i += 1) {
+          var a = merged[i][0];
+          var b = merged[i][1];
+          if (t > a + 0.06 && t < b - 0.06) {
+            var dir = self && self.direction ? self.direction : (t - a < b - t ? -1 : 1);
+            return (dir > 0 ? b : a) / d;
+          }
+        }
+        return value;
+      },
+      delay: 0.3,
+      duration: { min: 0.45, max: 1.0 },
+      ease: 'power2.inOut',
+      inertia: false
+    };
   }
 
   function bindCamera(section) {
@@ -1098,6 +1150,7 @@ window.Cbx300Answers = (function () {
       pinSpacing: true,
       pinType: 'fixed',
       scrub: SCRUB,
+      snap: settleSnap(section, tl),
       animation: tl,
       invalidateOnRefresh: false,
       anticipatePin: 1,
@@ -1254,25 +1307,29 @@ window.Cbx300Answers = (function () {
     var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
     var chWin = scenes.map(function () { return { appear: 0, gone: 1e6 }; });
     var stepTimes = [];
+    var snapWins = [];
     var T = 0.3;
     layers.forEach(function (l, k) {
       if (k) {
-        chWin[k].appear = T - 0.05;
-        chWin[k - 1].gone = T + 0.7;
-        tl.set(l.scene, { opacity: 1 }, T - 0.05);
+        /* the two chapters cross-fade (no hard swap) while the old panel
+           glides out and the new one glides in */
+        chWin[k].appear = T - 0.4;
+        chWin[k - 1].gone = T + 0.4;
+        tl.fromTo(l.scene, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut', immediateRender: false }, T - 0.35);
         tl.fromTo(l.panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, T);
       } else {
         tl.fromTo(l.panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, T);
       }
+      snapWins.push([T - 0.4, T + 0.2]);
       var E = addSteps(tl, l, bars[k], T + 0.2, { x: 0, y: 0, s: 1 }, stepTimes, l.swap ? function (i, t) {
         var sw = l.swap;
         if (!i || sw.dev[i] === sw.dev[i - 1]) return;
         var to = sw.dev[i];
         tl.fromTo(sw[to], { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut', immediateRender: false }, t + 0.35);
         tl.fromTo(sw[sw.dev[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, t);
-      } : null);
+      } : null, snapWins);
       if (k < layers.length - 1) {
-        tl.set(l.scene, { opacity: 0 }, E + 1.0);
+        tl.to(l.scene, { opacity: 0, duration: 0.8, ease: 'sine.inOut' }, E + 0.4);
         T = E + 1.0;
       } else {
         T = E + 0.8;
@@ -1280,6 +1337,7 @@ window.Cbx300Answers = (function () {
     });
     tl.to({}, { duration: 0.5 }, T);
     section._cbxWins = chWin;
+    section._cbxSnapWins = snapWins;
     section._cbxScenes = scenes;
     section.dataset.steps = JSON.stringify(stepTimes);
     var st = ScrollTrigger.create({
@@ -1290,6 +1348,7 @@ window.Cbx300Answers = (function () {
       pinSpacing: true,
       pinType: 'fixed',
       scrub: SCRUB,
+      snap: settleSnap(section, tl),
       animation: tl,
       refreshPriority: -1,
       onToggle: function (self) {
