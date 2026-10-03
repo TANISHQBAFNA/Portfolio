@@ -541,7 +541,8 @@ window.Cbx300Answers = (function () {
   /* One camera pose per pointer. Poses are solved in world space (the
      camera at the chapter pose Z is the reference), so each push-in lands
      on the exact element and keeps it fully inside the lit window. */
-  function buildPoses(scene, ch, Z, scale) {
+  function buildPoses(scene, ch, Z, scale, opts) {
+    opts = opts || {};
     Array.prototype.forEach.call(scene.querySelectorAll('.cbx-ans__mkr, .cbx-ans__ring, .cbx-ans__mpulse, .cbx-ans__rpulse'), function (n) {
       n.parentNode.removeChild(n);
     });
@@ -555,9 +556,9 @@ window.Cbx300Answers = (function () {
       r: Math.max.apply(null, kids.map(function (r) { return (r.r - Z.tx) / Z.s; })),
       b: Math.max.apply(null, kids.map(function (r) { return (r.btm - Z.ty) / Z.s; }))
     };
-    var side = 36;
-    var topIn = isPhone ? 112 : 44;
-    var botIn = 36;
+    var side = opts.side != null ? opts.side : 36;
+    var topIn = opts.topIn != null ? opts.topIn : (isPhone ? 112 : 44);
+    var botIn = opts.botIn != null ? opts.botIn : 36;
     var out = [];
     ch.pointers.forEach(function (p, i) {
       var tr = pointerRect(scene, p, scene, scale);
@@ -565,15 +566,18 @@ window.Cbx300Answers = (function () {
       var wr = { x: (tr.x - Z.tx) / Z.s, y: (tr.y - Z.ty) / Z.s, w: tr.w / Z.s, h: tr.h / Z.s };
       var capW = Z.W - 2 * side;
       var capH = Z.H - topIn - botIn;
-      var s = Math.min(Z.W * 0.5 / wr.w, Z.H * 0.4 / wr.h);
-      s = Math.min(Math.max(s, Z.s * 1.45), Z.s * 2.6);
+      var s = Math.min(Z.W * (opts.fillW || 0.5) / wr.w, Z.H * (opts.fillH || 0.4) / wr.h);
+      s = Math.min(Math.max(s, Z.s * (opts.minMul || 1.45)), Z.s * (opts.maxMul || 2.6));
       s = Math.min(s, capW / wr.w, capH / wr.h);
+      if (opts.identity) s = 1;
       var cx = Z.X + Z.W / 2;
       var cy = Z.Y + topIn + capH / 2;
       var tx0 = cx - (wr.x + wr.w / 2) * s;
       var ty0 = cy - (wr.y + wr.h / 2) * s;
+      if (opts.identity) { tx0 = Z.tx; ty0 = Z.ty; }
       var tx = fitAxis(tx0, Z.X + side - wr.x * s, Z.X + Z.W - side - (wr.x + wr.w) * s, Z.X + Z.W - wb.r * s, Z.X - wb.x * s);
       var ty = fitAxis(ty0, Z.Y + topIn - wr.y * s, Z.Y + Z.H - botIn - (wr.y + wr.h) * s, Z.Y + Z.H - wb.b * s, Z.Y - wb.y * s);
+      if (opts.identity) { tx = Z.tx; ty = Z.ty; }
       var R = { x: tx + wr.x * s, y: ty + wr.y * s, w: wr.w * s, h: wr.h * s };
       var pad = 8;
       var ring = el('div', 'cbx-ans__ring ring');
@@ -860,6 +864,53 @@ window.Cbx300Answers = (function () {
     tl.to([l.q, l.sl], { textShadow: '0 1px 14px rgba(20,14,10,0)', duration: 0.2, ease: 'sine.in' }, t + 0.83);
   }
 
+  /* The twelve-beat core, shared by wide and 390. One call = one chapter's
+     four pointers. Every tween is a fromTo with immediateRender:false so a
+     scrub, a jump or a reverse always lands on the same pixels. Only
+     transform and opacity animate (gsap-performance). Returns the end time. */
+  function addSteps(tl, l, bar, R0, start, stepTimes) {
+    var cur = start;
+    var dur = STEP - GLIDE - 0.05;
+    l.poses.forEach(function (q, i) {
+      var t = R0 + i * STEP;
+      if (stepTimes) stepTimes.push(+t.toFixed(3));
+      /* camera glide: previous pose (after its slow drift) to this one */
+      tl.fromTo(l.cams, { x: cur.x, y: cur.y, scale: cur.s },
+        { x: q.pose.x, y: q.pose.y, scale: q.pose.s, duration: GLIDE, ease: 'power2.inOut', immediateRender: false }, t);
+      /* previous marker and shade hand over gently */
+      if (i) {
+        tl.fromTo([l.mk[i - 1], l.rg[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.45, ease: 'sine.inOut', immediateRender: false }, t);
+        /* old text glides up and out, line by line */
+        tl.fromTo(l.lines[i - 1], { opacity: 1, y: 0, scale: 1 },
+          { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, t);
+      }
+      /* new text glides in, staggered, long soft ease */
+      tl.fromTo(l.lines[i], { opacity: 0, y: IN_DY, scale: 0.985 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: 'power3.out', stagger: 0.07, immediateRender: false }, t + (i ? 0.5 : 0.25));
+      /* marker softly rings in once the camera has nearly landed */
+      tl.fromTo(l.rg[i], { opacity: 0 }, { opacity: 1, duration: 0.95, ease: 'sine.inOut', immediateRender: false }, t + 0.7);
+      tl.fromTo(l.mk[i], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.85, ease: 'power3.out', immediateRender: false }, t + 0.85);
+      tl.fromTo(l.mp[i], { opacity: 0.55, scale: 1 }, { opacity: 0, scale: 2.4, duration: 1.2, ease: 'power2.out', immediateRender: false }, t + 0.95);
+      /* tick fills, chapter bar advances */
+      tl.fromTo(l.fills[i], { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: 'power2.inOut', immediateRender: false }, t + 0.15);
+      if (bar) tl.to(bar, { scaleX: 0.2 + 0.8 * (i + 1) / 4, duration: 1.0, ease: 'power2.inOut' }, t + 0.15);
+      /* slow push while the beat holds on scroll */
+      tl.fromTo(l.cams, { x: q.pose.x, y: q.pose.y, scale: q.pose.s },
+        { x: q.drift.x, y: q.drift.y, scale: q.drift.s, duration: dur, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
+      tl.fromTo(l.rg[i], { scale: 1 }, { scale: DRIFT, duration: dur, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
+      tl.fromTo(l.mk[i], { x: 0, y: 0 },
+        { x: (q.mx - q.ecx) * (DRIFT - 1), y: (q.my - q.ecy) * (DRIFT - 1), duration: dur, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
+      cur = q.drift;
+    });
+    var E = R0 + l.poses.length * STEP + 0.1;
+    var last = l.poses.length - 1;
+    tl.fromTo(l.lines[last], { opacity: 1, y: 0, scale: 1 },
+      { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, E);
+    tl.fromTo([l.mk[last], l.rg[last]], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, E);
+    tl.fromTo(l.panel, { opacity: 1, y: 0 }, { opacity: 0, y: -10, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, E + 0.35);
+    return E;
+  }
+
   function buildTimeline(section, scale) {
     var gsap = window.gsap;
     var stage = section.querySelector('.cbx-ans__stage');
@@ -900,48 +951,8 @@ window.Cbx300Answers = (function () {
         tl.to(l.vf, { opacity: 1, duration: 0.6, stagger: 0.06, ease: 'sine.out' }, S0 + ZOOM - 0.5);
         tl.to(l.ctag, { opacity: 1, duration: 0.8, ease: 'sine.out' }, S0 + ZOOM - 0.3);
         var R0 = S0 + ZOOM + 0.1;
-        var cur = { x: Z.tx, y: Z.ty, s: Z.s };
         tl.fromTo(l.panel, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', immediateRender: false }, S0 + ZOOM - 0.3);
-        l.poses.forEach(function (q, i) {
-          if (!q) return;
-          var t = R0 + i * STEP;
-          stepTimes.push(+t.toFixed(3));
-          var hold = t + GLIDE + 0.45;
-          /* camera glide: previous pose (after its slow drift) to this one */
-          tl.fromTo(l.cams, { x: cur.x, y: cur.y, scale: cur.s },
-            { x: q.pose.x, y: q.pose.y, scale: q.pose.s, duration: GLIDE, ease: 'power2.inOut', immediateRender: false }, t);
-          /* previous marker + dim hand over gently */
-          if (i && l.mk[i - 1]) {
-            tl.fromTo([l.mk[i - 1], l.rg[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.45, ease: 'sine.inOut', immediateRender: false }, t);
-          }
-          /* old text glides up and out, new text glides in, lines staggered */
-          if (i) {
-            tl.fromTo(l.lines[i - 1], { opacity: 1, y: 0, scale: 1 },
-              { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, t);
-          }
-          tl.fromTo(l.lines[i], { opacity: 0, y: IN_DY, scale: 0.985 },
-            { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: 'power3.out', stagger: 0.07, immediateRender: false }, t + (i ? 0.5 : 0.25));
-          /* marker softly rings in once the camera has nearly landed */
-          tl.fromTo(l.rg[i], { opacity: 0 }, { opacity: 1, duration: 0.95, ease: 'sine.inOut', immediateRender: false }, t + 0.7);
-          tl.fromTo(l.mk[i], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.85, ease: 'power3.out', immediateRender: false }, t + 0.85);
-          tl.fromTo(l.mp[i], { opacity: 0.55, scale: 1 }, { opacity: 0, scale: 2.4, duration: 1.2, ease: 'power2.out', immediateRender: false }, t + 0.95);
-          /* tick fills, chapter bar advances */
-          tl.fromTo(l.fills[i], { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: 'power2.inOut', immediateRender: false }, t + 0.15);
-          if (bars[k]) tl.to(bars[k], { scaleX: 0.2 + 0.8 * (i + 1) / 4, duration: 1.0, ease: 'power2.inOut' }, t + 0.15);
-          /* slow push while the beat holds on scroll */
-          tl.fromTo(l.cams, { x: q.pose.x, y: q.pose.y, scale: q.pose.s },
-            { x: q.drift.x, y: q.drift.y, scale: q.drift.s, duration: STEP - GLIDE - 0.05, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
-          tl.fromTo(l.rg[i], { scale: 1 }, { scale: DRIFT, duration: STEP - GLIDE - 0.05, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
-          tl.fromTo(l.mk[i], { x: 0, y: 0 }, { x: (q.mx - q.ecx) * (DRIFT - 1), y: (q.my - q.ecy) * (DRIFT - 1), duration: STEP - GLIDE - 0.05, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
-          cur = q.drift;
-        });
-        var FULL = R0 + 4 * STEP;
-        var E = FULL + 0.1;
-        var last = l.poses.length - 1;
-        tl.fromTo(l.lines[last], { opacity: 1, y: 0, scale: 1 },
-          { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, E);
-        tl.fromTo([l.mk[last], l.rg[last]], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, E);
-        tl.fromTo(l.panel, { opacity: 1, y: 0 }, { opacity: 0, y: -10, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, E + 0.35);
+        var E = addSteps(tl, l, bars[k], R0, { x: Z.tx, y: Z.ty, s: Z.s }, stepTimes);
         tl.to(l.ctag, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.5);
         tl.to(l.vf, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.7);
         var B = E + OUT + 0.05;
@@ -1117,48 +1128,73 @@ window.Cbx300Answers = (function () {
     section.dataset.dur = String(tl.duration());
   }
 
+  /* Reduced motion: no camera, no glide. Scroll still walks the twelve
+     points, one at a time; each swap is a short opacity fade (CSS). */
   function bindReduced(section) {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     section.classList.add('is-static');
-    fitScale(section);
-    var scenes = section.querySelectorAll('.cbx-ans__scene');
-    Array.prototype.forEach.call(scenes, function (scene, i) {
-      scene.hidden = i !== 0;
-      scene.style.opacity = i === 0 ? '1' : '0';
-      var ptrs = scene.querySelectorAll('.cbx-ans__ptr, .cbx-ans__ctag, .cbx-vf, .cbx-vfl, .cbx-ans__dim, .cbx-ans__nbg, .cbx-ans__spot');
-      gsap.set(ptrs, { opacity: 1 });
+    var scale = fitScale(section);
+    var scenes = Array.prototype.slice.call(section.querySelectorAll('.cbx-ans__scene'));
+    var bars = section.querySelectorAll('.cbx-ans__prog b');
+    var per = scenes.map(function (scene, k) {
+      scene.removeAttribute('hidden');
+      scene.style.opacity = '1';
+      var poses = buildPoses(scene, CHAPTERS[k], { tx: 0, ty: 0, s: 1, X: 32, Y: 72, W: 880, H: 780 }, scale, { identity: true });
+      if (k) { scene.setAttribute('hidden', ''); scene.style.opacity = '0'; }
+      return { scene: scene, poses: poses };
     });
-    var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: function () { return '+=' + Math.round(window.innerHeight * 2.4); },
-        pin: true,
-        pinSpacing: true,
-        pinType: 'fixed',
-        scrub: 0.6,
-        refreshPriority: -1,
-        onToggle: function (self) { pinActive(self.isActive); },
-        onUpdate: function (self) {
-          var i = Math.min(2, Math.floor(self.progress * 3));
-          Array.prototype.forEach.call(scenes, function (scene, n) {
-            var on = n === i;
-            scene.style.opacity = on ? '1' : '0';
-            if (on) scene.removeAttribute('hidden');
-            else scene.setAttribute('hidden', '');
-          });
-          var shown = section.querySelector('.cbx-ans__scene:not([hidden])');
-          if (!shown && scenes[i]) scenes[i].removeAttribute('hidden');
-          if (motion.onStep) motion.onStep(2);
-        }
+    gsap.set(section.querySelectorAll('.cbx-ans__ptr, .cbx-ans__ctag, .cbx-vf, .cbx-vfl, .cbx-ans__dim, .cbx-ans__nbg, .cbx-ans__panel'), { opacity: 1 });
+    gsap.set(section.querySelectorAll('.cbx-ans__ring, .cbx-ans__mkr'), { clearProps: 'opacity' });
+    var shown = -1;
+    function show(idx) {
+      if (idx === shown) return;
+      shown = idx;
+      var ch = Math.floor(idx / 4);
+      var st = idx % 4;
+      per.forEach(function (c, k) {
+        c.scene.style.opacity = k === ch ? '1' : '0';
+        if (k === ch) c.scene.removeAttribute('hidden');
+        else c.scene.setAttribute('hidden', '');
+        var steps = c.scene.querySelectorAll('.cbx-ans__step');
+        var cns = c.scene.querySelectorAll('.cbx-ans__cn');
+        var ticks = c.scene.querySelectorAll('.cbx-ans__tick');
+        Array.prototype.forEach.call(steps, function (n, i) {
+          n.classList.toggle('is-current', k === ch && i === st);
+          if (cns[i]) cns[i].classList.toggle('is-current', k === ch && i === st);
+          if (ticks[i]) ticks[i].classList.toggle('is-on', k === ch && i <= st);
+          if (c.poses[i]) {
+            c.poses[i].ring.classList.toggle('is-on', k === ch && i === st);
+            c.poses[i].mkr.classList.toggle('is-on', k === ch && i === st);
+          }
+        });
+      });
+      Array.prototype.forEach.call(bars, function (b, k) {
+        b.style.transform = 'scaleX(' + (k < ch ? 1 : (k === ch ? 0.2 + 0.8 * (st + 1) / 4 : 0)) + ')';
+      });
+    }
+    show(0);
+    var st = ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: function () { return '+=' + Math.round(window.innerHeight * 12); },
+      pin: true,
+      pinSpacing: true,
+      pinType: 'fixed',
+      refreshPriority: -1,
+      onToggle: function (self) { pinActive(self.isActive); },
+      onUpdate: function (self) {
+        show(Math.max(0, Math.min(11, Math.floor(self.progress * 12))));
+        if (motion.onStep) motion.onStep(2);
       }
     });
-    motion.tween = tl;
-    if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
+    motion.tween = null;
+    motion.triggers.push(st);
     section.dataset.ready = '1';
   }
 
+  /* 390: same twelve beats. The camera pushes into the element inside the
+     window above the bottom sheet; the sheet swaps its text per beat. */
   function bindNarrow(section) {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
@@ -1170,66 +1206,78 @@ window.Cbx300Answers = (function () {
       scene.style.opacity = '1';
     });
     section.getBoundingClientRect();
-    scenes.forEach(function (scene, k) {
-      placeMarks(scene, CHAPTERS[k], 1);
-    });
-    scenes.forEach(function (scene, k) {
-      if (k) {
-        scene.setAttribute('hidden', '');
-        scene.style.opacity = '0';
-      }
-    });
-    var tl = gsap.timeline({ paused: true });
-    var T = 0.2;
-    var chWin = scenes.map(function (_, k) {
-      return { appear: k ? 1e6 : 0, gone: 1e6 };
-    });
-    scenes.forEach(function (scene, k) {
-      var ptrs = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__ptr'));
-      var mk = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__mkr'));
-      gsap.set(ptrs, { opacity: 0, y: 8 });
-      gsap.set(mk, { opacity: 0, scale: 0.4 });
+    var vw = section.clientWidth;
+    var vh = section.clientHeight;
+    var hud = section.querySelector('.cbx-ans__hud');
+    var winTop = Math.ceil(hud.getBoundingClientRect().bottom - section.getBoundingClientRect().top) + 8;
+    var bars = section.querySelectorAll('.cbx-ans__prog b');
+    var layers = scenes.map(function (scene, k) {
+      var note = scene.querySelector('.cbx-ans__note');
+      var winBot = Math.floor(note.getBoundingClientRect().top - section.getBoundingClientRect().top) - 6;
+      var Z = { tx: 0, ty: 0, s: 1, X: 0, Y: winTop, W: vw, H: Math.max(120, winBot - winTop) };
+      var cams = scene.querySelectorAll('.cbx-ans__cam.is-sharp .cbx-ans__camin');
+      var sharp = scene.querySelector('.cbx-ans__cam.is-sharp');
+      sharp.style.clipPath = 'inset(' + Z.Y + 'px 0 ' + (vh - Z.Y - Z.H) + 'px 0)';
+      var poses = buildPoses(scene, CHAPTERS[k], Z, 1, { side: 14, topIn: 12, botIn: 12, fillW: 0.62, fillH: 0.5, minMul: 1.25, maxMul: 2.4 });
+      var mk = poses.map(function (q) { return q && q.mkr; });
+      var rg = poses.map(function (q) { return q && q.ring; });
+      var mp = mk.map(function (m) {
+        var e = el('div', 'cbx-ans__mpulse mpulse');
+        e.style.left = m.style.left;
+        e.style.top = m.style.top;
+        m.parentNode.insertBefore(e, m);
+        return e;
+      });
+      gsap.set(mk.concat(rg, mp), { opacity: 0 });
+      var panel = scene.querySelector('.cbx-ans__panel');
+      var steps = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__step'));
+      var counts = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__cn'));
+      var fills = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__tick b'));
+      var lines = steps.map(function (st, i) {
+        var ls = [counts[i]].concat(Array.prototype.slice.call(st.querySelectorAll('.cbx-ans__ln')));
+        gsap.set(ls, { opacity: 0, y: IN_DY * 0.7, scale: 0.985, transformOrigin: '0 50%' });
+        return ls;
+      });
+      gsap.set(fills, { scaleX: 0, transformOrigin: '0 50%' });
+      gsap.set(cams, { x: 0, y: 0, scale: 1, transformOrigin: '0 0', force3D: true });
+      gsap.set(panel, { opacity: 0, y: 14 });
       gsap.set(scene, { opacity: k ? 0 : 1 });
       if (k) scene.setAttribute('hidden', '');
-      else scene.removeAttribute('hidden');
-      if (ptrs[0]) {
-        ptrs[0].classList.add('is-current');
-        if (!k) gsap.set(ptrs[0], { opacity: 1, y: 0 });
-      }
-      if (k) {
-        chWin[k].appear = T;
-        chWin[k - 1].gone = T + 0.15;
-        tl.set(scene, { opacity: 1 }, T);
-        tl.set(scenes[k - 1], { opacity: 0 }, T + 0.15);
-        T += 0.25;
-      }
-      ptrs.forEach(function (p, i) {
-        var t = T + i * 0.9;
-        if (mk[i]) tl.fromTo(mk[i], { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)' }, t);
-        tl.call(function () {
-          ptrs.forEach(function (node, n) {
-            node.classList.toggle('is-current', n === i);
-          });
-        }, null, t);
-        if (k === 0 && i === 0) {
-          gsap.set(p, { opacity: 1, y: 0 });
-        } else {
-          tl.fromTo(p, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, t + 0.08);
-        }
-      });
-      T += 0.9 * 3 + 1.6;
+      return { scene: scene, cams: cams, poses: poses, mk: mk, rg: rg, mp: mp, panel: panel, lines: lines, fills: fills };
     });
-    tl.to({}, { duration: 0.4 }, T);
+    var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
+    var chWin = scenes.map(function () { return { appear: 0, gone: 1e6 }; });
+    var stepTimes = [];
+    var T = 0.3;
+    layers.forEach(function (l, k) {
+      if (k) {
+        chWin[k].appear = T - 0.05;
+        chWin[k - 1].gone = T + 0.7;
+        tl.set(l.scene, { opacity: 1 }, T - 0.05);
+        tl.fromTo(l.panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, T);
+      } else {
+        tl.fromTo(l.panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, T);
+      }
+      var E = addSteps(tl, l, bars[k], T + 0.2, { x: 0, y: 0, s: 1 }, stepTimes);
+      if (k < layers.length - 1) {
+        tl.set(l.scene, { opacity: 0 }, E + 1.0);
+        T = E + 1.0;
+      } else {
+        T = E + 0.8;
+      }
+    });
+    tl.to({}, { duration: 0.5 }, T);
     section._cbxWins = chWin;
     section._cbxScenes = scenes;
+    section.dataset.steps = JSON.stringify(stepTimes);
     var st = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: function () { return '+=' + Math.round(tl.duration() * 140); },
+      end: function () { return '+=' + Math.round(tl.duration() * 170); },
       pin: true,
       pinSpacing: true,
       pinType: 'fixed',
-      scrub: 0.8,
+      scrub: SCRUB,
       animation: tl,
       refreshPriority: -1,
       onToggle: function (self) {
