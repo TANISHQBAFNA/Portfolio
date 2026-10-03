@@ -865,11 +865,12 @@ window.Cbx300Answers = (function () {
      four pointers. Every tween is a fromTo with immediateRender:false so a
      scrub, a jump or a reverse always lands on the same pixels. Only
      transform and opacity animate (gsap-performance). Returns the end time. */
-  function addSteps(tl, l, bar, R0, start, stepTimes) {
+  function addSteps(tl, l, bar, R0, start, stepTimes, hook) {
     var cur = start;
     l.poses.forEach(function (q, i) {
       var t = R0 + i * STEP;
       if (stepTimes) stepTimes.push(+t.toFixed(3));
+      if (hook) hook(i, t);
       /* camera glide: previous pose to this one. Only the sharp camera moves;
          the dimmed duplicate behind it stays at the chapter pose so it is
          not re-rasterised every frame. */
@@ -1210,6 +1211,15 @@ window.Cbx300Answers = (function () {
       var cams = scene.querySelectorAll('.cbx-ans__cam.is-sharp .cbx-ans__camin');
       var sharp = scene.querySelector('.cbx-ans__cam.is-sharp');
       sharp.style.clipPath = 'inset(' + Z.Y + 'px 0 ' + (vh - Z.Y - Z.H) + 'px 0)';
+      var swap = null;
+      if (scene.classList.contains('is-both')) {
+        var sharpRoot = scene.querySelector('.cbx-ans__cam.is-sharp');
+        var deskN = sharpRoot.querySelector('.cbx-desk');
+        var phoneN = sharpRoot.querySelector('.cbx-phone');
+        var dsc = (vw - 24) / 760;
+        deskN.style.cssText += ';left:12px;top:' + Math.round(Z.Y + Math.max(8, (Z.H - 560 * dsc) / 2)) + 'px;width:760px;height:560px;transform:scale(' + dsc + ');transform-origin:0 0;z-index:2';
+        swap = { desk: deskN, phone: phoneN, dev: CHAPTERS[k].pointers.map(function (q) { return q.device; }) };
+      }
       var poses = buildPoses(scene, CHAPTERS[k], Z, 1, { side: 14, topIn: 12, botIn: 12, fillW: 0.62, fillH: 0.5, minMul: 1.25, maxMul: 2.4 });
       var mk = poses.map(function (q) { return q && q.mkr; });
       var rg = poses.map(function (q) { return q && q.ring; });
@@ -1233,9 +1243,13 @@ window.Cbx300Answers = (function () {
       gsap.set(fills, { scaleX: 0, transformOrigin: '0 50%' });
       gsap.set(cams, { x: 0, y: 0, scale: 1, transformOrigin: '0 0', force3D: true });
       gsap.set(panel, { opacity: 0, y: 14 });
+      if (swap) {
+        gsap.set(swap.desk, { opacity: swap.dev[0] === 'desk' ? 1 : 0 });
+        gsap.set(swap.phone, { opacity: swap.dev[0] === 'phone' ? 1 : 0 });
+      }
       gsap.set(scene, { opacity: k ? 0 : 1 });
       if (k) scene.setAttribute('hidden', '');
-      return { scene: scene, cams: cams, stepCam: cams[0], poses: poses, mk: mk, rg: rg, mp: mp, panel: panel, lines: lines, fills: fills };
+      return { swap: swap, scene: scene, cams: cams, stepCam: cams[0], poses: poses, mk: mk, rg: rg, mp: mp, panel: panel, lines: lines, fills: fills };
     });
     var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
     var chWin = scenes.map(function () { return { appear: 0, gone: 1e6 }; });
@@ -1250,7 +1264,13 @@ window.Cbx300Answers = (function () {
       } else {
         tl.fromTo(l.panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, T);
       }
-      var E = addSteps(tl, l, bars[k], T + 0.2, { x: 0, y: 0, s: 1 }, stepTimes);
+      var E = addSteps(tl, l, bars[k], T + 0.2, { x: 0, y: 0, s: 1 }, stepTimes, l.swap ? function (i, t) {
+        var sw = l.swap;
+        if (!i || sw.dev[i] === sw.dev[i - 1]) return;
+        var to = sw.dev[i];
+        tl.fromTo(sw[to], { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut', immediateRender: false }, t + 0.35);
+        tl.fromTo(sw[sw.dev[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, t);
+      } : null);
       if (k < layers.length - 1) {
         tl.set(l.scene, { opacity: 0 }, E + 1.0);
         T = E + 1.0;

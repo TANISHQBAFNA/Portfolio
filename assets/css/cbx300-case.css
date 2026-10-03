@@ -2323,27 +2323,28 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-alog {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   margin-top: 6px;
-  padding: 12px 14px;
+  padding: 12px 12px;
   border-radius: 12px;
   background: var(--c2);
-  font-size: 13px;
+  font-size: 12px;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .cbx-d1 .alog .lbl {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: .08em;
+  letter-spacing: .06em;
   text-transform: uppercase;
   color: var(--mut);
-  margin-right: 4px;
+  margin-right: 1px;
 }
 
 .cbx-d1 .alog b { font-weight: 600; }
 .cbx-d1 .alog span { color: var(--mut); }
-.cbx-d1 .alog i { width: 1px; height: 18px; background: var(--ln); margin: 0 6px; }
+.cbx-d1 .alog i { width: 1px; height: 18px; background: var(--ln); margin: 0 3px; }
 
 .cbx-d1 .ev { display: grid; grid-template-columns: 10px 1fr; column-gap: 10px; row-gap: 4px; padding: 12px 14px; border-radius: 12px; background: var(--c2); }
 .cbx-d1 .ev i { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; }
