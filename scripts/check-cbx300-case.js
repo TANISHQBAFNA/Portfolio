@@ -195,7 +195,7 @@ check('Section 03 camera into the screen, phone-hero then both', function () {
   assert.ok(answers.indexOf("hero: 'phone'") !== -1, 'Ch1/Ch2 must hero the phone');
   assert.ok(answers.indexOf("hero: 'both'") !== -1, 'Ch3 must share phone and desktop');
   assert.ok(answers.indexOf("phone: '[data-ans-device=\"phone\"]', desk: null") !== -1, 'Ch1/Ch2 must zoom the phone device');
-  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 17px/.test(css), 'does line must be 17px on the 1440 stage');
+  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 18px/.test(css), 'decision line must be 18px on the 1440 stage');
   assert.ok(/\.cbx-ans__pg \{[\s\S]{0,180}font-size: 17px/.test(css), 'outcome line must be 17px on the 1440 stage');
   assert.ok(answers.indexOf("device: 'phone'") !== -1, 'some pointers land on the phone');
   assert.ok(answers.indexOf("device: 'desk'") !== -1, 'Ch3 pointers 1/3/4 land on desktop');
@@ -223,12 +223,13 @@ check('Section 03 camera into the screen, phone-hero then both', function () {
   assert.ok(css.indexOf('html.is-study.is-study-page.is-cbx-ans-pin') !== -1, 'Close z-index must beat the parked chrome rule');
   assert.ok(css.indexOf('overscroll-behavior: auto !important') !== -1, 'study body must not trap wheel overscroll');
   assert.ok(/\.cbx-ph__body \{[\s\S]{0,80}height: auto;/.test(css), 'phone body must hug the invoice card');
-  assert.ok(css.indexOf('.cbx-ans__pd b { color: #1E1510; }') !== -1, '390 pointer <b> must stay ink on cream');
+  assert.ok(/\.cbx-ans__pd \{ font-size: 15px; line-height: 1\.34; color: #1E1510; }/.test(css), '390 decision text must stay ink on cream');
   assert.ok(css.indexOf('1440px') !== -1 && css.indexOf('--ans-scale') !== -1, 'desktop must use a uniformly scaled 1440 stage');
   assert.ok(css.indexOf('font-size: 26px') !== -1, 'pointer worry must be 26px Newsreader on the stage');
   assert.ok(css.indexOf('font-size: 44px') !== -1, 'chapter title must be 44px Newsreader on the stage');
   assert.ok(css.indexOf('text-overflow: ellipsis') === -1, 'client names must not ellipsize');
-  assert.ok(answers.indexOf('var SCRUB = 0.8') !== -1, 'timeline scrub must be 0.6–1');
+  assert.ok(/var SCRUB = (0\.[6-9]\d*|1(\.0)?);/.test(answers), 'timeline scrub must be 0.6–1');
+  assert.ok(answers.indexOf('function settleSnap') !== -1 && /snap: settleSnap\(section, tl\)/.test(answers), 'scroll-end settle must be wired to both triggers');
   assert.ok(answers.indexOf('BACK') !== -1 && answers.indexOf('k < 2') !== -1, 'Ch3 must share the pull-back');
   assert.ok(pages.indexOf('y >= st.end - 1 && dy > 0') !== -1, 'S02 wheel must yield downward only, after the last stage');
   assert.ok(mvCase.indexOf('html.is-multiverse .cbx-ans {') !== -1, 'Multiverse answers skin missing');
@@ -268,23 +269,62 @@ check('released coffee stays a fixed 100vh curtain so the SME hero cannot flash 
     'releaseGrowth must not call ScrollTrigger.refresh — that reflowed the pin end');
 });
 
-check('Section 03 pointer does-lines explain the UX, not the application', function () {
+function loadChapters() {
+  var win = {};
+  new Function('window', answers)(win);
+  return win.Cbx300Answers.CHAPTERS;
+}
+
+check('Section 03 presents twelve pointers one at a time, each a structured UX explanation', function () {
+  var chapters = loadChapters();
+  assert.strictEqual(chapters.length, 3, 'three chapters');
+  var pts = [];
+  chapters.forEach(function (c) {
+    assert.strictEqual(c.pointers.length, 4, 'four pointers per chapter');
+    c.pointers.forEach(function (p) { pts.push(p); });
+  });
+  assert.strictEqual(pts.length, 12, 'twelve steps in total');
+  var worries = [
+    'Did Mehta pay?', 'Which invoice was that for?', 'Who still owes me?', 'Chasing feels rude.',
+    'Is this money really mine?', 'Will GST and rent eat into it?', 'What if a client pays late?', 'Can I pay Lina on Friday?',
+    'What needs me right now?', 'I’m out meeting a client.', 'Who approved that?', 'Should everyone see everything?'
+  ];
+  var gains = [
+    'No awkward call to the client.', 'Books that balance without a spreadsheet.', 'She knows who to chase, and who to leave alone.', 'The money comes in. The relationship stays warm.',
+    'One honest number to decide with.', 'No bill ambushes payday.', 'She never spends money that hasn’t arrived.', 'She says yes to her first hire, calmly.',
+    'Nothing gets lost in a chat thread.', 'Her team isn’t stuck waiting for her.', 'Clear answers when the accountant asks.', 'Lina runs payments. The big calls stay with Aisha.'
+  ];
+  pts.forEach(function (p, i) {
+    assert.strictEqual(p.worry, worries[i], 'worry ' + (i + 1) + ' must stay verbatim');
+    assert.strictEqual(p.gain, gains[i], 'outcome ' + (i + 1) + ' must stay verbatim');
+    assert.ok(p.does && p.does.length > 40 && p.does.length < 150, 'decision ' + (i + 1) + ' must be one clear sentence');
+    assert.ok(Array.isArray(p.why) && p.why.length === 2, 'why ' + (i + 1) + ' must be two short lines');
+    p.why.forEach(function (w) { assert.ok(w.length > 20 && w.length < 100, 'why line too long/short at ' + (i + 1)); });
+    assert.ok(p.not && /^We didn’t /.test(p.not) && p.not.length < 110, 'what-we-didn’t-do ' + (i + 1) + ' must be one line');
+    assert.ok(!/\d+\s?%/.test([p.does, p.not].concat(p.why).join(' ')), 'no invented stats at ' + (i + 1));
+  });
+  assert.ok(answers.indexOf('The design decision') !== -1 && answers.indexOf('Why it works') !== -1 && answers.indexOf('What we didn’t do') !== -1, 'panel labels missing');
+  assert.ok(answers.indexOf('function addSteps') !== -1, 'one shared step sequencer');
+  assert.ok(/var STEP = 5/.test(answers), 'about one screen of scroll per point');
+  assert.ok(answers.indexOf('stagger: 0.07') !== -1, 'new text lines stagger in');
+  assert.ok(answers.indexOf("ease: 'power3.out'") !== -1, 'long soft ease for text');
+  assert.ok(/var GLIDE = 1\.[0-2]/.test(answers), 'camera glide between targets is 0.9–1.2s');
+  assert.ok(answers.indexOf('immediateRender: false') !== -1, 'step tweens are deterministic fromTo');
+  assert.ok(answers.indexOf('buildPoses') !== -1, 'a camera pose per pointer');
+  assert.ok(answers.indexOf('prefers-reduced-motion') !== -1 && answers.indexOf('is-static') !== -1, 'reduced motion fallback');
+  assert.ok(!/cbx-ans__ptrs/.test(css), 'old four-card stack is gone');
+  assert.ok(/\.cbx-ans__pw \{[\s\S]{0,160}font-size: 26px/.test(css), 'worry stays 26px');
+  assert.ok(/\.cbx-ans__why li \{[\s\S]{0,200}font-size: 16px/.test(css), 'reasoning is 16px min');
+  assert.ok(/\.cbx-ans__lab2 \{[\s\S]{0,160}font-size: 12px/.test(css), 'labels are 12px caps');
+});
+
+check('Section 03 old four-card copy is gone', function () {
   var does = [
     'Status is first on every row, in a colour she can read at a glance, and it flips when money lands.',
-    'A payment arrives already tied to its invoice, so she never matches a bank line to a bill herself.',
-    'The list puts the oldest overdue on top, so the order itself tells her where to look first.',
-    'The reminder is already written politely and one tap away, so the awkward part is done for her.',
-    'One bar splits the balance into safe, set aside and still coming, so the true answer is visible.',
-    'Bills that are certain are set aside as their own block, so they can’t hide inside the balance.',
-    'Money still to arrive stays out of the safe number, so a late payment changes nothing.',
-    'The question is answered on the day: Friday is marked and one ‘Covered’ badge says yes or no.',
-    'Everything waiting is in one list with a tab count, so she doesn’t have to remember where to look.',
-    'Approve is the biggest thing on the phone, so one thumb and a few seconds is enough.',
-    'Every action is logged with a name and time under the list, so the answer is already in view.',
-    'Each request carries a role tag, so she sees who it belongs to and access is limited by role.'
+    'The list puts the oldest overdue on top, so the order itself tells her where to look first.'
   ];
   does.forEach(function (line) {
-    assert.ok(answers.indexOf(line) !== -1, 'missing UX does-line: ' + line.slice(0, 48));
+    assert.ok(answers.indexOf(line) === -1, 'old does-line still shown: ' + line.slice(0, 48));
   });
   [
     'Shows <b>Paid</b> the moment money lands.',
@@ -306,9 +346,8 @@ check('Section 03 pointer does-lines explain the UX, not the application', funct
   assert.ok(answers.indexOf("gain: 'No awkward call to the client.'") !== -1, 'Ch1 gain 1 must stay');
   assert.ok(answers.indexOf("worry: 'Can I pay Lina on Friday?'") !== -1, 'Ch2 worry 4 must stay');
   assert.ok(answers.indexOf("gain: 'Lina runs payments. The big calls stay with Aisha.'") !== -1, 'Ch3 gain 4 must stay');
-  assert.ok(answers.indexOf('var g = 28') !== -1, 'pointer stack gap must stay 28px');
-  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 17px/.test(css), 'does line must stay 17px on the 1440 stage');
-  assert.ok(/rgba\(244, 239, 230, \.74\)/.test(cssBlock(css, '.cbx-ans__pd')), 'does line must keep readable cream contrast');
+  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 18px/.test(css), 'decision line must stay 18px on the 1440 stage');
+  assert.ok(/rgba\(244, 239, 230, \.94\)/.test(cssBlock(css, '.cbx-ans__pd')), 'decision line must keep readable cream contrast');
 });
 
 check('Section 02 growth field is coffee; cover stays cream', function () {
@@ -969,13 +1008,13 @@ check('wheel-up through coffee is hysteresis-free; one notch stays put', functio
   assert.ok(wheel.indexOf('deltaY: -100') !== -1, 'wheel check must use 100px notches');
 });
 
-check('390 hold shows one pointer card as a bottom sheet', function () {
-  assert.ok(answers.indexOf("classList.toggle('is-current'") !== -1,
-    'narrow timeline must swap the current pointer card');
-  assert.ok(css.indexOf('.cbx-ans.is-narrow:not(.is-static) .cbx-ans__ptr.is-current') !== -1,
-    'only the current pointer card is in flow on mobile');
+check('390 hold shows one point at a time as a bottom sheet over a pushed-in phone', function () {
+  assert.ok(answers.indexOf('function bindNarrow') !== -1 && answers.indexOf('addSteps(tl, l, bars[k]') !== -1,
+    'narrow timeline must run the same twelve beats');
   assert.ok(css.indexOf('border-radius: 18px 18px 0 0') !== -1,
-    'current card sits in a bottom sheet over the phone');
+    'the current point sits in a bottom sheet over the phone');
+  assert.ok(/\.cbx-ans__pd \{ font-size: 15px/.test(css) && /\.cbx-ans__why li \{ font-size: 15px/.test(css),
+    'sheet text is 15px min at 390');
 });
 
 check('S03 pin does not blur-filter the backdrop camera', function () {

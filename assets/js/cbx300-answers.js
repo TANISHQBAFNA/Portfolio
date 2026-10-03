@@ -26,13 +26,21 @@ window.Cbx300Answers = (function () {
   var ZOOM = 2.1;
   var GAP = 1.0;
   var OUT = 1.2;
-  var BACK = 2.1;
+  var BACK = 2.5;
   var HOLD = 5.3;
+  var STEP = 5.0;
+  var IN_DY = 30;
+  var OUT_DY = -26;
+  var GLIDE = 1.15;
   var START = 0.7;
   var CURTAIN = 0.55;
   var DEST = { x: 48, w: 880, cy: 470 };
   var NCOL = { left: 984, width: 416 };
-  var SCRUB = 0.8;
+  var SCRUB = 1.0;
+  /* Scrub smoothing is bypassed only for a true jump (deep link, anchor);
+     a fast wheel stays smoothed so the glide never turns into a cut. */
+  var JUMP = 0.2;
+  var SETTLE_IN = 2.2;
 
   var motion = {
     mm: null,
@@ -60,10 +68,10 @@ window.Cbx300Answers = (function () {
       deskTitle: 'Invoices',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
-        { worry: 'Did Mehta pay?', does: 'Status is first on every row, in a colour she can read at a glance, and it flips when money lands.', gain: 'No awkward call to the client.', t: '[data-ans-t="paid"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Which invoice was that for?', does: 'A payment arrives already tied to its invoice, so she never matches a bank line to a bill herself.', gain: 'Books that balance without a spreadsheet.', t: '[data-ans-t="match"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Who still owes me?', does: 'The list puts the oldest overdue on top, so the order itself tells her where to look first.', gain: 'She knows who to chase, and who to leave alone.', t: '[data-ans-t="owe"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Chasing feels rude.', does: 'The reminder is already written politely and one tap away, so the awkward part is done for her.', gain: 'The money comes in. The relationship stays warm.', t: '[data-ans-t="nudge"]', device: 'phone', a: 'l', off: 18 }
+        { worry: 'Did Mehta pay?', does: 'Status is the first thing on every row, as a coloured pill that turns to ‘Paid’ the moment money lands.', why: ['Green means done and red means act, so one glance replaces reading.', 'It sits in the same place on every row, so her eye learns where to look.'], not: 'We didn’t bury status inside each invoice. She would have to open every one to find out.', gain: 'No awkward call to the client.', t: '[data-ans-t="paid"]', device: 'phone', a: 'l', off: 18 },
+        { worry: 'Which invoice was that for?', does: 'The payment arrives with a ‘Matched to INV-015’ badge, tied to its invoice by the bank, not by her.', why: ['The badge names the exact invoice, so there is nothing left to cross-check.', 'It sits on the same row as the client, so the proof is where she already looks.'], not: 'We didn’t list bank credits in a separate feed. She would be matching amounts to bills herself.', gain: 'Books that balance without a spreadsheet.', t: '[data-ans-t="match"]', device: 'phone', a: 'l', off: 18 },
+        { worry: 'Who still owes me?', does: 'The oldest overdue invoice is tagged in red and sits first among the unpaid ones.', why: ['Order and colour say the same thing, so she knows where to start without sorting.', 'The word ‘oldest’ answers ‘who first?’, so she doesn’t compare dates.'], not: 'We didn’t sort by amount or client name. The most overdue one would sink into the list.', gain: 'She knows who to chase, and who to leave alone.', t: '[data-ans-t="owe"]', device: 'phone', a: 'l', off: 18 },
+        { worry: 'Chasing feels rude.', does: 'A ‘Nudge’ button sits on every overdue row, with a polite reminder already written behind it.', why: ['One tap is all it takes, so chasing becomes a small task, not a dreaded one.', 'The wording is already kind, so she never has to find the right tone.'], not: 'We didn’t hand her a blank email. A blank box is what makes people put it off.', gain: 'The money comes in. The relationship stays warm.', t: '[data-ans-t="nudge"]', device: 'phone', a: 'l', off: 18 }
       ]
     },
     {
@@ -85,10 +93,10 @@ window.Cbx300Answers = (function () {
       deskTitle: 'Cash plan',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
-        { worry: 'Is this money really mine?', does: 'One bar splits the balance into safe, set aside and still coming, so the true answer is visible.', gain: 'One honest number to decide with.', t: '[data-ans-t="safe"]', device: 'phone', a: 'c', off: 0 },
-        { worry: 'Will GST and rent eat into it?', does: 'Bills that are certain are set aside as their own block, so they can’t hide inside the balance.', gain: 'No bill ambushes payday.', t: '[data-ans-t="aside"]', device: 'phone', a: 'l', off: 16 },
-        { worry: 'What if a client pays late?', does: 'Money still to arrive stays out of the safe number, so a late payment changes nothing.', gain: 'She never spends money that hasn’t arrived.', t: '[data-ans-t="coming"]', device: 'phone', a: 'l', off: 16 },
-        { worry: 'Can I pay Lina on Friday?', does: 'The question is answered on the day: Friday is marked and one ‘Covered’ badge says yes or no.', gain: 'She says yes to her first hire, calmly.', t: '[data-ans-t="payday"]', device: 'phone', a: 'l', off: 18 }
+        { worry: 'Is this money really mine?', does: 'One bar splits the balance into three parts, and the first, ‘Safe to spend’, is the one she decides with.', why: ['The bar shows proportions, so she sees how much is hers before reading a figure.', 'Safe to spend comes first and has its own colour, so it isn’t mistaken for the total.'], not: 'We didn’t show one big balance. It looks like savings and hides what is already promised.', gain: 'One honest number to decide with.', t: '[data-ans-t="safe"]', device: 'phone', a: 'c', off: 0 },
+        { worry: 'Will GST and rent eat into it?', does: 'Money for bills that are certain, like GST and rent, is set aside as its own labelled block.', why: ['A separate colour and name keep it out of ‘Safe to spend’, so it can’t be spent by accident.', 'It says ‘Set aside’ in plain words, not an accounting term.'], not: 'We didn’t leave upcoming bills in a list further down. They would look like part of the balance.', gain: 'No bill ambushes payday.', t: '[data-ans-t="aside"]', device: 'phone', a: 'l', off: 16 },
+        { worry: 'What if a client pays late?', does: 'Money that hasn’t arrived yet is shown as ‘Coming in’ and kept out of the safe number.', why: ['The label says expected, not here, so it reads as a maybe.', 'A late client changes ‘Coming in’ and leaves ‘Safe to spend’ exactly where it was.'], not: 'We didn’t add expected payments to the balance. One late invoice would make the safe number wrong.', gain: 'She never spends money that hasn’t arrived.', t: '[data-ans-t="coming"]', device: 'phone', a: 'l', off: 16 },
+        { worry: 'Can I pay Lina on Friday?', does: 'Friday is marked on the week, with Lina’s salary and a single ‘Covered’ badge that says yes or no.', why: ['The answer sits on the day she is asking about, so there is no sum to do.', 'A green tick and one word is quicker to trust than a column of figures.'], not: 'We didn’t make her compare the balance to the salary. That is a sum the app can do.', gain: 'She says yes to her first hire, calmly.', t: '[data-ans-t="payday"]', device: 'phone', a: 'l', off: 18 }
       ]
     },
     {
@@ -116,10 +124,10 @@ window.Cbx300Answers = (function () {
         desk: '[data-ans-device="desk"] [data-ans-region]'
       },
       pointers: [
-        { worry: 'What needs me right now?', does: 'Everything waiting is in one list with a tab count, so she doesn’t have to remember where to look.', gain: 'Nothing gets lost in a chat thread.', t: '[data-ans-t="waiting"]', device: 'desk', a: 'r', off: 22 },
-        { worry: 'I’m out meeting a client.', does: 'Approve is the biggest thing on the phone, so one thumb and a few seconds is enough.', gain: 'Her team isn’t stuck waiting for her.', t: '[data-ans-t="approve"]', device: 'phone', a: 'tr', off: 0, dx: 2, dy: -2 },
-        { worry: 'Who approved that?', does: 'Every action is logged with a name and time under the list, so the answer is already in view.', gain: 'Clear answers when the accountant asks.', t: '[data-ans-t="log"]', device: 'desk', a: 'tr', off: 0, dx: -14 },
-        { worry: 'Should everyone see everything?', does: 'Each request carries a role tag, so she sees who it belongs to and access is limited by role.', gain: 'Lina runs payments. The big calls stay with Aisha.', t: '[data-ans-t="role"]', device: 'desk', a: 'tr', off: 0, dx: 2, dy: -3 }
+        { worry: 'What needs me right now?', does: 'Everything waiting for her is in one list, with a count beside the title so she sees the size of the job.', why: ['One list means one place to look, so nothing hides in a chat thread.', 'The count tells her how much is waiting before she scrolls.'], not: 'We didn’t send approvals as messages. Requests scatter across chats and the oldest get lost.', gain: 'Nothing gets lost in a chat thread.', t: '[data-ans-t="waiting"]', device: 'desk', a: 'r', off: 22 },
+        { worry: 'I’m out meeting a client.', does: 'On the phone, Approve is the biggest thing on the screen, with Decline lighter beside it.', why: ['A large button works with one thumb, even when she is standing in a meeting.', 'Decline is quieter, so the common action is easy and a slip is less likely.'], not: 'We didn’t shrink the desktop list onto the phone. Tiny buttons turn a five-second job into ‘later’.', gain: 'Her team isn’t stuck waiting for her.', t: '[data-ans-t="approve"]', device: 'phone', a: 'tr', off: 0, dx: 2, dy: -2 },
+        { worry: 'Who approved that?', does: 'Under the list, a short log shows who approved or paid what, with names and when.', why: ['The record sits right under the requests, so she doesn’t open another page.', 'Names make it personal: Lina approved, Dev paid.'], not: 'We didn’t hide history in a separate report. By the time she needs it, she would be hunting.', gain: 'Clear answers when the accountant asks.', t: '[data-ans-t="log"]', device: 'desk', a: 'tr', off: 0, dx: -14 },
+        { worry: 'Should everyone see everything?', does: 'Every request carries a role tag, like ‘Payments’, and access is limited to what that role needs.', why: ['The tag shows whose job the request is, so she sees the owner at a glance.', 'Limits follow the role, so people see what they need and no more.'], not: 'We didn’t give everyone the same view. A shared view of everything is where mistakes happen.', gain: 'Lina runs payments. The big calls stay with Aisha.', t: '[data-ans-t="role"]', device: 'desk', a: 'tr', off: 0, dx: 2, dy: -3 }
       ]
     }
   ];
@@ -370,17 +378,34 @@ window.Cbx300Answers = (function () {
     col.style.width = NCOL.width + 'px';
     var sline = html('div', 'cbx-ans__sline nsline', '<span class="sline cbx-sline">' + peopleRow(ch.people) + '<span>' + ch.kicker + '</span></span>');
     var ask = el('h2', 'cbx-ans__ask q serif', '“' + ch.ask + '”');
-    var wrap = el('div', 'cbx-ans__ptrs pw-wrap');
+    var wrap = el('div', 'cbx-ans__panel');
+    wrap.setAttribute('aria-live', 'polite');
+    var head = el('div', 'cbx-ans__phead');
+    var counts = el('div', 'cbx-ans__count');
+    var ticks = el('div', 'cbx-ans__ticks');
+    ticks.setAttribute('aria-hidden', 'true');
     ch.pointers.forEach(function (p, i) {
-      var ptr = el('div', 'cbx-ans__ptr ptr');
+      counts.appendChild(html('span', 'cbx-ans__cn', '<b>' + (i + 1) + '</b> of ' + ch.pointers.length));
+      ticks.appendChild(html('i', 'cbx-ans__tick', '<b></b>'));
+    });
+    head.appendChild(counts);
+    head.appendChild(ticks);
+    wrap.appendChild(head);
+    var body = el('div', 'cbx-ans__pbody');
+    ch.pointers.forEach(function (p, i) {
+      var ptr = el('div', 'cbx-ans__ptr cbx-ans__step ptr');
       ptr.setAttribute('data-n', String(i));
       ptr.setAttribute('data-device', p.device);
-      ptr.innerHTML = '<span class="cbx-ans__pn pn" data-n="' + (i + 1) + '"></span>' +
-        '<p class="cbx-ans__pw pw">“' + p.worry + '”</p>' +
-        '<p class="cbx-ans__pd pd">' + p.does + '</p>' +
-        '<p class="cbx-ans__pg pg"><i>↳</i><span>' + p.gain + '</span></p>';
-      wrap.appendChild(ptr);
+      ptr.innerHTML =
+        '<p class="cbx-ans__pw pw cbx-ans__ln">“' + p.worry + '”</p>' +
+        '<div class="cbx-ans__blk cbx-ans__ln"><h4 class="cbx-ans__lab2">The design decision</h4><p class="cbx-ans__pd pd">' + p.does + '</p></div>' +
+        '<div class="cbx-ans__blk cbx-ans__ln"><h4 class="cbx-ans__lab2">Why it works</h4><ul class="cbx-ans__why">' +
+          p.why.map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul></div>' +
+        '<div class="cbx-ans__blk cbx-ans__ln"><h4 class="cbx-ans__lab2">What we didn’t do</h4><p class="cbx-ans__not">' + p.not + '</p></div>' +
+        '<p class="cbx-ans__pg pg cbx-ans__ln"><i>↳</i><span>' + p.gain + '</span></p>';
+      body.appendChild(ptr);
     });
+    wrap.appendChild(body);
     var ctag = html('div', 'cbx-ans__ctag ctag', '<span class="tag">Example copy</span>');
     col.appendChild(sline);
     col.appendChild(ask);
@@ -471,12 +496,9 @@ window.Cbx300Answers = (function () {
 
   function placeNote(scene) {
     var col = scene.querySelector('.cbx-ans__ncol');
-    var wrap = col.querySelector('.cbx-ans__ptrs');
-    var g = 28;
-    wrap.style.gap = g + 'px';
     var H = col.offsetHeight;
     col.style.top = Math.round(84 + Math.max(0, (768 - H) / 2)) + 'px';
-    return { H: H, g: g };
+    return { H: H };
   }
 
   function anchorPt(r, a, off) {
@@ -495,42 +517,91 @@ window.Cbx300Answers = (function () {
     return m[a] || m.c;
   }
 
-  function placeMarks(scene, ch, scale, root) {
+  function pointerRect(scene, p, root, scale) {
+    var scope = scene.querySelector('.cbx-ans__cam.is-sharp [data-ans-device="' + p.device + '"]') ||
+      scene.querySelector('.cbx-ans__cam.is-sharp');
+    if (p.rect) {
+      var slot = scene.querySelector('.cbx-ans__cam.is-sharp [data-ans-device="' + p.device + '"] [data-ans-screen]') || scope;
+      var sr = stageRect(slot, root, scale);
+      var q = { x: sr.x + sr.w * p.rect.x / 100, y: sr.y + sr.h * p.rect.y / 100, w: sr.w * p.rect.w / 100, h: sr.h * p.rect.h / 100 };
+      q.r = q.x + q.w;
+      q.btm = q.y + q.h;
+      return q;
+    }
+    var t = p.t ? scope.querySelector(p.t) : null;
+    return t ? stageRect(t, root, scale) : null;
+  }
+
+  function fitAxis(desired, vlo, vhi, blo, bhi) {
+    /* Keep the element fully inside the safe window first; then keep the
+       window inside the world (no empty bezel) when both can hold. */
+    var lo = Math.max(vlo, blo);
+    var hi = Math.min(vhi, bhi);
+    if (blo <= bhi && lo <= hi) return Math.min(hi, Math.max(lo, desired));
+    return Math.min(vhi, Math.max(vlo, desired));
+  }
+
+  /* One camera pose per pointer. Poses are solved in world space (the
+     camera at the chapter pose Z is the reference), so each push-in lands
+     on the exact element and keeps it fully inside the lit window. */
+  function buildPoses(scene, ch, Z, scale, opts) {
+    opts = opts || {};
     Array.prototype.forEach.call(scene.querySelectorAll('.cbx-ans__mkr, .cbx-ans__ring, .cbx-ans__mpulse, .cbx-ans__rpulse'), function (n) {
       n.parentNode.removeChild(n);
     });
-    root = root || scene;
+    var sharp = scene.querySelector('.cbx-ans__cam.is-sharp');
+    var inner = sharp.querySelector('.cbx-ans__camin');
+    var isPhone = scene.classList.contains('is-phone');
+    var kids = Array.prototype.map.call(inner.querySelectorAll('[data-ans-device]'), function (n) { return stageRect(n, scene, scale); });
+    var wb = {
+      x: Math.min.apply(null, kids.map(function (r) { return (r.x - Z.tx) / Z.s; })),
+      y: Math.min.apply(null, kids.map(function (r) { return (r.y - Z.ty) / Z.s; })),
+      r: Math.max.apply(null, kids.map(function (r) { return (r.r - Z.tx) / Z.s; })),
+      b: Math.max.apply(null, kids.map(function (r) { return (r.btm - Z.ty) / Z.s; }))
+    };
+    var side = opts.side != null ? opts.side : 36;
+    var topIn = opts.topIn != null ? opts.topIn : (isPhone ? 112 : 44);
+    var botIn = opts.botIn != null ? opts.botIn : 36;
+    var out = [];
     ch.pointers.forEach(function (p, i) {
-      var scope = scene.querySelector('.cbx-ans__cam.is-sharp [data-ans-device="' + p.device + '"]') ||
-        scene.querySelector('.cbx-ans__cam.is-sharp');
-      var t = p.t ? scope.querySelector(p.t) : null;
-      var tr;
-      if (p.rect) {
-        var slot = scene.querySelector('.cbx-ans__cam.is-sharp [data-ans-device="' + p.device + '"] [data-ans-screen]') ||
-          scene.querySelector('.cbx-ans__cam.is-sharp [data-ans-device="' + p.device + '"]');
-        var sr = stageRect(slot, root, scale);
-        tr = { x: sr.x + sr.w * p.rect.x / 100, y: sr.y + sr.h * p.rect.y / 100, w: sr.w * p.rect.w / 100, h: sr.h * p.rect.h / 100 };
-        tr.r = tr.x + tr.w;
-        tr.btm = tr.y + tr.h;
-      } else if (t) {
-        tr = stageRect(t, root, scale);
-      } else {
-        return;
-      }
-      var pad = 5;
+      var tr = pointerRect(scene, p, scene, scale);
+      if (!tr) { out.push(null); return; }
+      var wr = { x: (tr.x - Z.tx) / Z.s, y: (tr.y - Z.ty) / Z.s, w: tr.w / Z.s, h: tr.h / Z.s };
+      var capW = Z.W - 2 * side;
+      var capH = Z.H - topIn - botIn;
+      var s = Math.min(Z.W * (opts.fillW || 0.5) / wr.w, Z.H * (opts.fillH || 0.4) / wr.h);
+      s = Math.min(Math.max(s, Z.s * (opts.minMul || 1.45)), Z.s * (opts.maxMul || 2.6));
+      s = Math.min(s, capW / wr.w, capH / wr.h);
+      if (opts.identity) s = 1;
+      var cx = Z.X + Z.W / 2;
+      var cy = Z.Y + topIn + capH / 2;
+      var tx0 = cx - (wr.x + wr.w / 2) * s;
+      var ty0 = cy - (wr.y + wr.h / 2) * s;
+      if (opts.identity) { tx0 = Z.tx; ty0 = Z.ty; }
+      var tx = fitAxis(tx0, Z.X + side - wr.x * s, Z.X + Z.W - side - (wr.x + wr.w) * s, Z.X + Z.W - wb.r * s, Z.X - wb.x * s);
+      var ty = fitAxis(ty0, Z.Y + topIn - wr.y * s, Z.Y + Z.H - botIn - (wr.y + wr.h) * s, Z.Y + Z.H - wb.b * s, Z.Y - wb.y * s);
+      if (opts.identity) { tx = Z.tx; ty = Z.ty; }
+      var R = { x: tx + wr.x * s, y: ty + wr.y * s, w: wr.w * s, h: wr.h * s };
+      var pad = 8;
       var ring = el('div', 'cbx-ans__ring ring');
-      ring.style.left = (tr.x - pad) + 'px';
-      ring.style.top = (tr.y - pad) + 'px';
-      ring.style.width = (tr.w + 2 * pad) + 'px';
-      ring.style.height = (tr.h + 2 * pad) + 'px';
-      scene.appendChild(ring);
-      var pt = anchorPt(tr, p.a || 'l', p.off != null ? p.off : 18);
+      ring.style.left = (R.x - pad) + 'px';
+      ring.style.top = (R.y - pad) + 'px';
+      ring.style.width = (R.w + 2 * pad) + 'px';
+      ring.style.height = (R.h + 2 * pad) + 'px';
+      sharp.appendChild(ring);
+      var mx = R.x - pad;
+      var my = R.y - pad;
       var mkr = el('div', 'cbx-ans__mkr mkr');
       mkr.textContent = String(i + 1);
-      mkr.style.left = (pt[0] + (p.dx || 0)) + 'px';
-      mkr.style.top = (pt[1] + (p.dy || 0)) + 'px';
+      mkr.style.left = mx + 'px';
+      mkr.style.top = my + 'px';
       scene.appendChild(mkr);
+      out.push({
+        pose: { x: tx, y: ty, s: s },
+        R: R, ring: ring, mkr: mkr
+      });
     });
+    return out;
   }
 
   function zoomBox(scene, ch, scale) {
@@ -553,7 +624,7 @@ window.Cbx300Answers = (function () {
       /* Header pill bottom is 74 on the 1440 stage. Keep ≥12px of
          viewport gap under it (same as 390) so 9:41 is not covered.
          NCOL pointers stay put; only the zoom dest drops. */
-      var minTop = 74 + 12 / Math.max(scale, 0.01) + 2;
+      var minTop = 74 + 12 / Math.max(scale, 0.01) + 2 + 16;
       var maxH = STAGE_H - 12 - minTop;
       s = Math.min(d.w / Math.max(1, R.r - R.x), maxH / hh, (STAGE_H - 56) / hh);
       var deskR = deskEl ? stageRect(deskEl, inner, scale) : null;
@@ -639,7 +710,7 @@ window.Cbx300Answers = (function () {
     var gsap = window.gsap;
     gsap.set(cams, { x: Z.tx, y: Z.ty, scale: Z.s, transformOrigin: '0 0', force3D: false });
     if (cams[0]) cams[0].offsetWidth;
-    placeMarks(scene, ch, scale, scene);
+    var poses = buildPoses(scene, ch, Z, scale);
     if (cams[0]) gsap.set(cams[0], { x: P.tx, y: P.ty, scale: P.s, force3D: false });
     if (cams[1]) gsap.set(cams[1], { x: P.tx, y: P.ty, scale: P.s, force3D: true });
     if (!cams[1] && cams[0]) gsap.set(cams[0], { x: P.tx, y: P.ty, scale: P.s, force3D: true });
@@ -648,13 +719,8 @@ window.Cbx300Answers = (function () {
     gsap.set(sharp, { clipPath: insetPath(P.tx, P.ty, P.w, P.h, 16 * P.s) });
     gsap.set(spot, { left: P.tx, top: P.ty, width: P.w, height: P.h, opacity: 0 });
     gsap.set(scene.querySelectorAll('.cbx-ans__dim, .cbx-ans__nbg, .cbx-vf, .cbx-vfl'), { opacity: 0 });
-    var mk = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__mkr'));
-    var rg = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__ring'));
-    var paired = mk.map(function (m, i) {
-      return { m: m, g: rg[i], n: +m.textContent };
-    }).sort(function (a, b) { return a.n - b.n; });
-    mk = paired.map(function (p) { return p.m; });
-    rg = paired.map(function (p) { return p.g; });
+    var mk = poses.map(function (q) { return q && q.mkr; });
+    var rg = poses.map(function (q) { return q && q.ring; });
     var mp = mk.map(function (m) {
       var e = el('div', 'cbx-ans__mpulse mpulse');
       e.style.left = m.style.left;
@@ -662,20 +728,20 @@ window.Cbx300Answers = (function () {
       m.parentNode.insertBefore(e, m);
       return e;
     });
-    var rp = rg.map(function (g) {
-      var e = el('div', 'cbx-ans__rpulse rpulse');
-      ['left', 'top', 'width', 'height', 'borderRadius'].forEach(function (p) {
-        e.style[p] = g.style[p];
-      });
-      g.parentNode.insertBefore(e, g);
-      return e;
+    gsap.set(mk.concat(rg, mp), { opacity: 0 });
+    var panel = scene.querySelector('.cbx-ans__panel');
+    var steps = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__step'));
+    var counts = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__cn'));
+    var fills = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__tick b'));
+    var lines = steps.map(function (st, i) {
+      var ls = [counts[i]].concat(Array.prototype.slice.call(st.querySelectorAll('.cbx-ans__ln')));
+      gsap.set(ls, { opacity: 0, y: IN_DY, scale: 0.985, transformOrigin: '0 50%' });
+      return ls;
     });
-    gsap.set(mk.concat(rg), { opacity: 0 });
-    var ptrs = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__ptr')).sort(function (x, y) {
-      return +x.getAttribute('data-n') - +y.getAttribute('data-n');
-    });
+    gsap.set(fills, { scaleX: 0, transformOrigin: '0 50%' });
     var ctag = scene.querySelector('.cbx-ans__ctag');
-    gsap.set(ptrs.concat([ctag]), { opacity: 0 });
+    gsap.set([panel, ctag], { opacity: 0 });
+    gsap.set(panel, { y: 18 });
     var h = titleGlide(scene, k, scale, stage);
     var mkav = h.sl.querySelectorAll('.mk, .cbx-mk');
     var slt = h.sl.querySelectorAll('.sline > span, .cbx-sline > span');
@@ -691,15 +757,18 @@ window.Cbx300Answers = (function () {
     return {
       scene: scene,
       cams: cams,
+      stepCam: cams[cams.length - 1],
       sharp: sharp,
       spot: spot,
       Z: Z,
       box: { l: P.tx, t: P.ty, r: P.tx + P.w, b: P.ty + P.h, rad: 16 * P.s },
+      poses: poses,
       mk: mk,
       rg: rg,
       mp: mp,
-      rp: rp,
-      ptrs: ptrs,
+      panel: panel,
+      lines: lines,
+      fills: fills,
       ctag: ctag,
       sl: h.sl,
       q: h.q,
@@ -796,6 +865,52 @@ window.Cbx300Answers = (function () {
     tl.to([l.q, l.sl], { textShadow: '0 1px 14px rgba(20,14,10,0)', duration: 0.2, ease: 'sine.in' }, t + 0.83);
   }
 
+  /* The twelve-beat core, shared by wide and 390. One call = one chapter's
+     four pointers. Every tween is a fromTo with immediateRender:false so a
+     scrub, a jump or a reverse always lands on the same pixels. Only
+     transform and opacity animate (gsap-performance). Returns the end time. */
+  function addSteps(tl, l, bar, R0, start, stepTimes, hook, wins) {
+    var cur = start;
+    l.poses.forEach(function (q, i) {
+      var t = R0 + i * STEP;
+      if (stepTimes) stepTimes.push(+t.toFixed(3));
+      /* text of this point is still arriving until t + SETTLE_IN */
+      if (wins) wins.push([t, t + SETTLE_IN]);
+      if (hook) hook(i, t);
+      /* camera glide: previous pose to this one. Only the sharp camera moves;
+         the dimmed duplicate behind it stays at the chapter pose so it is
+         not re-rasterised every frame. */
+      tl.fromTo(l.stepCam, { x: cur.x, y: cur.y, scale: cur.s },
+        { x: q.pose.x, y: q.pose.y, scale: q.pose.s, duration: GLIDE, ease: 'power2.inOut', immediateRender: false }, t);
+      /* previous marker and shade hand over gently */
+      if (i) {
+        tl.fromTo([l.mk[i - 1], l.rg[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.45, ease: 'sine.inOut', immediateRender: false }, t);
+        /* old text glides up and out, line by line */
+        tl.fromTo(l.lines[i - 1], { opacity: 1, y: 0, scale: 1 },
+          { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, t);
+      }
+      /* new text glides in, staggered, long soft ease */
+      tl.fromTo(l.lines[i], { opacity: 0, y: IN_DY, scale: 0.985 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: 'power3.out', stagger: 0.07, immediateRender: false }, t + (i ? 0.5 : 0.25));
+      /* marker softly rings in once the camera has nearly landed */
+      tl.fromTo(l.rg[i], { opacity: 0 }, { opacity: 1, duration: 0.95, ease: 'sine.inOut', immediateRender: false }, t + 0.7);
+      tl.fromTo(l.mk[i], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.85, ease: 'power3.out', immediateRender: false }, t + 0.85);
+      tl.fromTo(l.mp[i], { opacity: 0.55, scale: 1 }, { opacity: 0, scale: 2.4, duration: 1.2, ease: 'power2.out', immediateRender: false }, t + 0.95);
+      /* tick fills, chapter bar advances */
+      tl.fromTo(l.fills[i], { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: 'power2.inOut', immediateRender: false }, t + 0.15);
+      if (bar) tl.to(bar, { scaleX: 0.2 + 0.8 * (i + 1) / 4, duration: 1.0, ease: 'power2.inOut' }, t + 0.15);
+      cur = q.pose;
+    });
+    var E = R0 + l.poses.length * STEP + 0.1;
+    var last = l.poses.length - 1;
+    if (wins) wins.push([E, E + 1.25]);
+    tl.fromTo(l.lines[last], { opacity: 1, y: 0, scale: 1 },
+      { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, E);
+    tl.fromTo([l.mk[last], l.rg[last]], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, E);
+    tl.fromTo(l.panel, { opacity: 1, y: 0 }, { opacity: 0, y: -10, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, E + 0.35);
+    return E;
+  }
+
   function buildTimeline(section, scale) {
     var gsap = window.gsap;
     var stage = section.querySelector('.cbx-ans__stage');
@@ -816,6 +931,8 @@ window.Cbx300Answers = (function () {
     var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
     var T = START;
     var k;
+    var stepTimes = [];
+    var snapWins = [];
     var chWin = scenes.map(function () {
       return { appear: 0, gone: 1e6 };
     });
@@ -834,31 +951,10 @@ window.Cbx300Answers = (function () {
         if (bars[k]) tl.to(bars[k], { scaleX: 0.2, duration: ZOOM, ease: 'none' }, S0);
         tl.to(l.vf, { opacity: 1, duration: 0.6, stagger: 0.06, ease: 'sine.out' }, S0 + ZOOM - 0.5);
         tl.to(l.ctag, { opacity: 1, duration: 0.8, ease: 'sine.out' }, S0 + ZOOM - 0.3);
-        var R0 = S0 + ZOOM + 0.05;
-        l.ptrs.forEach(function (p, i) {
-          var t = R0 + i * GAP;
-          if (l.rg[i]) tl.fromTo(l.rg[i], { opacity: 0 }, { opacity: 1, duration: 0.45, ease: 'sine.out' }, t);
-          if (l.rp[i]) {
-            tl.fromTo(l.rp[i], { opacity: 1, boxShadow: '0 0 0 2px rgba(232,169,107,.95)' }, {
-              opacity: 0, boxShadow: '0 0 0 16px rgba(232,169,107,0)', duration: 0.9, ease: 'power2.out', immediateRender: false
-            }, t);
-          }
-          if (l.mk[i]) tl.fromTo(l.mk[i], { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.55, ease: 'back.out(2.6)' }, t);
-          if (l.mp[i]) {
-            tl.fromTo(l.mp[i], { opacity: 0.95, scale: 1 }, { opacity: 0, scale: 2.8, duration: 0.8, ease: 'power2.out', immediateRender: false }, t + 0.08);
-          }
-          tl.fromTo(p, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, t + 0.1);
-          if (bars[k]) tl.to(bars[k], { scaleX: 0.2 + 0.8 * (i + 1) / 4, duration: 0.5, ease: 'none' }, t);
-        });
-        var FULL = R0 + 3 * GAP + 0.8;
-        var E = FULL + HOLD;
-        var each = 0.5;
-        var stg = (OUT - each) / 3;
-        [3, 2, 1, 0].forEach(function (i, j) {
-          var t = E + j * stg;
-          tl.to(l.ptrs[i], { opacity: 0, y: -6, duration: each, ease: 'sine.inOut' }, t);
-          if (l.mk[i] && l.rg[i]) tl.to([l.mk[i], l.rg[i]], { opacity: 0, duration: each, ease: 'sine.inOut' }, t);
-        });
+        var R0 = S0 + ZOOM + 0.1;
+        tl.fromTo(l.panel, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', immediateRender: false }, S0 + ZOOM - 0.3);
+        snapWins.push([S0 + ZOOM - 0.6, R0]);
+        var E = addSteps(tl, l, bars[k], R0, { x: Z.tx, y: Z.ty, s: Z.s }, stepTimes, null, snapWins);
         tl.to(l.ctag, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.5);
         tl.to(l.vf, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.7);
         var B = E + OUT + 0.05;
@@ -866,22 +962,26 @@ window.Cbx300Answers = (function () {
         if (k < 2) {
           var W = B + BACK + 0.1;
           var n = layers[k + 1];
-          tl.to(l.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0, duration: 0.4, ease: 'sine.in' }, W);
-          tl.to([l.sl, l.q], { opacity: 0.55, duration: 0.28, ease: 'sine.in' }, W);
+          /* Handoff, soft: the old device content and the old question
+             glide up and out; the new chapter is already on the same
+             pulled-back pose and its content and question glide in. The two
+             questions never overlap (old is gone before new has started). */
+          var dyOf = function (c) { return function (i) { return i ? c.qdy : c.sdy; }; };
+          tl.to(l.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0, duration: 0.7, ease: 'sine.inOut' }, W);
+          tl.fromTo([l.sl, l.q], { opacity: 1, y: dyOf(l) },
+            { opacity: 0, y: function (i) { return dyOf(l)(i) - 24; }, duration: 0.6, ease: 'power2.inOut', stagger: 0.06, immediateRender: false }, W - 0.15);
           tl.set(n.layers, { opacity: 0 }, W - 0.2);
           tl.set(n.scene, { opacity: 1 }, W - 0.2);
           chWin[k + 1].appear = W - 0.2;
-          chWin[k].gone = W + 0.5;
-          tl.fromTo([n.sl, n.q], { opacity: 0.55, y: function (i) { return (i ? n.qdy : n.sdy) + 10; } }, {
-            opacity: 1, y: function (i) { return i ? n.qdy : n.sdy; }, duration: 0.55, ease: 'sine.out', immediateRender: false
-          }, W);
-          tl.to([l.sl, l.q], { opacity: 0, duration: 0.25, ease: 'sine.in' }, W + 0.28);
-          tl.set(l.scene, { opacity: 0 }, W + 0.45);
-          tl.set(n.scene.querySelectorAll('.cbx-ans__cam'), { opacity: 1 }, W + 0.4);
-          tl.set(n.spot, { opacity: 0 }, W + 0.4);
-          tl.fromTo(n.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'sine.out' }, W + 0.4);
-          tl.fromTo(n.scene.querySelectorAll('.si.new, .cbx-si.is-new'), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.45, stagger: 0.1, ease: 'power2.out' }, W + 0.45);
-          tl.set(n.scene.querySelectorAll('.cbx-ans__dim, .cbx-ans__nbg'), { opacity: 0 }, W + 0.4);
+          chWin[k].gone = W + 0.95;
+          tl.fromTo([n.sl, n.q], { opacity: 0, y: function (i) { return dyOf(n)(i) + 26; } },
+            { opacity: 1, y: dyOf(n), duration: 0.85, ease: 'power3.out', stagger: 0.07, immediateRender: false }, W + 0.3);
+          tl.set(l.scene, { opacity: 0 }, W + 0.9);
+          tl.fromTo(n.scene.querySelectorAll('.cbx-ans__cam'), { opacity: 0 }, { opacity: 1, duration: 0.7, ease: 'sine.inOut', immediateRender: false }, W + 0.1);
+          tl.set(n.spot, { opacity: 0 }, W);
+          tl.fromTo(n.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'sine.inOut' }, W + 0.2);
+          tl.fromTo(n.scene.querySelectorAll('.si.new, .cbx-si.is-new'), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.55, stagger: 0.1, ease: 'power2.out' }, W + 0.55);
+          tl.set(n.scene.querySelectorAll('.cbx-ans__dim, .cbx-ans__nbg'), { opacity: 0 }, W);
           T = W + 1.2;
         } else {
           T = B + BACK + 0.6;
@@ -890,7 +990,9 @@ window.Cbx300Answers = (function () {
     }
     tl.to({}, { duration: 0.6 }, T);
     section._cbxWins = chWin;
+    section._cbxSnapWins = snapWins;
     section._cbxScenes = scenes;
+    section.dataset.steps = JSON.stringify(stepTimes);
     return tl;
   }
 
@@ -989,9 +1091,47 @@ window.Cbx300Answers = (function () {
     var d = tl && tl.duration ? tl.duration() : 0;
     var target = Math.max(0, (progress || 0) * d);
     var now = tl && typeof tl.time === 'function' ? tl.time() : target;
-    var jump = d > 0 && Math.abs(now / d - (progress || 0)) > 0.03;
+    var jump = d > 0 && Math.abs(now / d - (progress || 0)) > JUMP;
     if (jump && typeof tl.time === 'function') tl.time(target);
     applySceneVisibility(section, target);
+  }
+
+  /* Scroll-end settle. The glide is scrubbed, so a reader who stops while a
+     point is still arriving would leave its text half-faded. When scrolling
+     ends inside one of those windows, ease on to the nearest settled state
+     in the direction they were travelling. Scrubbing and reversal are
+     untouched: any new scroll input cancels the settle. */
+  function settleSnap(section, tl) {
+    var merged = null;
+    function build() {
+      var w = (section._cbxSnapWins || []).slice().sort(function (a, b) { return a[0] - b[0]; });
+      merged = [];
+      w.forEach(function (x) {
+        var last = merged[merged.length - 1];
+        if (last && x[0] <= last[1] + 0.05) last[1] = Math.max(last[1], x[1]);
+        else merged.push([x[0], x[1]]);
+      });
+    }
+    return {
+      snapTo: function (value, self) {
+        if (!merged) build();
+        var d = tl.duration();
+        var t = value * d;
+        for (var i = 0; i < merged.length; i += 1) {
+          var a = merged[i][0];
+          var b = merged[i][1];
+          if (t > a + 0.06 && t < b - 0.06) {
+            var dir = self && self.direction ? self.direction : (t - a < b - t ? -1 : 1);
+            return (dir > 0 ? b : a) / d;
+          }
+        }
+        return value;
+      },
+      delay: 0.3,
+      duration: { min: 0.45, max: 1.0 },
+      ease: 'power2.inOut',
+      inertia: false
+    };
   }
 
   function bindCamera(section) {
@@ -1010,6 +1150,7 @@ window.Cbx300Answers = (function () {
       pinSpacing: true,
       pinType: 'fixed',
       scrub: SCRUB,
+      snap: settleSnap(section, tl),
       animation: tl,
       invalidateOnRefresh: false,
       anticipatePin: 1,
@@ -1033,48 +1174,73 @@ window.Cbx300Answers = (function () {
     section.dataset.dur = String(tl.duration());
   }
 
+  /* Reduced motion: no camera, no glide. Scroll still walks the twelve
+     points, one at a time; each swap is a short opacity fade (CSS). */
   function bindReduced(section) {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     section.classList.add('is-static');
-    fitScale(section);
-    var scenes = section.querySelectorAll('.cbx-ans__scene');
-    Array.prototype.forEach.call(scenes, function (scene, i) {
-      scene.hidden = i !== 0;
-      scene.style.opacity = i === 0 ? '1' : '0';
-      var ptrs = scene.querySelectorAll('.cbx-ans__ptr, .cbx-ans__ctag, .cbx-vf, .cbx-vfl, .cbx-ans__dim, .cbx-ans__nbg, .cbx-ans__spot');
-      gsap.set(ptrs, { opacity: 1 });
+    var scale = fitScale(section);
+    var scenes = Array.prototype.slice.call(section.querySelectorAll('.cbx-ans__scene'));
+    var bars = section.querySelectorAll('.cbx-ans__prog b');
+    var per = scenes.map(function (scene, k) {
+      scene.removeAttribute('hidden');
+      scene.style.opacity = '1';
+      var poses = buildPoses(scene, CHAPTERS[k], { tx: 0, ty: 0, s: 1, X: 32, Y: 72, W: 880, H: 780 }, scale, { identity: true });
+      if (k) { scene.setAttribute('hidden', ''); scene.style.opacity = '0'; }
+      return { scene: scene, poses: poses };
     });
-    var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: function () { return '+=' + Math.round(window.innerHeight * 2.4); },
-        pin: true,
-        pinSpacing: true,
-        pinType: 'fixed',
-        scrub: 0.6,
-        refreshPriority: -1,
-        onToggle: function (self) { pinActive(self.isActive); },
-        onUpdate: function (self) {
-          var i = Math.min(2, Math.floor(self.progress * 3));
-          Array.prototype.forEach.call(scenes, function (scene, n) {
-            var on = n === i;
-            scene.style.opacity = on ? '1' : '0';
-            if (on) scene.removeAttribute('hidden');
-            else scene.setAttribute('hidden', '');
-          });
-          var shown = section.querySelector('.cbx-ans__scene:not([hidden])');
-          if (!shown && scenes[i]) scenes[i].removeAttribute('hidden');
-          if (motion.onStep) motion.onStep(2);
-        }
+    gsap.set(section.querySelectorAll('.cbx-ans__ptr, .cbx-ans__ctag, .cbx-vf, .cbx-vfl, .cbx-ans__dim, .cbx-ans__nbg, .cbx-ans__panel'), { opacity: 1 });
+    gsap.set(section.querySelectorAll('.cbx-ans__ring, .cbx-ans__mkr'), { clearProps: 'opacity' });
+    var shown = -1;
+    function show(idx) {
+      if (idx === shown) return;
+      shown = idx;
+      var ch = Math.floor(idx / 4);
+      var st = idx % 4;
+      per.forEach(function (c, k) {
+        c.scene.style.opacity = k === ch ? '1' : '0';
+        if (k === ch) c.scene.removeAttribute('hidden');
+        else c.scene.setAttribute('hidden', '');
+        var steps = c.scene.querySelectorAll('.cbx-ans__step');
+        var cns = c.scene.querySelectorAll('.cbx-ans__cn');
+        var ticks = c.scene.querySelectorAll('.cbx-ans__tick');
+        Array.prototype.forEach.call(steps, function (n, i) {
+          n.classList.toggle('is-current', k === ch && i === st);
+          if (cns[i]) cns[i].classList.toggle('is-current', k === ch && i === st);
+          if (ticks[i]) ticks[i].classList.toggle('is-on', k === ch && i <= st);
+          if (c.poses[i]) {
+            c.poses[i].ring.classList.toggle('is-on', k === ch && i === st);
+            c.poses[i].mkr.classList.toggle('is-on', k === ch && i === st);
+          }
+        });
+      });
+      Array.prototype.forEach.call(bars, function (b, k) {
+        b.style.transform = 'scaleX(' + (k < ch ? 1 : (k === ch ? 0.2 + 0.8 * (st + 1) / 4 : 0)) + ')';
+      });
+    }
+    show(0);
+    var st = ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: function () { return '+=' + Math.round(window.innerHeight * 12); },
+      pin: true,
+      pinSpacing: true,
+      pinType: 'fixed',
+      refreshPriority: -1,
+      onToggle: function (self) { pinActive(self.isActive); },
+      onUpdate: function (self) {
+        show(Math.max(0, Math.min(11, Math.floor(self.progress * 12))));
+        if (motion.onStep) motion.onStep(2);
       }
     });
-    motion.tween = tl;
-    if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
+    motion.tween = null;
+    motion.triggers.push(st);
     section.dataset.ready = '1';
   }
 
+  /* 390: same twelve beats. The camera pushes into the element inside the
+     window above the bottom sheet; the sheet swaps its text per beat. */
   function bindNarrow(section) {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
@@ -1086,66 +1252,105 @@ window.Cbx300Answers = (function () {
       scene.style.opacity = '1';
     });
     section.getBoundingClientRect();
-    scenes.forEach(function (scene, k) {
-      placeMarks(scene, CHAPTERS[k], 1);
-    });
-    scenes.forEach(function (scene, k) {
-      if (k) {
-        scene.setAttribute('hidden', '');
-        scene.style.opacity = '0';
+    var vw = section.clientWidth;
+    var vh = section.clientHeight;
+    var hud = section.querySelector('.cbx-ans__hud');
+    var winTop = Math.ceil(hud.getBoundingClientRect().bottom - section.getBoundingClientRect().top) + 8;
+    var bars = section.querySelectorAll('.cbx-ans__prog b');
+    var layers = scenes.map(function (scene, k) {
+      var note = scene.querySelector('.cbx-ans__note');
+      var winBot = Math.floor(note.getBoundingClientRect().top - section.getBoundingClientRect().top) - 6;
+      var Z = { tx: 0, ty: 0, s: 1, X: 0, Y: winTop, W: vw, H: Math.max(120, winBot - winTop) };
+      var cams = scene.querySelectorAll('.cbx-ans__cam.is-sharp .cbx-ans__camin');
+      var sharp = scene.querySelector('.cbx-ans__cam.is-sharp');
+      sharp.style.clipPath = 'inset(' + Z.Y + 'px 0 ' + (vh - Z.Y - Z.H) + 'px 0)';
+      var swap = null;
+      if (scene.classList.contains('is-both')) {
+        var sharpRoot = scene.querySelector('.cbx-ans__cam.is-sharp');
+        var deskN = sharpRoot.querySelector('.cbx-desk');
+        var phoneN = sharpRoot.querySelector('.cbx-phone');
+        var dsc = (vw - 24) / 760;
+        deskN.style.cssText += ';left:12px;top:' + Math.round(Z.Y + Math.max(8, (Z.H - 560 * dsc) / 2)) + 'px;width:760px;height:560px;transform:scale(' + dsc + ');transform-origin:0 0;z-index:2';
+        swap = { desk: deskN, phone: phoneN, dev: CHAPTERS[k].pointers.map(function (q) { return q.device; }) };
       }
-    });
-    var tl = gsap.timeline({ paused: true });
-    var T = 0.2;
-    var chWin = scenes.map(function (_, k) {
-      return { appear: k ? 1e6 : 0, gone: 1e6 };
-    });
-    scenes.forEach(function (scene, k) {
-      var ptrs = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__ptr'));
-      var mk = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__mkr'));
-      gsap.set(ptrs, { opacity: 0, y: 8 });
-      gsap.set(mk, { opacity: 0, scale: 0.4 });
+      var poses = buildPoses(scene, CHAPTERS[k], Z, 1, { side: 14, topIn: 12, botIn: 12, fillW: 0.62, fillH: 0.5, minMul: 1.25, maxMul: 2.4 });
+      var mk = poses.map(function (q) { return q && q.mkr; });
+      var rg = poses.map(function (q) { return q && q.ring; });
+      var mp = mk.map(function (m) {
+        var e = el('div', 'cbx-ans__mpulse mpulse');
+        e.style.left = m.style.left;
+        e.style.top = m.style.top;
+        m.parentNode.insertBefore(e, m);
+        return e;
+      });
+      gsap.set(mk.concat(rg, mp), { opacity: 0 });
+      var panel = scene.querySelector('.cbx-ans__panel');
+      var steps = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__step'));
+      var counts = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__cn'));
+      var fills = Array.prototype.slice.call(scene.querySelectorAll('.cbx-ans__tick b'));
+      var lines = steps.map(function (st, i) {
+        var ls = [counts[i]].concat(Array.prototype.slice.call(st.querySelectorAll('.cbx-ans__ln')));
+        gsap.set(ls, { opacity: 0, y: IN_DY * 0.7, scale: 0.985, transformOrigin: '0 50%' });
+        return ls;
+      });
+      gsap.set(fills, { scaleX: 0, transformOrigin: '0 50%' });
+      gsap.set(cams, { x: 0, y: 0, scale: 1, transformOrigin: '0 0', force3D: true });
+      gsap.set(panel, { opacity: 0, y: 14 });
+      if (swap) {
+        gsap.set(swap.desk, { opacity: swap.dev[0] === 'desk' ? 1 : 0 });
+        gsap.set(swap.phone, { opacity: swap.dev[0] === 'phone' ? 1 : 0 });
+      }
       gsap.set(scene, { opacity: k ? 0 : 1 });
       if (k) scene.setAttribute('hidden', '');
-      else scene.removeAttribute('hidden');
-      if (ptrs[0]) {
-        ptrs[0].classList.add('is-current');
-        if (!k) gsap.set(ptrs[0], { opacity: 1, y: 0 });
-      }
-      if (k) {
-        chWin[k].appear = T;
-        chWin[k - 1].gone = T + 0.15;
-        tl.set(scene, { opacity: 1 }, T);
-        tl.set(scenes[k - 1], { opacity: 0 }, T + 0.15);
-        T += 0.25;
-      }
-      ptrs.forEach(function (p, i) {
-        var t = T + i * 0.9;
-        if (mk[i]) tl.fromTo(mk[i], { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)' }, t);
-        tl.call(function () {
-          ptrs.forEach(function (node, n) {
-            node.classList.toggle('is-current', n === i);
-          });
-        }, null, t);
-        if (k === 0 && i === 0) {
-          gsap.set(p, { opacity: 1, y: 0 });
-        } else {
-          tl.fromTo(p, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, t + 0.08);
-        }
-      });
-      T += 0.9 * 3 + 1.6;
+      return { swap: swap, scene: scene, cams: cams, stepCam: cams[0], poses: poses, mk: mk, rg: rg, mp: mp, panel: panel, lines: lines, fills: fills };
     });
-    tl.to({}, { duration: 0.4 }, T);
+    var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
+    var chWin = scenes.map(function () { return { appear: 0, gone: 1e6 }; });
+    var stepTimes = [];
+    var snapWins = [];
+    var T = 0.3;
+    layers.forEach(function (l, k) {
+      if (k) {
+        /* the two chapters cross-fade (no hard swap) while the old panel
+           glides out and the new one glides in */
+        chWin[k].appear = T - 0.4;
+        chWin[k - 1].gone = T + 0.6;
+        tl.fromTo(l.scene, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut', immediateRender: false }, T - 0.35);
+        tl.fromTo(l.panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, T);
+      } else {
+        tl.fromTo(l.panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, T);
+      }
+      snapWins.push([T - 0.4, T + 0.2]);
+      var E = addSteps(tl, l, bars[k], T + 0.2, { x: 0, y: 0, s: 1 }, stepTimes, l.swap ? function (i, t) {
+        var sw = l.swap;
+        if (!i || sw.dev[i] === sw.dev[i - 1]) return;
+        var to = sw.dev[i];
+        tl.fromTo(sw[to], { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut', immediateRender: false }, t + 0.35);
+        tl.fromTo(sw[sw.dev[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, t);
+      } : null, snapWins);
+      if (k < layers.length - 1) {
+        /* the next chapter fades in over this one; this one is released
+           only once the next is fully in (no dip through empty) */
+        tl.set(l.scene, { opacity: 0 }, E + 1.55);
+        T = E + 1.0;
+      } else {
+        T = E + 0.8;
+      }
+    });
+    tl.to({}, { duration: 0.5 }, T);
     section._cbxWins = chWin;
+    section._cbxSnapWins = snapWins;
     section._cbxScenes = scenes;
+    section.dataset.steps = JSON.stringify(stepTimes);
     var st = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: function () { return '+=' + Math.round(tl.duration() * 140); },
+      end: function () { return '+=' + Math.round(tl.duration() * 170); },
       pin: true,
       pinSpacing: true,
       pinType: 'fixed',
-      scrub: 0.8,
+      scrub: SCRUB,
+      snap: settleSnap(section, tl),
       animation: tl,
       refreshPriority: -1,
       onToggle: function (self) {
