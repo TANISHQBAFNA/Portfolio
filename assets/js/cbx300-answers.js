@@ -32,7 +32,6 @@ window.Cbx300Answers = (function () {
   var IN_DY = 30;
   var OUT_DY = -26;
   var GLIDE = 1.15;
-  var DRIFT = 1.035;
   var START = 0.7;
   var CURTAIN = 0.55;
   var DEST = { x: 48, w: 880, cy: 470 };
@@ -593,12 +592,9 @@ window.Cbx300Answers = (function () {
       mkr.style.left = mx + 'px';
       mkr.style.top = my + 'px';
       scene.appendChild(mkr);
-      var ecx = R.x + R.w / 2;
-      var ecy = R.y + R.h / 2;
       out.push({
         pose: { x: tx, y: ty, s: s },
-        drift: { x: ecx - (ecx - tx) * DRIFT, y: ecy - (ecy - ty) * DRIFT, s: s * DRIFT },
-        R: R, ring: ring, mkr: mkr, mx: mx, my: my, ecx: ecx, ecy: ecy
+        R: R, ring: ring, mkr: mkr
       });
     });
     return out;
@@ -757,6 +753,7 @@ window.Cbx300Answers = (function () {
     return {
       scene: scene,
       cams: cams,
+      stepCam: cams[cams.length - 1],
       sharp: sharp,
       spot: spot,
       Z: Z,
@@ -870,12 +867,13 @@ window.Cbx300Answers = (function () {
      transform and opacity animate (gsap-performance). Returns the end time. */
   function addSteps(tl, l, bar, R0, start, stepTimes) {
     var cur = start;
-    var dur = STEP - GLIDE - 0.05;
     l.poses.forEach(function (q, i) {
       var t = R0 + i * STEP;
       if (stepTimes) stepTimes.push(+t.toFixed(3));
-      /* camera glide: previous pose (after its slow drift) to this one */
-      tl.fromTo(l.cams, { x: cur.x, y: cur.y, scale: cur.s },
+      /* camera glide: previous pose to this one. Only the sharp camera moves;
+         the dimmed duplicate behind it stays at the chapter pose so it is
+         not re-rasterised every frame. */
+      tl.fromTo(l.stepCam, { x: cur.x, y: cur.y, scale: cur.s },
         { x: q.pose.x, y: q.pose.y, scale: q.pose.s, duration: GLIDE, ease: 'power2.inOut', immediateRender: false }, t);
       /* previous marker and shade hand over gently */
       if (i) {
@@ -894,13 +892,7 @@ window.Cbx300Answers = (function () {
       /* tick fills, chapter bar advances */
       tl.fromTo(l.fills[i], { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: 'power2.inOut', immediateRender: false }, t + 0.15);
       if (bar) tl.to(bar, { scaleX: 0.2 + 0.8 * (i + 1) / 4, duration: 1.0, ease: 'power2.inOut' }, t + 0.15);
-      /* slow push while the beat holds on scroll */
-      tl.fromTo(l.cams, { x: q.pose.x, y: q.pose.y, scale: q.pose.s },
-        { x: q.drift.x, y: q.drift.y, scale: q.drift.s, duration: dur, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
-      tl.fromTo(l.rg[i], { scale: 1 }, { scale: DRIFT, duration: dur, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
-      tl.fromTo(l.mk[i], { x: 0, y: 0 },
-        { x: (q.mx - q.ecx) * (DRIFT - 1), y: (q.my - q.ecy) * (DRIFT - 1), duration: dur, ease: 'none', immediateRender: false }, t + GLIDE + 0.05);
-      cur = q.drift;
+      cur = q.pose;
     });
     var E = R0 + l.poses.length * STEP + 0.1;
     var last = l.poses.length - 1;
@@ -1243,7 +1235,7 @@ window.Cbx300Answers = (function () {
       gsap.set(panel, { opacity: 0, y: 14 });
       gsap.set(scene, { opacity: k ? 0 : 1 });
       if (k) scene.setAttribute('hidden', '');
-      return { scene: scene, cams: cams, poses: poses, mk: mk, rg: rg, mp: mp, panel: panel, lines: lines, fills: fills };
+      return { scene: scene, cams: cams, stepCam: cams[0], poses: poses, mk: mk, rg: rg, mp: mp, panel: panel, lines: lines, fills: fills };
     });
     var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
     var chWin = scenes.map(function () { return { appear: 0, gone: 1e6 }; });

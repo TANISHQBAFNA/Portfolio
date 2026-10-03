@@ -1363,7 +1363,6 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   border-radius: 20px;
   background: rgba(244, 239, 230, .06);
   box-shadow: inset 0 0 0 1px rgba(244, 239, 230, .16);
-  will-change: transform, opacity;
 }
 
 .cbx-ans__phead {
@@ -1424,10 +1423,6 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   grid-area: 1 / 1;
   position: relative;
   color: #f4efe6;
-}
-
-.cbx-ans__ln {
-  will-change: transform, opacity;
 }
 
 .cbx-ans__blk {
@@ -1588,7 +1583,6 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-ans__ring {
   /* the 4000px shade dims everything in the lit window except the pointer */
   box-shadow: 0 0 0 2px #E8A96B, 0 0 0 7px rgba(232, 169, 107, .18), 0 0 0 4000px rgba(24, 16, 12, .56);
-  will-change: opacity, transform;
 }
 
 .cbx-ans__rpulse {
