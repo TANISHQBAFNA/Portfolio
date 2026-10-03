@@ -1314,7 +1314,7 @@ window.Cbx300Answers = (function () {
         /* the two chapters cross-fade (no hard swap) while the old panel
            glides out and the new one glides in */
         chWin[k].appear = T - 0.4;
-        chWin[k - 1].gone = T + 0.4;
+        chWin[k - 1].gone = T + 0.6;
         tl.fromTo(l.scene, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut', immediateRender: false }, T - 0.35);
         tl.fromTo(l.panel, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false }, T);
       } else {
@@ -1329,7 +1329,9 @@ window.Cbx300Answers = (function () {
         tl.fromTo(sw[sw.dev[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: 'sine.inOut', immediateRender: false }, t);
       } : null, snapWins);
       if (k < layers.length - 1) {
-        tl.to(l.scene, { opacity: 0, duration: 0.8, ease: 'sine.inOut' }, E + 0.4);
+        /* the next chapter fades in over this one; this one is released
+           only once the next is fully in (no dip through empty) */
+        tl.set(l.scene, { opacity: 0 }, E + 1.55);
         T = E + 1.0;
       } else {
         T = E + 0.8;
