@@ -302,8 +302,22 @@ html.is-multiverse .cbx-ans__mkr {
 
 html.is-multiverse .cbx-ans__ring {
   border-color: #ff4eb8;
-  box-shadow: 0 0 0 4px rgba(255, 78, 184, 0.22);
+  box-shadow: 0 0 0 2px #ff4eb8, 0 0 0 7px rgba(255, 78, 184, 0.22), 0 0 0 4000px rgba(8, 10, 16, 0.58);
 }
+
+html.is-multiverse .cbx-ans__panel {
+  background: rgba(14, 16, 24, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(61, 232, 245, 0.3);
+}
+html.is-multiverse .cbx-ans__cn,
+html.is-multiverse .cbx-ans__lab2 { color: #3de8f5; }
+html.is-multiverse .cbx-ans__cn b { color: #f3eee4; }
+html.is-multiverse .cbx-ans__tick b,
+html.is-multiverse .cbx-ans__why li::before { background: #3de8f5; }
+html.is-multiverse .cbx-ans__tick { background: rgba(243, 238, 228, 0.24); }
+html.is-multiverse .cbx-ans__why li,
+html.is-multiverse .cbx-ans__not { color: rgba(243, 238, 228, 0.86); }
+html.is-multiverse .cbx-ans__pd { color: #f3eee4; }
 
 html.is-multiverse .cbx-ans__mpulse {
   background: #ff4eb8;

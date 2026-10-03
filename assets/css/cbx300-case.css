@@ -1354,47 +1354,134 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   color: #f4efe6;
 }
 
-.cbx-ans__ptrs {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  margin-top: 30px;
+.cbx-ans__panel {
+  position: relative;
+  box-sizing: border-box;
   width: 100%;
+  margin-top: 22px;
+  padding: 18px 22px 20px;
+  border-radius: 20px;
+  background: rgba(244, 239, 230, .06);
+  box-shadow: inset 0 0 0 1px rgba(244, 239, 230, .16);
+  will-change: transform, opacity;
 }
 
-.cbx-ans__ptr {
-  position: relative;
-  width: auto;
-  padding-left: 44px;
+.cbx-ans__phead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  min-height: 20px;
+}
+
+.cbx-ans__count {
+  display: grid;
+}
+
+.cbx-ans__cn {
+  grid-area: 1 / 1;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: #F3C892;
+  white-space: nowrap;
+}
+
+.cbx-ans__cn b {
+  font-size: 16px;
+  font-weight: 700;
   color: #f4efe6;
 }
 
-.cbx-ans__pn {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #E8A96B;
-  color: #1E1510;
-  font-family: "Outfit", system-ui, sans-serif;
-  font-style: normal;
-  font-size: 0;
-  font-weight: 700;
+.cbx-ans__ticks {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
+  gap: 6px;
 }
 
-.cbx-ans__pn::after {
-  content: attr(data-n);
-  font-size: 13px;
+.cbx-ans__tick {
+  position: relative;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(244, 239, 230, .24);
+  overflow: hidden;
+}
+
+.cbx-ans__tick b {
+  position: absolute;
+  inset: 0;
+  background: #E8A96B;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.cbx-ans__pbody {
+  display: grid;
+}
+
+.cbx-ans__step {
+  grid-area: 1 / 1;
+  position: relative;
+  color: #f4efe6;
+}
+
+.cbx-ans__ln {
+  will-change: transform, opacity;
+}
+
+.cbx-ans__blk {
+  margin: 0 0 13px;
+}
+
+.cbx-ans__lab2 {
+  margin: 0 0 4px;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: #F3C892;
+}
+
+.cbx-ans__why {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cbx-ans__why li {
+  position: relative;
+  padding-left: 15px;
+  margin: 0 0 5px;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.38;
+  color: rgba(244, 239, 230, .86);
+}
+
+.cbx-ans__why li::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: .62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #E8A96B;
+}
+
+.cbx-ans__not {
+  margin: 0;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.38;
+  color: rgba(244, 239, 230, .8);
 }
 
 .cbx-ans__pw {
-  margin: 0 0 7px;
+  margin: 0 0 14px;
   font-family: "Newsreader", Georgia, serif;
   font-style: italic;
   font-size: 26px;
@@ -1405,12 +1492,12 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-ans__pd {
-  margin: 0 0 6px;
+  margin: 0;
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 400;
-  line-height: 1.42;
-  color: rgba(244, 239, 230, .74);
+  line-height: 1.4;
+  color: rgba(244, 239, 230, .94);
 }
 
 .cbx-ans__pd b {
@@ -1437,7 +1524,10 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-ans__ctag {
-  margin-top: 26px;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 14px;
 }
 
 .cbx-ans__ctag .tag,
@@ -1496,7 +1586,9 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-ans__ring {
-  box-shadow: 0 0 0 2px #E8A96B, 0 0 0 7px rgba(232, 169, 107, .18);
+  /* the 4000px shade dims everything in the lit window except the pointer */
+  box-shadow: 0 0 0 2px #E8A96B, 0 0 0 7px rgba(232, 169, 107, .18), 0 0 0 4000px rgba(24, 16, 12, .56);
+  will-change: opacity, transform;
 }
 
 .cbx-ans__rpulse {
