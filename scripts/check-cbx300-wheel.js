@@ -882,21 +882,22 @@ async function pointerSheet(page) {
   });
 }
 
-async function measurePin(page) {
-  var range = await page.evaluate(function () {
+async function measurePin(page, attr) {
+  attr = attr || 'data-cbx-answers';
+  var range = await page.evaluate(function (name) {
     var ScrollTrigger = window.ScrollTrigger;
     if (!ScrollTrigger) return null;
     var all = ScrollTrigger.getAll ? ScrollTrigger.getAll() : [];
     var i;
     for (i = 0; i < all.length; i += 1) {
       var t = all[i].trigger;
-      if (t && t.hasAttribute && t.hasAttribute('data-cbx-answers')) {
+      if (t && t.hasAttribute && t.hasAttribute(name)) {
         return { start: all[i].start, end: all[i].end };
       }
     }
     return null;
-  });
-  if (!range) return { ok: false, reason: 'no S03 trigger' };
+  }, attr);
+  if (!range) return { ok: false, reason: 'no trigger ' + attr };
   await page.evaluate(function (y) { window.scrollTo(0, y); }, Math.round(range.start + 8));
   await sleep(250);
   var samples = await page.evaluate(function (range) {
@@ -1136,13 +1137,22 @@ async function main() {
     }
 
     await openStudy(page, THEMES[0], SIZES[0]);
-    var pin = await measurePin(page);
-    if (!pin.ok) log(false, 'S03 pin rAF', pin.reason);
-    else {
-      var st = pin.stats;
-      log(st.median <= 40, 'S03 pin rAF 1440x900',
-        'median=' + st.median.toFixed(1) + 'ms p95=' + st.p95.toFixed(1) + 'ms worst=' + st.worst.toFixed(1) + 'ms n=' + st.n);
-      notes.push('S03 pin rAF median ' + st.median.toFixed(1) + ' / p95 ' + st.p95.toFixed(1) + ' / worst ' + st.worst.toFixed(1));
+    var pinAttrs = [
+      ['data-cbx-answers', 'S03'],
+      ['data-cbx-grow', 'S04'],
+      ['data-cbx-trust', 'S05'],
+      ['data-cbx-role', 'S06']
+    ];
+    var pi;
+    for (pi = 0; pi < pinAttrs.length; pi += 1) {
+      var pin = await measurePin(page, pinAttrs[pi][0]);
+      if (!pin.ok) log(false, pinAttrs[pi][1] + ' pin rAF', pin.reason);
+      else {
+        var st = pin.stats;
+        log(st.median <= 40, pinAttrs[pi][1] + ' pin rAF 1440x900',
+          'median=' + st.median.toFixed(1) + 'ms p95=' + st.p95.toFixed(1) + 'ms worst=' + st.worst.toFixed(1) + 'ms n=' + st.n);
+        notes.push(pinAttrs[pi][1] + ' pin rAF median ' + st.median.toFixed(1) + ' / p95 ' + st.p95.toFixed(1) + ' / worst ' + st.worst.toFixed(1));
+      }
     }
     await shot(page, 'coffee-last-cream-1440');
   });

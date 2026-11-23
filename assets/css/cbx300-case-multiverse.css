@@ -36,19 +36,26 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__accent {
   text-transform: none !important;
 }
 
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__kicker,
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__word,
-html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__kicker,
-html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__word {
+html.is-multiverse.is-dark .study[data-template="cbx300"] .cbx-cover .hero__kicker,
+html.is-multiverse.is-dark .study[data-template="cbx300"] .cbx-cover .hero__word {
   color: #f3eee4 !important;
   -webkit-text-fill-color: #f3eee4 !important;
 }
 
-html.is-multiverse .study[data-template="cbx300"] .cbx-cover .hero__accent,
-html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__accent,
+html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__kicker,
+html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__word {
+  color: #0e1018 !important;
+  -webkit-text-fill-color: #0e1018 !important;
+}
+
 html.is-multiverse.is-dark .study[data-template="cbx300"] .cbx-cover .hero__accent {
   color: #3de8f5 !important;
   -webkit-text-fill-color: #3de8f5 !important;
+}
+
+html.is-multiverse.is-print .study[data-template="cbx300"] .cbx-cover .hero__accent {
+  color: #00a0a0 !important;
+  -webkit-text-fill-color: #00a0a0 !important;
 }
 
 /* Worry board. Coffee panel becomes the night comic field. */
@@ -170,65 +177,65 @@ html.is-multiverse .cbx-growth__pic-media::after {
 }
 
 /* Illustration recolor. Skin and hair stay on the cream fills. */
-html.is-multiverse .cbx-growth [data-cbx-ink="panel"] { fill: #12141c; }
-html.is-multiverse .cbx-growth [data-cbx-ink="floor"] { fill: #0a0c13; }
-html.is-multiverse .cbx-growth [data-cbx-ink="rug"] { fill: #151827; }
-html.is-multiverse .cbx-growth [data-cbx-ink="rug-ring"] { stroke: #1f6f7a; }
-html.is-multiverse .cbx-growth [data-cbx-ink="halo"] {
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="panel"] { fill: #12141c; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="floor"] { fill: #0a0c13; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="rug"] { fill: #151827; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="rug-ring"] { stroke: #1f6f7a; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="halo"] {
   fill: #181b2b;
   stroke: #3de8f5;
   stroke-opacity: 0.14;
   stroke-width: 2;
 }
 
-html.is-multiverse .cbx-growth [data-cbx-ink="shirt-aisha"] { fill: #00a0a0; }
-html.is-multiverse .cbx-growth [data-cbx-ink="neck"] { stroke: #007a7a; }
-html.is-multiverse .cbx-growth [data-cbx-ink="shirt-lina"] { fill: #ff4eb8; }
-html.is-multiverse .cbx-growth [data-cbx-ink="shirt-side-l"] { fill: #ff003c; }
-html.is-multiverse .cbx-growth [data-cbx-ink="shirt-side-r"] { fill: #3de8f5; }
-html.is-multiverse .cbx-growth [data-cbx-ink="row-1"] { fill: #00ff9c; }
-html.is-multiverse .cbx-growth [data-cbx-ink="row-2"] { fill: #ff4eb8; }
-html.is-multiverse .cbx-growth [data-cbx-ink="row-3"] { fill: #f3eee4; }
-html.is-multiverse .cbx-growth [data-cbx-ink="row-4"] { fill: #3d7eff; }
-html.is-multiverse .cbx-growth [data-cbx-ink="row-5"] { fill: #f5e15a; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="shirt-aisha"] { fill: #00a0a0; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="neck"] { stroke: #007a7a; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="shirt-lina"] { fill: #ff4eb8; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="shirt-side-l"] { fill: #ff003c; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="shirt-side-r"] { fill: #3de8f5; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="row-1"] { fill: #00ff9c; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="row-2"] { fill: #ff4eb8; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="row-3"] { fill: #f3eee4; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="row-4"] { fill: #3d7eff; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="row-5"] { fill: #f5e15a; }
 
-html.is-multiverse .cbx-growth [data-cbx-ink="laptop"] { fill: #2c3252; }
-html.is-multiverse .cbx-growth [data-cbx-ink="laptop-dot"] { fill: #3de8f5; }
-html.is-multiverse .cbx-growth [data-cbx-ink="laptop-base"] { fill: #454c75; }
-html.is-multiverse .cbx-growth [data-cbx-ink="desk"] { fill: #2a2f4a; }
-html.is-multiverse .cbx-growth [data-cbx-ink="desk-leg"] { fill: #1e2236; }
-html.is-multiverse .cbx-growth [data-cbx-ink="bench"] { fill: #2a2f4a; }
-html.is-multiverse .cbx-growth [data-cbx-ink="bench-edge"] { fill: #1e2236; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="laptop"] { fill: #2c3252; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="laptop-dot"] { fill: #3de8f5; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="laptop-base"] { fill: #454c75; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="desk"] { fill: #2a2f4a; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="desk-leg"] { fill: #1e2236; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="bench"] { fill: #2a2f4a; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="bench-edge"] { fill: #1e2236; }
 
-html.is-multiverse .cbx-growth [data-cbx-ink="mug"] { fill: #c9d3e6; }
-html.is-multiverse .cbx-growth [data-cbx-ink="mug-handle"] { stroke: #c9d3e6; }
-html.is-multiverse .cbx-growth [data-cbx-ink="steam"] { stroke: rgba(61, 232, 245, 0.82); }
-html.is-multiverse .cbx-growth [data-cbx-ink="pot"] { fill: #ff4eb8; }
-html.is-multiverse .cbx-growth [data-cbx-ink="leaf-a"] { fill: #00ff9c; }
-html.is-multiverse .cbx-growth [data-cbx-ink="leaf-b"] { fill: #00a0a0; }
-html.is-multiverse .cbx-growth [data-cbx-ink="arrow"] { stroke: #3de8f5; }
-html.is-multiverse .cbx-growth [data-cbx-ink="arrow-dot"] { fill: #3de8f5; }
-html.is-multiverse .cbx-growth [data-cbx-ink="lamp-cord"] { stroke: #1e2236; }
-html.is-multiverse .cbx-growth [data-cbx-ink="lamp-shade"] { fill: #3de8f5; }
-html.is-multiverse .cbx-growth [data-cbx-ink="lamp-bulb"] { fill: #b8f6fb; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="mug"] { fill: #c9d3e6; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="mug-handle"] { stroke: #c9d3e6; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="steam"] { stroke: rgba(61, 232, 245, 0.82); }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="pot"] { fill: #ff4eb8; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="leaf-a"] { fill: #00ff9c; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="leaf-b"] { fill: #00a0a0; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="arrow"] { stroke: #3de8f5; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="arrow-dot"] { fill: #3de8f5; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="lamp-cord"] { stroke: #1e2236; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="lamp-shade"] { fill: #3de8f5; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="lamp-bulb"] { fill: #b8f6fb; }
 
-html.is-multiverse .cbx-growth [data-cbx-ink="card"] {
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="card"] {
   fill: #161822;
   stroke: #3de8f5;
   stroke-width: 1.5;
   stroke-opacity: 0.45;
 }
-html.is-multiverse .cbx-growth [data-cbx-ink="card-label"] { fill: rgba(243, 238, 228, 0.62); }
-html.is-multiverse .cbx-growth [data-cbx-ink="card-amt"] { fill: #f3eee4; }
-html.is-multiverse .cbx-growth [data-cbx-ink="tag-due"] { fill: #f5e15a; }
-html.is-multiverse .cbx-growth [data-cbx-ink="tag-paid"] { fill: #00ff9c; }
-html.is-multiverse .cbx-growth [data-cbx-ink="tag-late"] { fill: #ff4eb8; }
-html.is-multiverse .cbx-growth [data-cbx-ink="tag-ink"] { fill: #0e1018; }
-html.is-multiverse .cbx-growth [data-cbx-ink="card-cyan"] { fill: #3de8f5; }
-html.is-multiverse .cbx-growth [data-cbx-ink="chip"] { fill: #b8f6fb; }
-html.is-multiverse .cbx-growth [data-cbx-ink="chip-hot"] { fill: #ff4eb8; }
-html.is-multiverse .cbx-growth [data-cbx-ink="chip-cool"] { fill: #b8f6fb; }
-html.is-multiverse .cbx-growth [data-cbx-ink="pill"] { fill: #3de8f5; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="card-label"] { fill: rgba(243, 238, 228, 0.62); }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="card-amt"] { fill: #f3eee4; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="tag-due"] { fill: #f5e15a; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="tag-paid"] { fill: #00ff9c; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="tag-late"] { fill: #ff4eb8; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="tag-ink"] { fill: #0e1018; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="card-cyan"] { fill: #3de8f5; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="chip"] { fill: #b8f6fb; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="chip-hot"] { fill: #ff4eb8; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="chip-cool"] { fill: #b8f6fb; }
+html.is-multiverse.is-dark .cbx-ink [data-cbx-ink="pill"] { fill: #3de8f5; }
 
 html.is-multiverse .cbx-growth .is-mv-flick {
   animation: cbx-mv-card 420ms steps(2, end) 1;
@@ -257,8 +264,9 @@ html.is-multiverse .cbx-growth .is-mv-flick {
 }
 
 /* Section 03 skin only. Layout stays in cbx300-case.css.
-   Phone mock stays cream/coffee. Desktop + HUD + pointers go cyan. */
-html.is-multiverse .cbx-ans {
+   Phone mock stays cream/coffee. Desktop + HUD + pointers go cyan.
+   Dark and print are separate so print is never a dark stage. */
+html.is-multiverse.is-dark .cbx-ans {
   --ans-cream: #f3eee4;
   --ans-coffee: #0e1018;
   --ans-amber: #3de8f5;
@@ -461,3 +469,103 @@ html.is-multiverse .cbx-ans::before {
     color: #f3eee4;
   }
 }
+
+/* Print is paper and ink. No dark stage, no cream-on-dark type. */
+html.is-multiverse.is-print .study[data-template="cbx300"] {
+  --film-cream: #f3eee4;
+  --film-paper: #f3eee4;
+  --film-ink: #0e1018;
+  --film-muted: rgba(14, 16, 24, 0.68);
+  --film-faint: rgba(14, 16, 24, 0.48);
+  --film-line: rgba(0, 160, 160, 0.28);
+  --film-teal: #00a0a0;
+  background: #f3eee4;
+  color: #0e1018;
+}
+
+html.is-multiverse.is-print .study[data-template="cbx300"] .study__chrome {
+  background: #f3eee4;
+  color: #0e1018;
+}
+
+html.is-multiverse.is-print .study[data-template="cbx300"] .study__count {
+  color: #00a0a0;
+}
+
+html.is-multiverse.is-print .cbx-ans {
+  --ans-cream: #f3eee4;
+  --ans-coffee: #f3eee4;
+  --ans-ink: #0e1018;
+  --ans-amber: #00a0a0;
+  --ans-line: rgba(0, 160, 160, 0.28);
+  --ans-muted: rgba(14, 16, 24, 0.68);
+  --ans-mkd: #d9efe8;
+  --ans-ink-2: rgba(14, 16, 24, 0.68);
+  --ans-on-dim: #0e1018;
+  --ans-on-dim-2: rgba(14, 16, 24, 0.72);
+  background: #f3eee4;
+  color: #0e1018;
+}
+
+html.is-multiverse.is-dark .cbx-ans__stage,
+html.is-multiverse.is-dark .cbx-ans__cream {
+  background: #0e1018;
+}
+
+html.is-multiverse.is-print .cbx-ans__stage,
+html.is-multiverse.is-print .cbx-ans__cream {
+  background: #f3eee4;
+}
+
+html.is-multiverse.is-print .cbx-ans__nbg,
+html.is-multiverse.is-print .cbx-ans__dim {
+  background: transparent;
+}
+
+html.is-multiverse.is-print .cbx-growth {
+  background: #f3eee4;
+  color: #0e1018;
+}
+
+html.is-multiverse.is-print .cbx-growth__ask,
+html.is-multiverse.is-print .cbx-growth__sub,
+html.is-multiverse.is-print .cbx-growth__lab-name,
+html.is-multiverse.is-print .cbx-growth__step {
+  color: #0e1018;
+}
+
+html.is-multiverse.is-print .cbx-ans__ask,
+html.is-multiverse.is-print .cbx-ans__pw,
+html.is-multiverse.is-print .cbx-ans__pd,
+html.is-multiverse.is-print .cbx-ans__pd b,
+html.is-multiverse.is-print .cbx-ans__pg,
+html.is-multiverse.is-print .cbx-ans__kicker {
+  color: #0e1018;
+}
+
+html.is-multiverse.is-print .cbx-ans__lab,
+html.is-multiverse.is-print .cbx-ans__title {
+  color: #f3eee4;
+}
+
+html.is-multiverse.is-dark .cbx-ans {
+  --ans-mkd: #243038;
+  --ans-ink-2: rgba(243, 238, 228, 0.68);
+  --ans-on-dim: #f3eee4;
+  --ans-on-dim-2: rgba(243, 238, 228, 0.8);
+}
+
+html.is-multiverse .cbx-s04__kicker,
+html.is-multiverse .cbx-end__kicker { color: #3de8f5; }
+html.is-multiverse.is-print .cbx-s04__kicker,
+html.is-multiverse.is-print .cbx-end__kicker { color: #00a0a0; }
+html.is-multiverse .cbx-s04__chosen { box-shadow: 0 0 0 2px #3de8f5; }
+html.is-multiverse.is-print .cbx-s04__chosen { box-shadow: 0 0 0 2px #00a0a0; }
+html.is-multiverse.is-dark .cbx-s06__illos { background: #0e1018; }
+html.is-multiverse.is-print .cbx-s06__illos { background: #f3eee4; color: #0e1018; }
+html.is-multiverse.is-print .cbx-s06__a { color: #0e1018; }
+html.is-multiverse.is-print .cbx-s06__strike,
+html.is-multiverse .cbx-s06__strike { background: #3de8f5; }
+html.is-multiverse.is-print .cbx-s06__strike { background: #00a0a0; }
+html.is-multiverse.is-dark .cbx-end__sheet { background: #0e1018; }
+html.is-multiverse.is-print .cbx-end__sheet { background: #f3eee4; color: #0e1018; }

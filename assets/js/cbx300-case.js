@@ -55,14 +55,6 @@ window.Cbx300Case = (function () {
     }
   ];
 
-  var STUBS = [
-    { id: 'approvals', num: '04', title: 'My team can prepare. I need to approve.' },
-    { id: 'money', num: '05', title: 'Can I afford to pay this supplier today?' },
-    { id: 'permissions', num: '06', title: 'My team needs access, but not all access.' },
-    { id: 'grammar', num: '07', title: 'Same goal. Different moment.' },
-    { id: 'scale', num: '08', title: 'Volume finding. Results stay blank until real numbers exist.' }
-  ];
-
   var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s8';
   /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
      clears the mug; the stage-03 left figure shifts off the plant. */
@@ -449,7 +441,7 @@ window.Cbx300Case = (function () {
 
   function buildGrowth() {
     var glitch = isMultiverse();
-    var section = el('section', 'cbx-growth');
+    var section = el('section', 'cbx-growth cbx-ink');
     section.setAttribute('data-cbx-section', '02');
     section.setAttribute('data-cbx-live', '');
     section.setAttribute('data-cbx-growth', '');
@@ -480,21 +472,6 @@ window.Cbx300Case = (function () {
     scene.appendChild(board);
     section.appendChild(scene);
     return section;
-  }
-
-  function buildStubs() {
-    var rest = el('div', 'cbx-rest');
-    rest.setAttribute('data-cbx-rest', '');
-    rest.hidden = true;
-    rest.setAttribute('aria-hidden', 'true');
-    STUBS.forEach(function (stub) {
-      var section = el('section', 'cbx-stub');
-      section.setAttribute('data-cbx-section', stub.num);
-      section.setAttribute('data-cbx-stub', stub.id);
-      section.appendChild(el('h2', 'cbx-stub__title', stub.title));
-      rest.appendChild(section);
-    });
-    return rest;
   }
 
   function liveText(node) {
@@ -941,6 +918,11 @@ window.Cbx300Case = (function () {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
     if (window.Cbx300Answers && window.Cbx300Answers.kill) window.Cbx300Answers.kill();
+    if (window.Cbx300Finish && window.Cbx300Finish.kill) window.Cbx300Finish.kill();
+    if (motion.themeOn) {
+      document.removeEventListener('click', motion.themeOn);
+      motion.themeOn = null;
+    }
     unbindStageStep();
     clearTimers();
     killIdle();
@@ -1700,6 +1682,7 @@ window.Cbx300Case = (function () {
       /* Section 03 owns the wheel while its pin is active. Past S02 the
          native document scroller must keep moving — do not preventDefault. */
       if (document.documentElement.classList.contains('is-cbx-ans-pin')) return;
+      if (document.documentElement.classList.contains('is-cbx-finish-pin')) return;
       handleDelta(wheelPixels(event), event);
     }
 
@@ -2049,8 +2032,29 @@ window.Cbx300Case = (function () {
     window.Cbx300Answers.bind(world, {
       onStep: opts && opts.onStep,
       page: opts && opts.page,
-      reduce: motion.reduce
+      reduce: motion.reduce,
+      onReady: function () {
+        if (window.Cbx300Finish && window.Cbx300Finish.bind) {
+          window.Cbx300Finish.bind(world, { reduce: motion.reduce });
+        }
+        if (window.ScrollTrigger && window.ScrollTrigger.sort) window.ScrollTrigger.sort();
+        if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh(true);
+      }
     });
+    if (!motion.themeOn) {
+      motion.themeOn = function (event) {
+        var hit = event.target && event.target.closest && event.target.closest('[data-theme-toggle]');
+        if (!hit) return;
+        var y = window.scrollY || 0;
+        window.setTimeout(function () {
+          bindAnswers(world, opts);
+          window.scrollTo(0, y);
+          if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
+          window.scrollTo(0, y);
+        }, 40);
+      };
+      document.addEventListener('click', motion.themeOn);
+    }
   }
 
   function liveCount(world) {
@@ -2073,7 +2077,9 @@ window.Cbx300Case = (function () {
     if (window.Cbx300Answers && window.Cbx300Answers.build) {
       world.appendChild(window.Cbx300Answers.build());
     }
-    world.appendChild(buildStubs());
+    if (window.Cbx300Finish && window.Cbx300Finish.build) {
+      window.Cbx300Finish.build(world);
+    }
     fillIllos(world, function () { armGlitch(world, { chrome: false }); });
     armGlitch(world, { chrome: false });
     return {
@@ -2099,7 +2105,6 @@ window.Cbx300Case = (function () {
     STEP_PX: STEP_PX,
     META: META,
     BEATS: BEATS,
-    STUBS: STUBS,
     RISE_DUR: RISE_DUR,
     STAGE_HOLD: STAGE_HOLD,
     TRANS_12: TRANS_12,

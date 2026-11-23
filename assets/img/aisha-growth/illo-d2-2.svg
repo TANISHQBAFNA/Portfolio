@@ -35,7 +35,7 @@
 <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
 <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
 <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">PAYDAY · FRI</text>
-<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$3,200</text>
+<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">₹ ——</text>
 <rect x="14" y="68" width="62.400000000000006" height="18" rx="9" fill="#9A6A1E"/>
 <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">SALARY</text>
 </g>
@@ -43,7 +43,7 @@
 <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
 <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
 <text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">FREE AFTER</text>
-<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">$7,130</text>
+<text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">₹ ——</text>
 <rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36"/>
 <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">SAFE</text>
 </g>

@@ -72,16 +72,18 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s107') !== -1, 'index.html missing growth cache-bust');
-  assert.ok(index.indexOf('cbx300-case.js?v=s88') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(index.indexOf('cbx300-answers.js?v=s25') !== -1, 'index.html missing answers module');
-  assert.ok(index.indexOf('cbx300-case-multiverse.css') === -1, 'cream page must not load the Multiverse case skin');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s107') !== -1, 'multiverse missing growth css cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s88') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s25') !== -1, 'multiverse missing answers module');
-  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv10') !== -1, 'multiverse missing case skin');
-  assert.ok(index.indexOf('project-study.js?v=s46') !== -1, 'index.html missing study cache-bust');
-  assert.ok(mvIndex.indexOf('project-study.js?v=s46') !== -1, 'multiverse missing study cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s108') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.js?v=s89') !== -1, 'index.html missing growth js cache-bust');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s26') !== -1, 'index.html missing answers module');
+  assert.ok(index.indexOf('cbx300-case-multiverse.css?v=mv11') !== -1, 'index.html must load the Multiverse case skin');
+  assert.ok(index.indexOf('cbx300-finish.js?v=s1') !== -1, 'index.html missing finish module');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s108') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-case.js?v=s89') !== -1, 'multiverse missing growth cache-bust');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s26') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv11') !== -1, 'multiverse missing case skin');
+  assert.ok(mvIndex.indexOf('cbx300-finish.js?v=s1') !== -1, 'multiverse missing finish module');
+  assert.ok(index.indexOf('project-study.js?v=s47') !== -1, 'index.html missing study cache-bust');
+  assert.ok(mvIndex.indexOf('project-study.js?v=s47') !== -1, 'multiverse missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
   assert.ok(mvIndex.indexOf('project-rail.js?v=hz99') !== -1, 'multiverse missing rail cache-bust');
 });
@@ -176,16 +178,20 @@ check('Section 02 is Aisha growth, not the old 8-beat film', function () {
   assert.ok(pages.indexOf('THREE') === -1 && pages.indexOf('three.js') === -1, 'Three.js is off-limits');
 });
 
-check('later sections stay stubs after answers', function () {
-  assert.ok(pages.indexOf('rest.hidden = true') !== -1, 'stubs must stay hidden');
-  ['approvals', 'money', 'permissions', 'grammar', 'scale'].forEach(function (id) {
-    assert.ok(pages.indexOf("id: '" + id + "'") !== -1, 'missing stub id ' + id);
-  });
-  assert.ok(pages.indexOf("id: 'roles'") === -1, '03 roles stub must be the live answers section');
-  assert.ok(pages.indexOf("id: 'ladder'") === -1, 'ladder stub must be the live growth track');
+check('six live sections, stubs unmounted', function () {
+  var finish = read('assets/js/cbx300-finish.js');
+  assert.ok(pages.indexOf('data-cbx-stub') === -1, 'stubs must be gone');
+  assert.ok(finish.indexOf("setAttribute('data-cbx-section', '04')") !== -1, 'S04 missing');
+  assert.ok(finish.indexOf("num: '05'") !== -1, 'S05 missing');
+  assert.ok(finish.indexOf("setAttribute('data-cbx-section', '06')") !== -1, 'S06 missing');
+  assert.ok(finish.indexOf('data-cbx-stub') === -1, 'finish must not stub');
   assert.ok(pages.indexOf("data-cbx-section', '01'") !== -1, 'cover is 01');
   assert.ok(pages.indexOf("data-cbx-section', '02'") !== -1, 'growth is 02');
   assert.ok(answers.indexOf("data-cbx-section', '03'") !== -1, 'answers is 03');
+  assert.ok(answers.indexOf('function themeColors') !== -1, 'timeline colours must come from the theme');
+  assert.ok(css.indexOf('html.is-light-home.is-dark .cbx-ans') !== -1, 'normal dark answers skin missing');
+  assert.ok(mvCase.indexOf('html.is-multiverse.is-print .cbx-ans') !== -1, 'Multiverse print answers skin missing');
+  assert.ok(mvCase.indexOf('html.is-multiverse.is-dark .cbx-ans') !== -1, 'Multiverse dark answers skin missing');
 });
 
 check('Section 03 camera into the screen, phone-hero then both', function () {
@@ -197,17 +203,18 @@ check('Section 03 camera into the screen, phone-hero then both', function () {
   assert.ok(answers.indexOf("hero: 'phone'") !== -1, 'Ch1/Ch2 must hero the phone');
   assert.ok(answers.indexOf("hero: 'both'") !== -1, 'Ch3 must share phone and desktop');
   assert.ok(answers.indexOf("phone: '[data-ans-device=\"phone\"]', desk: null") !== -1, 'Ch1/Ch2 must zoom the phone device');
-  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 18px/.test(css), 'decision line must be 18px on the 1440 stage');
-  assert.ok(/\.cbx-ans__pg \{[\s\S]{0,180}font-size: 17px/.test(css), 'outcome line must be 17px on the 1440 stage');
+  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 22px/.test(css), 'decision line must be 22px on the 1440 stage');
+  assert.ok(/\.cbx-ans__pg \{[\s\S]{0,220}font-size: 22px/.test(css), 'outcome line must be 22px on the 1440 stage');
   assert.ok(answers.indexOf("device: 'phone'") !== -1, 'some pointers land on the phone');
   assert.ok(answers.indexOf("device: 'desk'") !== -1, 'Ch3 pointers 1/3/4 land on desktop');
   assert.ok(answers.indexOf('out meeting a client.') !== -1, 'Ch3 pointer 2 copy missing');
-  assert.ok(answers.indexOf("t: '[data-ans-t=\"approve\"]'") !== -1, 'one-tap approve target missing');
+  assert.ok(answers.indexOf('s03-ch3-phone-slide-to-approve.png') !== -1, 'slide-to-approve screen missing');
   assert.ok(answers.indexOf('data-slot') !== -1, 'device slots missing');
   assert.ok(answers.indexOf('phoneShot') !== -1, 'phone screenshot swap hook missing');
   assert.ok(answers.indexOf('deskShot') !== -1, 'desktop screenshot swap hook missing');
-  assert.ok(answers.indexOf('Example UI · real screens to come') !== -1, 'example UI tag missing');
-  assert.ok(answers.indexOf('Example copy') !== -1, 'example copy tag missing');
+  assert.ok(answers.indexOf('Example UI · real screens to come') === -1, 'example UI tag must be gone');
+  assert.ok(answers.indexOf('Example copy') === -1, 'example copy tag must be gone');
+  assert.ok(answers.indexOf('Mehta') === -1 && answers.indexOf('Kapoor') === -1, 'invented client names must be gone');
   assert.ok(answers.indexOf('₹ ——') !== -1, 'amounts must stay blank');
   assert.ok(answers.indexOf('Payment received') !== -1, 'Ch1 payment alert missing');
   assert.ok(answers.indexOf('Payday') !== -1, 'Ch2 payday chip missing');
@@ -225,16 +232,16 @@ check('Section 03 camera into the screen, phone-hero then both', function () {
   assert.ok(css.indexOf('html.is-study.is-study-page.is-cbx-ans-pin') !== -1, 'Close z-index must beat the parked chrome rule');
   assert.ok(css.indexOf('overscroll-behavior: auto !important') !== -1, 'study body must not trap wheel overscroll');
   assert.ok(/\.cbx-ph__body \{[\s\S]{0,80}height: auto;/.test(css), 'phone body must hug the invoice card');
-  assert.ok(/\.cbx-ans__pd \{ font-size: 15px; line-height: 1\.34; color: #1E1510; }/.test(css), '390 decision text must stay ink on cream');
+  assert.ok(/\.cbx-ans__pd \{ font-size: 22px; line-height: 1\.34; color: #1E1510; }/.test(css), '390 decision text must stay ink on cream');
   assert.ok(css.indexOf('1440px') !== -1 && css.indexOf('--ans-scale') !== -1, 'desktop must use a uniformly scaled 1440 stage');
   assert.ok(css.indexOf('font-size: 26px') !== -1, 'pointer worry must be 26px Newsreader on the stage');
   assert.ok(css.indexOf('font-size: 44px') !== -1, 'chapter title must be 44px Newsreader on the stage');
   assert.ok(css.indexOf('text-overflow: ellipsis') === -1, 'client names must not ellipsize');
   assert.ok(/var SCRUB = (0\.[6-9]\d*|1(\.0)?);/.test(answers), 'timeline scrub must be 0.6–1');
   assert.ok(answers.indexOf('function settleSnap') !== -1 && /snap: settleSnap\(section, tl\)/.test(answers), 'scroll-end settle must be wired to both triggers');
-  assert.ok(answers.indexOf('BACK') !== -1 && answers.indexOf('k < 2') !== -1, 'Ch3 must share the pull-back');
+  assert.ok(answers.indexOf('BACK') !== -1 && answers.indexOf('k < layers.length - 1') !== -1, 'chapters share the pull-back');
   assert.ok(pages.indexOf('y >= st.end - 1 && dy > 0') !== -1, 'S02 wheel must yield downward only, after the last stage');
-  assert.ok(mvCase.indexOf('html.is-multiverse .cbx-ans {') !== -1, 'Multiverse answers skin missing');
+  assert.ok(mvCase.indexOf('html.is-multiverse.is-dark .cbx-ans {') !== -1, 'Multiverse answers skin missing');
   assert.ok(mvCase.indexOf('.cbx-phone__bezel') === -1, 'Multiverse must not restyle the cream phone');
   assert.ok(mvCase.indexOf('.cbx-ph__row') === -1, 'Multiverse must not skin phone rows');
   assert.ok(mvCase.indexOf('.cbx-desk .cbx-btn') !== -1, 'Multiverse button skin must stay on the desktop');
@@ -287,22 +294,22 @@ check('Section 03 presents twelve pointers one at a time, each a structured UX e
   });
   assert.strictEqual(pts.length, 12, 'twelve steps in total');
   var worries = [
-    'Did Mehta pay?', 'Which invoice was that for?', 'Who still owes me?', 'Chasing feels rude.',
+    'Did Client A pay?', 'Which invoice was that for?', 'Who still owes me?', 'Chasing feels rude.',
     'Is this money really mine?', 'Will GST and rent eat into it?', 'What if a client pays late?', 'Can I pay Lina on Friday?',
     'What needs me right now?', 'I’m out meeting a client.', 'Who approved that?', 'Should everyone see everything?'
   ];
   var gains = [
     'No awkward call to the client.', 'Books that balance without a spreadsheet.', 'She knows who to chase, and who to leave alone.', 'The money comes in. The relationship stays warm.',
-    'One honest number to decide with.', 'No bill ambushes payday.', 'She never spends money that hasn’t arrived.', 'She says yes to her first hire, calmly.',
+    'One honest picture of what she can use.', 'No bill ambushes payday.', 'She never spends money that hasn’t arrived.', 'She says yes to her first hire, calmly.',
     'Nothing gets lost in a chat thread.', 'Her team isn’t stuck waiting for her.', 'Clear answers when the accountant asks.', 'Lina runs payments. The big calls stay with Aisha.'
   ];
   pts.forEach(function (p, i) {
     assert.strictEqual(p.worry, worries[i], 'worry ' + (i + 1) + ' must stay verbatim');
     assert.strictEqual(p.gain, gains[i], 'outcome ' + (i + 1) + ' must stay verbatim');
-    assert.ok(p.does && p.does.length > 40 && p.does.length < 150, 'decision ' + (i + 1) + ' must be one clear sentence');
-    assert.ok(Array.isArray(p.why) && p.why.length === 2, 'why ' + (i + 1) + ' must be two short lines');
-    p.why.forEach(function (w) { assert.ok(w.length > 20 && w.length < 100, 'why line too long/short at ' + (i + 1)); });
-    assert.ok(p.not && /^We didn’t /.test(p.not) && p.not.length < 110, 'what-we-didn’t-do ' + (i + 1) + ' must be one line');
+    assert.ok(p.does && p.does.length > 40 && p.does.length < 240, 'decision ' + (i + 1) + ' must be one clear sentence');
+    assert.ok(Array.isArray(p.why) && p.why.length >= 2 && p.why.length <= 3, 'why ' + (i + 1) + ' must be two or three short lines');
+    p.why.forEach(function (w) { assert.ok(w.length > 20 && w.length < 140, 'why line too long/short at ' + (i + 1)); });
+    assert.ok(p.not && /^We didn’t /.test(p.not) && p.not.length < 160, 'what-we-didn’t-do ' + (i + 1) + ' must be one line');
     assert.ok(!/\d+\s?%/.test([p.does, p.not].concat(p.why).join(' ')), 'no invented stats at ' + (i + 1));
   });
   assert.ok(answers.indexOf('The design decision') !== -1 && answers.indexOf('Why it works') !== -1 && answers.indexOf('What we didn’t do') !== -1, 'panel labels missing');
@@ -315,9 +322,9 @@ check('Section 03 presents twelve pointers one at a time, each a structured UX e
   assert.ok(answers.indexOf('buildPoses') !== -1, 'a camera pose per pointer');
   assert.ok(answers.indexOf('prefers-reduced-motion') !== -1 && answers.indexOf('is-static') !== -1, 'reduced motion fallback');
   assert.ok(!/cbx-ans__ptrs/.test(css), 'old four-card stack is gone');
-  assert.ok(/\.cbx-ans__pw \{[\s\S]{0,160}font-size: 26px/.test(css), 'worry stays 26px');
-  assert.ok(/\.cbx-ans__why li \{[\s\S]{0,200}font-size: 16px/.test(css), 'reasoning is 16px min');
-  assert.ok(/\.cbx-ans__lab2 \{[\s\S]{0,160}font-size: 12px/.test(css), 'labels are 12px caps');
+  assert.ok(/\.cbx-ans__pw \{[\s\S]{0,160}font-size: 28px/.test(css), 'worry stays 28px');
+  assert.ok(/\.cbx-ans__why li \{[\s\S]{0,200}font-size: 17px/.test(css), 'reasoning is 17px');
+  assert.ok(/\.cbx-ans__lab2 \{[\s\S]{0,160}font-size: 14px/.test(css), 'labels are 14px caps');
 });
 
 check('Section 03 old four-card copy is gone', function () {
@@ -344,11 +351,11 @@ check('Section 03 old four-card copy is gone', function () {
   ].forEach(function (line) {
     assert.ok(answers.indexOf(line) === -1, 'old application does-line leaked: ' + line);
   });
-  assert.ok(answers.indexOf("worry: 'Did Mehta pay?'") !== -1, 'Ch1 worry 1 must stay');
+  assert.ok(answers.indexOf("worry: 'Did Client A pay?'") !== -1, 'Ch1 worry 1 must name Client A');
   assert.ok(answers.indexOf("gain: 'No awkward call to the client.'") !== -1, 'Ch1 gain 1 must stay');
   assert.ok(answers.indexOf("worry: 'Can I pay Lina on Friday?'") !== -1, 'Ch2 worry 4 must stay');
   assert.ok(answers.indexOf("gain: 'Lina runs payments. The big calls stay with Aisha.'") !== -1, 'Ch3 gain 4 must stay');
-  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 18px/.test(css), 'decision line must stay 18px on the 1440 stage');
+  assert.ok(/\.cbx-ans__pd \{[\s\S]{0,140}font-size: 22px/.test(css), 'decision line must stay 22px on the 1440 stage');
   assert.ok(/rgba\(244, 239, 230, \.94\)/.test(cssBlock(css, '.cbx-ans__pd')), 'decision line must keep readable cream contrast');
 });
 
@@ -1015,8 +1022,8 @@ check('390 hold shows one point at a time as a bottom sheet over a pushed-in pho
     'narrow timeline must run the same twelve beats');
   assert.ok(css.indexOf('border-radius: 18px 18px 0 0') !== -1,
     'the current point sits in a bottom sheet over the phone');
-  assert.ok(/\.cbx-ans__pd \{ font-size: 15px/.test(css) && /\.cbx-ans__why li \{ font-size: 15px/.test(css),
-    'sheet text is 15px min at 390');
+  assert.ok(/\.cbx-ans__pd \{ font-size: 22px/.test(css) && /\.cbx-ans__why li \{ font-size: 17px/.test(css),
+    'sheet text stays readable at 390');
 });
 
 check('S03 pin does not blur-filter the backdrop camera', function () {
@@ -1052,7 +1059,7 @@ check('Lisa Charlie demo only; no invented NPS/outcomes', function () {
   assert.ok(!/\bNPS\b/.test(pages), 'invented NPS');
   assert.ok(!/time saved|time-saved/i.test(pages), 'invented time-saved');
   assert.ok(!/adoption rate/i.test(pages), 'invented adoption');
-  assert.ok(pages.indexOf('Results stay blank until real numbers exist') !== -1, 'missing honest results line');
+  assert.ok(read('assets/js/cbx300-finish.js').indexOf('Lisa Charlie is a demo brand') !== -1, 'missing demo-brand note');
 });
 
 check('Echo avoid-list stays off the film', function () {

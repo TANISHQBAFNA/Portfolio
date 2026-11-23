@@ -51,6 +51,8 @@ window.Cbx300Answers = (function () {
     fit: null
   };
 
+  var IMG = 'assets/img/cbx300/';
+
   var CHAPTERS = [
     {
       id: 'solo',
@@ -59,19 +61,20 @@ window.Cbx300Answers = (function () {
       people: ['aisha'],
       ask: 'Did the client pay yet?',
       focus: 'Invoices',
-      nav: [
-        { id: 'home', label: 'Home' },
-        { id: 'payments', label: 'Payments' },
-        { id: 'invoices', label: 'Invoices', on: true }
+      phoneShots: [
+        { id: 'home', src: IMG + 's03-ch1-phone-home.png', alt: 'CBX300 phone · Home' },
+        { id: 'invoices', src: IMG + 's03-ch1-phone-invoices.png', alt: 'CBX300 phone · Invoices' }
       ],
-      deskCrumb: 'Money in',
+      openShot: 'home',
+      deskShot: IMG + 's03-ch1-desk-invoices.png',
+      deskAlt: 'CBX300 web · Invoices',
       deskTitle: 'Invoices',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
-        { worry: 'Did Mehta pay?', does: 'Status is the first thing on every row, as a coloured pill that turns to ‘Paid’ the moment money lands.', why: ['Green means done and red means act, so one glance replaces reading.', 'It sits in the same place on every row, so her eye learns where to look.'], not: 'We didn’t bury status inside each invoice. She would have to open every one to find out.', gain: 'No awkward call to the client.', t: '[data-ans-t="paid"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Which invoice was that for?', does: 'The payment arrives with a ‘Matched to INV-015’ badge, tied to its invoice by the bank, not by her.', why: ['The badge names the exact invoice, so there is nothing left to cross-check.', 'It sits on the same row as the client, so the proof is where she already looks.'], not: 'We didn’t list bank credits in a separate feed. She would be matching amounts to bills herself.', gain: 'Books that balance without a spreadsheet.', t: '[data-ans-t="match"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Who still owes me?', does: 'The oldest overdue invoice is tagged in red and sits first among the unpaid ones.', why: ['Order and colour say the same thing, so she knows where to start without sorting.', 'The word ‘oldest’ answers ‘who first?’, so she doesn’t compare dates.'], not: 'We didn’t sort by amount or client name. The most overdue one would sink into the list.', gain: 'She knows who to chase, and who to leave alone.', t: '[data-ans-t="owe"]', device: 'phone', a: 'l', off: 18 },
-        { worry: 'Chasing feels rude.', does: 'A ‘Nudge’ button sits on every overdue row, with a polite reminder already written behind it.', why: ['One tap is all it takes, so chasing becomes a small task, not a dreaded one.', 'The wording is already kind, so she never has to find the right tone.'], not: 'We didn’t hand her a blank email. A blank box is what makes people put it off.', gain: 'The money comes in. The relationship stays warm.', t: '[data-ans-t="nudge"]', device: 'phone', a: 'l', off: 18 }
+        { worry: 'Did Client A pay?', does: 'Status is the first thing on every row, as a coloured pill that turns to ‘Paid’ the moment money lands.', why: ['Green means done and red means act, so one glance replaces reading.', 'It sits in the same place on every row, so her eye learns where to look.'], not: 'We didn’t bury status inside each invoice. She would have to open every one to find out.', gain: 'No awkward call to the client.', shot: 'invoices', rect: { x: 82.5, y: 23.4, w: 14, h: 4.2 }, device: 'phone', a: 'l', off: 18 },
+        { worry: 'Which invoice was that for?', does: 'The payment arrives with a ‘Matched to invoice’ badge, tied to its invoice by the bank, not by her.', why: ['The badge names the exact invoice, so there is nothing left to cross-check.', 'It sits on the same row as the client, so the proof is where she already looks.'], not: 'We didn’t list bank credits in a separate feed. She would be matching amounts to bills herself.', gain: 'Books that balance without a spreadsheet.', shot: 'invoices', rect: { x: 64, y: 29.2, w: 32, h: 2.8 }, device: 'phone', a: 'l', off: 18 },
+        { worry: 'Who still owes me?', does: 'The oldest overdue invoice is tagged in red and sits first among the unpaid ones.', why: ['Order and colour say the same thing, so she knows where to start without sorting.', 'The word ‘oldest’ answers ‘who first?’, so she doesn’t compare dates.'], not: 'We didn’t sort by amount or client name. The most overdue one would sink into the list.', gain: 'She knows who to chase, and who to leave alone.', shot: 'invoices', rect: { x: 68, y: 35, w: 28, h: 4 }, device: 'phone', a: 'l', off: 18 },
+        { worry: 'Chasing feels rude.', does: 'A ‘Nudge’ button sits on every overdue row, with a polite reminder already written behind it.', why: ['One tap is all it takes, so chasing becomes a small task, not a dreaded one.', 'The wording is already kind, so she never has to find the right tone.'], not: 'We didn’t hand her a blank email. A blank box is what makes people put it off.', gain: 'The money comes in. The relationship stays warm.', shot: 'invoices', rect: { x: 76, y: 39.5, w: 20, h: 5.2 }, device: 'phone', a: 'l', off: 18 }
       ]
     },
     {
@@ -81,53 +84,54 @@ window.Cbx300Answers = (function () {
       people: ['aisha', 'lina'],
       ask: 'Can I afford her salary this month?',
       focus: 'Cash plan',
-      nav: [
-        { id: 'home', label: 'Home' },
-        { id: 'payments', label: 'Payments' },
-        { id: 'invoices', label: 'Invoices' },
-        { id: 'cashplan', label: 'Cash plan', on: true, neu: true },
-        { id: 'salary', label: 'Salary', neu: true },
-        { id: 'tax', label: 'Tax', neu: true }
+      phoneShots: [
+        { id: 'liq', src: IMG + 's03-ch2-phone-liquidity.png', alt: 'CBX300 phone · Liquidity' },
+        { id: 'aside', src: IMG + 's03-ch2-phone-set-aside.png', alt: 'CBX300 phone · Cash plan' },
+        { id: 'payday', src: IMG + 's03-ch2-phone-payday.png', alt: 'CBX300 phone · Payday' }
       ],
-      deskCrumb: 'Planning',
+      openShot: 'liq',
+      inset: { src: IMG + 's03-ch2-phone-recurring.png', alt: 'CBX300 phone · Salary repeats' },
+      deskShot: IMG + 's03-ch2-desk-cashplan.png',
+      deskAlt: 'CBX300 web · Cash plan',
       deskTitle: 'Cash plan',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
-        { worry: 'Is this money really mine?', does: 'One bar splits the balance into three parts, and the first, ‘Safe to spend’, is the one she decides with.', why: ['The bar shows proportions, so she sees how much is hers before reading a figure.', 'Safe to spend comes first and has its own colour, so it isn’t mistaken for the total.'], not: 'We didn’t show one big balance. It looks like savings and hides what is already promised.', gain: 'One honest number to decide with.', t: '[data-ans-t="safe"]', device: 'phone', a: 'c', off: 0 },
-        { worry: 'Will GST and rent eat into it?', does: 'Money for bills that are certain, like GST and rent, is set aside as its own labelled block.', why: ['A separate colour and name keep it out of ‘Safe to spend’, so it can’t be spent by accident.', 'It says ‘Set aside’ in plain words, not an accounting term.'], not: 'We didn’t leave upcoming bills in a list further down. They would look like part of the balance.', gain: 'No bill ambushes payday.', t: '[data-ans-t="aside"]', device: 'phone', a: 'l', off: 16 },
-        { worry: 'What if a client pays late?', does: 'Money that hasn’t arrived yet is shown as ‘Coming in’ and kept out of the safe number.', why: ['The label says expected, not here, so it reads as a maybe.', 'A late client changes ‘Coming in’ and leaves ‘Safe to spend’ exactly where it was.'], not: 'We didn’t add expected payments to the balance. One late invoice would make the safe number wrong.', gain: 'She never spends money that hasn’t arrived.', t: '[data-ans-t="coming"]', device: 'phone', a: 'l', off: 16 },
-        { worry: 'Can I pay Lina on Friday?', does: 'Friday is marked on the week, with Lina’s salary and a single ‘Covered’ badge that says yes or no.', why: ['The answer sits on the day she is asking about, so there is no sum to do.', 'A green tick and one word is quicker to trust than a column of figures.'], not: 'We didn’t make her compare the balance to the salary. That is a sum the app can do.', gain: 'She says yes to her first hire, calmly.', t: '[data-ans-t="payday"]', device: 'phone', a: 'l', off: 18 }
+        { worry: 'Is this money really mine?', does: 'The total is split by where the money sits: the current account, the overdraft limit she can borrow, and deposits, each with the days until it frees up.', why: ['Borrowed money sits in its own line, so it is never mistaken for hers.', '‘Maturing in 7 days’ tells her when locked money becomes usable.'], not: 'We didn’t show one balance with the overdraft folded in. It looks like savings and hides what is borrowed.', gain: 'One honest picture of what she can use.', shot: 'liq', rect: { x: 4, y: 40, w: 92, h: 20 }, device: 'phone', a: 'c', off: 0 },
+        { worry: 'Will GST and rent eat into it?', does: 'Money for bills that are certain, like GST and rent, is set aside as its own labelled block.', why: ['A separate colour and name keep it out of ‘Safe to spend’, so it can’t be spent by accident.', 'It says ‘Set aside’ in plain words, not an accounting term.'], not: 'We didn’t leave upcoming bills in a list further down. They would look like part of the balance.', gain: 'No bill ambushes payday.', shot: 'aside', rect: { x: 4, y: 45, w: 92, h: 21 }, device: 'phone', a: 'l', off: 16 },
+        { worry: 'What if a client pays late?', does: 'Money that hasn’t arrived yet is shown as ‘Coming in’ and kept out of the safe number.', why: ['The label says expected, not here, so it reads as a maybe.', 'A late client changes ‘Coming in’ and leaves ‘Safe to spend’ exactly where it was.'], not: 'We didn’t add expected payments to the balance. One late invoice would make the safe number wrong.', gain: 'She never spends money that hasn’t arrived.', shot: 'aside', rect: { x: 4, y: 67, w: 92, h: 16 }, device: 'phone', a: 'l', off: 16 },
+        { worry: 'Can I pay Lina on Friday?', does: 'Friday is marked on the week, with Lina’s salary and a single ‘Covered’ badge that says yes or no.', why: ['The answer sits on the day she is asking about, so there is no sum to do.', 'A green tick and one word is quicker to trust than a column of figures.', 'The salary repeats monthly once it is set, so payday is never a new task.'], not: 'We didn’t make her compare the balance to the salary. That is a sum the app can do.', gain: 'She says yes to her first hire, calmly.', shot: 'payday', inset: true, rect: { x: 4, y: 25.5, w: 92, h: 15 }, device: 'phone', a: 'l', off: 18 }
       ]
     },
     {
       id: 'team',
       hero: 'both',
-      kicker: 'A small team · 5 people',
+      kicker: 'With a team · 8 people',
       people: ['aisha', 'lina', 'dev', 'mira', 'arjun'],
       ask: 'Who’s waiting on me today?',
       focus: 'Approvals',
-      nav: [
-        { id: 'home', label: 'Home' },
-        { id: 'payments', label: 'Payments' },
-        { id: 'invoices', label: 'Invoices' },
-        { id: 'cashplan', label: 'Cash plan' },
-        { id: 'salary', label: 'Salary' },
-        { id: 'tax', label: 'Tax' },
-        { id: 'approvals', label: 'Approvals', on: true, neu: true },
-        { id: 'team', label: 'Team', neu: true },
-        { id: 'vendors', label: 'Vendors', neu: true }
+      phoneShots: [
+        { id: 'task', src: IMG + 's03-ch3-phone-mytask.png', alt: 'CBX300 phone · My Task' },
+        { id: 'slide', src: IMG + 's03-ch3-phone-slide-to-approve.png', alt: 'CBX300 phone · Slide to approve' },
+        { id: 'maker', src: IMG + 's03-ch3-phone-maker-submitted.png', alt: 'CBX300 phone · Payment sent' },
+        { id: 'approved', src: IMG + 's03-ch3-phone-approved.png', alt: 'CBX300 phone · Approved' }
       ],
-      deskCrumb: 'Team',
+      openShot: 'task',
+      deskShot: IMG + 's03-ch3-desk-approvals.png',
+      deskAlt: 'CBX300 web · Approvals',
       deskTitle: 'Approvals',
       region: {
         phone: '[data-ans-device="phone"] [data-ans-screen]',
-        desk: '[data-ans-device="desk"] [data-ans-region]'
+        desk: '[data-ans-device="desk"] [data-ans-screen]'
       },
       pointers: [
-        { worry: 'What needs me right now?', does: 'Everything waiting for her is in one list, with a count beside the title so she sees the size of the job.', why: ['One list means one place to look, so nothing hides in a chat thread.', 'The count tells her how much is waiting before she scrolls.'], not: 'We didn’t send approvals as messages. Requests scatter across chats and the oldest get lost.', gain: 'Nothing gets lost in a chat thread.', t: '[data-ans-t="waiting"]', device: 'desk', a: 'r', off: 22 },
-        { worry: 'I’m out meeting a client.', does: 'On the phone, Approve is the biggest thing on the screen, with Decline lighter beside it.', why: ['A large button works with one thumb, even when she is standing in a meeting.', 'Decline is quieter, so the common action is easy and a slip is less likely.'], not: 'We didn’t shrink the desktop list onto the phone. Tiny buttons turn a five-second job into ‘later’.', gain: 'Her team isn’t stuck waiting for her.', t: '[data-ans-t="approve"]', device: 'phone', a: 'tr', off: 0, dx: 2, dy: -2 },
-        { worry: 'Who approved that?', does: 'Under the list, a short log shows who approved or paid what, with names and when.', why: ['The record sits right under the requests, so she doesn’t open another page.', 'Names make it personal: Lina approved, Dev paid.'], not: 'We didn’t hide history in a separate report. By the time she needs it, she would be hunting.', gain: 'Clear answers when the accountant asks.', t: '[data-ans-t="log"]', device: 'desk', a: 'tr', off: 0, dx: -14 },
-        { worry: 'Should everyone see everything?', does: 'Every request carries a role tag, like ‘Payments’, and access is limited to what that role needs.', why: ['The tag shows whose job the request is, so she sees the owner at a glance.', 'Limits follow the role, so people see what they need and no more.'], not: 'We didn’t give everyone the same view. A shared view of everything is where mistakes happen.', gain: 'Lina runs payments. The big calls stay with Aisha.', t: '[data-ans-t="role"]', device: 'desk', a: 'tr', off: 0, dx: 2, dy: -3 }
+        { worry: 'What needs me right now?', does: 'Everything waiting for her is one list in My Task, grouped by day, each with a Pending Approval tag, and filters by kind (Payments, Beneficiary, Payroll).', why: ['One list means one place to look, so nothing hides in a chat thread.', 'Filters by kind keep payments, beneficiaries and payroll from mixing.'], not: 'We didn’t send approvals as messages. Requests scatter across chats and the oldest get lost.', gain: 'Nothing gets lost in a chat thread.', shot: 'task', rect: { x: 4, y: 28, w: 92, h: 28 }, device: 'phone', a: 'l', off: 18 },
+        { worry: 'I’m out meeting a client.', does: 'On the phone, approving is a slide across the bottom of the payment, with Reject as a separate red button.', why: ['A slide can’t happen by accident in a pocket or mid-meeting.', 'Reject sits apart in its own colour, so the two are never confused.'], not: 'We didn’t shrink the desktop table onto the phone. Tiny buttons turn a five-second job into ‘later’.', gain: 'Her team isn’t stuck waiting for her.', shot: 'slide', rect: { x: 4, y: 87, w: 92, h: 10 }, device: 'phone', a: 'c', off: 0 },
+        { worry: 'Who approved that?', does: 'Under the list, a short log shows who approved or paid what, with names and when.', why: ['The record sits right under the requests, so she doesn’t open another page.', 'Names make it personal: Lina approved, Dev paid.'], not: 'We didn’t hide history in a separate report. By the time she needs it, she would be hunting.', gain: 'Clear answers when the accountant asks.', shot: 'slide', rect: { x: 8, y: 50, w: 70, h: 16 }, device: 'desk', a: 'tr', off: 0 },
+        { worry: 'Should everyone see everything?', does: 'Every request carries a role tag, like ‘Payments’, and access is limited to what that role needs.', why: ['The tag shows whose job the request is, so she sees the owner at a glance.', 'Limits follow the role, so people see what they need and no more.'], not: 'We didn’t give everyone the same view. A shared view of everything is where mistakes happen.', gain: 'Lina runs payments. The big calls stay with Aisha.', shot: 'slide', rect: { x: 55, y: 28, w: 22, h: 36 }, device: 'desk', a: 'tr', off: 0 }
+      ],
+      outro: [
+        { shot: 'maker', kicker: 'Lina sends it.' },
+        { shot: 'approved', kicker: 'Aisha approves it, between meetings.' }
       ]
     }
   ];
@@ -185,14 +189,27 @@ window.Cbx300Answers = (function () {
     return '<span class="ini cbx-ini" style="background:' + color + '">' + letter + '</span>';
   }
 
-  function shot(src, alt) {
+  function picture(src, alt, w, h) {
+    var pic = document.createElement('picture');
+    pic.className = 'cbx-ans__frame';
+    var webp = src.replace(/\.png(\?.*)?$/, '.webp');
+    var source = document.createElement('source');
+    source.type = 'image/webp';
+    source.srcset = webp;
     var img = document.createElement('img');
     img.className = 'cbx-ans__shot';
     img.src = src;
     img.alt = alt || '';
-    img.setAttribute('data-ans-screen', '');
+    img.width = w;
+    img.height = h;
     img.decoding = 'async';
-    return img;
+    pic.appendChild(source);
+    pic.appendChild(img);
+    return pic;
+  }
+
+  function shot(src, alt) {
+    return picture(src, alt, 440, 956);
   }
 
   function navItems(items) {
@@ -226,13 +243,13 @@ window.Cbx300Answers = (function () {
         '<section class="card c-inv" data-ans-region>' +
           '<header><h4>Invoices</h4><div class="seg"><span class="on is-on">All</span><span>Unpaid</span><span>Paid</span></div></header>' +
           '<div class="thead"><span>Client</span><span>Amount</span><span>Status</span><span></span></div>' +
-          '<div class="row hi is-hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Mehta Studio</b><span>INV-015</span></div><span class="amt cbx-amt">₹ ——</span><span class="st paid cbx-st is-paid">Paid</span><div class="act"><span class="match"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6l3 3 5-6"/></svg>Matched to INV-015</span></div></div>' +
-          '<div class="row">' + ini('K', '#C8664A') + '<div class="who cbx-who"><b>Kapoor &amp; Co</b><span>INV-011</span></div><span class="amt cbx-amt">₹ ——</span><span class="st late cbx-st is-late">Overdue · oldest</span><div class="act"><span class="btn nudge cbx-btn">Nudge</span></div></div>' +
-          '<div class="row">' + ini('R', '#7F95B0') + '<div class="who cbx-who"><b>Rao Interiors</b><span>INV-013</span></div><span class="amt cbx-amt">₹ ——</span><span class="st late cbx-st is-late">Overdue</span><div class="act"><span class="btn nudge cbx-btn">Nudge</span></div></div>' +
-          '<div class="row">' + ini('S', '#8FA58A') + '<div class="who cbx-who"><b>Sen Foods</b><span>INV-016</span></div><span class="amt cbx-amt">₹ ——</span><span class="st due cbx-st is-due">Due Fri</span><div class="act"><span class="muted">Sent Mon</span></div></div>' +
+          '<div class="row hi is-hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Client A</b><span>INV ——</span></div><span class="amt cbx-amt">₹ ——</span><span class="st paid cbx-st is-paid">Paid</span><div class="act"><span class="match"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6l3 3 5-6"/></svg>Matched to INV ——</span></div></div>' +
+          '<div class="row">' + ini('K', '#C8664A') + '<div class="who cbx-who"><b>Client B</b><span>INV ——</span></div><span class="amt cbx-amt">₹ ——</span><span class="st late cbx-st is-late">Overdue · oldest</span><div class="act"><span class="btn nudge cbx-btn">Nudge</span></div></div>' +
+          '<div class="row">' + ini('R', '#7F95B0') + '<div class="who cbx-who"><b>Client C</b><span>INV ——</span></div><span class="amt cbx-amt">₹ ——</span><span class="st late cbx-st is-late">Overdue</span><div class="act"><span class="btn nudge cbx-btn">Nudge</span></div></div>' +
+          '<div class="row">' + ini('S', '#8FA58A') + '<div class="who cbx-who"><b>Client D</b><span>INV ——</span></div><span class="amt cbx-amt">₹ ——</span><span class="st due cbx-st is-due">Due Fri</span><div class="act"><span class="muted">Sent Mon</span></div></div>' +
         '</section>' +
         '<section class="card c-log"><header><h4>Today</h4><span class="pill soft">Money in</span></header>' +
-          '<div class="tl"><div class="ev"><i class="e1"></i><b>Payment received</b><span>Mehta Studio · matched to INV-015</span></div></div>' +
+          '<div class="tl"><div class="ev"><i class="e1"></i><b>Payment received</b><span>Client A · matched to INV ——</span></div></div>' +
         '</section></div>';
     }
     if (ch.id === 'hire') {
@@ -270,10 +287,10 @@ window.Cbx300Answers = (function () {
         '<div class="cbx-ph__body" data-ans-screen><div class="card c-inv" data-ans-region>' +
           '<header><h4>Invoices</h4><div class="seg"><span class="on">All</span><span>Unpaid</span><span>Paid</span></div></header>' +
           '<div class="thead"><span>Client</span><span>Amount</span><span>Status</span><span></span></div>' +
-          '<div class="row hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Mehta Studio</b><span>INV-015</span></div><span class="amt">₹ ——</span><span class="st paid" data-ans-t="paid">Paid</span><div class="act"><span class="match" data-ans-t="match">' + matchMark() + 'Matched to INV-015</span></div></div>' +
-          '<div class="row">' + ini('K', '#C8664A') + '<div class="who cbx-who"><b>Kapoor &amp; Co</b><span>INV-011</span></div><span class="amt">₹ ——</span><span class="st late" data-ans-t="owe">Overdue · oldest</span><div class="act"><span class="btn nudge cbx-btn" data-ans-t="nudge">Nudge</span></div></div>' +
-          '<div class="row">' + ini('R', '#7F95B0') + '<div class="who cbx-who"><b>Rao Interiors</b><span>INV-013</span></div><span class="amt">₹ ——</span><span class="st late">Overdue</span><div class="act"><span class="btn nudge">Nudge</span></div></div>' +
-          '<div class="row">' + ini('S', '#8FA58A') + '<div class="who cbx-who"><b>Sen Foods</b><span>INV-016</span></div><span class="amt">₹ ——</span><span class="st due">Due Fri</span><div class="act"><span class="muted">Sent Mon</span></div></div>' +
+          '<div class="row hi">' + ini('M', '#E8A96B') + '<div class="who cbx-who"><b>Client A</b><span>INV ——</span></div><span class="amt">₹ ——</span><span class="st paid" data-ans-t="paid">Paid</span><div class="act"><span class="match" data-ans-t="match">' + matchMark() + 'Matched to INV ——</span></div></div>' +
+          '<div class="row">' + ini('K', '#C8664A') + '<div class="who cbx-who"><b>Client B</b><span>INV ——</span></div><span class="amt">₹ ——</span><span class="st late" data-ans-t="owe">Overdue · oldest</span><div class="act"><span class="btn nudge cbx-btn" data-ans-t="nudge">Nudge</span></div></div>' +
+          '<div class="row">' + ini('R', '#7F95B0') + '<div class="who cbx-who"><b>Client C</b><span>INV ——</span></div><span class="amt">₹ ——</span><span class="st late">Overdue</span><div class="act"><span class="btn nudge">Nudge</span></div></div>' +
+          '<div class="row">' + ini('S', '#8FA58A') + '<div class="who cbx-who"><b>Client D</b><span>INV ——</span></div><span class="amt">₹ ——</span><span class="st due">Due Fri</span><div class="act"><span class="muted">Sent Mon</span></div></div>' +
         '</div></div>';
     }
     if (ch.id === 'hire') {
@@ -306,7 +323,10 @@ window.Cbx300Answers = (function () {
     wrap.setAttribute('data-slot', 'desk');
     wrap.setAttribute('data-ans-device', 'desk');
     if (ch.deskShot) {
-      wrap.appendChild(shot(ch.deskShot, 'Example desktop · ' + ch.deskTitle));
+      var frame = picture(ch.deskShot, ch.deskAlt || ('CBX300 web · ' + ch.deskTitle), 1440, 900);
+      frame.setAttribute('data-ans-screen', '');
+      frame.setAttribute('data-shot', 'desk');
+      wrap.appendChild(frame);
       return wrap;
     }
     wrap.innerHTML = deskChrome(ch, deskMain(ch));
@@ -317,8 +337,29 @@ window.Cbx300Answers = (function () {
     var wrap = el('div', 'cbx-phone');
     wrap.setAttribute('data-slot', 'phone');
     wrap.setAttribute('data-ans-device', 'phone');
+    if (ch.phoneShots && ch.phoneShots.length) {
+      var stack = el('div', 'cbx-ans__stack');
+      stack.setAttribute('data-ans-screen', '');
+      var openId = ch.openShot || ch.phoneShots[0].id;
+      ch.phoneShots.forEach(function (s) {
+        var frame = picture(s.src, s.alt, 440, 956);
+        frame.setAttribute('data-shot', s.id);
+        if (s.id !== openId) frame.style.opacity = '0';
+        stack.appendChild(frame);
+      });
+      if (ch.inset) {
+        var inset = picture(ch.inset.src, ch.inset.alt, 440, 574);
+        inset.classList.add('cbx-ans__inset');
+        inset.setAttribute('data-inset', '');
+        stack.appendChild(inset);
+      }
+      wrap.appendChild(stack);
+      return wrap;
+    }
     if (ch.phoneShot) {
-      wrap.appendChild(shot(ch.phoneShot, 'Example phone · ' + ch.focus));
+      var one = picture(ch.phoneShot, 'CBX300 phone · ' + ch.focus, 440, 956);
+      one.setAttribute('data-ans-screen', '');
+      wrap.appendChild(one);
       return wrap;
     }
     wrap.innerHTML =
@@ -341,7 +382,7 @@ window.Cbx300Answers = (function () {
 
   function buildWorld(ch, layer) {
     var world = el('div', 'cbx-ans__world cbx-d1');
-    world.appendChild(buildDesk(ch));
+    if (!ch.noDesk) world.appendChild(buildDesk(ch));
     if (layer !== 'blur' || ch.hero === 'both') {
       world.appendChild(buildPhone(ch));
     }
@@ -406,11 +447,16 @@ window.Cbx300Answers = (function () {
       body.appendChild(ptr);
     });
     wrap.appendChild(body);
-    var ctag = html('div', 'cbx-ans__ctag ctag', '<span class="tag">Example copy</span>');
     col.appendChild(sline);
     col.appendChild(ask);
     col.appendChild(wrap);
-    col.appendChild(ctag);
+    if (ch.outro) {
+      ch.outro.forEach(function (o, i) {
+        var kick = el('p', 'cbx-ans__kicker', o.kicker);
+        kick.setAttribute('data-kicker', String(i));
+        col.appendChild(kick);
+      });
+    }
     note.appendChild(col);
 
     scene.appendChild(blur);
@@ -422,26 +468,31 @@ window.Cbx300Answers = (function () {
     return scene;
   }
 
-  function buildHud() {
+  function buildHud(chapters, num, title) {
     var hud = el('div', 'cbx-ans__hud hud');
-    hud.innerHTML = '<div class="cbx-ans__lab lab"><span class="cbx-ans__num n">03</span><span class="cbx-ans__title t">How our bank answers her</span></div>' +
-      '<div class="cbx-ans__prog prog" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i></div>' +
-      '<span class="cbx-ans__xtag xtag2">Example UI · real screens to come</span>';
+    var bars = '';
+    chapters.forEach(function () { bars += '<i><b></b></i>'; });
+    hud.innerHTML = '<div class="cbx-ans__lab lab"><span class="cbx-ans__num n">' + num + '</span><span class="cbx-ans__title t">' + title + '</span></div>' +
+      '<div class="cbx-ans__prog prog" aria-hidden="true">' + bars + '</div>';
     return hud;
   }
 
-  function build() {
+  function build(config) {
+    config = config || {};
+    var chapters = config.chapters || CHAPTERS;
     var section = el('section', 'cbx-ans');
-    section.setAttribute('data-cbx-section', '03');
+    if (!config.num) section.setAttribute('data-cbx-section', '03');
+    else section.setAttribute('data-cbx-section', config.num);
     section.setAttribute('data-cbx-live', '');
-    section.setAttribute('data-cbx-answers', '');
-    section.setAttribute('aria-label', 'How our bank answers her');
+    section.setAttribute(config.attr || 'data-cbx-answers', '');
+    section.setAttribute('aria-label', config.aria || 'How our bank answers her');
+    section._cbxChapters = chapters;
     var fit = el('div', 'cbx-ans__fit');
-    fit.appendChild(buildHud());
+    fit.appendChild(buildHud(chapters, config.num || '03', config.title || 'How our bank answers her'));
     var stage = el('div', 'cbx-ans__stage');
     var cream = el('div', 'cbx-ans__cream');
     stage.appendChild(cream);
-    CHAPTERS.forEach(function (ch, i) {
+    chapters.forEach(function (ch, i) {
       stage.appendChild(buildScene(ch, i));
     });
     fit.appendChild(stage);
@@ -546,9 +597,11 @@ window.Cbx300Answers = (function () {
      on the exact element and keeps it fully inside the lit window. */
   function buildPoses(scene, ch, Z, scale, opts) {
     opts = opts || {};
-    Array.prototype.forEach.call(scene.querySelectorAll('.cbx-ans__mkr, .cbx-ans__ring, .cbx-ans__mpulse, .cbx-ans__rpulse'), function (n) {
-      n.parentNode.removeChild(n);
-    });
+    if (!opts.keep) {
+      Array.prototype.forEach.call(scene.querySelectorAll('.cbx-ans__mkr, .cbx-ans__ring, .cbx-ans__mpulse, .cbx-ans__rpulse'), function (n) {
+        n.parentNode.removeChild(n);
+      });
+    }
     var sharp = scene.querySelector('.cbx-ans__cam.is-sharp');
     var inner = sharp.querySelector('.cbx-ans__camin');
     var isPhone = scene.classList.contains('is-phone');
@@ -582,7 +635,7 @@ window.Cbx300Answers = (function () {
       var ty = fitAxis(ty0, Z.Y + topIn - wr.y * s, Z.Y + Z.H - botIn - (wr.y + wr.h) * s, Z.Y + Z.H - wb.b * s, Z.Y - wb.y * s);
       if (opts.identity) { tx = Z.tx; ty = Z.ty; }
       var R = { x: tx + wr.x * s, y: ty + wr.y * s, w: wr.w * s, h: wr.h * s };
-      var pad = 8;
+      var pad = 6;
       var ring = el('div', 'cbx-ans__ring ring');
       ring.style.left = (R.x - pad) + 'px';
       ring.style.top = (R.y - pad) + 'px';
@@ -704,7 +757,7 @@ window.Cbx300Answers = (function () {
     return { sl: sl, q: q, sdx: sdx, sdy: sdy, qdx: qdx, qdy: qdy, bottom: WTOP + a.h + GAPW + b.h };
   }
 
-  function prepareChapter(scene, ch, k, P, stage, scale) {
+  function prepareChapter(scene, ch, k, P, stage, scale, colors) {
     var Z = zoomBox(scene, ch, scale);
     var cams = scene.querySelectorAll('.cbx-ans__camin');
     var gsap = window.gsap;
@@ -740,22 +793,35 @@ window.Cbx300Answers = (function () {
     });
     gsap.set(fills, { scaleX: 0, transformOrigin: '0 50%' });
     var ctag = scene.querySelector('.cbx-ans__ctag');
-    gsap.set([panel, ctag], { opacity: 0 });
+    gsap.set(ctag ? [panel, ctag] : panel, { opacity: 0 });
+    gsap.set(scene.querySelectorAll('[data-inset]'), { y: 0 });
     gsap.set(panel, { y: 18 });
     var h = titleGlide(scene, k, scale, stage);
     var mkav = h.sl.querySelectorAll('.mk, .cbx-mk');
     var slt = h.sl.querySelectorAll('.sline > span, .cbx-sline > span');
     gsap.set(h.sl, { x: h.sdx, y: h.sdy, opacity: k ? 0 : 1 });
-    gsap.set(h.q, { x: h.qdx, y: h.qdy, color: '#1E1510', opacity: k ? 0 : 1 });
-    gsap.set(slt, { color: '#54463c' });
-    gsap.set(mkav, { backgroundColor: '#2A1E17', boxShadow: 'inset 0 0 0 1px rgba(244,239,230,0)' });
+    gsap.set(h.q, { x: h.qdx, y: h.qdy, color: colors.ink, opacity: k ? 0 : 1 });
+    gsap.set(slt, { color: colors.ink2 });
+    gsap.set(mkav, { backgroundColor: colors.coffee, boxShadow: 'inset 0 0 0 1px rgba(244,239,230,0)' });
     if (k) gsap.set(scene, { opacity: 0 });
     if (isMultiverse() && !h.q.classList.contains('glitch')) {
       h.q.classList.add('glitch');
       h.q.setAttribute('data-text', h.q.textContent);
     }
+    var afterPose = ch.pointers.map(function (p) {
+      if (!p.after) return null;
+      var ghost = { hero: ch.hero, pointers: [p.after] };
+      var extra = buildPoses(scene, ghost, Z, scale, { keep: true });
+      var q = extra[0];
+      if (q && q.ring && q.ring.parentNode) q.ring.parentNode.removeChild(q.ring);
+      if (q && q.mkr && q.mkr.parentNode) q.mkr.parentNode.removeChild(q.mkr);
+      return q;
+    });
     return {
       scene: scene,
+      ch: ch,
+      colors: colors,
+      afterPose: afterPose,
       cams: cams,
       stepCam: cams[cams.length - 1],
       sharp: sharp,
@@ -810,12 +876,43 @@ window.Cbx300Answers = (function () {
   var TA = 0.4;
   var XF = 0.45;
   var YA = 0.45;
-  var INK = '#1E1510';
-  var INK2 = '#54463c';
-  var COF = '#2A1E17';
-  var CREAM = '#f4efe6';
-  var CREAM8 = 'rgba(244,239,230,.8)';
-  var MKD = '#3a2a20';
+
+  function themeColors(section) {
+    var cs = window.getComputedStyle(section);
+    function pick(name, fb) {
+      var v = (cs.getPropertyValue(name) || '').trim();
+      return v || fb;
+    }
+    var html = document.documentElement;
+    var mv = html.classList.contains('is-multiverse');
+    var print = mv && html.classList.contains('is-print');
+    var dark = html.classList.contains('is-dark') && !print;
+    var ink = pick('--ans-ink', '#1E1510');
+    var cream = pick('--ans-cream', '#f4efe6');
+    var zoom = pick('--ans-on-dim', '');
+    if (!zoom) {
+      if (print) zoom = ink;
+      else if (dark || mv) zoom = ink;
+      else zoom = cream;
+    }
+    return {
+      ink: ink,
+      ink2: pick('--ans-ink-2', dark ? 'rgba(244,239,230,.68)' : '#54463c'),
+      coffee: pick('--ans-coffee', '#2A1E17'),
+      cream: cream,
+      zoom: zoom,
+      zoom2: pick('--ans-on-dim-2', 'rgba(244,239,230,.8)'),
+      mkd: pick('--ans-mkd', '#3a2a20')
+    };
+  }
+
+  function chaptersOf(section) {
+    return (section && section._cbxChapters) || CHAPTERS;
+  }
+
+  function shotNodes(scene, id) {
+    return scene.querySelectorAll('[data-shot="' + id + '"]');
+  }
 
   function applyBox(l) {
     if (l._boxRaf) return;
@@ -838,9 +935,10 @@ window.Cbx300Answers = (function () {
   }
 
   function colr(tl, l, t, dur, wide) {
-    tl.to(l.q, { color: wide ? INK : CREAM, duration: dur, ease: 'sine.inOut' }, t);
-    tl.to(l.slt, { color: wide ? INK2 : CREAM8, duration: dur, ease: 'sine.inOut' }, t);
-    tl.to(l.mkav, { backgroundColor: wide ? COF : MKD, duration: dur, ease: 'sine.inOut' }, t);
+    var c = l.colors;
+    tl.to(l.q, { color: wide ? c.ink : c.zoom, duration: dur, ease: 'sine.inOut' }, t);
+    tl.to(l.slt, { color: wide ? c.ink2 : c.zoom2, duration: dur, ease: 'sine.inOut' }, t);
+    tl.to(l.mkav, { backgroundColor: wide ? c.coffee : c.mkd, duration: dur, ease: 'sine.inOut' }, t);
   }
 
   function toCol(tl, l, t, dur) {
@@ -871,37 +969,65 @@ window.Cbx300Answers = (function () {
      transform and opacity animate (gsap-performance). Returns the end time. */
   function addSteps(tl, l, bar, R0, start, stepTimes, hook, wins) {
     var cur = start;
+    var cursor = R0;
+    var count = l.poses.length || 1;
     l.poses.forEach(function (q, i) {
-      var t = R0 + i * STEP;
-      if (stepTimes) stepTimes.push(+t.toFixed(3));
-      /* text of this point is still arriving until t + SETTLE_IN */
-      if (wins) wins.push([t, t + SETTLE_IN]);
-      if (hook) hook(i, t);
+      var p = l.ch.pointers[i];
+      var prev = i ? l.ch.pointers[i - 1] : null;
+      var swap = !!(prev && p.shot && prev.shot && p.shot !== prev.shot && p.device !== 'desk');
+      var t = cursor;
+      var push = t;
+      if (swap) {
+        tl.to(l.stepCam, { x: l.Z.tx, y: l.Z.ty, scale: l.Z.s, duration: BACK, ease: 'power2.inOut' }, t);
+        var fadeAt = t + BACK - 0.22;
+        tl.to(shotNodes(l.scene, prev.shot), { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, fadeAt);
+        tl.to(shotNodes(l.scene, p.shot), { opacity: 1, duration: 0.45, ease: 'sine.inOut' }, fadeAt);
+        if (p.inset) {
+          tl.to(l.scene.querySelectorAll('[data-inset]'), { y: '-100%', duration: 0.6, ease: 'power3.out' }, fadeAt + 0.15);
+        }
+        push = t + BACK;
+      }
+      if (stepTimes) stepTimes.push(+push.toFixed(3));
+      /* text of this point is still arriving until push + SETTLE_IN */
+      if (wins) wins.push([push, push + SETTLE_IN]);
+      if (hook) hook(i, push);
       /* camera glide: previous pose to this one. Only the sharp camera moves;
          the dimmed duplicate behind it stays at the chapter pose so it is
-         not re-rasterised every frame. */
-      tl.fromTo(l.stepCam, { x: cur.x, y: cur.y, scale: cur.s },
-        { x: q.pose.x, y: q.pose.y, scale: q.pose.s, duration: GLIDE, ease: 'power2.inOut', immediateRender: false }, t);
+         not re-rasterised every frame. A shot change pulls back first. */
+      tl.fromTo(l.stepCam, { x: swap ? l.Z.tx : cur.x, y: swap ? l.Z.ty : cur.y, scale: swap ? l.Z.s : cur.s },
+        { x: q.pose.x, y: q.pose.y, scale: q.pose.s, duration: GLIDE, ease: 'power2.inOut', immediateRender: false }, push);
       /* previous marker and shade hand over gently */
       if (i) {
-        tl.fromTo([l.mk[i - 1], l.rg[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.45, ease: 'sine.inOut', immediateRender: false }, t);
+        tl.fromTo([l.mk[i - 1], l.rg[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.45, ease: 'sine.inOut', immediateRender: false }, push);
         /* old text glides up and out, line by line */
         tl.fromTo(l.lines[i - 1], { opacity: 1, y: 0, scale: 1 },
-          { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, t);
+          { opacity: 0, y: OUT_DY, scale: 0.99, duration: 0.6, ease: 'power2.inOut', stagger: 0.045, immediateRender: false }, push);
       }
       /* new text glides in, staggered, long soft ease */
       tl.fromTo(l.lines[i], { opacity: 0, y: IN_DY, scale: 0.985 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: 'power3.out', stagger: 0.07, immediateRender: false }, t + (i ? 0.5 : 0.25));
+        { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: 'power3.out', stagger: 0.07, immediateRender: false }, push + (i ? 0.5 : 0.25));
       /* marker softly rings in once the camera has nearly landed */
-      tl.fromTo(l.rg[i], { opacity: 0 }, { opacity: 1, duration: 0.95, ease: 'sine.inOut', immediateRender: false }, t + 0.7);
-      tl.fromTo(l.mk[i], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.85, ease: 'power3.out', immediateRender: false }, t + 0.85);
-      tl.fromTo(l.mp[i], { opacity: 0.55, scale: 1 }, { opacity: 0, scale: 2.4, duration: 1.2, ease: 'power2.out', immediateRender: false }, t + 0.95);
+      tl.fromTo(l.rg[i], { opacity: 0 }, { opacity: 1, duration: 0.95, ease: 'sine.inOut', immediateRender: false }, push + 0.7);
+      tl.fromTo(l.mk[i], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.85, ease: 'power3.out', immediateRender: false }, push + 0.85);
+      tl.fromTo(l.mp[i], { opacity: 0.55, scale: 1 }, { opacity: 0, scale: 2.4, duration: 1.2, ease: 'power2.out', immediateRender: false }, push + 0.95);
       /* tick fills, chapter bar advances */
-      tl.fromTo(l.fills[i], { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: 'power2.inOut', immediateRender: false }, t + 0.15);
-      if (bar) tl.to(bar, { scaleX: 0.2 + 0.8 * (i + 1) / 4, duration: 1.0, ease: 'power2.inOut' }, t + 0.15);
-      cur = q.pose;
+      tl.fromTo(l.fills[i], { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: 'power2.inOut', immediateRender: false }, push + 0.15);
+      if (bar) tl.to(bar, { scaleX: 0.2 + 0.8 * (i + 1) / count, duration: 1.0, ease: 'power2.inOut' }, push + 0.15);
+      if (p.after && l.afterPose && l.afterPose[i]) {
+        var ap = l.afterPose[i];
+        var at = push + 2.2;
+        tl.to(l.stepCam, { x: l.Z.tx, y: l.Z.ty, scale: l.Z.s, duration: BACK * 0.72, ease: 'power2.inOut' }, at);
+        tl.to(shotNodes(l.scene, p.shot), { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, at + BACK * 0.4);
+        tl.to(shotNodes(l.scene, p.after.shot), { opacity: 1, duration: 0.45, ease: 'sine.inOut' }, at + BACK * 0.4);
+        tl.to(l.stepCam, { x: ap.pose.x, y: ap.pose.y, scale: ap.pose.s, duration: GLIDE, ease: 'power2.inOut' }, at + BACK * 0.72);
+        cur = ap.pose;
+        cursor += STEP + BACK;
+      } else {
+        cur = q.pose;
+        cursor += STEP + (swap ? BACK : 0);
+      }
     });
-    var E = R0 + l.poses.length * STEP + 0.1;
+    var E = cursor + 0.1;
     var last = l.poses.length - 1;
     if (wins) wins.push([E, E + 1.25]);
     tl.fromTo(l.lines[last], { opacity: 1, y: 0, scale: 1 },
@@ -916,16 +1042,27 @@ window.Cbx300Answers = (function () {
     var stage = section.querySelector('.cbx-ans__stage');
     var scenes = Array.prototype.slice.call(section.querySelectorAll('.cbx-ans__scene'));
     var P = widePose(stage, scenes, scale);
+    var colors = themeColors(section);
+    var chs = chaptersOf(section);
     var layers = scenes.map(function (scene, k) {
-      return prepareChapter(scene, CHAPTERS[k], k, P, stage, scale);
+      return prepareChapter(scene, chs[k], k, P, stage, scale, colors);
     });
     var hud = section.querySelector('.cbx-ans__hud');
     var bars = section.querySelectorAll('.cbx-ans__prog b');
+    var html = document.documentElement;
+    var print = html.classList.contains('is-multiverse') && html.classList.contains('is-print');
+    var dark = html.classList.contains('is-dark') && !print;
     var hudWide = { hc: 'rgba(30,21,16,.55)', hb: 'rgba(30,21,16,.35)' };
     var hudZoom = { hc: 'rgba(244,239,230,.62)', hb: 'rgba(244,239,230,.4)' };
-    if (isMultiverse()) {
+    if (isMultiverse() && !print) {
       hudWide = { hc: 'rgba(243,238,228,.62)', hb: 'rgba(61,232,245,.35)' };
       hudZoom = { hc: 'rgba(243,238,228,.72)', hb: 'rgba(61,232,245,.5)' };
+    } else if (print) {
+      hudWide = { hc: 'rgba(14,16,24,.55)', hb: 'rgba(0,160,160,.35)' };
+      hudZoom = { hc: 'rgba(14,16,24,.62)', hb: 'rgba(0,160,160,.45)' };
+    } else if (dark) {
+      hudWide = { hc: 'rgba(244,239,230,.62)', hb: 'rgba(244,239,230,.35)' };
+      hudZoom = { hc: 'rgba(244,239,230,.72)', hb: 'rgba(232,169,107,.45)' };
     }
 
     var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
@@ -950,16 +1087,20 @@ window.Cbx300Answers = (function () {
         tl.to(hud, { '--hc': hudZoom.hc, '--hb': hudZoom.hb, duration: 1, ease: 'sine.inOut' }, S0 + 0.5);
         if (bars[k]) tl.to(bars[k], { scaleX: 0.2, duration: ZOOM, ease: 'none' }, S0);
         tl.to(l.vf, { opacity: 1, duration: 0.6, stagger: 0.06, ease: 'sine.out' }, S0 + ZOOM - 0.5);
-        tl.to(l.ctag, { opacity: 1, duration: 0.8, ease: 'sine.out' }, S0 + ZOOM - 0.3);
+        if (l.ch.openShot && l.ch.pointers[0] && l.ch.pointers[0].shot && l.ch.openShot !== l.ch.pointers[0].shot) {
+          tl.to(shotNodes(l.scene, l.ch.openShot), { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, S0 + 0.35);
+          tl.to(shotNodes(l.scene, l.ch.pointers[0].shot), { opacity: 1, duration: 0.45, ease: 'sine.inOut' }, S0 + 0.35);
+        }
+        if (l.ctag) tl.to(l.ctag, { opacity: 1, duration: 0.8, ease: 'sine.out' }, S0 + ZOOM - 0.3);
         var R0 = S0 + ZOOM + 0.1;
         tl.fromTo(l.panel, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', immediateRender: false }, S0 + ZOOM - 0.3);
         snapWins.push([S0 + ZOOM - 0.6, R0]);
         var E = addSteps(tl, l, bars[k], R0, { x: Z.tx, y: Z.ty, s: Z.s }, stepTimes, null, snapWins);
-        tl.to(l.ctag, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.5);
+        if (l.ctag) tl.to(l.ctag, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.5);
         tl.to(l.vf, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, E + 0.7);
         var B = E + OUT + 0.05;
-        pullBack(tl, l, P, hud, hudWide, B);
-        if (k < 2) {
+        if (k < layers.length - 1) {
+          pullBack(tl, l, P, hud, hudWide, B);
           var W = B + BACK + 0.1;
           var n = layers[k + 1];
           /* Handoff, soft: the old device content and the old question
@@ -967,7 +1108,7 @@ window.Cbx300Answers = (function () {
              pulled-back pose and its content and question glide in. The two
              questions never overlap (old is gone before new has started). */
           var dyOf = function (c) { return function (i) { return i ? c.qdy : c.sdy; }; };
-          tl.to(l.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0, duration: 0.7, ease: 'sine.inOut' }, W);
+          tl.to(l.scene.querySelectorAll('.main, .cbx-phone__screen, .cbx-ans__stack'), { opacity: 0, duration: 0.7, ease: 'sine.inOut' }, W);
           tl.fromTo([l.sl, l.q], { opacity: 1, y: dyOf(l) },
             { opacity: 0, y: function (i) { return dyOf(l)(i) - 24; }, duration: 0.6, ease: 'power2.inOut', stagger: 0.06, immediateRender: false }, W - 0.15);
           tl.set(n.layers, { opacity: 0 }, W - 0.2);
@@ -979,11 +1120,32 @@ window.Cbx300Answers = (function () {
           tl.set(l.scene, { opacity: 0 }, W + 0.9);
           tl.fromTo(n.scene.querySelectorAll('.cbx-ans__cam'), { opacity: 0 }, { opacity: 1, duration: 0.7, ease: 'sine.inOut', immediateRender: false }, W + 0.1);
           tl.set(n.spot, { opacity: 0 }, W);
-          tl.fromTo(n.scene.querySelectorAll('.main, .cbx-phone__screen'), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'sine.inOut' }, W + 0.2);
+          tl.fromTo(n.scene.querySelectorAll('.main, .cbx-phone__screen, .cbx-ans__stack'), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'sine.inOut' }, W + 0.2);
           tl.fromTo(n.scene.querySelectorAll('.si.new, .cbx-si.is-new'), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.55, stagger: 0.1, ease: 'power2.out' }, W + 0.55);
           tl.set(n.scene.querySelectorAll('.cbx-ans__dim, .cbx-ans__nbg'), { opacity: 0 }, W);
           T = W + 1.2;
+        } else if (l.ch.outro && l.ch.outro.length) {
+          tl.to(l.cams, { x: Z.tx, y: Z.ty, scale: Z.s, duration: BACK, ease: 'power2.inOut' }, B);
+          var beat = B + BACK - 0.2;
+          l.ch.outro.forEach(function (o, i) {
+            var kick = l.scene.querySelector('[data-kicker="' + i + '"]');
+            var fromShot = i ? l.ch.outro[i - 1].shot : (l.ch.pointers[l.ch.pointers.length - 1].shot || l.ch.openShot);
+            if (fromShot) tl.to(shotNodes(l.scene, fromShot), { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, beat);
+            tl.to(shotNodes(l.scene, o.shot), { opacity: 1, duration: 0.45, ease: 'sine.inOut' }, beat);
+            if (kick) {
+              tl.fromTo(kick, { opacity: 0, y: IN_DY }, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out', immediateRender: false }, beat + 0.2);
+            }
+            snapWins.push([beat + 0.9, beat + 1.3]);
+            if (i < l.ch.outro.length - 1) {
+              if (kick) tl.to(kick, { opacity: 0, y: OUT_DY, duration: 0.6, ease: 'power2.inOut' }, beat + HOLD);
+              beat += HOLD;
+            } else {
+              beat += HOLD;
+            }
+          });
+          T = beat + 0.4;
         } else {
+          pullBack(tl, l, P, hud, hudWide, B);
           T = B + BACK + 0.6;
         }
       }(k));
@@ -1168,7 +1330,7 @@ window.Cbx300Answers = (function () {
         fitScale(section);
       }
     });
-    motion.tween = tl;
+    if (section.hasAttribute('data-cbx-answers')) motion.tween = tl;
     motion.triggers.push(st);
     section.dataset.ready = '1';
     section.dataset.dur = String(tl.duration());
@@ -1186,18 +1348,31 @@ window.Cbx300Answers = (function () {
     var per = scenes.map(function (scene, k) {
       scene.removeAttribute('hidden');
       scene.style.opacity = '1';
-      var poses = buildPoses(scene, CHAPTERS[k], { tx: 0, ty: 0, s: 1, X: 32, Y: 72, W: 880, H: 780 }, scale, { identity: true });
+      var poses = buildPoses(scene, chaptersOf(section)[k], { tx: 0, ty: 0, s: 1, X: 32, Y: 72, W: 880, H: 780 }, scale, { identity: true });
       if (k) { scene.setAttribute('hidden', ''); scene.style.opacity = '0'; }
       return { scene: scene, poses: poses };
     });
     gsap.set(section.querySelectorAll('.cbx-ans__ptr, .cbx-ans__ctag, .cbx-vf, .cbx-vfl, .cbx-ans__dim, .cbx-ans__nbg, .cbx-ans__panel'), { opacity: 1 });
     gsap.set(section.querySelectorAll('.cbx-ans__ring, .cbx-ans__mkr'), { clearProps: 'opacity' });
     var shown = -1;
+    var chs = chaptersOf(section);
+    var counts = chs.map(function (c) { return c.pointers.length; });
+    var total = counts.reduce(function (a, b) { return a + b; }, 0) || 1;
+    function locate(idx) {
+      var left = idx;
+      var k;
+      for (k = 0; k < counts.length; k += 1) {
+        if (left < counts[k]) return { ch: k, st: left, n: counts[k] };
+        left -= counts[k];
+      }
+      return { ch: counts.length - 1, st: counts[counts.length - 1] - 1, n: counts[counts.length - 1] || 1 };
+    }
     function show(idx) {
       if (idx === shown) return;
       shown = idx;
-      var ch = Math.floor(idx / 4);
-      var st = idx % 4;
+      var at = locate(idx);
+      var ch = at.ch;
+      var st = at.st;
       per.forEach(function (c, k) {
         c.scene.style.opacity = k === ch ? '1' : '0';
         if (k === ch) c.scene.removeAttribute('hidden');
@@ -1216,25 +1391,25 @@ window.Cbx300Answers = (function () {
         });
       });
       Array.prototype.forEach.call(bars, function (b, k) {
-        b.style.transform = 'scaleX(' + (k < ch ? 1 : (k === ch ? 0.2 + 0.8 * (st + 1) / 4 : 0)) + ')';
+        b.style.transform = 'scaleX(' + (k < ch ? 1 : (k === ch ? 0.2 + 0.8 * (st + 1) / at.n : 0)) + ')';
       });
     }
     show(0);
     var st = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: function () { return '+=' + Math.round(window.innerHeight * 12); },
+      end: function () { return '+=' + Math.round(window.innerHeight * Math.max(6, total)); },
       pin: true,
       pinSpacing: true,
       pinType: 'fixed',
       refreshPriority: -1,
       onToggle: function (self) { pinActive(self.isActive); },
       onUpdate: function (self) {
-        show(Math.max(0, Math.min(11, Math.floor(self.progress * 12))));
+        show(Math.max(0, Math.min(total - 1, Math.floor(self.progress * total))));
         if (motion.onStep) motion.onStep(2);
       }
     });
-    motion.tween = null;
+    if (section.hasAttribute('data-cbx-answers')) motion.tween = null;
     motion.triggers.push(st);
     section.dataset.ready = '1';
   }
@@ -1271,9 +1446,9 @@ window.Cbx300Answers = (function () {
         var phoneN = sharpRoot.querySelector('.cbx-phone');
         var dsc = (vw - 24) / 760;
         deskN.style.cssText += ';left:12px;top:' + Math.round(Z.Y + Math.max(8, (Z.H - 560 * dsc) / 2)) + 'px;width:760px;height:560px;transform:scale(' + dsc + ');transform-origin:0 0;z-index:2';
-        swap = { desk: deskN, phone: phoneN, dev: CHAPTERS[k].pointers.map(function (q) { return q.device; }) };
+        swap = { desk: deskN, phone: phoneN, dev: chaptersOf(section)[k].pointers.map(function (q) { return q.device; }) };
       }
-      var poses = buildPoses(scene, CHAPTERS[k], Z, 1, { side: 14, topIn: 12, botIn: 12, fillW: 0.62, fillH: 0.5, minMul: 1.25, maxMul: 2.4 });
+      var poses = buildPoses(scene, chaptersOf(section)[k], Z, 1, { side: 14, topIn: 12, botIn: 12, fillW: 0.62, fillH: 0.5, minMul: 1.25, maxMul: 2.4 });
       var mk = poses.map(function (q) { return q && q.mkr; });
       var rg = poses.map(function (q) { return q && q.ring; });
       var mp = mk.map(function (m) {
@@ -1302,7 +1477,7 @@ window.Cbx300Answers = (function () {
       }
       gsap.set(scene, { opacity: k ? 0 : 1 });
       if (k) scene.setAttribute('hidden', '');
-      return { swap: swap, scene: scene, cams: cams, stepCam: cams[0], poses: poses, mk: mk, rg: rg, mp: mp, panel: panel, lines: lines, fills: fills };
+      return { swap: swap, scene: scene, ch: chaptersOf(section)[k], cams: cams, stepCam: cams[0], poses: poses, mk: mk, rg: rg, mp: mp, panel: panel, lines: lines, fills: fills, Z: Z, afterPose: [] };
     });
     var tl = gsap.timeline({ paused: true, defaults: { force3D: true } });
     var chWin = scenes.map(function () { return { appear: 0, gone: 1e6 }; });
@@ -1362,7 +1537,7 @@ window.Cbx300Answers = (function () {
         if (motion.onStep) motion.onStep(self.progress > 0.02 ? 2 : 1);
       }
     });
-    motion.tween = tl;
+    if (section.hasAttribute('data-cbx-answers')) motion.tween = tl;
     motion.triggers.push(st);
     section.dataset.ready = '1';
     section.dataset.dur = String(tl.duration());
@@ -1412,6 +1587,7 @@ window.Cbx300Answers = (function () {
   function bind(world, opts) {
     kill();
     opts = opts || {};
+    var sections = world ? world.querySelectorAll('.cbx-ans') : [];
     var section = world && world.querySelector('[data-cbx-answers]');
     if (!section) return;
     var gsap = window.gsap;
@@ -1421,14 +1597,17 @@ window.Cbx300Answers = (function () {
     motion.page = opts.page || '';
     motion.reduce = !!(opts.reduce || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches));
     if (!gsap || !ScrollTrigger) {
-      section.classList.add('is-static');
+      Array.prototype.forEach.call(sections, function (node) { node.classList.add('is-static'); });
+      if (opts.onReady) opts.onReady();
       return;
     }
     gsap.registerPlugin(ScrollTrigger);
-    motion.fit = function () { fitScale(section); };
+    motion.fit = function () {
+      Array.prototype.forEach.call(sections, function (node) { fitScale(node); });
+    };
     window.addEventListener('resize', motion.fit);
     function go() {
-      fitScale(section);
+      motion.fit();
       var mm = gsap.matchMedia();
       motion.mm = mm;
       mm.add({
@@ -1437,9 +1616,11 @@ window.Cbx300Answers = (function () {
         reduce: '(prefers-reduced-motion: reduce)'
       }, function (ctx) {
         var c = ctx.conditions || {};
-        if (c.reduce || motion.reduce) bindReduced(section);
-        else if (c.isNarrow) bindNarrow(section);
-        else bindCamera(section);
+        Array.prototype.forEach.call(sections, function (node) {
+          if (c.reduce || motion.reduce) bindReduced(node);
+          else if (c.isNarrow) bindNarrow(node);
+          else bindCamera(node);
+        });
         seekIfNeeded();
         if (window.ScrollTrigger && window.ScrollTrigger.refresh) {
           window.requestAnimationFrame(function () {
@@ -1447,13 +1628,16 @@ window.Cbx300Answers = (function () {
             seekIfNeeded();
           });
         }
+        if (opts.onReady) opts.onReady();
         return function () {
           pinActive(false);
           if (motion.tween && motion.tween.kill) motion.tween.kill();
           motion.tween = null;
           motion.triggers.forEach(function (t) { if (t && t.kill) t.kill(); });
           motion.triggers = [];
-          section.classList.remove('is-static', 'is-narrow');
+          Array.prototype.forEach.call(sections, function (node) {
+            node.classList.remove('is-static', 'is-narrow');
+          });
         };
       });
     }

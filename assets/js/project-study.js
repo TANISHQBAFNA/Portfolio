@@ -1287,8 +1287,12 @@ window.ProjectStudy = (function () {
       if (options.onOpen) options.onOpen(index);
     }
 
+    var pendingNext = -1;
+
     function finishClose() {
       if (mode === 'off') return;
+      var reopen = pendingNext;
+      pendingNext = -1;
       killMotion();
       root.hidden = true;
       root.setAttribute('aria-hidden', 'true');
@@ -1304,6 +1308,20 @@ window.ProjectStudy = (function () {
       if (nodes.veil && typeof gsap !== 'undefined') {
         resetVeil(-110);
       }
+      if (reopen >= 0) {
+        window.setTimeout(function () { open(reopen); }, 60);
+      }
+    }
+
+    function openNext() {
+      if (mode !== 'study' || openIndex < 0) return;
+      var next = openIndex + 1;
+      if (next >= projects.length) {
+        close();
+        return;
+      }
+      pendingNext = next;
+      close();
     }
 
     function close() {
@@ -1336,6 +1354,10 @@ window.ProjectStudy = (function () {
     root.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && mode === 'study') close();
+    });
+    window.addEventListener('cbx-open-next', function () { openNext(); });
+    window.addEventListener('cbx-close-study', function () {
+      if (mode === 'study') close();
     });
     window.addEventListener('resize', function () {
       if (mode !== 'study') return;
