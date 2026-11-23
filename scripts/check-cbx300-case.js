@@ -44,6 +44,8 @@ var mvLanding = read('assets/js/landing-multiverse.js');
 var rail = read('assets/js/project-rail.js');
 var css = read('assets/css/cbx300-case.css');
 var mvCase = read('assets/css/cbx300-case-multiverse.css');
+var kit = read('assets/js/case-scroll-kit.js');
+var bar = read('docs/case-study-cbx300-redesign-bar.md');
 var landingCss = read('assets/css/landing.css');
 var mvCss = read('assets/css/landing-multiverse.css');
 
@@ -1022,6 +1024,60 @@ check('S03 pin does not blur-filter the backdrop camera', function () {
     'blur(3px) on the duplicate camera is too expensive inside the S03 pin');
   assert.ok(answers.indexOf('requestAnimationFrame') !== -1,
     'clipPath updates must coalesce to animation frames');
+});
+
+/* Checks that still hold from tanishq-portfolio's film guard.
+   The film-only assertions (eight beats, Decision chips, volume finding,
+   case-scroll-kit pin stage) described the rejected Infoviz film. This
+   branch's S01–S03 guards above replace them. These six still pass on
+   the merged tree. */
+check('no Pages rail as primary wayfinding', function () {
+  assert.ok(css.indexOf('.case-tabs') === -1, 'case-tabs css leaked from rejected wireframe');
+  assert.ok(pages.indexOf('case-tabs') === -1, 'Pages rail markup in case js');
+  assert.ok(pages.indexOf("tab: 'Cover'") === -1, 'tabbed TOC copy still in case js');
+});
+
+check('cream paper, not cool grey wireframe', function () {
+  assert.ok(css.indexOf('#f4efe6') !== -1, 'missing cream');
+  assert.ok(css.indexOf('#efeae1') !== -1, 'missing paper');
+  assert.ok(css.indexOf('#00a0a0') !== -1, 'missing teal');
+  assert.ok(css.indexOf('#F3F4F6') === -1 && css.indexOf('#f3f4f6') === -1, 'cool grey cover leaked');
+  assert.ok(css.indexOf('#e7e9ed') === -1, 'wireframe slot grey leaked');
+  assert.ok(css.indexOf('Syne') !== -1 && css.indexOf('Outfit') !== -1, 'missing portfolio type');
+  assert.ok(!/@keyframes\s+.*glitch/i.test(css), 'glitch keyframes in film css');
+});
+
+check('Lisa Charlie demo only; no invented NPS/outcomes', function () {
+  assert.ok(/demo brand/.test(pages), 'Lisa Charlie not labelled demo');
+  assert.ok(!/\bNPS\b/.test(pages), 'invented NPS');
+  assert.ok(!/time saved|time-saved/i.test(pages), 'invented time-saved');
+  assert.ok(!/adoption rate/i.test(pages), 'invented adoption');
+  assert.ok(pages.indexOf('Results stay blank until real numbers exist') !== -1, 'missing honest results line');
+});
+
+check('Echo avoid-list stays off the film', function () {
+  assert.ok(!/maker-checker/i.test(pages), 'maker-checker on page');
+  assert.ok(!/mental model/i.test(pages), 'mental model on page');
+  assert.ok(!/entitlements/i.test(pages), 'entitlements jargon on page');
+  assert.ok(!/dual control/i.test(pages), 'dual control on page');
+  assert.ok(!/\bseamless\b/i.test(pages), 'seamless on page');
+  assert.ok(!/\bintuitive\b/i.test(pages), 'intuitive on page');
+});
+
+check('free GSAP + ScrollTrigger only; no Club plugins', function () {
+  [kit, pages, study, index].forEach(function (src) {
+    assert.ok(!/gsap\/SplitText|MorphSVGPlugin|gsap\/Flip|registerPlugin\(\s*Flip/.test(src), 'Club plugin reference found');
+  });
+  assert.ok(kit.indexOf('ScrollTrigger') !== -1, 'kit missing ScrollTrigger');
+});
+
+check('redesign bar is the experience lock', function () {
+  assert.ok(bar.indexOf('infoviz-cs5764.web.app') !== -1, 'bar missing Infoviz lock');
+  assert.ok(bar.indexOf('PR #18 rejected') !== -1, 'bar missing reject note');
+  assert.ok(bar.indexOf('7. Decision layer') !== -1, 'bar missing Decision layer lock');
+  assert.ok(/no invented research/i.test(bar), 'bar missing no-invented-research lock');
+  assert.ok(bar.indexOf('8. Motion variety lock') !== -1, 'bar missing motion variety lock');
+  assert.ok(/opacity-only = fail/i.test(bar), 'bar missing opacity-only fail');
 });
 
 console.log(passed + ' passed, ' + failed + ' failed');
