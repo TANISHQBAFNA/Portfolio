@@ -21,7 +21,7 @@
 <g transform="translate(34,64) rotate(-7)">
 <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
 <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">PAYROLL · 8</text>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">PAYROLL</text>
 <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">₹ ——</text>
 <rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E"/>
 <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">APPROVE?</text>
@@ -34,7 +34,7 @@
 <rect x="14" y="68" width="77.2" height="18" rx="9" fill="#9A6A1E"/>
 <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">APPROVE?</text>
 </g>
-<g transform="translate(248,28)"><rect width="104" height="40" rx="20" fill="#E8A96B"/><text x="52.0" y="26" text-anchor="middle" font-family="Outfit" font-size="16" font-weight="700" fill="#1E1510">7 waiting</text></g>
+<g transform="translate(248,28)"><rect width="104" height="40" rx="20" fill="#E8A96B"/><text x="52.0" y="26" text-anchor="middle" font-family="Outfit" font-size="16" font-weight="700" fill="#1E1510">WAITING</text></g>
 <g transform="translate(64,516) scale(0.82)">
 <path d="M-58 90 C-58 30 -36 6 0 6 C36 6 58 30 58 90 Z" fill="#8FA58A"/>
 <circle cx="0" cy="-22" r="30" fill="#A86F52"/><path d="M-31 -18 C-34 -60 34 -60 31 -18 C30 -4 20 2 0 2 C-20 2 -30 -4 -31 -18 Z" fill="#2B1B12"/></g><g transform="translate(182,522) scale(0.8)">

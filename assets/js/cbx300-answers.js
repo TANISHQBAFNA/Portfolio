@@ -71,10 +71,10 @@ window.Cbx300Answers = (function () {
       deskTitle: 'Invoices',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
-        { worry: 'Did Client A pay?', does: 'Status is the first thing on every row, as a coloured pill that turns to ‘Paid’ the moment money lands.', why: ['Green means done and red means act, so one glance replaces reading.', 'It sits in the same place on every row, so her eye learns where to look.'], not: 'We didn’t bury status inside each invoice. She would have to open every one to find out.', gain: 'No awkward call to the client.', shot: 'invoices', rect: { x: 82.5, y: 23.4, w: 14, h: 4.2 }, device: 'phone', a: 'l', off: 18 },
-        { worry: 'Which invoice was that for?', does: 'The payment arrives with a ‘Matched to invoice’ badge, tied to its invoice by the bank, not by her.', why: ['The badge names the exact invoice, so there is nothing left to cross-check.', 'It sits on the same row as the client, so the proof is where she already looks.'], not: 'We didn’t list bank credits in a separate feed. She would be matching amounts to bills herself.', gain: 'Books that balance without a spreadsheet.', shot: 'invoices', rect: { x: 64, y: 29.2, w: 32, h: 2.8 }, device: 'phone', a: 'l', off: 18 },
-        { worry: 'Who still owes me?', does: 'The oldest overdue invoice is tagged in red and sits first among the unpaid ones.', why: ['Order and colour say the same thing, so she knows where to start without sorting.', 'The word ‘oldest’ answers ‘who first?’, so she doesn’t compare dates.'], not: 'We didn’t sort by amount or client name. The most overdue one would sink into the list.', gain: 'She knows who to chase, and who to leave alone.', shot: 'invoices', rect: { x: 68, y: 35, w: 28, h: 4 }, device: 'phone', a: 'l', off: 18 },
-        { worry: 'Chasing feels rude.', does: 'A ‘Nudge’ button sits on every overdue row, with a polite reminder already written behind it.', why: ['One tap is all it takes, so chasing becomes a small task, not a dreaded one.', 'The wording is already kind, so she never has to find the right tone.'], not: 'We didn’t hand her a blank email. A blank box is what makes people put it off.', gain: 'The money comes in. The relationship stays warm.', shot: 'invoices', rect: { x: 76, y: 39.5, w: 20, h: 5.2 }, device: 'phone', a: 'l', off: 18 }
+        { worry: 'Did Client A pay?', does: 'Status is the first thing on every row, as a coloured pill that turns to ‘Paid’ the moment money lands.', why: ['Green means done and red means act, so one glance replaces reading.', 'It sits in the same place on every row, so her eye learns where to look.'], not: 'We didn’t bury status inside each invoice. She would have to open every one to find out.', gain: 'No awkward call to the client.', shot: 'invoices', rect: { x: 4, y: 21.5, w: 92, h: 9 }, device: 'phone', a: 'c', off: 0 },
+        { worry: 'Which invoice was that for?', does: 'The payment arrives with a ‘Matched to invoice’ badge, tied to its invoice by the bank, not by her.', why: ['The badge names the exact invoice, so there is nothing left to cross-check.', 'It sits on the same row as the client, so the proof is where she already looks.'], not: 'We didn’t list bank credits in a separate feed. She would be matching amounts to bills herself.', gain: 'Books that balance without a spreadsheet.', shot: 'invoices', rect: { x: 4, y: 21.5, w: 92, h: 12 }, device: 'phone', a: 'c', off: 0 },
+        { worry: 'Who still owes me?', does: 'The oldest overdue invoice is tagged in red and sits first among the unpaid ones.', why: ['Order and colour say the same thing, so she knows where to start without sorting.', 'The word ‘oldest’ answers ‘who first?’, so she doesn’t compare dates.'], not: 'We didn’t sort by amount or client name. The most overdue one would sink into the list.', gain: 'She knows who to chase, and who to leave alone.', shot: 'invoices', rect: { x: 4, y: 33, w: 92, h: 9 }, device: 'phone', a: 'c', off: 0 },
+        { worry: 'Chasing feels rude.', does: 'A ‘Nudge’ button sits on every overdue row, with a polite reminder already written behind it.', why: ['One tap is all it takes, so chasing becomes a small task, not a dreaded one.', 'The wording is already kind, so she never has to find the right tone.'], not: 'We didn’t hand her a blank email. A blank box is what makes people put it off.', gain: 'The money comes in. The relationship stays warm.', shot: 'invoices', rect: { x: 4, y: 33, w: 92, h: 14 }, device: 'phone', a: 'c', off: 0 }
       ]
     },
     {
@@ -96,7 +96,7 @@ window.Cbx300Answers = (function () {
       deskTitle: 'Cash plan',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
-        { worry: 'Is this money really mine?', does: 'The total is split by where the money sits: the current account, the overdraft limit she can borrow, and deposits, each with the days until it frees up.', why: ['Borrowed money sits in its own line, so it is never mistaken for hers.', '‘Maturing in 7 days’ tells her when locked money becomes usable.'], not: 'We didn’t show one balance with the overdraft folded in. It looks like savings and hides what is borrowed.', gain: 'One honest picture of what she can use.', shot: 'liq', rect: { x: 4, y: 40, w: 92, h: 20 }, device: 'phone', a: 'c', off: 0 },
+        { worry: 'Is this money really mine?', does: 'The total is split by where the money sits: the current account, the overdraft limit she can borrow, and deposits, each with the days until it frees up.', why: ['Borrowed money sits in its own line, so it is never mistaken for hers.', '‘Maturing in 7 days’ tells her when locked money becomes usable.'], not: 'We didn’t show one balance with the overdraft folded in. It looks like savings and hides what is borrowed.', gain: 'One honest picture of what she can use.', shot: 'liq', rect: { x: 5.7, y: 41.8, w: 88, h: 16.8 }, device: 'phone', a: 'c', off: 0 },
         { worry: 'Will GST and rent eat into it?', does: 'Money for bills that are certain, like GST and rent, is set aside as its own labelled block.', why: ['A separate colour and name keep it out of ‘Safe to spend’, so it can’t be spent by accident.', 'It says ‘Set aside’ in plain words, not an accounting term.'], not: 'We didn’t leave upcoming bills in a list further down. They would look like part of the balance.', gain: 'No bill ambushes payday.', shot: 'aside', rect: { x: 4, y: 45, w: 92, h: 21 }, device: 'phone', a: 'l', off: 16 },
         { worry: 'What if a client pays late?', does: 'Money that hasn’t arrived yet is shown as ‘Coming in’ and kept out of the safe number.', why: ['The label says expected, not here, so it reads as a maybe.', 'A late client changes ‘Coming in’ and leaves ‘Safe to spend’ exactly where it was.'], not: 'We didn’t add expected payments to the balance. One late invoice would make the safe number wrong.', gain: 'She never spends money that hasn’t arrived.', shot: 'aside', rect: { x: 4, y: 67, w: 92, h: 16 }, device: 'phone', a: 'l', off: 16 },
         { worry: 'Can I pay Lina on Friday?', does: 'Friday is marked on the week, with Lina’s salary and a single ‘Covered’ badge that says yes or no.', why: ['The answer sits on the day she is asking about, so there is no sum to do.', 'A green tick and one word is quicker to trust than a column of figures.', 'The salary repeats monthly once it is set, so payday is never a new task.'], not: 'We didn’t make her compare the balance to the salary. That is a sum the app can do.', gain: 'She says yes to her first hire, calmly.', shot: 'payday', inset: true, rect: { x: 4, y: 25.5, w: 92, h: 15 }, device: 'phone', a: 'l', off: 18 }
@@ -126,8 +126,8 @@ window.Cbx300Answers = (function () {
       pointers: [
         { worry: 'What needs me right now?', does: 'Everything waiting for her is one list in My Task, grouped by day, each with a Pending Approval tag, and filters by kind (Payments, Beneficiary, Payroll).', why: ['One list means one place to look, so nothing hides in a chat thread.', 'Filters by kind keep payments, beneficiaries and payroll from mixing.'], not: 'We didn’t send approvals as messages. Requests scatter across chats and the oldest get lost.', gain: 'Nothing gets lost in a chat thread.', shot: 'task', rect: { x: 4, y: 28, w: 92, h: 28 }, device: 'phone', a: 'l', off: 18 },
         { worry: 'I’m out meeting a client.', does: 'On the phone, approving is a slide across the bottom of the payment, with Reject as a separate red button.', why: ['A slide can’t happen by accident in a pocket or mid-meeting.', 'Reject sits apart in its own colour, so the two are never confused.'], not: 'We didn’t shrink the desktop table onto the phone. Tiny buttons turn a five-second job into ‘later’.', gain: 'Her team isn’t stuck waiting for her.', shot: 'slide', rect: { x: 4, y: 87, w: 92, h: 10 }, device: 'phone', a: 'c', off: 0 },
-        { worry: 'Who approved that?', does: 'Under the list, a short log shows who approved or paid what, with names and when.', why: ['The record sits right under the requests, so she doesn’t open another page.', 'Names make it personal: Lina approved, Dev paid.'], not: 'We didn’t hide history in a separate report. By the time she needs it, she would be hunting.', gain: 'Clear answers when the accountant asks.', shot: 'slide', rect: { x: 8, y: 50, w: 70, h: 16 }, device: 'desk', a: 'tr', off: 0 },
-        { worry: 'Should everyone see everything?', does: 'Every request carries a role tag, like ‘Payments’, and access is limited to what that role needs.', why: ['The tag shows whose job the request is, so she sees the owner at a glance.', 'Limits follow the role, so people see what they need and no more.'], not: 'We didn’t give everyone the same view. A shared view of everything is where mistakes happen.', gain: 'Lina runs payments. The big calls stay with Aisha.', shot: 'slide', rect: { x: 55, y: 28, w: 22, h: 36 }, device: 'desk', a: 'tr', off: 0 }
+        { worry: 'Who approved that?', does: 'Under the list, a short log shows who approved or paid what, with names and when.', why: ['The record sits right under the requests, so she doesn’t open another page.', 'Names make it personal: Lina approved, Dev paid.'], not: 'We didn’t hide history in a separate report. By the time she needs it, she would be hunting.', gain: 'Clear answers when the accountant asks.', shot: 'slide', rect: { x: 70, y: 17, w: 26, h: 38 }, minMul: 2.2, maxMul: 3.6, fillW: 0.7, device: 'desk', a: 'l', off: 12 },
+        { worry: 'Should everyone see everything?', does: 'Every request carries a role tag, like ‘Payments’, and access is limited to what that role needs.', why: ['The tag shows whose job the request is, so she sees the owner at a glance.', 'Limits follow the role, so people see what they need and no more.'], not: 'We didn’t give everyone the same view. A shared view of everything is where mistakes happen.', gain: 'Lina runs payments. The big calls stay with Aisha.', shot: 'slide', rect: { x: 31, y: 26, w: 12, h: 44 }, minMul: 2.2, maxMul: 3.6, fillW: 0.42, device: 'desk', a: 'l', off: 12 }
       ],
       outro: [
         { shot: 'maker', kicker: 'Lina sends it.' },
@@ -487,6 +487,7 @@ window.Cbx300Answers = (function () {
     section.setAttribute(config.attr || 'data-cbx-answers', '');
     section.setAttribute('aria-label', config.aria || 'How our bank answers her');
     section._cbxChapters = chapters;
+    if (config.refreshPriority != null) section._cbxRefresh = config.refreshPriority;
     var fit = el('div', 'cbx-ans__fit');
     fit.appendChild(buildHud(chapters, config.num || '03', config.title || 'How our bank answers her'));
     var stage = el('div', 'cbx-ans__stage');
@@ -622,8 +623,8 @@ window.Cbx300Answers = (function () {
       var wr = { x: (tr.x - Z.tx) / Z.s, y: (tr.y - Z.ty) / Z.s, w: tr.w / Z.s, h: tr.h / Z.s };
       var capW = Z.W - 2 * side;
       var capH = Z.H - topIn - botIn;
-      var s = Math.min(Z.W * (opts.fillW || 0.5) / wr.w, Z.H * (opts.fillH || 0.4) / wr.h);
-      s = Math.min(Math.max(s, Z.s * (opts.minMul || 1.45)), Z.s * (opts.maxMul || 2.6));
+      var s = Math.min(Z.W * (p.fillW || opts.fillW || 0.5) / wr.w, Z.H * (p.fillH || opts.fillH || 0.45) / wr.h);
+      s = Math.min(Math.max(s, Z.s * (p.minMul || opts.minMul || 1.45)), Z.s * (p.maxMul || opts.maxMul || 2.6));
       s = Math.min(s, capW / wr.w, capH / wr.h);
       if (opts.identity) s = 1;
       var cx = Z.X + Z.W / 2;
@@ -989,13 +990,20 @@ window.Cbx300Answers = (function () {
       }
       if (stepTimes) stepTimes.push(+push.toFixed(3));
       /* text of this point is still arriving until push + SETTLE_IN */
-      if (wins) wins.push([push, push + SETTLE_IN]);
+      /* Open the settle window after the shot crossfade and the old
+         copy have finished, so a pause never lands on the previous
+         sentence over the next screen. */
+      if (wins) wins.push([push + 1.15, push + 1.15 + SETTLE_IN]);
       if (hook) hook(i, push);
       /* camera glide: previous pose to this one. Only the sharp camera moves;
          the dimmed duplicate behind it stays at the chapter pose so it is
          not re-rasterised every frame. A shot change pulls back first. */
       tl.fromTo(l.stepCam, { x: swap ? l.Z.tx : cur.x, y: swap ? l.Z.ty : cur.y, scale: swap ? l.Z.s : cur.s },
         { x: q.pose.x, y: q.pose.y, scale: q.pose.s, duration: GLIDE, ease: 'power2.inOut', immediateRender: false }, push);
+      var deskEl = l.scene.querySelector('.cbx-ans__cam.is-sharp .cbx-desk');
+      if (deskEl) {
+        tl.to(deskEl, { opacity: p.device === 'phone' ? 0.15 : 1, duration: 0.45, ease: 'sine.inOut' }, push);
+      }
       /* previous marker and shade hand over gently */
       if (i) {
         tl.fromTo([l.mk[i - 1], l.rg[i - 1]], { opacity: 1 }, { opacity: 0, duration: 0.45, ease: 'sine.inOut', immediateRender: false }, push);
@@ -1242,6 +1250,23 @@ window.Cbx300Answers = (function () {
     return out;
   }
 
+  function coverCoffee(on) {
+    var pin = document.querySelector('[data-cbx-growth]');
+    if (pin) pin.classList.toggle('is-covered', !!on);
+  }
+
+  function syncCoffee(section, self) {
+    if (!section.hasAttribute('data-cbx-answers') || !self) return;
+    var passed = self.progress >= 0.98;
+    var inside = self.isActive && self.progress > 0.01;
+    coverCoffee(passed || inside);
+  }
+
+  function pinPriority(section) {
+    if (section && section._cbxRefresh != null) return section._cbxRefresh;
+    return -1;
+  }
+
   function pinActive(on) {
     document.documentElement.classList.toggle('is-cbx-ans-pin', !!on);
     if (window.Cbx300Case && window.Cbx300Case.syncCloseInk) {
@@ -1316,16 +1341,19 @@ window.Cbx300Answers = (function () {
       animation: tl,
       invalidateOnRefresh: false,
       anticipatePin: 1,
-      refreshPriority: -1,
+      refreshPriority: pinPriority(section),
       onUpdate: function (self) {
         syncSceneFromTrigger(section, tl, self.progress);
+        syncCoffee(section, self);
         if (motion.onStep) motion.onStep(self.progress > 0.02 ? 2 : 1);
       },
       onToggle: function (self) {
         pinActive(self.isActive);
         syncSceneFromTrigger(section, tl, self.progress);
+        syncCoffee(section, self);
         if (self.isActive && motion.onStep) motion.onStep(2);
       },
+      onLeaveBack: function () { if (section.hasAttribute('data-cbx-answers')) coverCoffee(false); },
       onRefresh: function () {
         fitScale(section);
       }
@@ -1336,81 +1364,50 @@ window.Cbx300Answers = (function () {
     section.dataset.dur = String(tl.duration());
   }
 
-  /* Reduced motion: no camera, no glide. Scroll still walks the twelve
-     points, one at a time; each swap is a short opacity fade (CSS). */
+  /* Reduced motion: no pin, no camera. Every pointer is its own block
+     in document flow, with the screen that belongs to that pointer. */
   function bindReduced(section) {
-    var gsap = window.gsap;
-    var ScrollTrigger = window.ScrollTrigger;
-    section.classList.add('is-static');
-    var scale = fitScale(section);
-    var scenes = Array.prototype.slice.call(section.querySelectorAll('.cbx-ans__scene'));
-    var bars = section.querySelectorAll('.cbx-ans__prog b');
-    var per = scenes.map(function (scene, k) {
+    section.classList.add('is-static', 'is-flow');
+    var chs = chaptersOf(section);
+    var scenes = section.querySelectorAll('.cbx-ans__scene');
+    Array.prototype.forEach.call(scenes, function (scene, k) {
+      var ch = chs[k];
+      if (!ch) return;
       scene.removeAttribute('hidden');
       scene.style.opacity = '1';
-      var poses = buildPoses(scene, chaptersOf(section)[k], { tx: 0, ty: 0, s: 1, X: 32, Y: 72, W: 880, H: 780 }, scale, { identity: true });
-      if (k) { scene.setAttribute('hidden', ''); scene.style.opacity = '0'; }
-      return { scene: scene, poses: poses };
+      Array.prototype.forEach.call(scene.querySelectorAll('.cbx-ans__cam, .cbx-ans__spot, .cbx-ans__dim, .cbx-ans__nbg'), function (n) {
+        n.style.display = 'none';
+      });
+      var steps = scene.querySelectorAll('.cbx-ans__step');
+      Array.prototype.forEach.call(steps, function (step, i) {
+        step.classList.add('is-current');
+        var p = ch.pointers[i];
+        if (!p) return;
+        var src = '';
+        var alt = 'CBX300 phone · ' + (ch.focus || 'screen');
+        if (p.device === 'desk' && ch.deskShot) {
+          src = ch.deskShot;
+          alt = ch.deskAlt || 'CBX300 web · ' + ch.focus;
+        } else if (ch.phoneShots) {
+          var shot = null;
+          ch.phoneShots.forEach(function (s) { if (s.id === p.shot) shot = s; });
+          if (shot) { src = shot.src; alt = shot.alt; }
+        }
+        if (!src) return;
+        var fig = picture(src, alt, p.device === 'desk' ? 1440 : 440, p.device === 'desk' ? 900 : 956);
+        fig.classList.add('cbx-ans__flowshot');
+        step.insertBefore(fig, step.firstChild);
+      });
     });
-    gsap.set(section.querySelectorAll('.cbx-ans__ptr, .cbx-ans__ctag, .cbx-vf, .cbx-vfl, .cbx-ans__dim, .cbx-ans__nbg, .cbx-ans__panel'), { opacity: 1 });
-    gsap.set(section.querySelectorAll('.cbx-ans__ring, .cbx-ans__mkr'), { clearProps: 'opacity' });
-    var shown = -1;
-    var chs = chaptersOf(section);
-    var counts = chs.map(function (c) { return c.pointers.length; });
-    var total = counts.reduce(function (a, b) { return a + b; }, 0) || 1;
-    function locate(idx) {
-      var left = idx;
-      var k;
-      for (k = 0; k < counts.length; k += 1) {
-        if (left < counts[k]) return { ch: k, st: left, n: counts[k] };
-        left -= counts[k];
-      }
-      return { ch: counts.length - 1, st: counts[counts.length - 1] - 1, n: counts[counts.length - 1] || 1 };
-    }
-    function show(idx) {
-      if (idx === shown) return;
-      shown = idx;
-      var at = locate(idx);
-      var ch = at.ch;
-      var st = at.st;
-      per.forEach(function (c, k) {
-        c.scene.style.opacity = k === ch ? '1' : '0';
-        if (k === ch) c.scene.removeAttribute('hidden');
-        else c.scene.setAttribute('hidden', '');
-        var steps = c.scene.querySelectorAll('.cbx-ans__step');
-        var cns = c.scene.querySelectorAll('.cbx-ans__cn');
-        var ticks = c.scene.querySelectorAll('.cbx-ans__tick');
-        Array.prototype.forEach.call(steps, function (n, i) {
-          n.classList.toggle('is-current', k === ch && i === st);
-          if (cns[i]) cns[i].classList.toggle('is-current', k === ch && i === st);
-          if (ticks[i]) ticks[i].classList.toggle('is-on', k === ch && i <= st);
-          if (c.poses[i]) {
-            c.poses[i].ring.classList.toggle('is-on', k === ch && i === st);
-            c.poses[i].mkr.classList.toggle('is-on', k === ch && i === st);
-          }
+    if (section.hasAttribute('data-cbx-answers') && window.IntersectionObserver) {
+      var watch = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) coverCoffee(true);
+          else if (e.boundingClientRect.top > 40) coverCoffee(false);
         });
-      });
-      Array.prototype.forEach.call(bars, function (b, k) {
-        b.style.transform = 'scaleX(' + (k < ch ? 1 : (k === ch ? 0.2 + 0.8 * (st + 1) / at.n : 0)) + ')';
-      });
+      }, { threshold: [0, 0.05] });
+      watch.observe(section);
     }
-    show(0);
-    var st = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: function () { return '+=' + Math.round(window.innerHeight * Math.max(6, total)); },
-      pin: true,
-      pinSpacing: true,
-      pinType: 'fixed',
-      refreshPriority: -1,
-      onToggle: function (self) { pinActive(self.isActive); },
-      onUpdate: function (self) {
-        show(Math.max(0, Math.min(total - 1, Math.floor(self.progress * total))));
-        if (motion.onStep) motion.onStep(2);
-      }
-    });
-    if (section.hasAttribute('data-cbx-answers')) motion.tween = null;
-    motion.triggers.push(st);
     section.dataset.ready = '1';
   }
 
@@ -1527,15 +1524,18 @@ window.Cbx300Answers = (function () {
       scrub: SCRUB,
       snap: settleSnap(section, tl),
       animation: tl,
-      refreshPriority: -1,
+      refreshPriority: pinPriority(section),
       onToggle: function (self) {
         pinActive(self.isActive);
         syncSceneFromTrigger(section, tl, self.progress);
+        syncCoffee(section, self);
       },
       onUpdate: function (self) {
         syncSceneFromTrigger(section, tl, self.progress);
+        syncCoffee(section, self);
         if (motion.onStep) motion.onStep(self.progress > 0.02 ? 2 : 1);
-      }
+      },
+      onLeaveBack: function () { if (section.hasAttribute('data-cbx-answers')) coverCoffee(false); }
     });
     if (section.hasAttribute('data-cbx-answers')) motion.tween = tl;
     motion.triggers.push(st);

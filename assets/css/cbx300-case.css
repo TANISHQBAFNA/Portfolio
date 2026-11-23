@@ -404,7 +404,7 @@ html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-after {
   margin-top: 0;
   transform: none;
   overflow: hidden;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-static {
@@ -413,7 +413,13 @@ html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-static {
 }
 
 html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
-  pointer-events: auto;
+  pointer-events: none;
+}
+
+.cbx-growth.is-after.is-covered,
+html.is-study-page .study[data-template="cbx300"] .cbx-growth.is-after.is-covered {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* After the morph pin, keep the coffee sheet fixed and covering.
@@ -436,7 +442,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .cbx-growth {
   transform: none;
   will-change: auto;
   border-radius: 0;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .cbx-growth__rail-wrap {
@@ -1225,7 +1231,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-ans__cam.is-blur .cbx-ans__camin .cbx-desk,
 .cbx-ans__cam.is-sharp .cbx-ans__camin .cbx-phone,
 .cbx-ans__cam.is-blur .cbx-ans__camin .cbx-phone {
-  border-radius: 16px;
+  border-radius: 4px;
 }
 
 .cbx-ans__cam.is-sharp .cbx-ans__camin .cbx-desk {
@@ -1254,7 +1260,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   position: absolute;
   z-index: 6;
   pointer-events: none;
-  border-radius: 20px;
+  border-radius: 4px;
   box-shadow: 0 0 0 1px rgba(232, 169, 107, .55), 0 40px 90px -30px rgba(0, 0, 0, .7), 0 0 0 8px rgba(232, 169, 107, .08);
   opacity: 0;
 }
@@ -1268,18 +1274,19 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-vf.is-tl,
-.cbx-vf.tl { left: -12px; top: -12px; border-width: 2px 0 0 2px; border-top-left-radius: 10px; }
+.cbx-vf.tl { left: -12px; top: -12px; border-width: 2px 0 0 2px; border-top-left-radius: 3px; }
 .cbx-vf.is-tr,
-.cbx-vf.tr { right: -12px; top: -12px; border-width: 2px 2px 0 0; border-top-right-radius: 10px; }
+.cbx-vf.tr { right: -12px; top: -12px; border-width: 2px 2px 0 0; border-top-right-radius: 3px; }
 .cbx-vf.is-bl,
-.cbx-vf.bl { left: -12px; bottom: -12px; border-width: 0 0 2px 2px; border-bottom-left-radius: 10px; }
+.cbx-vf.bl { left: -12px; bottom: -12px; border-width: 0 0 2px 2px; border-bottom-left-radius: 3px; }
 .cbx-vf.is-br,
-.cbx-vf.br { right: -12px; bottom: -12px; border-width: 0 2px 2px 0; border-bottom-right-radius: 10px; }
+.cbx-vf.br { right: -12px; bottom: -12px; border-width: 0 2px 2px 0; border-bottom-right-radius: 3px; }
 
 .cbx-vfl {
   position: absolute;
-  left: 30px;
-  top: -14px;
+  left: 0;
+  top: auto;
+  bottom: calc(100% + 8px);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1383,7 +1390,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   width: 100%;
   margin-top: 22px;
   padding: 18px 22px 20px;
-  border-radius: 20px;
+  border-radius: 4px;
   background: rgba(244, 239, 230, .06);
   box-shadow: inset 0 0 0 1px rgba(244, 239, 230, .16);
 }
@@ -1474,8 +1481,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   padding-left: 15px;
   margin: 0 0 5px;
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: 17px;
-  line-height: 1.38;
+  font-size: 22px;
+  line-height: 1.35;
   color: rgba(244, 239, 230, .86);
 }
 
@@ -1493,8 +1500,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-ans__not {
   margin: 0;
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: 17px;
-  line-height: 1.38;
+  font-size: 22px;
+  line-height: 1.35;
   color: rgba(244, 239, 230, .8);
 }
 
@@ -1598,7 +1605,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-ans__ring,
 .cbx-ans__rpulse {
   position: absolute;
-  border-radius: 12px;
+  border-radius: 3px;
   pointer-events: none;
   z-index: 29;
 }
@@ -1631,6 +1638,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   position: absolute;
   z-index: 3;
   box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 4px;
 }
 
 .cbx-ans__scene.is-phone .cbx-desk {
@@ -1639,7 +1648,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   top: 96px;
   width: 880px;
   height: 600px;
-  opacity: .48;
+  opacity: .18;
   transform: scale(.9);
   transform-origin: 0 40%;
 }
@@ -1656,8 +1665,9 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
    top:-14 hangs the In focus pill into Close and the 03 header.
    Drop it below the header row. Ch3 .is-both stays put. */
 .cbx-ans__scene.is-phone .cbx-vfl {
-  left: 16px;
-  top: 72px;
+  left: 0;
+  top: auto;
+  bottom: calc(100% + 8px);
 }
 
 .cbx-ans__scene.is-both .cbx-desk {
@@ -2686,9 +2696,9 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
     margin-bottom: 8px;
   }
   .cbx-ans__pd { font-size: 22px; line-height: 1.34; color: #1E1510; }
-  .cbx-ans__why li { font-size: 17px; line-height: 1.34; color: rgba(30, 21, 16, .86); margin-bottom: 3px; }
+  .cbx-ans__why li { font-size: 22px; line-height: 1.35; color: rgba(30, 21, 16, .86); margin-bottom: 3px; }
   .cbx-ans__why li::before { background: #B8741C; }
-  .cbx-ans__not { font-size: 17px; line-height: 1.34; color: rgba(30, 21, 16, .8); }
+  .cbx-ans__not { font-size: 22px; line-height: 1.35; color: rgba(30, 21, 16, .8); }
   .cbx-ans__pg { font-size: 22px; line-height: 1.34; color: #8a5a14; margin-top: 2px; }
   .cbx-ans__pg i { color: #8a5a14; }
   .cbx-ans__ctag { display: none; }
@@ -2799,7 +2809,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 
 .cbx-s04__kicker,
 .cbx-end__kicker {
-  margin: 36px 0 8px 72px;
+  margin: 96px 0 8px 72px;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -2811,6 +2821,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-s04__title,
 .cbx-s06__title {
   margin: 0 72px 28px;
+  padding-top: 8px;
   max-width: 16em;
   font-family: "Newsreader", Georgia, serif;
   font-style: italic;
@@ -2820,7 +2831,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   letter-spacing: -0.02em;
 }
 
-.cbx-s06__title { font-size: 64px; }
+.cbx-s06__title { font-size: 64px; margin-top: 72px; }
 
 .cbx-s04__strip {
   position: relative;
@@ -2830,7 +2841,14 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   margin-top: 12px;
 }
 
-.cbx-s04__col { width: 360px; }
+.cbx-s04__col { width: 280px; }
+.cbx-s04__col .cbx-fin__phone img {
+  width: 100%;
+  height: min(520px, calc(100svh - 380px));
+  object-fit: cover;
+  object-position: top center;
+  background: transparent;
+}
 
 .cbx-fin__phone {
   position: relative;
@@ -2910,7 +2928,21 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-s04__chosen,
 .cbx-s04__dropped {
   position: relative;
-  width: 280px;
+  width: 260px;
+  height: min(520px, calc(100svh - 360px));
+}
+.cbx-s04__chosen .cbx-fin__phone,
+.cbx-s04__dropped .cbx-fin__phone {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.cbx-s04__chosen .cbx-fin__phone img,
+.cbx-s04__dropped .cbx-fin__phone img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
 }
 
 .cbx-s04__chosen { box-shadow: 0 0 0 2px #E8A96B; border-radius: 4px; }
@@ -2934,17 +2966,16 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-s04__lines { position: absolute; inset: 0; }
-.cbx-s04__ncol { position: relative; min-height: 220px; }
+.cbx-s04__ncol { position: relative; min-height: 220px; align-self: center; }
 
 .cbx-s06__illos {
   display: flex;
   justify-content: center;
   gap: 36px;
   margin: 0 48px;
-  padding: 28px 24px 32px;
-  background: #1E1510;
-  color: #f4efe6;
-  border-radius: 4px;
+  padding: 8px 0 12px;
+  background: transparent;
+  color: inherit;
 }
 
 .cbx-s06__illo { width: 280px; }
@@ -2968,7 +2999,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   transform: scaleX(0);
   transform-origin: 0 50%;
 }
-.cbx-s06__a { color: #f4efe6; }
+.cbx-s06__a { color: inherit; }
 .cbx-s06__beat.is-role {
   position: absolute;
   left: 72px;
@@ -2994,7 +3025,7 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 .cbx-s06__note {
   margin: 18px 0 0;
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
   opacity: 0.75;
 }
@@ -3082,4 +3113,186 @@ html.is-light-home.is-dark .cbx-s06__row { border-top-color: rgba(244, 239, 230,
   .cbx-s04__hand,
   .cbx-s04__sweep { display: none; }
   .cbx-s06__strike { transform: none; }
+}
+
+@media (min-width: 860px) {
+  .cbx-ans__why li:nth-child(n + 2) { display: none; }
+}
+
+.cbx-ans.is-flow {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+  background: #f4efe6;
+  color: #1e1510;
+}
+html.is-light-home.is-dark .cbx-ans.is-flow {
+  background: #1E1510;
+  color: #f4efe6;
+}
+.cbx-ans.is-flow .cbx-ans__fit {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(880px, 100%);
+  height: auto;
+  margin: 0 auto;
+  transform: none;
+  padding: 96px 24px 72px;
+}
+.cbx-ans.is-flow .cbx-ans__hud,
+.cbx-ans.is-flow .cbx-ans__lab,
+.cbx-ans.is-flow .cbx-ans__prog {
+  position: relative;
+  left: auto;
+  top: auto;
+  height: auto;
+  margin: 0 0 16px;
+}
+.cbx-ans.is-flow .cbx-ans__stage,
+.cbx-ans.is-flow .cbx-ans__scene,
+.cbx-ans.is-flow .cbx-ans__note,
+.cbx-ans.is-flow .cbx-ans__ncol {
+  position: relative;
+  left: auto !important;
+  top: auto !important;
+  width: auto !important;
+  height: auto;
+  overflow: visible;
+  background: transparent;
+}
+.cbx-ans.is-flow .cbx-ans__pbody { display: block; }
+.cbx-ans.is-flow .cbx-ans__step {
+  grid-area: auto;
+  display: block;
+  opacity: 1;
+  margin: 0 0 56px;
+  color: inherit;
+}
+.cbx-ans.is-flow .cbx-ans__flowshot,
+.cbx-ans.is-flow .cbx-ans__flowshot img {
+  display: block;
+  width: min(420px, 100%);
+  height: auto;
+  margin: 0 0 16px;
+  border-radius: 4px;
+}
+.cbx-ans.is-flow .cbx-ans__pw,
+.cbx-ans.is-flow .cbx-ans__pd,
+.cbx-ans.is-flow .cbx-ans__not,
+.cbx-ans.is-flow .cbx-ans__why li,
+.cbx-ans.is-flow .cbx-ans__ask { color: inherit; }
+
+.cbx-s04.is-static,
+.cbx-s06.is-static,
+.cbx-end.is-static {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+}
+.cbx-s04.is-static .cbx-s04__fit,
+.cbx-s06.is-static .cbx-s06__fit {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(1100px, 100%);
+  height: auto;
+  margin: 0 auto;
+  transform: none;
+  padding: 96px 24px 64px;
+}
+.cbx-s04.is-static .cbx-s04__col { display: block; opacity: 1; }
+.cbx-s04.is-static .cbx-s04__cap { opacity: 1; }
+.cbx-s04.is-static .cbx-s04__pairs { opacity: 1; }
+.cbx-s04.is-static .cbx-s04__pairs {
+  position: static !important;
+  display: block !important;
+  opacity: 1 !important;
+}
+.cbx-s04.is-static .cbx-s04__duo {
+  display: grid !important;
+  grid-template-columns: minmax(0, 280px) minmax(0, 280px);
+  gap: 28px;
+  align-items: start;
+}
+.cbx-s04.is-static .cbx-s04__chosen,
+.cbx-s04.is-static .cbx-s04__dropped {
+  position: static !important;
+  width: 100% !important;
+  height: auto !important;
+}
+.cbx-s04.is-static .cbx-s04__chosen .cbx-fin__phone,
+.cbx-s04.is-static .cbx-s04__dropped .cbx-fin__phone {
+  position: relative !important;
+  inset: auto !important;
+  opacity: 1 !important;
+  width: 100%;
+  height: auto;
+  margin: 0 0 18px;
+  overflow: hidden;
+  transform: none !important;
+}
+.cbx-s04.is-static .cbx-s04__ncol { position: static !important; min-height: 0; }
+.cbx-s04.is-static .cbx-s04__lines {
+  position: static !important;
+  inset: auto !important;
+  opacity: 1 !important;
+  transform: none !important;
+  margin: 0 0 36px;
+}
+.cbx-s06.is-static .cbx-s06__beat { position: relative; opacity: 1; transform: none; }
+.cbx-s06.is-static .cbx-s06__strike { transform: none; }
+
+html.is-light-home.is-dark,
+html.is-light-home.is-dark body { background: #1E1510; }
+html.is-light-home.is-dark .study__veil { background: #1E1510; }
+html.is-light-home.is-dark .study__curtain-name { color: #f4efe6; }
+
+@media (max-width: 859px) {
+  .cbx-s06__fit {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: 100%;
+    margin: 0;
+    transform: none;
+    padding: 88px 16px 12px;
+  }
+  .cbx-s06__beat.is-worry,
+  .cbx-s06__beat.is-role {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 64px;
+    bottom: 8px;
+    display: block;
+    overflow: auto;
+  }
+  .cbx-s06__illos { display: flex; gap: 8px; margin: 0; }
+  .cbx-s06__illo { width: 32%; margin: 0; }
+  .cbx-s06__phone { width: min(200px, 52vw); max-height: 42vh; margin: 0 auto 12px; }
+  .cbx-s04__chosen,
+  .cbx-s04__dropped { height: min(420px, calc(100svh - 260px)); }
+  .cbx-s04__kicker,
+  .cbx-s06__kicker { margin-top: 8px; }
+  .cbx-cover__media.work-card {
+    width: min(52vw, 200px);
+    height: auto;
+    aspect-ratio: 440 / 956;
+  }
+  .cbx-cover__media .work-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  .cbx-s06__beat.is-role {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    display: block;
+    opacity: 1;
+  }
+  .cbx-s06__phone { width: min(300px, 100%); margin: 12px auto 20px; max-height: calc(100svh - 220px); }
 }

@@ -72,16 +72,16 @@ check('wires CBX300 cover into existing ProjectStudy router', function () {
   assert.ok(landing.indexOf("studyTemplate: 'cbx300'") !== -1, 'landing does not set studyTemplate');
   assert.ok(index.indexOf('data-world="cbx300"') !== -1, 'index.html missing cbx300 world');
   assert.ok(mvIndex.indexOf('data-world="cbx300"') !== -1, 'index-multiverse.html missing cbx300 world');
-  assert.ok(index.indexOf('cbx300-case.css?v=s108') !== -1, 'index.html missing growth cache-bust');
+  assert.ok(index.indexOf('cbx300-case.css?v=s110') !== -1, 'index.html missing growth cache-bust');
   assert.ok(index.indexOf('cbx300-case.js?v=s89') !== -1, 'index.html missing growth js cache-bust');
-  assert.ok(index.indexOf('cbx300-answers.js?v=s26') !== -1, 'index.html missing answers module');
-  assert.ok(index.indexOf('cbx300-case-multiverse.css?v=mv11') !== -1, 'index.html must load the Multiverse case skin');
-  assert.ok(index.indexOf('cbx300-finish.js?v=s1') !== -1, 'index.html missing finish module');
-  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s108') !== -1, 'multiverse missing growth css cache-bust');
+  assert.ok(index.indexOf('cbx300-answers.js?v=s28') !== -1, 'index.html missing answers module');
+  assert.ok(index.indexOf('cbx300-case-multiverse.css?v=mv13') !== -1, 'index.html must load the Multiverse case skin');
+  assert.ok(index.indexOf('cbx300-finish.js?v=s2') !== -1, 'index.html missing finish module');
+  assert.ok(mvIndex.indexOf('cbx300-case.css?v=s110') !== -1, 'multiverse missing growth css cache-bust');
   assert.ok(mvIndex.indexOf('cbx300-case.js?v=s89') !== -1, 'multiverse missing growth cache-bust');
-  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s26') !== -1, 'multiverse missing answers module');
-  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv11') !== -1, 'multiverse missing case skin');
-  assert.ok(mvIndex.indexOf('cbx300-finish.js?v=s1') !== -1, 'multiverse missing finish module');
+  assert.ok(mvIndex.indexOf('cbx300-answers.js?v=s28') !== -1, 'multiverse missing answers module');
+  assert.ok(mvIndex.indexOf('cbx300-case-multiverse.css?v=mv13') !== -1, 'multiverse missing case skin');
+  assert.ok(mvIndex.indexOf('cbx300-finish.js?v=s2') !== -1, 'multiverse missing finish module');
   assert.ok(index.indexOf('project-study.js?v=s47') !== -1, 'index.html missing study cache-bust');
   assert.ok(mvIndex.indexOf('project-study.js?v=s47') !== -1, 'multiverse missing study cache-bust');
   assert.ok(index.indexOf('project-rail.js?v=hz99') !== -1, 'index.html missing rail cache-bust');
@@ -323,7 +323,7 @@ check('Section 03 presents twelve pointers one at a time, each a structured UX e
   assert.ok(answers.indexOf('prefers-reduced-motion') !== -1 && answers.indexOf('is-static') !== -1, 'reduced motion fallback');
   assert.ok(!/cbx-ans__ptrs/.test(css), 'old four-card stack is gone');
   assert.ok(/\.cbx-ans__pw \{[\s\S]{0,160}font-size: 28px/.test(css), 'worry stays 28px');
-  assert.ok(/\.cbx-ans__why li \{[\s\S]{0,200}font-size: 17px/.test(css), 'reasoning is 17px');
+  assert.ok(/\.cbx-ans__why li \{[\s\S]{0,200}font-size: 22px/.test(css), 'reasoning is 22px');
   assert.ok(/\.cbx-ans__lab2 \{[\s\S]{0,160}font-size: 14px/.test(css), 'labels are 14px caps');
 });
 
@@ -789,7 +789,8 @@ check('D2 worry board replaces clay plate and product chips', function () {
   var sceneSvg = read('assets/img/aisha-growth/illo-d2-scene.svg');
   assert.ok(sceneSvg.indexOf('""""') === -1, 'masked card digits must not be quote glyphs');
   assert.ok(sceneSvg.indexOf('\u00b7') === -1, 'prop labels must not rely on a middle-dot glyph');
-  assert.ok(sceneSvg.indexOf('>4821<') !== -1, 'shared card must keep the visible digits');
+  assert.ok(sceneSvg.indexOf('>4821<') === -1, 'card digits must be masked');
+  assert.ok(sceneSvg.indexOf('INVOICE #') === -1, 'invoice numbers must be masked');
   assert.ok(sceneSvg.indexOf('>PAYDAY<') !== -1 && sceneSvg.indexOf('>FRI<') !== -1, 'payday label must split around a drawn dot');
   assert.ok(sceneSvg.indexOf('>PAYROLL<') !== -1, 'payroll label must split around a drawn dot');
   var coffee = [30, 21, 16];
@@ -977,7 +978,7 @@ check('S03 header title and labels sit on a dark scrim with solid cream ink', fu
   assert.ok(wheel.indexOf('closeCovers') !== -1, 'wheel check must fail if Close covers hero or coffee nav at 390');
   var phoneVfl = cssBlock(css, '.cbx-ans__scene.is-phone .cbx-vfl');
   assert.ok(phoneVfl, 'phone-hero In focus must have its own offset');
-  assert.ok(/top:\s*72px/.test(phoneVfl), 'In focus must sit below the header pill on phone-hero holds');
+  assert.ok(/bottom:\s*calc\(100% \+ 8px\)/.test(phoneVfl), 'In focus sits above the frame so it does not cover screen text');
   assert.ok(!/top:\s*-14px/.test(phoneVfl), 'In focus must not hang into Close / 03');
   assert.ok(answers.indexOf('74 + 12 / Math.max(scale') !== -1,
     'phone-hero zoom must keep 12px viewport gap under the header pill');
@@ -1022,8 +1023,20 @@ check('390 hold shows one point at a time as a bottom sheet over a pushed-in pho
     'narrow timeline must run the same twelve beats');
   assert.ok(css.indexOf('border-radius: 18px 18px 0 0') !== -1,
     'the current point sits in a bottom sheet over the phone');
-  assert.ok(/\.cbx-ans__pd \{ font-size: 22px/.test(css) && /\.cbx-ans__why li \{ font-size: 17px/.test(css),
+  assert.ok(/\.cbx-ans__pd \{ font-size: 22px/.test(css) && /\.cbx-ans__why li \{ font-size: 22px/.test(css),
     'sheet text stays readable at 390');
+});
+
+check('later pins refresh after S03 so the end cannot close the case early', function () {
+  var finish = read('assets/js/cbx300-finish.js');
+  assert.ok(finish.indexOf('refreshPriority: -2') !== -1, 'S04 must measure after S03');
+  assert.ok(finish.indexOf('refreshPriority: -3') !== -1, 'S05 priority is passed into the answers pin');
+  assert.ok(finish.indexOf('refreshPriority: -4') !== -1, 'S06 must measure after S05');
+  assert.ok(finish.indexOf('refreshPriority: -5') !== -1, 'end curtain must measure last');
+  assert.ok(answers.indexOf('is-covered') !== -1, 'S03 must cover the coffee sheet');
+  assert.ok(css.indexOf('.cbx-growth.is-after.is-covered') !== -1, 'covered coffee is hidden');
+  assert.ok(/pointer-events:\s*none/.test(cssBlock(css, '.cbx-growth.is-after')), 'released coffee must not catch clicks');
+  assert.ok(answers.indexOf('is-flow') !== -1, 'reduced motion lays each pointer out in flow');
 });
 
 check('S03 pin does not blur-filter the backdrop camera', function () {

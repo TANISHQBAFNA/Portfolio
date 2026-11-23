@@ -20,7 +20,7 @@
 <g transform="translate(36,110) rotate(-8)">
 <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
 <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #015</text>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE</text>
 <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">₹ ——</text>
 <rect x="14" y="68" width="69.80000000000001" height="18" rx="9" fill="#9A6A1E"/>
 <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">DUE FRI</text>
@@ -28,7 +28,7 @@
 <g transform="translate(410,58) rotate(7)">
 <rect x="0" y="4" width="150" height="96" rx="12" fill="#000" opacity=".22"/>
 <rect width="150" height="96" rx="12" fill="#F6F1E8"/>
-<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #014</text>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE</text>
 <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">₹ ——</text>
 <rect x="14" y="68" width="47.6" height="18" rx="9" fill="#3E7A36"/>
 <text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">PAID</text>
@@ -36,10 +36,10 @@
 <g transform="translate(430,236) rotate(-5)">
 <rect x="0" y="4" width="156" height="96" rx="12" fill="#000" opacity=".22"/>
 <rect width="156" height="96" rx="12" fill="#F6F1E8"/>
-<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE #012</text>
+<text x="14" y="26" font-family="Outfit" font-size="13" font-weight="600" fill="#6B5E54" letter-spacing="1">INVOICE</text>
 <text x="14" y="56" font-family="Outfit" font-size="22" font-weight="600" fill="#1E1510">₹ ——</text>
 <rect x="14" y="68" width="99.4" height="18" rx="9" fill="#C8664A"/>
-<text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">6 DAYS LATE</text>
+<text x="23" y="81" font-family="Outfit" font-size="11" font-weight="700" fill="#F6F1E8" letter-spacing=".8">LATE</text>
 </g>
 <rect x="196" y="416" width="64" height="8" rx="2" fill="#F6F1E8" opacity=".0"/>
 <path d="M300 -30 V44" stroke="#5A3826" stroke-width="3"/><path d="M270 78 L282 44 H318 L330 78 Z" fill="#E8A96B"/><ellipse cx="300" cy="80" rx="12" ry="6" fill="#F3D7A8"/></svg>

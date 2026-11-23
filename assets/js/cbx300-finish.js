@@ -248,7 +248,12 @@ window.Cbx300Finish = (function () {
     section.setAttribute('aria-label', 'Outcome and my role');
     var stage = el('div', 'cbx-s06__fit');
     var beat = el('div', 'cbx-s06__beat is-worry');
-    beat.appendChild(el('h2', 'cbx-s06__title', 'Her business got bigger. Her worries got smaller.'));
+    var h2 = el('h2', 'cbx-s06__title', 'Her business got bigger. Her worries got smaller.');
+    if (document.documentElement.classList.contains('is-multiverse')) {
+      h2.classList.add('glitch');
+      h2.setAttribute('data-text', h2.textContent);
+    }
+    beat.appendChild(h2);
     var row = el('div', 'cbx-s06__illos cbx-ink');
     Qs.forEach(function (item) {
       var col = el('div', 'cbx-s06__illo');
@@ -295,13 +300,6 @@ window.Cbx300Finish = (function () {
     }
     var card = el('button', 'cbx-end__card work-card');
     card.type = 'button';
-    var shot = document.createElement('img');
-    shot.className = 'cbx-end__img';
-    shot.src = 'assets/img/work/cin-work-plootus.png';
-    shot.alt = '';
-    shot.width = 720;
-    shot.height = 1100;
-    card.appendChild(shot);
     var cap = el('span', 'cbx-end__cap');
     cap.appendChild(el('span', 'work-card__title', 'Plootus.ai'));
     cap.appendChild(el('span', 'work-card__caption', 'AI · Sales · Agents that call, dashboards that read'));
@@ -366,7 +364,7 @@ window.Cbx300Finish = (function () {
     var ticks = section.querySelectorAll('.cbx-s04__pairs .cbx-ans__tick');
     gsap.set(cols[0], { y: 40, opacity: 0 });
     gsap.set(cols[1], { y: 40, opacity: 0 });
-    gsap.set(hand, { opacity: 1, scale: 1.35, y: -40 });
+    gsap.set(hand, { opacity: 1, scale: 1.08, y: 0 });
     gsap.set(cols[2], { opacity: 0 });
     gsap.set(caps, { opacity: 0 });
     gsap.set(sweep, { scaleX: 0, transformOrigin: '0 50%' });
@@ -383,12 +381,12 @@ window.Cbx300Finish = (function () {
     tl.to(cols, { y: -12, duration: 0.5, ease: 'power3.out', stagger: 0.15 }, 3.5);
     tl.to(caps, { opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.15 }, 3.6);
     tl.to({}, { duration: 3.0 }, 5.2);
-    tl.to([cols[0], cols[1]], { x: -120, opacity: 0, duration: 0.85, ease: 'power2.inOut' }, 8.2);
-    tl.to(cols[2], { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, 8.4);
-    tl.to(pairs, { opacity: 1, duration: 0.45 }, 8.4);
-    tl.fromTo(dropped[0], { x: 120, opacity: 0 }, { x: 0, opacity: 0.55, duration: 0.85, ease: 'power3.out' }, 8.4);
-    tl.fromTo(lines[0], { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1.15, ease: 'power3.out' }, 8.5);
-    var t = 8.2 + 5.3;
+    tl.to([cols[0], cols[1]], { x: -120, opacity: 0, duration: 0.45, ease: 'power2.inOut' }, 8.2);
+    tl.to(cols[2], { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, 8.7);
+    tl.to(pairs, { opacity: 1, duration: 0.45 }, 9.2);
+    tl.fromTo(dropped[0], { x: 120, opacity: 0 }, { x: 0, opacity: 0.55, duration: 0.85, ease: 'power3.out' }, 9.2);
+    tl.fromTo(lines[0], { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1.15, ease: 'power3.out' }, 9.35);
+    var t = 9.2 + 5.3;
     var i;
     for (i = 1; i < PAIRS.length; i += 1) {
       tl.to(chosen[i - 1], { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, t);
@@ -411,6 +409,7 @@ window.Cbx300Finish = (function () {
       scrub: SCRUB,
       animation: tl,
       anticipatePin: 1,
+      refreshPriority: -2,
       snap: snap(),
       onToggle: function (self) { pinOn(self.isActive); }
     });
@@ -437,6 +436,7 @@ window.Cbx300Finish = (function () {
       pin: true,
       pinSpacing: true,
       pinType: 'fixed',
+      refreshPriority: -2,
       onToggle: function (self) { pinOn(self.isActive); },
       onUpdate: function (self) {
         show(Math.max(0, Math.min(steps.length - 1, Math.floor(self.progress * steps.length))));
@@ -482,6 +482,7 @@ window.Cbx300Finish = (function () {
       scrub: SCRUB,
       animation: tl,
       anticipatePin: 1,
+      refreshPriority: -4,
       snap: snap(),
       onToggle: function (self) { pinOn(self.isActive); }
     });
@@ -520,10 +521,13 @@ window.Cbx300Finish = (function () {
       scrub: SCRUB,
       animation: tl,
       anticipatePin: 1,
+      refreshPriority: -5,
       snap: snap(),
       onToggle: function (self) { pinOn(self.isActive); },
       onLeave: function (self) {
         if (jumped || self.direction < 0) return;
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        if (window.scrollY < max - 120) return;
         jumped = true;
         window.dispatchEvent(new CustomEvent('cbx-open-next'));
       }
@@ -541,7 +545,8 @@ window.Cbx300Finish = (function () {
         num: '05',
         title: 'Trust and team',
         attr: 'data-cbx-trust',
-        aria: 'Trust and team'
+        aria: 'Trust and team',
+        refreshPriority: -3
       }));
     }
     world.appendChild(buildRole());

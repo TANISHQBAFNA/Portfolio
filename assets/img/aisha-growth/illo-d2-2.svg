@@ -28,7 +28,7 @@
 <rect x="0" y="5" width="150" height="94" rx="12" fill="#000" opacity=".25"/>
 <rect width="150" height="94" rx="12" fill="#E8A96B"/>
 <rect x="16" y="26" width="28" height="20" rx="4" fill="#F3D7A8"/>
-<text x="16" y="74" font-family="Outfit" font-size="13" font-weight="600" fill="#1E1510" letter-spacing="2">•••• 4821</text>
+<text x="16" y="74" font-family="Outfit" font-size="13" font-weight="600" fill="#1E1510" letter-spacing="2">•••• ——</text>
 <circle cx="116" cy="30" r="10" fill="#C8664A" opacity=".9"/><circle cx="128" cy="30" r="10" fill="#F3D7A8" opacity=".9"/>
 <text x="16" y="18" font-family="Outfit" font-size="10" font-weight="700" fill="#1E1510" letter-spacing="1.2" opacity=".7">SHARED</text></g>
 <g transform="translate(28,70) rotate(-7)">
