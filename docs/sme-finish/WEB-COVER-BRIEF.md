@@ -18,7 +18,7 @@ Do not merge, do not touch other PRs or the live domain. Keep story, copy voice,
 
 ## 2. S03 web is the main view, phone is the extension (assets/js/cbx300-answers.js)
 - Ch1 `solo`: `deskShot: IMG + 's03-ch1-web-dashboard.png'`, `deskAlt: 'CBX300 web · Dashboard'`, `deskTitle: 'Dashboard'`. Phone stays hero (Home → Invoices).
-- Ch2 `cash`: `deskShot: IMG + 's03-ch2-web-bulk-upload.png'`, `deskAlt: 'CBX300 web · Salary file upload'`, `deskTitle: 'Bulk payments'`. Phone stays hero; the recurring-salary inset stays.
+- Ch2 `hire`: `deskShot: IMG + 's03-ch2-web-bulk-upload.png'`, `deskAlt: 'CBX300 web · Salary file upload'`, `deskTitle: 'Bulk payments'`. Phone stays hero; the recurring-salary inset stays.
 - Ch3 `team` (hero both): add `deskShots` (same shape as `phoneShots`, 1440×900) and crossfade the desk by pointer `shot` exactly like the phone stack (same 0.35 s crossfade, same pin/scrub progress):
   - `{ id: 'queue', src: IMG + 's03-ch3-web-pending-approvals.png', alt: 'CBX300 web · Pending approvals' }` (openDesk)
   - `{ id: 'detail', src: IMG + 's03-ch3-web-approve-payment.png', alt: 'CBX300 web · Payment detail and approval trail' }`
