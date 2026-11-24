@@ -133,10 +133,57 @@ window.Cbx300Finish = (function () {
     return pic;
   }
 
+  function pfMark(pic, src) {
+    if (!src || (src.indexOf('s03-ch1-phone-home') === -1 && src.indexOf('s04-grow-2-home') === -1)) return;
+    var mark = el('span', 'device-pf');
+    mark.setAttribute('aria-hidden', 'true');
+    pic.appendChild(mark);
+  }
+
+  function iphoneButtons(dev) {
+    dev.appendChild(el('i', 'device-iphone__island'));
+    ['action', 'vol-up', 'vol-dn', 'power'].forEach(function (name) {
+      dev.appendChild(el('i', 'device-iphone__btn is-' + name));
+    });
+  }
+
   function phone(src, alt) {
-    var slot = el('div', 'cbx-fin__phone');
-    slot.appendChild(picture(IMG + src, alt, 440, 956));
-    return slot;
+    return phoneGroup([{ src: src, alt: alt }]);
+  }
+
+  function phoneGroup(items) {
+    var dev = el('div', 'cbx-fin__phone device-iphone');
+    var screen = el('div', 'device-iphone__screen');
+    screen.setAttribute('data-ans-screen', '');
+    items.forEach(function (item, i) {
+      var pic = picture(IMG + item.src, item.alt, 440, 956);
+      pic.setAttribute('data-pair', String(i));
+      if (i) pic.style.opacity = '0';
+      pfMark(pic, item.src);
+      screen.appendChild(pic);
+    });
+    dev.appendChild(screen);
+    iphoneButtons(dev);
+    return dev;
+  }
+
+  function explodePairs(section) {
+    ['.cbx-s04__chosen', '.cbx-s04__dropped'].forEach(function (sel) {
+      var box = section.querySelector(sel);
+      if (!box) return;
+      var dev = box.querySelector('.device-iphone');
+      if (!dev) return;
+      var pics = Array.prototype.slice.call(dev.querySelectorAll('.cbx-fin__pic'));
+      pics.forEach(function (pic, i) {
+        pic.style.opacity = '1';
+        if (i === 0) return;
+        var clone = dev.cloneNode(true);
+        var screen = clone.querySelector('.device-iphone__screen');
+        screen.innerHTML = '';
+        screen.appendChild(pic);
+        box.appendChild(clone);
+      });
+    });
   }
 
   function fit(section) {
@@ -188,15 +235,12 @@ window.Cbx300Finish = (function () {
     var phones = el('div', 'cbx-s04__duo');
     var chosen = el('div', 'cbx-s04__chosen');
     var dropped = el('div', 'cbx-s04__dropped');
-    PAIRS.forEach(function (pair, i) {
-      var c = phone(pair.chosen, 'CBX300 phone · Chosen');
-      var d = phone(pair.dropped, 'CBX300 phone · Dropped');
-      c.setAttribute('data-pair', String(i));
-      d.setAttribute('data-pair', String(i));
-      if (i) { c.style.opacity = '0'; d.style.opacity = '0'; }
-      chosen.appendChild(c);
-      dropped.appendChild(d);
-    });
+    chosen.appendChild(phoneGroup(PAIRS.map(function (pair) {
+      return { src: pair.chosen, alt: 'CBX300 phone · Chosen' };
+    })));
+    dropped.appendChild(phoneGroup(PAIRS.map(function (pair) {
+      return { src: pair.dropped, alt: 'CBX300 phone · Dropped' };
+    })));
     var tag = el('p', 'cbx-s04__drop-lab', 'Dropped');
     dropped.appendChild(tag);
     var col = el('div', 'cbx-s04__ncol');
@@ -346,6 +390,7 @@ window.Cbx300Finish = (function () {
     fit(section);
     if (motion.reduce || !gsap) {
       section.classList.add('is-static');
+      explodePairs(section);
       return;
     }
     var narrow = window.matchMedia('(max-width: 859px)').matches;
@@ -358,8 +403,8 @@ window.Cbx300Finish = (function () {
     var hand = section.querySelector('.cbx-s04__hand');
     var sweep = section.querySelector('.cbx-s04__sweep');
     var pairs = section.querySelector('.cbx-s04__pairs');
-    var chosen = section.querySelectorAll('.cbx-s04__chosen .cbx-fin__phone');
-    var dropped = section.querySelectorAll('.cbx-s04__dropped .cbx-fin__phone');
+    var chosen = section.querySelectorAll('.cbx-s04__chosen .cbx-fin__pic');
+    var dropped = section.querySelectorAll('.cbx-s04__dropped .cbx-fin__pic');
     var lines = section.querySelectorAll('.cbx-s04__lines');
     var ticks = section.querySelectorAll('.cbx-s04__pairs .cbx-ans__tick');
     gsap.set(cols[0], { y: 40, opacity: 0 });
@@ -384,7 +429,7 @@ window.Cbx300Finish = (function () {
     tl.to([cols[0], cols[1]], { x: -120, opacity: 0, duration: 0.45, ease: 'power2.inOut' }, 8.2);
     tl.to(cols[2], { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, 8.7);
     tl.to(pairs, { opacity: 1, duration: 0.45 }, 9.2);
-    tl.fromTo(dropped[0], { x: 120, opacity: 0 }, { x: 0, opacity: 0.55, duration: 0.85, ease: 'power3.out' }, 9.2);
+    tl.fromTo(dropped[0], { x: 120, opacity: 0 }, { x: 0, opacity: 1, duration: 0.85, ease: 'power3.out' }, 9.2);
     tl.fromTo(lines[0], { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1.15, ease: 'power3.out' }, 9.35);
     var t = 9.2 + 5.3;
     var i;
@@ -393,7 +438,7 @@ window.Cbx300Finish = (function () {
       tl.to(dropped[i - 1], { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, t);
       tl.to(lines[i - 1], { y: -26, opacity: 0, duration: 0.6, ease: 'power2.inOut' }, t);
       tl.to(chosen[i], { opacity: 1, duration: 0.45, ease: 'sine.inOut' }, t + 0.2);
-      tl.fromTo(dropped[i], { x: 120, opacity: 0 }, { x: 0, opacity: 0.55, duration: 0.85, ease: 'power3.out' }, t + 0.2);
+      tl.fromTo(dropped[i], { x: 120, opacity: 0 }, { x: 0, opacity: 1, duration: 0.85, ease: 'power3.out' }, t + 0.2);
       tl.fromTo(lines[i], { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1.15, ease: 'power3.out' }, t + 0.35);
       t += 5.0;
     }

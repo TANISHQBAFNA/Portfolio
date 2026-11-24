@@ -161,7 +161,7 @@ html.is-light-home .study[data-template="cbx300"] .cbx-cover__media.work-card,
 html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media.work-card {
   padding: var(--work-frame-pad);
   border: var(--work-frame-border);
-  border-radius: var(--work-frame-radius);
+  border-radius: 4px;
   overflow: hidden;
   background: var(--work-frame-bg);
   box-shadow: var(--work-frame-shadow);
@@ -169,21 +169,34 @@ html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media.work-card {
 
 .cbx-cover__media .work-card__media {
   display: block;
+  position: relative;
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
   overflow: hidden;
   border: var(--work-frame-media-border);
-  border-radius: var(--work-frame-media-radius);
+  border-radius: 4px;
   background: var(--work-frame-media-bg);
 }
 
-.cbx-cover__media .work-card__img {
+.cbx-cover__media .work-card__img,
+.cbx-cover__media video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center center;
   display: block;
+}
+
+.cbx-cover__media video {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
+
+.cbx-cover__media video.is-ready {
+  opacity: 1;
 }
 
 .cbx-cover .cbx-cover__type,
@@ -1706,8 +1719,8 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
 }
 
 .cbx-ans__shot {
-  object-fit: fill;
-  object-position: top left;
+  object-fit: cover;
+  object-position: top center;
 }
 
 .cbx-ans__inset {
@@ -1716,10 +1729,11 @@ html.is-cbx-growth-in .study[data-template="cbx300"] .study__mark .study__word {
   right: 0;
   top: 100%;
   z-index: 4;
-  height: 60%;
-  border-radius: 16px 16px 0 0;
+  height: auto;
+  aspect-ratio: 912 / 1072;
+  border-radius: calc(var(--dw, 340px) * 0.06) calc(var(--dw, 340px) * 0.06) 0 0;
   overflow: hidden;
-  box-shadow: 0 -12px 30px rgba(30, 21, 16, 0.18);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .cbx-ans__kicker {
@@ -3276,9 +3290,11 @@ html.is-light-home.is-dark .study__curtain-name { color: #f4efe6; }
   .cbx-s04__kicker,
   .cbx-s06__kicker { margin-top: 8px; }
   .cbx-cover__media.work-card {
-    width: min(52vw, 200px);
+    position: relative;
+    width: 100%;
     height: auto;
-    aspect-ratio: 440 / 956;
+    aspect-ratio: 16 / 9;
+    top: 0;
   }
   .cbx-cover__media .work-card__img {
     width: 100%;
@@ -3295,4 +3311,311 @@ html.is-light-home.is-dark .study__curtain-name { color: #f4efe6; }
     opacity: 1;
   }
   .cbx-s06__phone { width: min(300px, 100%); margin: 12px auto 20px; max-height: calc(100svh - 220px); }
+}
+
+/* Device frames. Sizes are screen width (--dw). Resting layout never uses transform:scale. */
+.device-iphone {
+  --dw: 340px;
+  position: relative;
+  box-sizing: content-box;
+  width: var(--dw);
+  aspect-ratio: 440 / 956;
+  padding: calc(var(--dw) * 0.0295);
+  border-radius: calc(var(--dw) * 0.1545);
+  background: #0d0f0e;
+  box-shadow:
+    inset 0 0 0 calc(var(--dw) * 0.0045) #3a3d3b,
+    inset 0 0 0 calc(var(--dw) * 0.009) #121413,
+    0 calc(var(--dw) * 0.11) calc(var(--dw) * 0.14) calc(var(--dw) * -0.05) rgba(30, 21, 16, 0.30),
+    0 calc(var(--dw) * 0.03) calc(var(--dw) * 0.05) rgba(30, 21, 16, 0.14);
+  overflow: visible;
+}
+html.is-light-home.is-dark .device-iphone {
+  box-shadow:
+    inset 0 0 0 calc(var(--dw) * 0.0045) #3a3d3b,
+    inset 0 0 0 calc(var(--dw) * 0.009) #121413,
+    0 calc(var(--dw) * 0.11) calc(var(--dw) * 0.14) calc(var(--dw) * -0.05) rgba(0, 0, 0, 0.60),
+    0 calc(var(--dw) * 0.03) calc(var(--dw) * 0.05) rgba(0, 0, 0, 0.35),
+    0 0 calc(var(--dw) * 0.3) rgba(46, 120, 70, 0.18);
+}
+.device-iphone__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--dw) * 0.125);
+  isolation: isolate;
+  background: #f4f6f8;
+}
+.device-iphone__screen img,
+.device-iphone__screen picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.device-iphone__screen > picture,
+.device-iphone__screen .cbx-ans__stack {
+  position: absolute;
+  inset: 0;
+}
+.device-iphone__island {
+  position: absolute;
+  z-index: 5;
+  top: calc(var(--dw) * 0.025);
+  left: 50%;
+  width: calc(var(--dw) * 0.2818);
+  height: calc(var(--dw) * 0.0818);
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #050606;
+  pointer-events: none;
+}
+.device-iphone__btn {
+  position: absolute;
+  width: calc(var(--dw) * 0.0091);
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2b2e2c, #0d0f0e);
+  pointer-events: none;
+}
+.device-iphone__btn.is-action { left: calc(var(--dw) * -0.0068); top: 17%; height: 3.4%; }
+.device-iphone__btn.is-vol-up { left: calc(var(--dw) * -0.0068); top: 23%; height: 6.6%; }
+.device-iphone__btn.is-vol-dn { left: calc(var(--dw) * -0.0068); top: 31%; height: 6.6%; }
+.device-iphone__btn.is-power { right: calc(var(--dw) * -0.0068); left: auto; top: 27%; height: 10%; background: linear-gradient(270deg, #2b2e2c, #0d0f0e); }
+.device-pf {
+  position: absolute;
+  z-index: 6;
+  right: 0;
+  top: 76.7%;
+  width: 16.2%;
+  height: 8.2%;
+  background: #f6f5f8;
+  border-radius: 22% 0 0 22%;
+  pointer-events: none;
+}
+
+.device-browser {
+  --dw: 760px;
+  position: relative;
+  box-sizing: border-box;
+  width: var(--dw);
+  height: auto;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(30, 21, 16, 0.10),
+    0 calc(var(--dw) * 0.042) calc(var(--dw) * 0.083) calc(var(--dw) * -0.02) rgba(30, 21, 16, 0.35);
+}
+html.is-light-home.is-dark .device-browser {
+  background: #1E1510;
+  box-shadow:
+    0 0 0 1px rgba(243, 238, 228, 0.12),
+    0 calc(var(--dw) * 0.042) calc(var(--dw) * 0.083) calc(var(--dw) * -0.02) rgba(0, 0, 0, 0.70),
+    0 0 calc(var(--dw) * 0.12) rgba(46, 120, 70, 0.40);
+}
+.device-browser__bar {
+  height: max(22px, calc(var(--dw) * 0.0236));
+  display: flex;
+  align-items: center;
+  gap: calc(var(--dw) * 0.0056);
+  padding: 0 calc(var(--dw) * 0.0097);
+  background: #eceee9;
+  border-bottom: 1px solid #dfe3dc;
+}
+html.is-light-home.is-dark .device-browser__bar {
+  background: #1b1f1c;
+  border-bottom-color: #2c322d;
+}
+.device-browser__dot {
+  width: max(6px, calc(var(--dw) * 0.0069));
+  height: max(6px, calc(var(--dw) * 0.0069));
+  border-radius: 50%;
+  background: #cfd5cc;
+  display: block;
+}
+html.is-light-home.is-dark .device-browser__dot { background: #2a302b; }
+.device-browser__url {
+  margin-left: calc(var(--dw) * 0.0097);
+  height: 52%;
+  width: 25%;
+  border-radius: 4px;
+  background: #f7f8f5;
+  display: block;
+}
+html.is-light-home.is-dark .device-browser__url { background: #232824; }
+.device-browser__screen {
+  position: relative;
+  aspect-ratio: 1440 / 900;
+  overflow: hidden;
+  background: #f4f6f8;
+}
+.device-browser__screen img,
+.device-browser__screen picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.device-browser__screen > picture {
+  position: absolute;
+  inset: 0;
+}
+
+.cbx-phone.device-iphone,
+.cbx-desk.device-browser {
+  height: auto;
+  overflow: visible;
+}
+.cbx-ans__cam.is-sharp .cbx-ans__camin .cbx-phone.device-iphone,
+.cbx-ans__cam.is-blur .cbx-ans__camin .cbx-phone.device-iphone {
+  border-radius: calc(var(--dw) * 0.1545);
+  overflow: visible;
+}
+.cbx-ans__cam.is-sharp .cbx-ans__camin .cbx-desk.device-browser,
+.cbx-ans__cam.is-blur .cbx-ans__camin .cbx-desk.device-browser {
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px rgba(30, 21, 16, 0.10),
+    0 calc(var(--dw) * 0.042) calc(var(--dw) * 0.083) calc(var(--dw) * -0.02) rgba(30, 21, 16, 0.35);
+}
+html.is-light-home.is-dark .cbx-ans__cam .cbx-ans__camin .cbx-desk.device-browser {
+  box-shadow:
+    0 0 0 1px rgba(243, 238, 228, 0.12),
+    0 calc(var(--dw) * 0.042) calc(var(--dw) * 0.083) calc(var(--dw) * -0.02) rgba(0, 0, 0, 0.70),
+    0 0 calc(var(--dw) * 0.12) rgba(46, 120, 70, 0.40);
+}
+.cbx-desk.device-browser { overflow: hidden; }
+.cbx-ans__scene.is-phone .cbx-phone.device-iphone {
+  --dw: 340px;
+  left: 300px;
+  top: 40px;
+  width: var(--dw);
+  height: auto;
+  transform: none;
+}
+.cbx-ans__scene.is-phone .cbx-desk.device-browser {
+  --dw: 760px;
+  left: 40px;
+  top: 96px;
+  width: var(--dw);
+  height: auto;
+  opacity: 0.18;
+  transform: none;
+}
+.cbx-ans__scene.is-both .cbx-desk.device-browser {
+  --dw: 760px;
+  left: 48px;
+  top: 88px;
+  width: var(--dw);
+  height: auto;
+  opacity: 1;
+  transform: none;
+}
+.cbx-ans__scene.is-both .cbx-phone.device-iphone {
+  --dw: 300px;
+  left: 836px;
+  top: 64px;
+  width: var(--dw);
+  height: auto;
+  transform: none;
+}
+.cbx-s04__col { width: 280px; }
+.cbx-s04__col .device-iphone { --dw: 248px; margin: 0 auto; }
+.cbx-s04__col .cbx-fin__phone img,
+.cbx-s04__hand.device-iphone { height: auto; max-height: none; object-fit: cover; }
+.cbx-s04__hand.device-iphone { --dw: 248px; width: var(--dw); }
+.cbx-s04__chosen,
+.cbx-s04__dropped {
+  width: calc(260px + 260px * 0.059);
+  height: auto;
+}
+.cbx-s04__duo { gap: 48px; }
+.cbx-s04__chosen .device-iphone,
+.cbx-s04__dropped .device-iphone { --dw: 260px; position: relative; }
+.cbx-s04__chosen .cbx-fin__phone,
+.cbx-s04__dropped .cbx-fin__phone { position: relative; inset: auto; overflow: visible; }
+.cbx-s04__dropped { opacity: 1; filter: none; }
+.cbx-s04__dropped .device-iphone__screen { filter: grayscale(0.6); opacity: 0.55; }
+.cbx-s06__phone.device-iphone { --dw: 300px; width: var(--dw); max-height: none; height: auto; margin-left: auto; margin-right: auto; }
+.cbx-ans.is-flow .device-iphone { --dw: 280px; }
+.cbx-ans.is-flow .device-browser { --dw: min(640px, 100%); }
+
+@media (min-width: 721px) {
+  .cbx-cover__media.work-card,
+  html.is-light-home .study[data-template="cbx300"] .cbx-cover__media.work-card,
+  html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media.work-card,
+  html.is-multiverse .cbx-cover__media.work-card {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: auto;
+    bottom: auto;
+    width: min(58vw, 52rem, calc((100svh - var(--study-head, 72px) - 330px) * 16 / 9));
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border-radius: 4px !important;
+  }
+  html.is-light-home .cbx-cover .cbx-cover__type,
+  html.is-multiverse .cbx-cover .cbx-cover__type,
+  .cbx-cover .cbx-cover__type {
+    max-width: calc(100% - min(58vw, 52rem, calc((100svh - var(--study-head, 72px) - 330px) * 16 / 9)) - 32px);
+  }
+}
+
+@media (max-width: 720px) {
+  .cbx-cover__inner { justify-content: flex-start; gap: 24px; }
+  .cbx-cover__media.work-card,
+  html.is-light-home .study[data-template="cbx300"] .cbx-cover__media.work-card,
+  html.is-multiverse .study[data-template="cbx300"] .cbx-cover__media.work-card {
+    position: relative;
+    top: 0;
+    right: auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 859px) {
+  .cbx-ans__note { max-height: 46vh; overflow: auto; }
+  .cbx-ans__scene.is-phone .cbx-desk.device-browser { display: none; }
+  .cbx-ans__scene.is-phone .cbx-phone.device-iphone {
+    --dw: 236px;
+    top: calc(var(--study-head, 64px) + 56px);
+    left: 50%;
+    width: var(--dw);
+    height: auto;
+    margin-left: calc(var(--dw) * -0.5295);
+    transform: none;
+  }
+  .cbx-ans__scene.is-both .cbx-desk.device-browser {
+    --dw: 350px;
+    display: block;
+    left: 16px;
+    top: calc(var(--study-head, 64px) + 48px);
+    width: var(--dw);
+    height: auto;
+    opacity: 1;
+  }
+  .cbx-ans__scene.is-both .cbx-phone.device-iphone {
+    --dw: 200px;
+    left: calc(16px + 350px - 24px - (200px * 1.059));
+    top: calc(var(--study-head, 64px) + 48px + max(22px, 350px * 0.0236) + (350px * 900 / 1440) - 24px);
+    width: var(--dw);
+    height: auto;
+    margin-left: 0;
+    transform: none;
+  }
+  .cbx-s04__strip { display: block; }
+  .cbx-s04__col .device-iphone { --dw: 220px; }
+  .cbx-s04__duo { gap: 16px; }
+  .cbx-s04__chosen,
+  .cbx-s04__dropped { width: calc(160px * 1.059); height: auto; }
+  .cbx-s04__chosen .device-iphone,
+  .cbx-s04__dropped .device-iphone { --dw: 160px; }
+  .cbx-s06__phone.device-iphone { --dw: 220px; width: var(--dw); max-height: none; }
+  .cbx-ans.is-flow .device-iphone { --dw: 220px; }
 }

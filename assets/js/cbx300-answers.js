@@ -66,9 +66,9 @@ window.Cbx300Answers = (function () {
         { id: 'invoices', src: IMG + 's03-ch1-phone-invoices.png', alt: 'CBX300 phone · Invoices' }
       ],
       openShot: 'home',
-      deskShot: IMG + 's03-ch1-desk-invoices.png',
-      deskAlt: 'CBX300 web · Invoices',
-      deskTitle: 'Invoices',
+      deskShot: IMG + 's03-ch1-web-dashboard.png',
+      deskAlt: 'CBX300 web · Dashboard',
+      deskTitle: 'Dashboard',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
         { worry: 'Did Client A pay?', does: 'Status is the first thing on every row, as a coloured pill that turns to ‘Paid’ the moment money lands.', why: ['Green means done and red means act, so one glance replaces reading.', 'It sits in the same place on every row, so her eye learns where to look.'], not: 'We didn’t bury status inside each invoice. She would have to open every one to find out.', gain: 'No awkward call to the client.', shot: 'invoices', rect: { x: 4, y: 21.5, w: 92, h: 9 }, device: 'phone', a: 'c', off: 0 },
@@ -91,9 +91,9 @@ window.Cbx300Answers = (function () {
       ],
       openShot: 'liq',
       inset: { src: IMG + 's03-ch2-phone-recurring.png', alt: 'CBX300 phone · Salary repeats' },
-      deskShot: IMG + 's03-ch2-desk-cashplan.png',
-      deskAlt: 'CBX300 web · Cash plan',
-      deskTitle: 'Cash plan',
+      deskShot: IMG + 's03-ch2-web-bulk-upload.png',
+      deskAlt: 'CBX300 web · Salary file upload',
+      deskTitle: 'Bulk payments',
       region: { phone: '[data-ans-device="phone"]', desk: null },
       pointers: [
         { worry: 'Is this money really mine?', does: 'The total is split by where the money sits: the current account, the overdraft limit she can borrow, and deposits, each with the days until it frees up.', why: ['Borrowed money sits in its own line, so it is never mistaken for hers.', '‘Maturing in 7 days’ tells her when locked money becomes usable.'], not: 'We didn’t show one balance with the overdraft folded in. It looks like savings and hides what is borrowed.', gain: 'One honest picture of what she can use.', shot: 'liq', rect: { x: 5.7, y: 41.8, w: 88, h: 16.8 }, device: 'phone', a: 'c', off: 0 },
@@ -116,18 +116,23 @@ window.Cbx300Answers = (function () {
         { id: 'approved', src: IMG + 's03-ch3-phone-approved.png', alt: 'CBX300 phone · Approved' }
       ],
       openShot: 'task',
-      deskShot: IMG + 's03-ch3-desk-approvals.png',
-      deskAlt: 'CBX300 web · Approvals',
-      deskTitle: 'Approvals',
+      deskShots: [
+        { id: 'queue', src: IMG + 's03-ch3-web-pending-approvals.png', alt: 'CBX300 web · Pending approvals' },
+        { id: 'detail', src: IMG + 's03-ch3-web-approve-payment.png', alt: 'CBX300 web · Payment detail and approval trail' }
+      ],
+      openDesk: 'queue',
+      deskShot: IMG + 's03-ch3-web-pending-approvals.png',
+      deskAlt: 'CBX300 web · Pending approvals',
+      deskTitle: 'Pending approvals',
       region: {
         phone: '[data-ans-device="phone"] [data-ans-screen]',
         desk: '[data-ans-device="desk"] [data-ans-screen]'
       },
       pointers: [
-        { worry: 'What needs me right now?', does: 'Everything waiting for her is one list in My Task, grouped by day, each with a Pending Approval tag, and filters by kind (Payments, Beneficiary, Payroll).', why: ['One list means one place to look, so nothing hides in a chat thread.', 'Filters by kind keep payments, beneficiaries and payroll from mixing.'], not: 'We didn’t send approvals as messages. Requests scatter across chats and the oldest get lost.', gain: 'Nothing gets lost in a chat thread.', shot: 'task', rect: { x: 4, y: 28, w: 92, h: 28 }, device: 'phone', a: 'l', off: 18 },
-        { worry: 'I’m out meeting a client.', does: 'On the phone, approving is a slide across the bottom of the payment, with Reject as a separate red button.', why: ['A slide can’t happen by accident in a pocket or mid-meeting.', 'Reject sits apart in its own colour, so the two are never confused.'], not: 'We didn’t shrink the desktop table onto the phone. Tiny buttons turn a five-second job into ‘later’.', gain: 'Her team isn’t stuck waiting for her.', shot: 'slide', rect: { x: 4, y: 87, w: 92, h: 10 }, device: 'phone', a: 'c', off: 0 },
-        { worry: 'Who approved that?', does: 'Under the list, a short log shows who approved or paid what, with names and when.', why: ['The record sits right under the requests, so she doesn’t open another page.', 'Names make it personal: Lina approved, Dev paid.'], not: 'We didn’t hide history in a separate report. By the time she needs it, she would be hunting.', gain: 'Clear answers when the accountant asks.', shot: 'slide', rect: { x: 70, y: 17, w: 26, h: 38 }, minMul: 2.2, maxMul: 3.6, fillW: 0.7, device: 'desk', a: 'l', off: 12 },
-        { worry: 'Should everyone see everything?', does: 'Every request carries a role tag, like ‘Payments’, and access is limited to what that role needs.', why: ['The tag shows whose job the request is, so she sees the owner at a glance.', 'Limits follow the role, so people see what they need and no more.'], not: 'We didn’t give everyone the same view. A shared view of everything is where mistakes happen.', gain: 'Lina runs payments. The big calls stay with Aisha.', shot: 'slide', rect: { x: 31, y: 26, w: 12, h: 44 }, minMul: 2.2, maxMul: 3.6, fillW: 0.42, device: 'desk', a: 'l', off: 12 }
+        { worry: 'What needs me right now?', does: 'Everything waiting for her is one list in My Task, grouped by day, each with a Pending Approval tag, and filters by kind (Payments, Beneficiary, Payroll).', why: ['One list means one place to look, so nothing hides in a chat thread.', 'Filters by kind keep payments, beneficiaries and payroll from mixing.'], not: 'We didn’t send approvals as messages. Requests scatter across chats and the oldest get lost.', gain: 'Nothing gets lost in a chat thread.', shot: 'task', deskShot: 'queue', rect: { x: 4, y: 28, w: 92, h: 28 }, device: 'phone', a: 'l', off: 18 },
+        { worry: 'I’m out meeting a client.', does: 'On the phone, approving is a slide across the bottom of the payment, with Reject as a separate red button.', why: ['A slide can’t happen by accident in a pocket or mid-meeting.', 'Reject sits apart in its own colour, so the two are never confused.'], not: 'We didn’t shrink the desktop table onto the phone. Tiny buttons turn a five-second job into ‘later’.', gain: 'Her team isn’t stuck waiting for her.', shot: 'slide', deskShot: 'queue', rect: { x: 4, y: 87, w: 92, h: 10 }, device: 'phone', a: 'c', off: 0 },
+        { worry: 'Who approved that?', does: 'Each payment carries its own trail: who started it, who approves it, and what happens next, with names and dates.', why: ['The trail sits on the payment itself, so she doesn\'t open another page.', 'Names make it personal: Lina approved, Dev paid.'], not: 'We didn’t hide history in a separate report. By the time she needs it, she would be hunting.', gain: 'Clear answers when the accountant asks.', shot: 'slide', deskShot: 'detail', rect: { x: 20, y: 76, w: 50, h: 15 }, device: 'desk', a: 'l', off: 12 },
+        { worry: 'Should everyone see everything?', does: 'Requests are split by kind (single payments, bulk, service requests), each with its own count, and each role only sees the kinds it handles.', why: ['The tag shows whose job the request is, so she sees the owner at a glance.', 'Limits follow the role, so people see what they need and no more.'], not: 'We didn’t give everyone the same view. A shared view of everything is where mistakes happen.', gain: 'Lina runs payments. The big calls stay with Aisha.', shot: 'slide', deskShot: 'queue', rect: { x: 23, y: 21, w: 76, h: 13 }, device: 'desk', a: 'l', off: 12 }
       ],
       outro: [
         { shot: 'maker', kicker: 'Lina sends it.' },
@@ -318,33 +323,70 @@ window.Cbx300Answers = (function () {
       '</div></div>';
   }
 
+  function pfMark(pic, src) {
+    if (!src || (src.indexOf('s03-ch1-phone-home') === -1 && src.indexOf('s04-grow-2-home') === -1)) return;
+    var mark = el('span', 'device-pf');
+    mark.setAttribute('aria-hidden', 'true');
+    pic.appendChild(mark);
+  }
+
+  function iphoneButtons(dev) {
+    dev.appendChild(el('i', 'device-iphone__island'));
+    ['action', 'vol-up', 'vol-dn', 'power'].forEach(function (name) {
+      dev.appendChild(el('i', 'device-iphone__btn is-' + name));
+    });
+  }
+
+  function browserBar() {
+    var bar = el('div', 'device-browser__bar');
+    var i;
+    for (i = 0; i < 3; i += 1) bar.appendChild(el('i', 'device-browser__dot'));
+    bar.appendChild(el('span', 'device-browser__url'));
+    return bar;
+  }
+
   function buildDesk(ch) {
-    var wrap = el('div', 'cbx-desk');
+    var wrap = el('div', 'cbx-desk device-browser');
     wrap.setAttribute('data-slot', 'desk');
     wrap.setAttribute('data-ans-device', 'desk');
-    if (ch.deskShot) {
+    var screen = el('div', 'device-browser__screen');
+    screen.setAttribute('data-ans-screen', '');
+    var shots = ch.deskShots;
+    if (shots && shots.length) {
+      var openId = ch.openDesk || shots[0].id;
+      shots.forEach(function (s) {
+        var frame = picture(s.src, s.alt, 1440, 900);
+        frame.setAttribute('data-shot', s.id);
+        if (s.id !== openId) frame.style.opacity = '0';
+        screen.appendChild(frame);
+      });
+    } else if (ch.deskShot) {
       var frame = picture(ch.deskShot, ch.deskAlt || ('CBX300 web · ' + ch.deskTitle), 1440, 900);
-      frame.setAttribute('data-ans-screen', '');
       frame.setAttribute('data-shot', 'desk');
-      wrap.appendChild(frame);
+      screen.appendChild(frame);
+    } else {
+      wrap.innerHTML = deskChrome(ch, deskMain(ch));
       return wrap;
     }
-    wrap.innerHTML = deskChrome(ch, deskMain(ch));
+    wrap.appendChild(browserBar());
+    wrap.appendChild(screen);
     return wrap;
   }
 
   function buildPhone(ch) {
-    var wrap = el('div', 'cbx-phone');
+    var wrap = el('div', 'cbx-phone device-iphone');
     wrap.setAttribute('data-slot', 'phone');
     wrap.setAttribute('data-ans-device', 'phone');
     if (ch.phoneShots && ch.phoneShots.length) {
+      var screen = el('div', 'device-iphone__screen');
+      screen.setAttribute('data-ans-screen', '');
       var stack = el('div', 'cbx-ans__stack');
-      stack.setAttribute('data-ans-screen', '');
       var openId = ch.openShot || ch.phoneShots[0].id;
       ch.phoneShots.forEach(function (s) {
         var frame = picture(s.src, s.alt, 440, 956);
         frame.setAttribute('data-shot', s.id);
         if (s.id !== openId) frame.style.opacity = '0';
+        pfMark(frame, s.src);
         stack.appendChild(frame);
       });
       if (ch.inset) {
@@ -353,13 +395,19 @@ window.Cbx300Answers = (function () {
         inset.setAttribute('data-inset', '');
         stack.appendChild(inset);
       }
-      wrap.appendChild(stack);
+      screen.appendChild(stack);
+      wrap.appendChild(screen);
+      iphoneButtons(wrap);
       return wrap;
     }
     if (ch.phoneShot) {
+      var screenOne = el('div', 'device-iphone__screen');
+      screenOne.setAttribute('data-ans-screen', '');
       var one = picture(ch.phoneShot, 'CBX300 phone · ' + ch.focus, 440, 956);
-      one.setAttribute('data-ans-screen', '');
-      wrap.appendChild(one);
+      pfMark(one, ch.phoneShot);
+      screenOne.appendChild(one);
+      wrap.appendChild(screenOne);
+      iphoneButtons(wrap);
       return wrap;
     }
     wrap.innerHTML =
@@ -988,6 +1036,10 @@ window.Cbx300Answers = (function () {
         }
         push = t + BACK;
       }
+      if (p.deskShot && prev && prev.deskShot && prev.deskShot !== p.deskShot) {
+        tl.to(shotNodes(l.scene, prev.deskShot), { opacity: 0, duration: 0.35, ease: 'sine.inOut' }, push);
+        tl.to(shotNodes(l.scene, p.deskShot), { opacity: 1, duration: 0.35, ease: 'sine.inOut' }, push);
+      }
       if (stepTimes) stepTimes.push(+push.toFixed(3));
       /* text of this point is still arriving until push + SETTLE_IN */
       /* Open the settle window after the shot crossfade and the old
@@ -1385,9 +1437,19 @@ window.Cbx300Answers = (function () {
         if (!p) return;
         var src = '';
         var alt = 'CBX300 phone · ' + (ch.focus || 'screen');
-        if (p.device === 'desk' && ch.deskShot) {
-          src = ch.deskShot;
-          alt = ch.deskAlt || 'CBX300 web · ' + ch.focus;
+        if (p.device === 'desk') {
+          var deskId = p.deskShot;
+          var deskHit = null;
+          if (ch.deskShots && deskId) {
+            ch.deskShots.forEach(function (s) { if (s.id === deskId) deskHit = s; });
+          }
+          if (deskHit) {
+            src = deskHit.src;
+            alt = deskHit.alt;
+          } else if (ch.deskShot) {
+            src = ch.deskShot;
+            alt = ch.deskAlt || 'CBX300 web · ' + ch.focus;
+          }
         } else if (ch.phoneShots) {
           var shot = null;
           ch.phoneShots.forEach(function (s) { if (s.id === p.shot) shot = s; });
@@ -1395,8 +1457,22 @@ window.Cbx300Answers = (function () {
         }
         if (!src) return;
         var fig = picture(src, alt, p.device === 'desk' ? 1440 : 440, p.device === 'desk' ? 900 : 956);
-        fig.classList.add('cbx-ans__flowshot');
-        step.insertBefore(fig, step.firstChild);
+        pfMark(fig, src);
+        var framed;
+        if (p.device === 'desk') {
+          framed = el('div', 'device-browser cbx-ans__flowshot');
+          var dscreen = el('div', 'device-browser__screen');
+          dscreen.appendChild(fig);
+          framed.appendChild(browserBar());
+          framed.appendChild(dscreen);
+        } else {
+          framed = el('div', 'device-iphone cbx-ans__flowshot');
+          var pscreen = el('div', 'device-iphone__screen');
+          pscreen.appendChild(fig);
+          framed.appendChild(pscreen);
+          iphoneButtons(framed);
+        }
+        step.insertBefore(framed, step.firstChild);
       });
     });
     if (section.hasAttribute('data-cbx-answers') && window.IntersectionObserver) {

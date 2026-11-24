@@ -286,6 +286,109 @@ window.Cbx300Case = (function () {
     }
   }
 
+  function coverVariant() {
+    var html = document.documentElement;
+    var print = html.classList.contains('is-multiverse') && html.classList.contains('is-print');
+    if (print) return 'light';
+    if (html.classList.contains('is-dark')) return 'dark';
+    return 'light';
+  }
+
+  function coverReduced() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function fillCoverMedia(media) {
+    var v = coverVariant();
+    var poster = 'assets/img/cbx300/cbx300-cover-' + v + '-poster.jpg';
+    media.innerHTML = '';
+    var shot = el('span', 'work-card__media');
+    var img = document.createElement('img');
+    img.className = 'work-card__img cbx-cover__poster';
+    img.alt = '';
+    img.width = 1600;
+    img.height = 900;
+    img.src = poster;
+    shot.appendChild(img);
+    if (!coverReduced()) {
+      var video = document.createElement('video');
+      video.className = 'cbx-cover__video';
+      video.muted = true;
+      video.autoplay = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.preload = 'metadata';
+      video.disablePictureInPicture = true;
+      video.setAttribute('disablepictureinpicture', '');
+      video.poster = poster;
+      video.setAttribute('aria-hidden', 'true');
+      var webm = document.createElement('source');
+      webm.type = 'video/webm';
+      webm.src = 'assets/video/cbx300/cbx300-cover-' + v + '.webm';
+      var mp4 = document.createElement('source');
+      mp4.type = 'video/mp4';
+      mp4.src = 'assets/video/cbx300/cbx300-cover-' + v + '.mp4';
+      video.appendChild(webm);
+      video.appendChild(mp4);
+      video.addEventListener('canplay', function () {
+        video.classList.add('is-ready');
+      });
+      shot.appendChild(video);
+      var play = video.play();
+      if (play && play.catch) play.catch(function () {});
+    }
+    media.appendChild(shot);
+    media._cbxVariant = v;
+  }
+
+  function armCover(section) {
+    var media = section.querySelector('.cbx-cover__media');
+    if (!media) return;
+    fillCoverMedia(media);
+    var html = document.documentElement;
+    var mo = new MutationObserver(function () {
+      var next = coverVariant();
+      if (next === media._cbxVariant && !coverReduced() === !!media.querySelector('video')) return;
+      var video = media.querySelector('video');
+      var t = video ? video.currentTime : 0;
+      fillCoverMedia(media);
+      var again = media.querySelector('video');
+      if (again && t) {
+        var seek = function () {
+          try { again.currentTime = t; } catch (err) {}
+          again.removeEventListener('loadedmetadata', seek);
+        };
+        again.addEventListener('loadedmetadata', seek);
+      }
+    });
+    mo.observe(html, { attributes: true, attributeFilter: ['class'] });
+    var io = new IntersectionObserver(function (entries) {
+      var video = media.querySelector('video');
+      if (!video) return;
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var play = video.play();
+          if (play && play.catch) play.catch(function () {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0 });
+    io.observe(media);
+    var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var onReduce = function () { fillCoverMedia(media); };
+    if (mq.addEventListener) mq.addEventListener('change', onReduce);
+    else if (mq.addListener) mq.addListener(onReduce);
+    motion.coverStop = function () {
+      mo.disconnect();
+      io.disconnect();
+      if (mq.removeEventListener) mq.removeEventListener('change', onReduce);
+      else if (mq.removeListener) mq.removeListener(onReduce);
+      motion.coverStop = null;
+    };
+  }
+
   function buildCover(project) {
     var glitch = isMultiverse();
     var section = el('section', 'cbx-cover');
@@ -308,14 +411,13 @@ window.Cbx300Case = (function () {
 
     var media = el('figure', 'work-card cbx-cover__media');
     media.setAttribute('data-tone', 'cream');
-    media.setAttribute('aria-label', 'SME Banking');
+    media.setAttribute('aria-label', 'CBX300 business banking on a laptop and a phone');
     var shot = el('span', 'work-card__media');
     var img = document.createElement('img');
     img.className = 'work-card__img';
     img.alt = '';
-    img.width = 720;
+    img.width = 1600;
     img.height = 900;
-    img.src = cardSrc(project);
     shot.appendChild(img);
     media.appendChild(shot);
 
@@ -917,6 +1019,7 @@ window.Cbx300Case = (function () {
   function kill() {
     var gsap = window.gsap;
     var ScrollTrigger = window.ScrollTrigger;
+    if (motion.coverStop) motion.coverStop();
     if (window.Cbx300Answers && window.Cbx300Answers.kill) window.Cbx300Answers.kill();
     if (window.Cbx300Finish && window.Cbx300Finish.kill) window.Cbx300Finish.kill();
     if (motion.themeOn) {
@@ -2071,7 +2174,9 @@ window.Cbx300Case = (function () {
     world.classList.add('cbx-world');
     var stage = el('div', 'cbx-stage');
     stage.setAttribute('data-cbx-stage', '');
-    stage.appendChild(buildCover(project));
+    var cover = buildCover(project);
+    stage.appendChild(cover);
+    armCover(cover);
     world.appendChild(stage);
     world.appendChild(buildGrowth());
     if (window.Cbx300Answers && window.Cbx300Answers.build) {
