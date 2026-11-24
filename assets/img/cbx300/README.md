@@ -1,4 +1,8 @@
-# CBX300 SME case study: screens (masked, 2x)
+# CBX300 SME case study: screens (2x)
+
+**Nov 24 update (owner decision): real Figma screens are now the ORIGINAL exports, unmasked** (sample names, amounts, IBANs, logos as designed in Figma; download_assets 2x from file NbivlhwDZPgPRxv7Kg4Bi8). Web screens cropped to the 1440×900 viewport. s04-grow-2-home = s03-ch1-phone-home, s04-pair1-chosen = s04-grow-1-home-min, s04-pair3-chosen = s03-ch3-phone-slide-to-approve. s03-ch2-phone-recurring is the left state of node 33387:99923 (912×1072 sheet). Designed (non-Figma) screens below are unchanged and still use the older masked naming. See docs/sme-finish/DEVICE-FRAMES-BRIEF.md §5 for flagged content (real brands, PF badge, typos).
+
+## Earlier notes (masking no longer applied to real screens)
 
 Source: CBX300 Figma file `NbivlhwDZPgPRxv7Kg4Bi8`, page `858:23168` "Screens · All Journeys" (read through the work Figma account, nothing edited in Figma).
 **Real** screens were rebuilt from Figma's own layer code (get_design_context) and rendered at 2x in Chrome with Lato (the file's font), so masked text looks native.
