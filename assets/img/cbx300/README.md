@@ -39,3 +39,13 @@ Notes
 - Counts: any count that would read as real business data is masked ("Total —— Transactions • —— Failed Validation", "—— Leaves", "—— Accounts"). Generic UI counts stay as they are ("7 Transactions Selected for Approval", task/notification badges, list-length badges, "Last 6 Months", "Maturing in 7 days").
 - The Cashflow card icon (banknote with a "$") is replaced with a neutral banknote glyph (rectangle + circle) in the same brand stroke, on home, home-min and multi-entity.
 - The render and mask pipeline (Figma layer code → HTML → masked 2x PNG) lives in Iris's workspace, not in this repo. Ask Iris to regenerate any screen; do not hand-edit these PNGs.
+
+## Web screens + cover (Nov 24)
+Web screens come from the CBX300 Figma "Interactive All journeys" page (1440 web journeys; that page is team-labelled "do not refer", used here as real reference UI). Masked with the same rules as above (pixel erase + Lato redraw). 2x PNG + WebP.
+| File | Slot | Figma node |
+|---|---|---|
+| s03-ch1-web-dashboard | S03 Ch1 desk (replaces designed desk-invoices as main view) + cover laptop | 22789:199862 (top 900px) |
+| s03-ch2-web-bulk-upload | S03 Ch2 desk: salary run as one file | 22789:131409 |
+| s03-ch3-web-pending-approvals | S03 Ch3 desk: approval queue | 22789:154433 |
+| s03-ch3-web-approve-payment | S03 Ch3 desk: payment detail + maker/checker trail | 22789:154618 |
+| cbx300-cover-{light,dark}-poster.jpg + assets/video/cbx300/cbx300-cover-{light,dark}.{mp4,webm} | S01 cover: generated studio scene (no UI generated), real masked web + phone screens composited in code, 5 s seamless code-driven loop, 1600x900, H.264 + VP9, muted | — |
