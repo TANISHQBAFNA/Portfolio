@@ -1,191 +1,143 @@
 /**
- * CBX300 cream scroll film.
- * Aisha story from the simple-story case study. Cream portfolio chrome.
- * Designed placeholders stand in for Figma frames (CEO lock 2026-09-12).
+ * CBX300 case study — Section 01 cover + Section 02 D2 worry board.
+ * Cover: kicker → accent → word. Image overlaps type from the right;
+ * type always paints on top of the image.
+ * Growth: coffee panel curtains over the parked cover + chrome
+ * (--cbx-rise / --panel-flush, same family as landing --rise /
+ * --panel-flush / is-projects-in), then one pinned morph:
+ * glanceable three-stage rail (kept), worry question + subtext,
+ * inline SVG illustration. No clay cast. No product chip.
+ * Cream stays calm. Multiverse uses glitch plates on chrome + type.
+ * Section 03 (How our bank answers her) mounts after the coffee pin.
+ * Later chapters stay hidden stubs until the next design pass.
  * Lisa Charlie is a demo brand. Aisha is a representative example.
- * No invented outcomes.
  */
 window.Cbx300Case = (function () {
   'use strict';
 
   var META = {
-    hook: 'Banking that grows with the business.',
-    promise: 'CBX300 helps business owners understand their money, make payments safely, approve work, and manage team access as their business grows.',
-    quote: 'A business should not need a new banking product just because it has grown.',
-    product: 'CBX300 · web + phone · 259 web · 377 mobile · ~147 flows · demo brand: Lisa Charlie',
-    role: 'Lead product designer — design system, end-to-end screens (web + phone), through developer handoff',
-    duration: 'Jan 2026 – present',
-    status: 'Design system complete. Majority of functional screens and full user flows designed through handoff.',
-    demo: 'Lisa Charlie bank is a demo brand. Aisha is a representative story, not a real customer interview.',
-    finding: '259 web screens. 377 mobile screens. ~147 flows. One shared system.'
+    kicker: 'Banking that',
+    accent: 'Grows with',
+    word: 'the Business'
   };
 
+  /* D2 worry board. Rail labels stay. Questions replace the old intro. */
   var BEATS = [
     {
-      id: 'cover',
-      num: '',
-      title: META.hook,
-      recipe: 'cover',
-      pin: true,
-      layout: 'cover',
-      captions: ['259 web · 377 mobile · ~147 flows. One shared system.']
-    },
-    {
-      id: 'ladder',
+      id: 'freelancer',
+      label: 'Freelancer',
       num: '01',
-      title: 'Meet Aisha.',
-      body: 'Aisha runs a growing distribution business. She began by managing every financial task herself. As the company grew, banking became a shared job.',
-      recipe: 'ends',
-      pin: true,
-      decision: {
-        kind: 'Finding',
-        finding: 'Aisha started doing every financial task herself. As the company grew, banking became a shared job.',
-        choice: 'One product that shows more control only when it is needed — not five separate banks.'
-      },
-      captions: [
-        'Independent professional. One person. Quick visibility.',
-        'Sole proprietor. Daily cash, bills, and supplier payments.',
-        'Micro. A helper begins to work with company money.',
-        'Small. Finance prepares. An owner or director approves.',
-        'Medium. More accounts, more users, stronger controls.',
-        'The same layout has to work for a business with no accounts and a business with four.'
-      ],
-      ask: 'Who prepared this payment? Does it need my approval?'
+      kicker: 'Her worry, every morning',
+      ask: 'Did the client pay yet?',
+      sub: 'Just her, a laptop and a stack of invoices.',
+      illo: 'assets/img/aisha-growth/illo-d2-1.svg',
+      crop: true
     },
     {
-      id: 'roles',
+      id: 'sole',
+      label: 'Shop of two',
       num: '02',
-      title: 'I designed for roles, not one user.',
-      body: 'The same business account can be used by people with very different responsibilities. The product needs to help each person do their job clearly.',
-      recipe: 'jobs',
-      pin: true,
-      decision: {
-        kind: 'Finding',
-        finding: 'The same business account is used by people with very different jobs.',
-        choice: 'Design for the owner, the payment maker, and the approver — not one generic user.'
-      },
-      captions: [
-        'The owner wants a clear view of cash and what is waiting.',
-        'The payment maker needs speed, less retyping, and errors early.',
-        'The approver needs key facts first, on a phone.'
-      ],
-      ask: 'If approving is the work, where does that work live?'
+      kicker: 'Her worry, once she hires',
+      ask: 'Can I afford her salary this month?',
+      sub: 'One hire, one shared card, and payday every month.',
+      illo: 'assets/img/aisha-growth/illo-d2-2.svg',
+      crop: true
     },
     {
-      id: 'approvals',
+      id: 'mid',
+      label: 'Mid-size',
       num: '03',
-      title: 'My team can prepare. I need to approve.',
-      body: 'As the business grows, banking work is shared. A payment can be prepared, reviewed, approved, rejected, or completed. Each stage has to stay obvious.',
-      recipe: 'door',
-      pin: true,
-      decision: {
-        kind: 'Finding',
-        finding: 'Preparing a payment is not the same as approving it. Submitted can look like completed.',
-        choice: 'Approvals get their own door, and batch approve names the count while rows stay visible.',
-        ruledOut: 'Ruled out: bury under Payments, or select-all with no line of sight.'
-      },
-      captions: [
-        'Approving is the job, so it has its own button, not a notification.',
-        'The action is labelled with the number it will perform. No one approves a mystery quantity.'
-      ],
-      ask: 'Tell me what is wrong before I approve.'
-    },
-    {
-      id: 'money',
-      num: '04',
-      title: 'Can I afford to pay this supplier today?',
-      body: 'A business balance is not always one number. Some money may be held, some may not be cleared yet, and some may already be booked.',
-      recipe: 'money',
-      pin: true,
-      decision: {
-        kind: 'Finding',
-        finding: 'One balance can be misleading — some money is held, pending, or uncleared.',
-        choice: 'Available balance leads the page because it answers what Aisha can pay today.',
-        ruledOut: 'Ruled out: one big number, or a clean list that fails after submit.'
-      },
-      captions: [
-        'Bad rows turn red before you sign.',
-        'Available, current, held, uncleared. One number would lie.'
-      ],
-      ask: 'Did the system use the right beneficiary?'
-    },
-    {
-      id: 'permissions',
-      num: '05',
-      title: 'My team needs access, but not all access.',
-      body: 'Giving access is also a money decision. A person needs the right actions for the right business accounts — not automatic access to everything.',
-      recipe: 'verbs',
-      pin: true,
-      decision: {
-        kind: 'Finding',
-        finding: 'A role name does not explain which actions a person can take or which accounts they can use.',
-        choice: 'A safe permission connects a person, an action, and the right financial scope.',
-        ruledOut: 'Ruled out: one question per screen.'
-      },
-      captions: [
-        'Start, check, view, send, approve. The verbs sit in a grid you can read.',
-        'The same screen serves one person and a fourteen-person finance team.'
-      ],
-      ask: 'After the verbs, does every money path still end the same way?'
-    },
-    {
-      id: 'grammar',
-      num: '06',
-      title: 'Same goal. Different moment.',
-      body: 'Aisha uses web for detailed work. She uses mobile for quick checks and urgent approval. The task stays the same. The layout changes.',
-      recipe: 'ending',
-      pin: true,
-      decision: {
-        kind: 'Finding',
-        finding: 'Web is the workspace. Mobile is the urgent check. Shrinking the desktop onto a phone loses the moment.',
-        choice: 'Keep the meaning of the task, then change the layout for the device.'
-      },
-      captions: [
-        'Review, then a one-time code, then done.',
-        'Same three steps on payments, deposits, cards, loans.',
-        'People do not relearn the ending.',
-        'Week one for every new customer. Each empty screen offers the next action.'
-      ],
-      ask: 'What did this produce, on web and on the phone?'
-    },
-    {
-      id: 'scale',
-      num: '',
-      title: META.finding,
-      body: 'That volume is the finding. Results stay blank until real numbers exist.',
-      recipe: 'finding',
-      pin: true,
-      hold: 'short',
-      finding: true,
-      captions: [
-        '259 web · 377 mobile · ~147 flows · one shared system.',
-        'Aisha is a representative story. Lisa Charlie is the demo brand, not a live client.'
-      ],
-      next: [
-        'Test payment, approval, and access journeys with real business users.',
-        'Measure time to complete key tasks and understand status.',
-        'Track errors, abandoned steps, and support requests.',
-        'Test whether web and mobile tell the same clear story.'
-      ]
+      kicker: 'Her worry, with a team',
+      ask: "Who's waiting on me today?",
+      sub: 'Eight people, and most of them need her yes.',
+      illo: 'assets/img/aisha-growth/illo-d2-3.svg',
+      crop: false
     }
   ];
 
-  var STAGES = [
-    { id: 'indie', num: '01', name: 'Independent professional', people: 'Needs: quick visibility', need: 'One person manages income, expenses, and a few payments.' },
-    { id: 'sole', num: '02', name: 'Sole proprietor', people: 'Needs: simple payments', need: 'The owner manages daily cash, bills, and supplier payments.' },
-    { id: 'micro', num: '03', name: 'Micro business', people: 'Needs: safe delegation', need: 'A helper or bookkeeper begins to work with company money.' },
-    { id: 'small', num: '04', name: 'Small business', people: 'Needs: clear approval', need: 'A finance person prepares. An owner or director approves.' },
-    { id: 'medium', num: '05', name: 'Medium business', people: 'Needs: control at scale', need: 'More accounts, more users, payment batches, stronger controls.' }
+  var SCENE_ILLO = 'assets/img/aisha-growth/illo-d2-scene.svg?v=s8';
+  /* Aisha and the plant stay at x 0. Lina shifts right so her laptop
+     clears the mug; the stage-03 left figure shifts off the plant. */
+  var LINA_X = 112;
+  var SIDE_L_X = -28;
+  /* Docked stages take one step per gesture. ~72px of travel commits
+     the next rail, then the lock swallows the rest of that gesture.
+     The curtain rise and fall stay scroll-scrubbed, like the landing
+     projects curtain. They are not a threshold snap. */
+  var STEP_PX = 72;
+  var GESTURE_QUIET = 80;
+  /* After a docked stage change, swallow the flick tail (~40ms) then
+     yield. A continuing roll must not wait for a quiet gap — pendingDir
+     carries the next stage as soon as the shift tween ends. */
+  var STEP_LOCK_MS = 40;
+  var ROLL_ARM_MS = 280;
+  /* Idle in the curtain band, then ease to the nearer end (cover or 01). */
+  var RISE_REST_MS = 220;
+  var DOCK_PX = 4;
+  /* Docked 01↔02↔03 plays in place. The scroll rail jumps immediately
+     so deep links and close stay mapped; the panel itself does not move. */
+  var SHIFT_DUR = 0.62;
+  var SHIFT_COPY = 28;
+  var SHIFT_ILLO = 20;
+  var STAGE_TOPS = [
+    ['s01', 's01-arrow'],
+    ['s02', 's02-lina', 's02-arrows'],
+    ['s03', 's03-sides', 's03-row', 's03-bench']
+  ];
+  var STAGE_BITS = [
+    ['s01-inv-015', 's01-inv-014', 's01-inv-012', 's01-arrow', 's01-arrow-head'],
+    ['s02-lina', 's02-card-shared', 's02-card-payday', 's02-card-free', 's02-arrows'],
+    ['s03-side-l', 's03-side-r', 's03-row', 's03-bench', 's03-card-payroll', 's03-card-supplier', 's03-pill']
   ];
 
-  var JOBS = [
-    { id: 'owner', title: 'The owner', body: 'A clear view of cash, important activity, and decisions waiting.', device: 'Web desk' },
-    { id: 'maker', title: 'The payment maker', body: 'Prepares payments. Needs speed, less retyping, errors early.', device: 'Web desk' },
-    { id: 'approver', title: 'The approver', body: 'Reviews work prepared by someone else. Often from a phone.', device: 'On a phone.' }
-  ];
+  var motion = {
+    triggers: [],
+    tween: null,
+    riseTween: null,
+    riseState: { p: 0 },
+    refreshTimers: [],
+    normalized: false,
+    pin: null,
+    stage: null,
+    idle: null,
+    pulsed: {},
+    reduce: false,
+    onStep: null,
+    stepCtrl: null,
+    coverPaused: false
+  };
 
-  var VERBS = ['Start', 'Check', 'View', 'Send', 'Approve'];
-  var FUNCTIONS = ['Payments', 'Payroll', 'Cards', 'Deposits'];
+  /* Landing projects curtain is the feel source of truth:
+     .scroll-run 200vh => riseMax() ≈ 1 viewport of native scroll,
+     then tweenBento lerps visual p (duration 0.7, ease power3.out,
+     overwrite true). Mirror that family here. Morph still owns the
+     long pin after the sheet is flush-top. */
+  var RISE_DUR = 1;
+  var RISE_LERP = 0.7;
+  /* Stage 01 enter used to overlap the curtain and start 01→02 0.42vh
+     after dock (~0.18vh of fully-shown 01). Trackpad inertia from the
+     rise then landed on 02. Hold 01 after the pin docks; space each
+     stage so one flick cannot skip it. */
+  var STAGE_HOLD = 0.55;
+  var TRANS_12 = 0.64;
+  var TRANS_23 = 0.96;
+  /* Pin ends on the stage-03 snap. A trailing half-hold was a dead
+     tail: one gesture down moved with no visible change. */
+  var MORPH_VH = STAGE_HOLD * 2 + TRANS_12 + TRANS_23 + STAGE_HOLD * 0.5;
+  /* Stages 01–02 only. 60 local units inside the 1.16 cast scale is
+     ~70px on screen. Legs shorten by the same amount so the feet stay
+     planted; stage 03 tweens both back. */
+  var FLOOR_DROP = 60;
+  var CAST_SCALE = 1.16;
+  /* Same root-unit shift the cast scale applies to FLOOR_DROP. The
+     floor-shift group, Lina, and the connector ends all use this. */
+  var FLOOR_ROOT = FLOOR_DROP * CAST_SCALE;
+  var LEG_FULL = 104;
+  var LEG_ORIGIN = '300 416';
+
+  function isMultiverse() {
+    return document.documentElement.classList.contains('is-multiverse');
+  }
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -194,432 +146,2074 @@ window.Cbx300Case = (function () {
     return node;
   }
 
-  function paperNote(text) {
-    return el('p', 'film-slot-note', text);
+  function shout(tag, className, text, glitch) {
+    var node = el(tag, glitch ? className + ' glitch' : className, text);
+    node.setAttribute('data-latin', text);
+    if (glitch) node.setAttribute('data-text', text);
+    return node;
   }
 
-  function captionStack(list) {
-    var wrap = el('div', 'film-caption-stack');
-    list.forEach(function (text, i) {
-      var p = el('p', 'film-caption', text);
-      p.setAttribute('data-caption', String(i));
-      wrap.appendChild(p);
-    });
-    return wrap;
+  function cardSrc(project) {
+    if (project && project.cardImage) return project.cardImage;
+    if (project && project.cover) return project.cover;
+    return 'assets/img/work/cin-work-sme.png';
   }
 
-  function decisionChip(d) {
-    if (!d) return null;
-    var aside = el('aside', 'film-decision');
-    aside.setAttribute('data-film-decision', '');
-    aside.appendChild(el('p', 'film-decision__label', d.kind || 'Finding'));
-    aside.appendChild(el('p', 'film-decision__finding', d.finding));
-    aside.appendChild(el('p', 'film-decision__choice-label', 'Choice'));
-    aside.appendChild(el('p', 'film-decision__choice', d.choice));
-    if (d.ruledOut) {
-      var ruled = el('p', 'film-decision__ruled', d.ruledOut);
-      ruled.setAttribute('data-film-ruled', '');
-      aside.appendChild(ruled);
+  function pad(n) {
+    return String(n).length < 2 ? '0' + n : String(n);
+  }
+
+  function viewH() {
+    var vv = window.visualViewport;
+    if (vv && vv.height) return vv.height;
+    return window.innerHeight || 800;
+  }
+
+  function paneH() {
+    return Math.max(280, Math.round(viewH()));
+  }
+
+  function studyChrome() {
+    return document.querySelector('.study[data-template="cbx300"] .study__chrome');
+  }
+
+  function panelFlushFromRise(rise) {
+    if (rise <= 0) return 1;
+    if (rise >= 0.05) return 0;
+    return 1 - rise / 0.05;
+  }
+
+  function growthPane() {
+    return motion.pin || document.querySelector('[data-cbx-growth]');
+  }
+
+  function applyCbxRise(p) {
+    var html = document.documentElement;
+    var rise = 1 - Math.max(0, Math.min(1, p));
+    var flush = panelFlushFromRise(rise).toFixed(4);
+    var pane = growthPane();
+    html.style.setProperty('--cbx-rise', rise.toFixed(4));
+    /* Write --panel-flush on the coffee pane, not html. Landing already
+       owns html --panel-flush for the projects rail (flush 1 after open). */
+    if (pane) pane.style.setProperty('--panel-flush', flush);
+    html.classList.toggle('is-cbx-growth-in', p > 0.08);
+    syncCloseInk();
+    syncCoverParticles(rise);
+  }
+
+  /* Close ink is a function of the surface behind it: light on the dark
+     coffee sheet, dark on cream S03 / hero / anything after the pin. */
+  function syncCloseInk() {
+    var html = document.documentElement;
+    var pin = motion.pin || document.querySelector('[data-cbx-growth]');
+    var after = !!(pin && pin.classList.contains('is-after'));
+    var growth = html.classList.contains('is-cbx-growth-in');
+    var ans = html.classList.contains('is-cbx-ans-pin');
+    html.classList.toggle('is-cbx-close-light', growth && !ans && !after);
+  }
+
+  /* The constellation canvas sits under the docked curtain. Pause it
+     once the sheet covers the viewport, and resume as the sheet falls. */
+  function syncCoverParticles(rise) {
+    var iris = window.IrisMotion;
+    if (!iris || !iris.setCoverPaused) return;
+    var onStudy = document.documentElement.classList.contains('is-study-page');
+    if (!onStudy) {
+      if (motion.coverPaused) {
+        motion.coverPaused = false;
+        iris.setCoverPaused(false);
+      }
+      return;
     }
-    return aside;
+    if (!motion.coverPaused && rise <= 0.03) {
+      motion.coverPaused = true;
+      iris.setCoverPaused(true);
+    } else if (motion.coverPaused && rise >= 0.05) {
+      motion.coverPaused = false;
+      iris.setCoverPaused(false);
+    }
   }
 
-  function uiBand(mods) {
-    return el('span', 'film-ui-band' + (mods ? ' ' + mods : ''));
-  }
-
-  function uiCard(title, note) {
-    var card = el('div', 'film-ui-card');
-    if (title) card.appendChild(el('strong', '', title));
-    if (note) card.appendChild(el('span', '', note));
-    card.appendChild(uiBand('film-ui-band--lg'));
-    card.appendChild(uiBand());
-    return card;
-  }
-
-  function coverCompose() {
-    var board = el('div', 'film-board film-compose');
-    var web = el('div', 'film-device film-device--web film-paper');
-    var bar = el('div', 'film-device__bar');
-    bar.setAttribute('aria-hidden', 'true');
-    bar.appendChild(el('span', 'film-device__dot'));
-    bar.appendChild(el('span', 'film-device__dot'));
-    bar.appendChild(el('span', 'film-device__dot'));
-    bar.appendChild(el('span', 'film-device__url', 'lisa-charlie.bank'));
-    var body = el('div', 'film-device__body');
-    var hero = el('div', 'film-ui-hero');
-    hero.appendChild(el('p', 'film-ui-kicker', 'Company cash'));
-    hero.appendChild(uiBand('film-ui-band--teal'));
-    hero.appendChild(uiBand('film-ui-band--lg'));
-    body.appendChild(hero);
-    var row = el('div', 'film-ui-row');
-    row.appendChild(uiCard('Spendable', 'What you can use'));
-    row.appendChild(uiCard('Approvals', 'Waiting on you'));
-    body.appendChild(row);
-    web.appendChild(bar);
-    web.appendChild(body);
-    web.appendChild(paperNote('Web dashboard frame later'));
-    var phone = el('div', 'film-device film-device--phone film-paper');
-    var pchrome = el('div', 'film-device__phone-bar');
-    pchrome.appendChild(el('span', 'film-device__pill'));
-    var pbody = el('div', 'film-device__body');
-    pbody.appendChild(el('p', 'film-ui-kicker', 'Today'));
-    pbody.appendChild(uiBand('film-ui-band--teal'));
-    pbody.appendChild(uiCard('Queue', 'On a phone'));
-    pbody.appendChild(uiBand());
-    phone.appendChild(pchrome);
-    phone.appendChild(pbody);
-    phone.appendChild(paperNote('Phone frame later'));
-    board.appendChild(web);
-    board.appendChild(phone);
-    return board;
-  }
-
-  function ladderBoard() {
-    var board = el('div', 'film-board film-ladder');
-    var world = el('div', 'film-ladder__world');
-    world.setAttribute('data-ladder-world', '');
-    var row = el('div', 'film-ladder__row');
-    STAGES.forEach(function (stage) {
-      var card = el('article', 'film-stage-card film-paper');
-      card.setAttribute('data-focus', stage.id);
-      card.appendChild(el('span', 'film-stage-card__num', stage.num));
-      card.appendChild(el('strong', '', stage.name));
-      card.appendChild(el('p', '', stage.need));
-      card.appendChild(el('small', '', stage.people));
-      row.appendChild(card);
+  function tweenCbxRise(next, immediate) {
+    var gsap = window.gsap;
+    var target = Math.max(0, Math.min(1, next));
+    if (immediate || !gsap) {
+      if (motion.riseTween && motion.riseTween.kill) motion.riseTween.kill();
+      motion.riseTween = null;
+      motion.riseState.p = target;
+      applyCbxRise(target);
+      return;
+    }
+    motion.riseTween = gsap.to(motion.riseState, {
+      p: target,
+      duration: RISE_LERP,
+      ease: 'power3.out',
+      overwrite: true,
+      onUpdate: function () { applyCbxRise(motion.riseState.p); },
+      onComplete: function () { motion.riseTween = null; }
     });
-    world.appendChild(row);
-    var bar = el('div', 'film-ladder__bar');
-    var fill = el('span', 'film-ladder__fill');
-    fill.setAttribute('data-ladder-fill', '');
-    bar.appendChild(fill);
-    var words = el('div', 'film-ladder__words');
-    words.appendChild(el('span', '', 'One person'));
-    words.appendChild(el('em', '', 'One platform'));
-    words.appendChild(el('span', '', 'Finance team'));
-    board.appendChild(world);
-    board.appendChild(bar);
-    board.appendChild(words);
-    return board;
   }
 
-  function pairBoard() {
-    var pair = el('div', 'film-pair');
-    var empty = el('figure');
-    var a = el('div', 'film-screen film-paper');
-    a.appendChild(el('p', 'film-ui-kicker', 'Accounts'));
-    a.appendChild(el('p', 'film-ui-empty', 'None yet'));
-    a.appendChild(paperNote('Accounts, none yet'));
-    empty.appendChild(a);
-    empty.appendChild(el('figcaption', '', 'No accounts'));
-    var full = el('figure');
-    var b = el('div', 'film-screen film-paper');
-    b.appendChild(el('p', 'film-ui-kicker', 'Accounts'));
-    var list = el('div', 'film-ui-stack');
-    ['Operating', 'Tax', 'Payroll', 'Reserve'].forEach(function (name) {
-      var row = el('div', 'film-ui-line');
-      row.appendChild(el('strong', '', name));
-      row.appendChild(uiBand('film-ui-band--sm'));
-      list.appendChild(row);
-    });
-    b.appendChild(list);
-    b.appendChild(paperNote('Accounts, four'));
-    full.appendChild(b);
-    full.appendChild(el('figcaption', '', 'Four accounts'));
-    pair.appendChild(empty);
-    pair.appendChild(full);
-    return pair;
+  function restRise() {
+    var html = document.documentElement;
+    var pane = growthPane();
+    if (motion.riseTween && motion.riseTween.kill) motion.riseTween.kill();
+    motion.riseTween = null;
+    html.classList.remove('is-cbx-growth-in');
+    html.classList.remove('is-cbx-close-light');
+    html.style.removeProperty('--cbx-rise');
+    if (pane) pane.style.removeProperty('--panel-flush');
+    motion.riseState.p = 0;
+    motion.coverPaused = false;
+    if (window.IrisMotion && window.IrisMotion.setCoverPaused) {
+      window.IrisMotion.setCoverPaused(false);
+    }
   }
 
-  function jobsBoard() {
-    var row = el('div', 'film-jobs');
-    JOBS.forEach(function (job) {
-      var card = el('article', 'film-job film-paper');
-      card.setAttribute('data-focus', job.id);
-      var screen = el('div', 'film-job__screen');
-      screen.appendChild(uiBand('film-ui-band--teal'));
-      screen.appendChild(uiBand());
-      card.appendChild(screen);
-      card.appendChild(el('small', '', job.device));
-      card.appendChild(el('strong', '', job.title));
-      card.appendChild(el('p', '', job.body));
-      row.appendChild(card);
-    });
-    return row;
+  function restChrome() {
+    var chrome = studyChrome();
+    var gsap = window.gsap;
+    if (!chrome) return;
+    chrome.classList.remove('is-away');
+    chrome.removeAttribute('aria-hidden');
+    if (gsap) {
+      gsap.set(chrome, { clearProps: 'opacity,visibility,pointerEvents,transform,y' });
+    } else {
+      chrome.style.opacity = '';
+      chrome.style.visibility = '';
+      chrome.style.pointerEvents = '';
+      chrome.style.transform = '';
+    }
   }
 
-  function doorBoard() {
-    var board = el('div', 'film-board film-nav');
-    [
-      { label: 'Home', door: false, count: '' },
-      { label: 'Accounts', door: false, count: '' },
-      { label: 'Approvals', door: true, count: '15' },
-      { label: 'Payments', door: false, count: '' }
-    ].forEach(function (item) {
-      var row = el('div', 'film-nav__item film-paper' + (item.door ? ' is-door' : ''));
-      row.setAttribute('data-focus', item.door ? 'door' : 'nav');
-      row.appendChild(el('span', '', item.label));
-      if (item.count) row.appendChild(el('span', 'film-nav__dot', item.count));
-      board.appendChild(row);
-    });
-    return board;
+  function coverVariant() {
+    var html = document.documentElement;
+    var print = html.classList.contains('is-multiverse') && html.classList.contains('is-print');
+    if (print) return 'light';
+    if (html.classList.contains('is-dark')) return 'dark';
+    return 'light';
   }
 
-  function batchBoard() {
-    var wrap = el('div', 'film-batch');
-    var rows = el('div', 'film-rows');
-    ['Vendor payout', 'Salary file', 'Supplier transfer', 'Card spend', 'Tax payment', 'FX send'].forEach(function (label) {
-      var row = el('div', 'film-row film-paper');
-      row.appendChild(el('span', '', label));
-      row.appendChild(el('span', '', 'Ready'));
-      rows.appendChild(row);
+  function coverReduced() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function fillCoverMedia(media) {
+    var v = coverVariant();
+    var poster = 'assets/img/cbx300/cbx300-cover-' + v + '-poster.jpg';
+    media.innerHTML = '';
+    var shot = el('span', 'work-card__media');
+    var img = document.createElement('img');
+    img.className = 'work-card__img cbx-cover__poster';
+    img.alt = '';
+    img.width = 1600;
+    img.height = 900;
+    img.src = poster;
+    shot.appendChild(img);
+    if (!coverReduced()) {
+      var video = document.createElement('video');
+      video.className = 'cbx-cover__video';
+      video.muted = true;
+      video.autoplay = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.preload = 'metadata';
+      video.disablePictureInPicture = true;
+      video.setAttribute('disablepictureinpicture', '');
+      video.poster = poster;
+      video.setAttribute('aria-hidden', 'true');
+      var webm = document.createElement('source');
+      webm.type = 'video/webm';
+      webm.src = 'assets/video/cbx300/cbx300-cover-' + v + '.webm';
+      var mp4 = document.createElement('source');
+      mp4.type = 'video/mp4';
+      mp4.src = 'assets/video/cbx300/cbx300-cover-' + v + '.mp4';
+      video.appendChild(webm);
+      video.appendChild(mp4);
+      video.addEventListener('canplay', function () {
+        video.classList.add('is-ready');
+      });
+      shot.appendChild(video);
+      var play = video.play();
+      if (play && play.catch) play.catch(function () {});
+    }
+    media.appendChild(shot);
+    media._cbxVariant = v;
+  }
+
+  function armCover(section) {
+    var media = section.querySelector('.cbx-cover__media');
+    if (!media) return;
+    fillCoverMedia(media);
+    var html = document.documentElement;
+    var mo = new MutationObserver(function () {
+      var next = coverVariant();
+      if (next === media._cbxVariant && !coverReduced() === !!media.querySelector('video')) return;
+      var video = media.querySelector('video');
+      var t = video ? video.currentTime : 0;
+      fillCoverMedia(media);
+      var again = media.querySelector('video');
+      if (again && t) {
+        var seek = function () {
+          try { again.currentTime = t; } catch (err) {}
+          again.removeEventListener('loadedmetadata', seek);
+        };
+        again.addEventListener('loadedmetadata', seek);
+      }
     });
-    var action = el('button', 'film-action', 'Approve (6)');
-    action.type = 'button';
-    action.tabIndex = -1;
-    wrap.appendChild(rows);
-    wrap.appendChild(action);
+    mo.observe(html, { attributes: true, attributeFilter: ['class'] });
+    var io = new IntersectionObserver(function (entries) {
+      var video = media.querySelector('video');
+      if (!video) return;
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var play = video.play();
+          if (play && play.catch) play.catch(function () {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0 });
+    io.observe(media);
+    var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var onReduce = function () { fillCoverMedia(media); };
+    if (mq.addEventListener) mq.addEventListener('change', onReduce);
+    else if (mq.addListener) mq.addListener(onReduce);
+    motion.coverStop = function () {
+      mo.disconnect();
+      io.disconnect();
+      if (mq.removeEventListener) mq.removeEventListener('change', onReduce);
+      else if (mq.removeListener) mq.removeListener(onReduce);
+      motion.coverStop = null;
+    };
+  }
+
+  function buildCover(project) {
+    var glitch = isMultiverse();
+    var section = el('section', 'cbx-cover');
+    section.setAttribute('data-cbx-section', '01');
+    section.setAttribute('data-cbx-live', '');
+    section.setAttribute('aria-labelledby', 'cbx-cover-heading');
+
+    var inner = el('div', 'cbx-cover__inner');
+
+    var type = el('div', 'hero__type cbx-cover__type');
+    var heading = el('h1', 'hero__heading');
+    heading.id = 'cbx-cover-heading';
+    heading.appendChild(shout('span', 'hero__kicker', META.kicker, glitch));
+
+    var display = el('span', 'hero__display');
+    display.appendChild(shout('span', 'hero__accent', META.accent, glitch));
+    display.appendChild(shout('span', 'hero__word', META.word, glitch));
+    heading.appendChild(display);
+    type.appendChild(heading);
+
+    var media = el('figure', 'work-card cbx-cover__media');
+    media.setAttribute('data-tone', 'cream');
+    media.setAttribute('aria-label', 'CBX300 business banking on a laptop and a phone');
+    var shot = el('span', 'work-card__media');
+    var img = document.createElement('img');
+    img.className = 'work-card__img';
+    img.alt = '';
+    img.width = 1600;
+    img.height = 900;
+    shot.appendChild(img);
+    media.appendChild(shot);
+
+    inner.appendChild(media);
+    inner.appendChild(type);
+    section.appendChild(inner);
+    return section;
+  }
+
+  function beatCopy(beat, index, glitch) {
+    var beatEl = el('div', 'cbx-growth__beat' + (index === 0 ? ' is-on' : ''));
+    beatEl.setAttribute('data-cbx-beat', beat.id);
+    beatEl.setAttribute('data-beat-index', String(index));
+
+    var lab = el('p', 'cbx-growth__lab');
+    lab.appendChild(el('span', 'cbx-growth__lab-num', beat.num));
+    lab.appendChild(el('span', 'cbx-growth__lab-name', beat.kicker));
+    beatEl.appendChild(lab);
+
+    var ask = el('h2', 'cbx-growth__ask');
+    var quote = el('q', 'cbx-growth__quote');
+    var askText = el('span', glitch ? 'cbx-growth__ask-text glitch' : 'cbx-growth__ask-text');
+    askText.setAttribute('data-latin', beat.ask);
+    if (glitch) askText.setAttribute('data-text', beat.ask);
+    var words = beat.ask.split(' ');
+    words.forEach(function (part, w) {
+      if (w) askText.appendChild(document.createTextNode(' '));
+      askText.appendChild(el('span', 'cbx-growth__word', part));
+    });
+    quote.appendChild(askText);
+    ask.appendChild(quote);
+    beatEl.appendChild(ask);
+    beatEl.appendChild(el('span', 'cbx-growth__rule'));
+    beatEl.appendChild(el('p', 'cbx-growth__sub', beat.sub));
+    return beatEl;
+  }
+
+  function buildRail() {
+    var wrap = el('div', 'cbx-growth__rail-wrap');
+    var rail = el('ol', 'cbx-growth__rail');
+    rail.setAttribute('data-cbx-rail', '');
+    rail.setAttribute('aria-label', 'Aisha grows through three stages');
+    BEATS.forEach(function (beat, i) {
+      var item = el('li', 'cbx-growth__step' + (i === 0 ? ' is-on' : ''));
+      item.setAttribute('data-cbx-step', beat.id);
+      item.setAttribute('data-step-index', String(i));
+      item.appendChild(el('span', 'cbx-growth__step-num', pad(i + 1)));
+      item.appendChild(el('span', 'cbx-growth__step-name', beat.label));
+      rail.appendChild(item);
+    });
+    var ink = el('span', 'cbx-growth__rail-ink');
+    ink.setAttribute('data-cbx-rail-ink', '');
+    wrap.appendChild(rail);
+    wrap.appendChild(ink);
     return wrap;
   }
 
-  function failBoard() {
-    var board = el('div', 'film-board film-fail');
-    var head = el('p', 'film-line', '128 rows in the file. 3 failed a check.');
-    var rows = el('div', 'film-rows');
-    [
-      { label: 'Row 12 · account missing', bad: true },
-      { label: 'Row 44 · amount unreadable', bad: true },
-      { label: 'Row 91 · duplicate line', bad: true },
-      { label: 'Row 02 · salary', bad: false },
-      { label: 'Row 03 · salary', bad: false }
-    ].forEach(function (item) {
-      var row = el('div', 'film-row film-paper' + (item.bad ? ' is-bad' : ''));
-      row.appendChild(el('span', '', item.label));
-      row.appendChild(el('span', '', item.bad ? 'Failed' : 'OK'));
-      rows.appendChild(row);
-    });
-    board.appendChild(head);
-    board.appendChild(rows);
-    return board;
+  function illoSlot() {
+    var slot = el('div', 'cbx-growth__illo is-on');
+    slot.setAttribute('data-cbx-illo', 'scene');
+    slot.setAttribute('data-illo-src', SCENE_ILLO);
+    slot.setAttribute('data-illo-crop', '1');
+    slot.setAttribute('aria-hidden', 'true');
+    return slot;
   }
 
-  function balanceBoard() {
-    var grid = el('div', 'film-balances');
-    [
-      { name: 'Spendable', note: 'What you can use today' },
-      { name: 'Booked', note: 'What the ledger says' },
-      { name: 'Blocked', note: 'Held, not gone' },
-      { name: 'Pending', note: 'Still on the way' }
-    ].forEach(function (item) {
-      var card = el('article', 'film-balance film-paper');
-      card.appendChild(el('strong', '', item.name));
-      card.appendChild(el('span', '', item.note));
-      card.appendChild(uiBand('film-ui-band--teal'));
-      grid.appendChild(card);
-    });
-    return grid;
+  function tightenIllo(svg, crop) {
+    if (!svg) return;
+    svg.removeAttribute('width');
+    svg.removeAttribute('height');
+    /* Fill the card well. Bottom-anchored slice; the viewBox keeps the
+       lamp, cards, people, desk and bench inside the widest stage. */
+    svg.setAttribute('preserveAspectRatio', crop ? 'xMidYMax slice' : 'xMidYMid slice');
+    if (!crop) return;
+    svg.setAttribute('viewBox', '-110 -72 860 700');
   }
 
-  function verbBoard(solo) {
-    var grid = el('div', 'film-board film-grid film-paper');
-    grid.appendChild(el('span', 'film-grid__fn', solo ? 'One user' : 'Function'));
-    VERBS.forEach(function (verb) {
-      var head = el('span', 'film-grid__head', verb);
-      grid.appendChild(head);
+  function paintIllo(slot, done) {
+    var src = slot.getAttribute('data-illo-src');
+    var crop = slot.getAttribute('data-illo-crop') === '1';
+    var finish = function () {
+      if (done) done();
+    };
+    if (slot.querySelector('svg, img')) {
+      finish();
+      return;
+    };
+    if (!src || !window.fetch) {
+      finish();
+      return;
+    }
+    window.fetch(src).then(function (res) {
+      if (!res.ok) throw new Error('illo ' + src);
+      return res.text();
+    }).then(function (markup) {
+      slot.innerHTML = markup;
+      tightenIllo(slot.querySelector('svg'), crop);
+      finish();
+    }).catch(function () {
+      var img = document.createElement('img');
+      img.className = 'cbx-growth__illo-img';
+      img.alt = '';
+      img.src = src;
+      slot.appendChild(img);
+      finish();
     });
-    FUNCTIONS.forEach(function (fn, fi) {
-      grid.appendChild(el('span', 'film-grid__fn', fn));
-      VERBS.forEach(function (verb, vi) {
-        var on = solo ? (vi <= 1 || (fi === 0 && vi === 4)) : true;
-        var cell = el('span', 'film-cell' + (on ? '' : ' is-off'));
-        cell.setAttribute('aria-hidden', 'true');
-        grid.appendChild(cell);
+  }
+
+  function fillIllos(root, done) {
+    var slots = root ? root.querySelectorAll('[data-cbx-illo]') : [];
+    var left = slots.length;
+    if (!left) {
+      done();
+      return;
+    }
+    Array.prototype.forEach.call(slots, function (slot) {
+      paintIllo(slot, function () {
+        left -= 1;
+        if (left <= 0) done();
       });
     });
-    return grid;
   }
 
-  function endingTrack() {
-    var wrap = el('div', 'film-track-wrap');
-    var track = el('div', 'film-track');
-    track.setAttribute('data-film-track', '');
-    [
-      { title: 'Review', note: 'See the money. See who it is for.' },
-      { title: 'One-time code', note: 'Prove it is you.' },
-      { title: 'Done', note: 'The path ends. Same every time.' }
-    ].forEach(function (step) {
-      var card = el('article', 'film-step film-paper');
-      card.appendChild(el('strong', '', step.title));
-      card.appendChild(el('span', '', step.note));
-      track.appendChild(card);
+  function buildGrowth() {
+    var glitch = isMultiverse();
+    var section = el('section', 'cbx-growth cbx-ink');
+    section.setAttribute('data-cbx-section', '02');
+    section.setAttribute('data-cbx-live', '');
+    section.setAttribute('data-cbx-growth', '');
+    section.setAttribute('data-cbx-live-beat', '0');
+    section.setAttribute('aria-label', 'Aisha grows through three worries.');
+
+    var scene = el('div', 'cbx-growth__scene');
+    scene.setAttribute('data-cbx-board', '');
+    scene.appendChild(buildRail());
+
+    var board = el('div', 'cbx-growth__board');
+    var worry = el('div', 'cbx-growth__worry');
+    var voice = el('div', 'cbx-growth__voice');
+    voice.setAttribute('data-cbx-beats', '');
+    BEATS.forEach(function (beat, i) {
+      voice.appendChild(beatCopy(beat, i, glitch));
     });
-    wrap.appendChild(track);
-    return wrap;
+    worry.appendChild(voice);
+
+    var pic = el('div', 'cbx-growth__pic');
+    pic.setAttribute('data-cbx-pic', '');
+    var picMedia = el('div', 'cbx-growth__pic-media');
+    picMedia.appendChild(illoSlot());
+    pic.appendChild(picMedia);
+
+    board.appendChild(worry);
+    board.appendChild(pic);
+    scene.appendChild(board);
+    section.appendChild(scene);
+    return section;
   }
 
-  function emptyGrid() {
-    var grid = el('div', 'film-empty');
-    [
-      { title: 'No payments yet', next: 'Send the first one' },
-      { title: 'No cards yet', next: 'Order a card' },
-      { title: 'No people yet', next: 'Add a teammate' },
-      { title: 'No files yet', next: 'Upload payroll' }
-    ].forEach(function (item) {
-      var card = el('article', 'film-paper');
-      card.appendChild(el('strong', '', item.title));
-      card.appendChild(el('span', '', item.next));
-      grid.appendChild(card);
+  function liveText(node) {
+    return (node.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function burstSafe(iris, node, reduce) {
+    if (!iris || !iris.burstGlitch) return;
+    /* Letter-swap rewrites textContent. Nested chrome (01 / 02) must keep its spans. */
+    if (node.children && node.children.length) {
+      node.classList.remove('is-glitching', 'is-slam');
+      void node.offsetWidth;
+      node.classList.add('is-glitching', 'is-slam');
+      window.setTimeout(function () {
+        node.classList.remove('is-glitching', 'is-slam');
+      }, 720);
+      return;
+    }
+    iris.burstGlitch(node, reduce);
+  }
+
+  function armGlitch(world, opts) {
+    if (!isMultiverse()) return;
+    var iris = window.IrisMotion;
+    opts = opts || {};
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var nodes = [];
+    if (world) {
+      Array.prototype.forEach.call(world.querySelectorAll('.glitch'), function (node) {
+        nodes.push(node);
+      });
+    }
+    if (opts.chrome !== false) {
+      var studyRoot = document.querySelector('.study[data-template="cbx300"]');
+      if (studyRoot) {
+        Array.prototype.forEach.call(
+          studyRoot.querySelectorAll('.study__word, .study__close, .study__count'),
+          function (node) { nodes.push(node); }
+        );
+      }
+    }
+    nodes.forEach(function (node) {
+      var text = liveText(node);
+      if (!text) return;
+      node.classList.add('glitch');
+      node.setAttribute('data-text', text);
+      node.setAttribute('data-latin', text);
+      if (iris && iris.armGlitchTarget) iris.armGlitchTarget(node, text);
+      burstSafe(iris, node, reduce);
+      if (node.getAttribute('data-cbx-glitch-hover')) return;
+      node.setAttribute('data-cbx-glitch-hover', '1');
+      node.addEventListener('mouseenter', function () {
+        var next = liveText(node);
+        node.setAttribute('data-text', next);
+        node.setAttribute('data-latin', next);
+        if (iris && iris.armGlitchTarget) iris.armGlitchTarget(node, next);
+        burstSafe(iris, node, reduce);
+      });
     });
-    return grid;
   }
 
-  function contactSheet() {
-    var sheet = el('div', 'film-sheet');
+  function clearTimers() {
+    motion.refreshTimers.forEach(function (id) { window.clearTimeout(id); });
+    motion.refreshTimers = [];
+  }
+
+  function morphNodes(root) {
+    if (!root || !root.querySelectorAll) return [];
+    return Array.prototype.slice.call(
+      root.querySelectorAll('[data-cbx-beat], [data-cbx-illo]')
+    );
+  }
+
+  function layer(root, name) {
+    return root ? root.querySelector('[data-cbx-layer="' + name + '"]') : null;
+  }
+
+  function seatConnectors(root, dy) {
+    var drop = +dy || 0;
+    function yAt(y) {
+      return Math.round((y - drop) * 10) / 10;
+    }
+    var arrowD = 'M470 ' + yAt(176) + ' C 450 ' + yAt(240) + ', 410 290, 362 328';
+    var arrow = layer(root, 's01-arrow');
+    var line = arrow && arrow.querySelector('path[mask]');
+    var draw = layer(root, 's01-arrow-draw');
+    if (line) line.setAttribute('d', arrowD);
+    if (draw) draw.setAttribute('d', arrowD);
+  }
+
+  function posePersist(root, beatIndex) {
+    var gsap = window.gsap;
+    if (!gsap || !root) return;
+    var shift = layer(root, 'floor-shift');
+    var aisha = layer(root, 'aisha');
+    var plant = layer(root, 'plant');
+    var legs = layer(root, 'desk-legs');
+    var lina = layer(root, 's02-lina');
+    var sideL = layer(root, 's03-side-l');
+    var dropped = (beatIndex || 0) < 2;
+    var dy = dropped ? FLOOR_ROOT : 0;
+    var legScale = dropped ? (LEG_FULL - FLOOR_DROP) / LEG_FULL : 1;
+    if (shift) gsap.set(shift, { y: dy });
+    seatConnectors(root, dy);
+    if (legs) gsap.set(legs, { scaleY: legScale, svgOrigin: LEG_ORIGIN });
+    if (aisha) gsap.set(aisha, { x: 0 });
+    if (plant) gsap.set(plant, { x: 0 });
+    if (lina) gsap.set(lina, { x: LINA_X });
+    if (sideL) gsap.set(sideL, { x: SIDE_L_X });
+  }
+
+  function setRailInk(root, morphP) {
+    var gsap = window.gsap;
+    var ink = root && root.querySelector('[data-cbx-rail-ink]');
+    if (!gsap || !ink) return;
+    var t = Math.max(0, Math.min(1, morphP)) * MORPH_VH;
+    var p0 = STAGE_HOLD * 0.5;
+    var p1 = STAGE_HOLD + TRANS_12 + STAGE_HOLD * 0.5;
+    var p2 = STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23 + STAGE_HOLD * 0.5;
+    var railT = 0;
+    if (t <= p0) railT = 0;
+    else if (t <= p1) railT = (t - p0) / Math.max(0.0001, p1 - p0);
+    else if (t <= p2) railT = 1 + (t - p1) / Math.max(0.0001, p2 - p1);
+    else railT = 2;
+    gsap.set(ink, { xPercent: railT * 100 });
+  }
+
+  function copyBits(beatEl) {
+    if (!beatEl) return [];
+    return Array.prototype.slice.call(
+      beatEl.querySelectorAll('.cbx-growth__lab, .cbx-growth__word, .cbx-growth__rule, .cbx-growth__sub')
+    );
+  }
+
+  function addCopyEnter(tl, beatEl, at) {
+    if (!beatEl) return;
+    var lab = beatEl.querySelector('.cbx-growth__lab');
+    var words = beatEl.querySelectorAll('.cbx-growth__word');
+    var rule = beatEl.querySelector('.cbx-growth__rule');
+    var sub = beatEl.querySelector('.cbx-growth__sub');
+    if (lab) {
+      tl.fromTo(lab, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.16, ease: 'power3.out' }, at);
+    }
+    if (words.length) {
+      tl.fromTo(words, { opacity: 0, y: 14 }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.26,
+        stagger: 0.04,
+        ease: 'power3.out'
+      }, at + 0.05);
+    }
+    var ruleAt = at + 0.22;
+    if (rule) {
+      tl.fromTo(rule, { scaleX: 0 }, {
+        scaleX: 1,
+        duration: 0.2,
+        ease: 'power3.out',
+        transformOrigin: '0% 50%'
+      }, ruleAt);
+    }
+    if (sub) {
+      tl.fromTo(sub, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.2, ease: 'power3.out' }, ruleAt + 0.1);
+    }
+  }
+
+  function addCopyLeave(tl, beatEl, at) {
+    var bits = copyBits(beatEl);
+    if (!bits.length) return;
+    tl.to(bits, { opacity: 0, y: -8, duration: 0.2, stagger: 0.015, ease: 'power3.in' }, at);
+  }
+
+  function dropIn(tl, node, at, rot) {
+    if (!node) return;
+    tl.fromTo(node,
+      { y: -24, rotation: rot || 7, opacity: 0 },
+      { y: 0, rotation: 0, opacity: 1, duration: 0.26, ease: 'power3.out' },
+      at
+    );
+  }
+
+  function floatOut(tl, node, at, dx) {
+    if (!node) return;
+    tl.to(node, { y: -16, x: dx || 0, opacity: 0, duration: 0.24, ease: 'power3.in' }, at);
+  }
+
+  function killIdle() {
+    var gsap = window.gsap;
+    (motion.idle || []).forEach(function (tw) {
+      if (tw && tw.kill) tw.kill();
+    });
+    motion.idle = [];
+    motion.pulsed = {};
+    if (gsap && motion.pin) {
+      Array.prototype.forEach.call(motion.pin.querySelectorAll('[data-cbx-idle]'), function (node) {
+        gsap.set(node, { y: 0, rotation: 0 });
+      });
+    }
+  }
+
+  function armIdle(root) {
+    var gsap = window.gsap;
+    killIdle();
+    if (!gsap || !root || motion.reduce) return;
+    var tweens = [];
+    var lamp = root.querySelector('[data-cbx-idle="lamp"]');
+    if (lamp) {
+      gsap.set(lamp, { transformOrigin: '50% 0%', svgOrigin: '300 -64' });
+      tweens.push(gsap.to(lamp, {
+        rotation: 2,
+        duration: 1.9,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        paused: true
+      }));
+    }
+    var steamA = layer(root, 'steam-a');
+    var steamB = layer(root, 'steam-b');
+    if (steamA) {
+      tweens.push(gsap.fromTo(steamA, { y: 0, opacity: 0.95 }, {
+        y: -4,
+        opacity: 0.55,
+        duration: 2.2,
+        ease: 'sine.out',
+        repeat: -1,
+        paused: true
+      }));
+    }
+    if (steamB) {
+      tweens.push(gsap.fromTo(steamB, { y: 0, opacity: 0.85 }, {
+        y: -5,
+        opacity: 0.5,
+        duration: 2.5,
+        delay: 0.35,
+        ease: 'sine.out',
+        repeat: -1,
+        paused: true
+      }));
+    }
+    Array.prototype.forEach.call(root.querySelectorAll('[data-cbx-idle="card"]'), function (card, i) {
+      tweens.push(gsap.to(card, {
+        y: 3.5,
+        duration: 2.4 + (i % 3) * 0.15,
+        delay: i * 0.08,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        paused: true
+      }));
+    });
+    motion.idle = tweens;
+  }
+
+  function setIdlePlaying(on) {
+    (motion.idle || []).forEach(function (tw) {
+      if (!tw) return;
+      if (on) tw.play();
+      else tw.pause();
+    });
+  }
+
+  function pulseOnce(key, node) {
+    var gsap = window.gsap;
+    if (!gsap || !node || motion.reduce) return;
+    if (motion.pulsed[key]) return;
+    motion.pulsed[key] = true;
+    gsap.fromTo(node, { scale: 1 }, {
+      scale: 1.06,
+      duration: 0.32,
+      yoyo: true,
+      repeat: 1,
+      ease: 'sine.inOut',
+      transformOrigin: '50% 50%'
+    });
+  }
+
+  function resetPulse(key, node) {
+    if (!motion.pulsed[key]) return;
+    motion.pulsed[key] = false;
+    if (node && window.gsap) window.gsap.set(node, { scale: 1 });
+  }
+
+  function wireScene(tl, pin) {
+    var aisha = layer(pin, 'aisha');
+    var desk = layer(pin, 'desk');
+    var mug = layer(pin, 'mug');
+    var plant = layer(pin, 'plant');
+    var lampNode = layer(pin, 'lamp');
+    var beats = pin.querySelectorAll('[data-cbx-beat]');
+    var inv015 = layer(pin, 's01-inv-015');
+    var inv014 = layer(pin, 's01-inv-014');
+    var inv012 = layer(pin, 's01-inv-012');
+    var arrow = layer(pin, 's01-arrow');
+    var draw = layer(pin, 's01-arrow-draw');
+    var head = layer(pin, 's01-arrow-head');
+    var lina = layer(pin, 's02-lina');
+    var s02arrows = layer(pin, 's02-arrows');
+    var shared = layer(pin, 's02-card-shared');
+    var payday = layer(pin, 's02-card-payday');
+    var freeAfter = layer(pin, 's02-card-free');
+    var sideL = layer(pin, 's03-side-l');
+    var sideR = layer(pin, 's03-side-r');
+    var row = layer(pin, 's03-row');
+    var bench = layer(pin, 's03-bench');
+    var payroll = layer(pin, 's03-card-payroll');
+    var supplier = layer(pin, 's03-card-supplier');
+    var pill = layer(pin, 's03-pill');
+    var legs = layer(pin, 'desk-legs');
+    var shift = layer(pin, 'floor-shift');
+    var floor = [aisha, desk, mug, plant].filter(Boolean);
+    var enter01 = Math.max(0, RISE_DUR - 0.86);
+    var t12 = RISE_DUR + STAGE_HOLD;
+    var t23 = t12 + TRANS_12 + STAGE_HOLD;
+    var legShort = (LEG_FULL - FLOOR_DROP) / LEG_FULL;
+
+    if (legs) tl.set(legs, { scaleY: legShort, svgOrigin: LEG_ORIGIN }, 0);
+    if (shift) {
+      tl.set(shift, { y: FLOOR_ROOT }, 0);
+      tl.fromTo(shift, { y: FLOOR_ROOT + 16 * CAST_SCALE }, {
+        y: FLOOR_ROOT,
+        duration: 0.28,
+        ease: 'power3.out'
+      }, enter01);
+    }
+    if (floor.length) {
+      tl.fromTo(floor, { opacity: 0 }, {
+        opacity: 1,
+        duration: 0.28,
+        stagger: 0.04,
+        ease: 'power3.out'
+      }, enter01);
+    }
+    if (lampNode) {
+      tl.fromTo(lampNode, { opacity: 0, y: 16 }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.28,
+        ease: 'power3.out'
+      }, enter01);
+    }
+    addCopyEnter(tl, beats[0], enter01);
+    dropIn(tl, inv015, enter01 + 0.22, -8);
+    dropIn(tl, inv014, enter01 + 0.3, 7);
+    dropIn(tl, inv012, enter01 + 0.38, -5);
+    if (draw) {
+      tl.fromTo(draw, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.36, ease: 'none' }, enter01 + 0.48);
+    }
+    if (head) {
+      tl.fromTo(head, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: 'power3.out' }, enter01 + 0.72);
+    }
+
+    addCopyLeave(tl, beats[0], t12);
+    addCopyEnter(tl, beats[1], t12 + 0.08);
+    floatOut(tl, inv015, t12, -12);
+    floatOut(tl, inv014, t12 + 0.04, 14);
+    floatOut(tl, inv012, t12 + 0.08, 18);
+    if (arrow) floatOut(tl, arrow, t12, 0);
+    if (lina) {
+      tl.fromTo(lina,
+        { x: LINA_X + 48, opacity: 0 },
+        { x: LINA_X, opacity: 1, duration: 0.4, ease: 'power3.out' },
+        t12 + 0.12
+      );
+    }
+    dropIn(tl, shared, t12 + 0.22, -4);
+    dropIn(tl, payday, t12 + 0.3, -7);
+    dropIn(tl, freeAfter, t12 + 0.38, 6);
+    if (s02arrows) {
+      tl.fromTo(s02arrows, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power3.out' }, t12 + 0.4);
+    }
+
+    addCopyLeave(tl, beats[1], t23);
+    addCopyEnter(tl, beats[2], t23 + 0.1);
+    if (shift) {
+      tl.to(shift, { y: 0, duration: 0.42, ease: 'power3.out' }, t23);
+    }
+    if (legs) {
+      tl.to(legs, { scaleY: 1, svgOrigin: LEG_ORIGIN, duration: 0.42, ease: 'power3.out' }, t23);
+    }
+    floatOut(tl, lina, t23, LINA_X);
+    floatOut(tl, shared, t23, 0);
+    floatOut(tl, payday, t23 + 0.04, -12);
+    floatOut(tl, freeAfter, t23 + 0.08, 12);
+    if (s02arrows) floatOut(tl, s02arrows, t23, 0);
+    if (sideL) {
+      tl.fromTo(sideL,
+        { x: SIDE_L_X, y: 22, opacity: 0 },
+        { x: SIDE_L_X, y: 0, opacity: 1, duration: 0.32, ease: 'power3.out' },
+        t23 + 0.16
+      );
+    }
+    if (sideR) {
+      tl.fromTo(sideR, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.32, ease: 'power3.out' }, t23 + 0.32);
+    }
+    if (row) {
+      tl.fromTo(row, { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34, ease: 'power3.out' }, t23 + 0.34);
+    }
+    if (bench) {
+      tl.fromTo(bench, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28, ease: 'power3.out' }, t23 + 0.38);
+    }
+    dropIn(tl, payroll, t23 + 0.52, -7);
+    dropIn(tl, supplier, t23 + 0.6, 6);
+    if (pill) {
+      tl.fromTo(pill, { opacity: 0, scale: 0.88 }, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.22,
+        ease: 'power3.out'
+      }, t23 + 0.74);
+    }
+    var shiftNow = shift && window.gsap ? window.gsap.getProperty(shift, 'y') : FLOOR_ROOT;
+    seatConnectors(pin, shiftNow == null ? FLOOR_ROOT : shiftNow);
+  }
+
+  function tickMorph(pin, morphP, riseTarget, self) {
+    applyBeat(pin, beatIndexFromProgress(morphP));
+    if (motion.reduce) {
+      posePersist(pin, beatIndexFromProgress(morphP));
+    } else {
+      setRailInk(pin, morphP);
+      var morphT = morphP * MORPH_VH;
+      if (morphT < STAGE_HOLD && riseTarget >= 0.95) pulseOnce('late', layer(pin, 's01-late'));
+      else resetPulse('late', layer(pin, 's01-late'));
+      if (morphT >= STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23) pulseOnce('pill', layer(pin, 's03-pill'));
+      else resetPulse('pill', layer(pin, 's03-pill'));
+      var shift = layer(pin, 'floor-shift');
+      var shiftY = shift && window.gsap ? window.gsap.getProperty(shift, 'y') : 0;
+      seatConnectors(pin, shiftY);
+    }
+    setIdlePlaying(!!(self && self.isActive) && riseTarget >= 0.92 && !motion.reduce);
+  }
+
+  function releaseGrowth(pin, on) {
+    if (!pin) return;
+    /* z-index only. Do not change layout or rebuild the pin —
+       that reflowed the pin end and trapped wheel-up at the last stage. */
+    if (on) pin.classList.add('is-after');
+    else pin.classList.remove('is-after');
+    syncCloseInk();
+  }
+
+  function kill() {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    if (motion.coverStop) motion.coverStop();
+    if (window.Cbx300Answers && window.Cbx300Answers.kill) window.Cbx300Answers.kill();
+    if (window.Cbx300Finish && window.Cbx300Finish.kill) window.Cbx300Finish.kill();
+    if (motion.themeOn) {
+      document.removeEventListener('click', motion.themeOn);
+      motion.themeOn = null;
+    }
+    unbindStageStep();
+    clearTimers();
+    killIdle();
+    if (motion.tween && motion.tween.scrollTrigger && motion.tween.scrollTrigger.kill) {
+      motion.tween.scrollTrigger.kill();
+    }
+    if (motion.tween && motion.tween.kill) motion.tween.kill();
+    motion.tween = null;
+    motion.triggers.forEach(function (t) {
+      if (t && t.kill) t.kill();
+    });
+    motion.triggers = [];
+    restChrome();
+    restRise();
+    if (motion.stage) {
+      motion.stage.style.height = '';
+    }
+    motion.stage = null;
+    if (motion.pin) {
+      motion.pin.classList.remove('is-static', 'is-cinematic', 'is-reduce', 'is-after');
+      motion.pin.style.height = '';
+      if (gsap) {
+        morphNodes(motion.pin).forEach(function (node) {
+          gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' });
+        });
+        Array.prototype.forEach.call(
+          motion.pin.querySelectorAll('[data-cbx-layer], [data-cbx-idle], .cbx-growth__word, .cbx-growth__rule, .cbx-growth__sub, .cbx-growth__lab, [data-cbx-rail-ink]'),
+          function (node) {
+            gsap.set(node, { clearProps: 'opacity,visibility,transform,x,y,rotation,scale,strokeDashoffset' });
+          }
+        );
+      }
+      applyBeat(motion.pin, 0);
+    }
+    motion.pin = null;
+    motion.reduce = false;
+    if (motion.normalized && ScrollTrigger && ScrollTrigger.normalizeScroll) {
+      ScrollTrigger.normalizeScroll(false);
+      motion.normalized = false;
+    }
+  }
+
+  function watchSteps(cover, pin, onStep) {
+    var ScrollTrigger = window.ScrollTrigger;
+    if (!ScrollTrigger) return;
+    if (cover) {
+      motion.triggers.push(ScrollTrigger.create({
+        trigger: cover,
+        start: 'top 70%',
+        end: 'bottom 45%',
+        onToggle: function (self) {
+          if (self.isActive && onStep) onStep(0);
+        }
+      }));
+    }
+    if (pin) {
+      motion.triggers.push(ScrollTrigger.create({
+        trigger: pin,
+        start: 'top 70%',
+        end: 'bottom 25%',
+        onToggle: function (self) {
+          if (self.isActive && onStep) onStep(1);
+        }
+      }));
+    }
+  }
+
+  function sizePane(stage) {
+    if (!stage) return paneH();
+    var h = paneH();
+    stage.style.height = h + 'px';
+    return h;
+  }
+
+  function beatIndexFromProgress(progress) {
+    var n = BEATS.length;
+    if (n <= 1) return 0;
+    if (progress >= 1) return n - 1;
+    var equal = Math.min(n - 1, Math.max(0, Math.floor(progress * n)));
+    var t = Math.max(0, progress) * MORPH_VH;
+    if (t < STAGE_HOLD + TRANS_12 * 0.5) return 0;
+    if (t < STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23 * 0.5) return 1;
+    return equal;
+  }
+
+  function pinSnapProgress(index) {
+    var total = RISE_DUR + MORPH_VH;
+    var t = RISE_DUR + STAGE_HOLD * 0.5;
+    if (index === 1) t = RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD * 0.5;
+    else if (index >= 2) return 1;
+    return t / total;
+  }
+
+  function stageStops(st) {
+    var start = st.start;
+    var span = Math.max(1, st.end - st.start);
+    return [
+      start,
+      start + pinSnapProgress(0) * span,
+      start + pinSnapProgress(1) * span,
+      start + pinSnapProgress(2) * span,
+      st.end
+    ];
+  }
+
+  function dockScrollY(st) {
+    var span = Math.max(1, st.end - st.start);
+    return st.start + span * (RISE_DUR / (RISE_DUR + MORPH_VH));
+  }
+
+  function railStops(st) {
+    var all = stageStops(st);
+    return [all[1], all[2], all[3]];
+  }
+
+  function nearestRailIndex(y, rails) {
+    var best = 0;
+    var bestD = Math.abs(y - rails[0]);
     var i;
-    for (i = 0; i < 32; i += 1) {
-      sheet.appendChild(el('i'));
+    for (i = 1; i < rails.length; i += 1) {
+      var d = Math.abs(y - rails[i]);
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
     }
-    return sheet;
+    if (y > rails[2] + 24) return 3;
+    return best;
   }
 
-  function shot(name, node) {
-    var wrap = el('div', 'film-shot');
-    wrap.setAttribute('data-shot', name);
-    wrap.appendChild(node);
-    return wrap;
+  function sectionStepFromY(y, st) {
+    if (!st) return 0;
+    var span = Math.max(1, st.end - st.start);
+    var risePx = span * (RISE_DUR / (RISE_DUR + MORPH_VH));
+    return y > st.start + risePx * 0.92 ? 1 : 0;
   }
 
-  function buildCover(beat) {
-    var claim = el('div', 'film-claim');
-    claim.setAttribute('data-film-claim', '');
-    var title = el('h2', 'film-title film-title--hook', beat.title);
-    claim.appendChild(title);
-    claim.appendChild(el('p', 'film-promise', META.promise));
-    claim.appendChild(el('p', 'film-quote', META.quote));
-    claim.appendChild(el('p', 'film-line', META.product));
-    claim.appendChild(el('p', 'film-demo', META.demo));
-    return claim;
+  function publishSectionStep() {
+    if (!motion.onStep) return;
+    var st = motion.tween && motion.tween.scrollTrigger;
+    if (!st) return;
+    var y = window.scrollY || document.documentElement.scrollTop || 0;
+    motion.onStep(sectionStepFromY(y, st));
   }
 
-  function buildClaim(beat) {
-    var claim = el('div', 'film-claim');
-    claim.setAttribute('data-film-claim', '');
-    if (beat.num) claim.appendChild(el('p', 'film-num', beat.num));
-    claim.appendChild(el('h2', 'film-title', beat.title));
-    if (beat.body) claim.appendChild(el('p', 'film-body', beat.body));
-    var chip = decisionChip(beat.decision);
-    if (chip) claim.appendChild(chip);
-    if (beat.ask) {
-      var ask = el('p', 'film-ask', beat.ask);
-      ask.setAttribute('data-film-ask', '');
-      claim.appendChild(ask);
+  function stageNodes(pin, index, table) {
+    var names = table[index] || [];
+    var out = [];
+    var i;
+    for (i = 0; i < names.length; i += 1) {
+      var node = layer(pin, names[i]);
+      if (node) out.push(node);
     }
-    if (beat.next && beat.next.length) {
-      var list = el('ul', 'film-next');
-      beat.next.forEach(function (line) {
-        list.appendChild(el('li', '', line));
+    return out;
+  }
+
+  function bitX(name) {
+    if (name === 's02-lina') return LINA_X;
+    if (name === 's03-side-l') return SIDE_L_X;
+    return 0;
+  }
+
+  function showStageBits(pin, index) {
+    var gsap = window.gsap;
+    var bits = stageNodes(pin, index, STAGE_BITS);
+    if (!gsap || !bits.length) return;
+    gsap.set(bits, { opacity: 1, y: 0, rotation: 0, scale: 1 });
+    bits.forEach(function (node) {
+      gsap.set(node, { x: bitX(node.getAttribute('data-cbx-layer')) });
+    });
+    if (index === 0) {
+      var draw = layer(pin, 's01-arrow-draw');
+      if (draw) gsap.set(draw, { strokeDashoffset: 0 });
+    }
+  }
+
+  function copyNodes(beatEl) {
+    var empty = { lab: null, words: [], rule: null, sub: null, all: [] };
+    if (!beatEl) return empty;
+    var lab = beatEl.querySelector('.cbx-growth__lab');
+    var words = Array.prototype.slice.call(beatEl.querySelectorAll('.cbx-growth__word'));
+    var rule = beatEl.querySelector('.cbx-growth__rule');
+    var sub = beatEl.querySelector('.cbx-growth__sub');
+    return {
+      lab: lab,
+      words: words,
+      rule: rule,
+      sub: sub,
+      all: [lab].concat(words, [rule, sub]).filter(Boolean)
+    };
+  }
+
+  function clearShiftGroups(pin) {
+    var gsap = window.gsap;
+    if (!gsap || !pin) return;
+    var tops = [];
+    var i;
+    for (i = 0; i < STAGE_TOPS.length; i += 1) tops = tops.concat(stageNodes(pin, i, STAGE_TOPS));
+    if (tops.length) gsap.set(tops, { clearProps: 'opacity,transform,x,y,scale,rotation' });
+  }
+
+  function clearShiftText(nodes) {
+    var gsap = window.gsap;
+    if (!gsap || !nodes || !nodes.length) return;
+    /* Only the copy this shift moved. A rule on a stage that did not
+       move keeps scaleX; clearing that one draws a full-width divider. */
+    var flat = [];
+    var i;
+    for (i = 0; i < nodes.length; i += 1) {
+      if (nodes[i]) flat.push(nodes[i]);
+    }
+    if (flat.length) gsap.set(flat, { clearProps: 'transform,will-change' });
+  }
+
+  function syncScrubPose() {
+    var tl = motion.tween;
+    if (!tl || !tl.render) return;
+    /* Same time still has to re-apply. A plain time() set no-ops when
+       the playhead has not moved, and the shift tweens would linger. */
+    tl.render(tl.time(), true, true);
+    /* A leave tween that has already played renders its start values at
+       progress 0, which covers the earlier beat. Replay future tweens
+       from the latest start so the resting beat wins. */
+    var now = tl.time();
+    var kids = tl.getChildren(true, true, false);
+    var pending = [];
+    var i;
+    for (i = 0; i < kids.length; i += 1) {
+      if (kids[i].startTime() > now) pending.push(kids[i]);
+    }
+    pending.sort(function (a, b) { return b.startTime() - a.startTime(); });
+    for (i = 0; i < pending.length; i += 1) pending[i].totalTime(0);
+  }
+
+  function resumeIdle() {
+    var st = motion.tween && motion.tween.scrollTrigger;
+    var rise = motion.riseState ? motion.riseState.p : 0;
+    setIdlePlaying(!!(st && st.isActive) && rise >= 0.92 && !motion.reduce);
+  }
+
+  function unbindStageStep() {
+    var ctrl = motion.stepCtrl;
+    if (!ctrl) return;
+    if (ctrl.timer) window.clearTimeout(ctrl.timer);
+    if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
+    if (ctrl.unlockTimer) window.clearTimeout(ctrl.unlockTimer);
+    if (ctrl.tween && ctrl.tween.kill) ctrl.tween.kill();
+    if (motion.pin) motion.pin.classList.remove('is-shifting');
+    window.removeEventListener('wheel', ctrl.onWheel, true);
+    window.removeEventListener('keydown', ctrl.onKey, true);
+    window.removeEventListener('touchstart', ctrl.onTouchStart, true);
+    window.removeEventListener('touchmove', ctrl.onTouchMove, true);
+    window.removeEventListener('touchend', ctrl.onTouchEnd, true);
+    window.removeEventListener('touchcancel', ctrl.onTouchEnd, true);
+    window.removeEventListener('scroll', ctrl.onScroll);
+    motion.stepCtrl = null;
+  }
+
+  function bindStageStep() {
+    unbindStageStep();
+    var ctrl = {
+      active: false,
+      kind: 'rise',
+      origin: 0,
+      originY: 0,
+      settled: 0,
+      park: null,
+      travel: 0,
+      timer: 0,
+      restTimer: 0,
+      unlockTimer: 0,
+      tween: null,
+      pendingDir: 0,
+      committed: false,
+      locked: false,
+      lastInput: 0,
+      touchY: 0,
+      touchOn: false,
+      riseHold: false
+    };
+
+    function pinTrigger() {
+      return motion.tween && motion.tween.scrollTrigger;
+    }
+
+    function yNow() {
+      return window.scrollY || document.documentElement.scrollTop || 0;
+    }
+
+    function killTween() {
+      var tw = ctrl.tween;
+      ctrl.tween = null;
+      ctrl.pendingDir = 0;
+      if (tw && tw.kill) tw.kill();
+      var pin = motion.pin;
+      var shifting = pin && pin.classList.contains('is-shifting');
+      if (pin) pin.classList.remove('is-shifting');
+      if (!shifting) return;
+      clearShiftGroups(pin);
+      syncScrubPose();
+      resumeIdle();
+    }
+
+    function noteInput() {
+      ctrl.lastInput = Date.now();
+    }
+
+    function clearIdleTimers() {
+      if (ctrl.timer) window.clearTimeout(ctrl.timer);
+      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
+      ctrl.timer = 0;
+      ctrl.restTimer = 0;
+    }
+
+    function armUnlock() {
+      if (ctrl.unlockTimer) window.clearTimeout(ctrl.unlockTimer);
+      var quiet = Date.now() - (ctrl.lastInput || 0);
+      var wait = Math.max(0, STEP_LOCK_MS - quiet);
+      ctrl.unlockTimer = window.setTimeout(tryUnlock, wait);
+    }
+
+    function tryUnlock() {
+      ctrl.unlockTimer = 0;
+      if (!ctrl.locked) return;
+      if (ctrl.tween) return;
+      var quiet = Date.now() - (ctrl.lastInput || 0);
+      if (quiet < STEP_LOCK_MS) {
+        ctrl.unlockTimer = window.setTimeout(tryUnlock, STEP_LOCK_MS - quiet);
+        return;
+      }
+      ctrl.locked = false;
+      ctrl.travel = 0;
+      ctrl.active = false;
+      ctrl.committed = false;
+    }
+
+    function lockStep() {
+      ctrl.locked = true;
+      ctrl.lockAt = Date.now();
+      ctrl.travel = 0;
+      ctrl.active = true;
+      ctrl.committed = true;
+      clearIdleTimers();
+    }
+
+    function animateTo(y) {
+      killTween();
+      lockStep();
+      ctrl.park = y;
+      var gsap = window.gsap;
+      if (!gsap) {
+        window.scrollTo(0, y);
+        publishSectionStep();
+        armUnlock();
+        return;
+      }
+      var proxy = { y: yNow() };
+      ctrl.tween = gsap.to(proxy, {
+        y: y,
+        duration: 0.26,
+        ease: 'power3.out',
+        overwrite: true,
+        onUpdate: function () { window.scrollTo(0, proxy.y); },
+        onComplete: function () {
+          ctrl.tween = null;
+          window.scrollTo(0, y);
+          publishSectionStep();
+          armUnlock();
+        }
       });
-      claim.appendChild(list);
     }
-    if (beat.finding) {
-      var end = el('div', 'film-end');
-      var back = el('button', 'study__end-btn', 'Back to work');
-      back.type = 'button';
-      back.setAttribute('data-study-close', '');
-      end.appendChild(back);
-      claim.appendChild(end);
+
+    function easeTo(y, opts) {
+      opts = opts || {};
+      killTween();
+      if (ctrl.restTimer) window.clearTimeout(ctrl.restTimer);
+      ctrl.restTimer = 0;
+      ctrl.park = y;
+      ctrl.kind = 'rise';
+      var gsap = window.gsap;
+      function done() {
+        if (opts.onComplete) opts.onComplete();
+        else publishSectionStep();
+      }
+      if (!gsap) {
+        window.scrollTo(0, y);
+        done();
+        return;
+      }
+      var proxy = { y: yNow() };
+      ctrl.tween = gsap.to(proxy, {
+        y: y,
+        duration: opts.duration || 0.55,
+        ease: opts.ease || 'sine.inOut',
+        overwrite: true,
+        onUpdate: function () {
+          if (ctrl.locked) return;
+          window.scrollTo(0, proxy.y);
+        },
+        onComplete: function () {
+          ctrl.tween = null;
+          if (ctrl.locked) return;
+          window.scrollTo(0, y);
+          done();
+        }
+      });
     }
-    return claim;
-  }
 
-  function buildViz(beat) {
-    var viz = el('div', 'film-viz');
-    var stack = el('div', 'film-shot-stack');
-    stack.setAttribute('data-shot-stack', '');
+    /* Curtain is fully up from the dock line through stage 01.
+       Resting there is stage 01, with the same lock as a full rise. */
+    function scrubCurtain(st, rails, y, dy) {
+      if (!ctrl.locked) killTween();
+      ctrl.kind = 'rise';
+      ctrl.active = true;
+      ctrl.committed = false;
+      var lo = st.start;
+      var hi = dockScrollY(st);
+      var dock = rails[0];
+      /* Stage 01 sits past the dock. The curtain is already fully up
+         across that band, so an upward gesture skips it and scrubs. */
+      if (dy < 0 && y > hi) y = hi;
+      var next = y + dy;
+      if (dy > 0 && next >= hi - 0.5) {
+        window.scrollTo(0, dock);
+        ctrl.park = dock;
+        ctrl.settled = 0;
+        ctrl.origin = 0;
+        ctrl.originY = dock;
+        lockStep();
+        armUnlock();
+        return;
+      }
+      if (next <= lo) {
+        clearIdleTimers();
+        window.scrollTo(0, lo);
+        ctrl.park = lo;
+        ctrl.settled = -1;
+        ctrl.originY = lo;
+        return;
+      }
+      window.scrollTo(0, next);
+    }
 
-    switch (beat.id) {
-      case 'cover':
-        stack.appendChild(shot('cover', coverCompose()));
-        break;
-      case 'ladder':
-        stack.appendChild(shot('ladder', ladderBoard()));
-        stack.appendChild(shot('pair', pairBoard()));
-        break;
-      case 'roles':
-        stack.appendChild(shot('jobs', jobsBoard()));
-        break;
-      case 'approvals':
-        stack.appendChild(shot('door', doorBoard()));
-        stack.appendChild(shot('batch', batchBoard()));
-        break;
-      case 'money':
-        stack.appendChild(shot('fail', failBoard()));
-        stack.appendChild(shot('balances', balanceBoard()));
-        break;
-      case 'permissions':
-        stack.appendChild(shot('grid', verbBoard(false)));
-        stack.appendChild(shot('solo', verbBoard(true)));
-        break;
-      case 'grammar':
-        stack.appendChild(shot('ending', endingTrack()));
-        stack.appendChild(shot('empty', emptyGrid()));
-        break;
-      case 'scale':
-        stack.appendChild(shot('sheet', contactSheet()));
-        break;
-      default: {
-        var unknown = beat.id;
-        stack.appendChild(shot('board', el('div', 'film-paper film-screen', unknown)));
-        break;
+    function dockedAt(y, rails) {
+      var i;
+      for (i = 0; i < rails.length; i += 1) {
+        if (Math.abs(y - rails[i]) <= DOCK_PX) return i;
+      }
+      return -1;
+    }
+
+    function commitStep(rails, origin, dir) {
+      ctrl.origin = origin;
+      ctrl.originY = rails[origin];
+      var dest = Math.max(0, Math.min(rails.length - 1, ctrl.origin + dir));
+      if (dest === origin) {
+        lockStep();
+        armUnlock();
+        return;
+      }
+      ctrl.kind = 'step';
+      ctrl.settled = dest;
+      ctrl.park = rails[dest];
+      playStageShift(origin, dest, rails[dest]);
+    }
+
+    /* Scroll jumps to the destination rail in this turn. The pin and the
+       fixed curtain keep the panel visually still; this timeline then
+       replaces the seek with a directional crossfade before paint. */
+    function playStageShift(origin, dest, y) {
+      killTween();
+      lockStep();
+      var pin = motion.pin;
+      var gsap = window.gsap;
+      var animate = !!(pin && gsap && !motion.reduce);
+      if (animate) pin.classList.add('is-shifting');
+      window.scrollTo(0, y);
+      if (window.ScrollTrigger && window.ScrollTrigger.update) window.ScrollTrigger.update();
+      publishSectionStep();
+      if (!animate) {
+        if (motion.reduce) {
+          var token = { kill: function () { token.dead = true; } };
+          ctrl.tween = token;
+          window.setTimeout(function () {
+            if (ctrl.tween !== token) return;
+            ctrl.tween = null;
+            ctrl.lastInput = Date.now();
+            armUnlock();
+          }, 200);
+          return;
+        }
+        armUnlock();
+        return;
+      }
+      var forward = dest > origin;
+      var outCopyY = forward ? -SHIFT_COPY : SHIFT_COPY;
+      var inCopyY = forward ? SHIFT_COPY : -SHIFT_COPY;
+      var outIlloY = forward ? -SHIFT_ILLO : SHIFT_ILLO;
+      var inIlloY = forward ? SHIFT_ILLO : -SHIFT_ILLO;
+      var beats = pin.querySelectorAll('[data-cbx-beat]');
+      var outCopy = copyNodes(beats[origin]);
+      var inCopy = copyNodes(beats[dest]);
+      var outTops = stageNodes(pin, origin, STAGE_TOPS);
+      var inTops = stageNodes(pin, dest, STAGE_TOPS);
+      if (pin.offsetWidth >= 0) pin.classList.add('is-shifting');
+      setIdlePlaying(false);
+      showStageBits(pin, origin);
+      showStageBits(pin, dest);
+      if (outTops.length) gsap.set(outTops, { opacity: 1, y: 0, scale: 1 });
+      if (inTops.length) gsap.set(inTops, { opacity: 0, y: inIlloY, scale: 1.02 });
+      if (outCopy.all.length) gsap.set(outCopy.all, { opacity: 1, y: 0, force3D: true });
+      if (outCopy.rule) gsap.set(outCopy.rule, { scaleX: 1 });
+      if (inCopy.all.length) gsap.set(inCopy.all, { opacity: 0, y: inCopyY, force3D: true });
+      var ink = pin.querySelector('[data-cbx-rail-ink]');
+      if (ink) gsap.set(ink, { xPercent: origin * 100 });
+      var floorFrom = origin < 2 ? FLOOR_ROOT : 0;
+      var floorTo = dest < 2 ? FLOOR_ROOT : 0;
+      var legFrom = origin < 2 ? (LEG_FULL - FLOOR_DROP) / LEG_FULL : 1;
+      var legTo = dest < 2 ? (LEG_FULL - FLOOR_DROP) / LEG_FULL : 1;
+      var floor = layer(pin, 'floor-shift');
+      var legs = layer(pin, 'desk-legs');
+      var crossFloor = origin === 2 || dest === 2;
+      if (crossFloor && floor) {
+        gsap.set(floor, { y: floorFrom });
+        seatConnectors(pin, floorFrom);
+      }
+      if (crossFloor && legs) gsap.set(legs, { scaleY: legFrom, svgOrigin: LEG_ORIGIN });
+
+      var shiftTl = gsap.timeline({
+        onComplete: function () {
+          if (ctrl.tween !== shiftTl) return;
+          var dir = ctrl.pendingDir;
+          ctrl.pendingDir = 0;
+          ctrl.tween = null;
+          pin.classList.remove('is-shifting');
+          clearShiftText(outCopy.all.concat(inCopy.all));
+          clearShiftGroups(pin);
+          syncScrubPose();
+          resumeIdle();
+          publishSectionStep();
+          if (dir) {
+            var st = pinTrigger();
+            if (st) commitStep(railStops(st), ctrl.settled, dir);
+            return;
+          }
+          ctrl.locked = false;
+          ctrl.travel = 0;
+          ctrl.active = false;
+          ctrl.committed = false;
+          if (ctrl.unlockTimer) {
+            window.clearTimeout(ctrl.unlockTimer);
+            ctrl.unlockTimer = 0;
+          }
+        }
+      });
+      ctrl.tween = shiftTl;
+      if (outCopy.all.length) {
+        shiftTl.fromTo(outCopy.all, { opacity: 1, y: 0 }, {
+          opacity: 0,
+          y: outCopyY,
+          duration: 0.25,
+          ease: 'expo.out',
+          overwrite: false,
+          immediateRender: false,
+          force3D: true
+        }, 0);
+      }
+      if (inCopy.lab) {
+        shiftTl.fromTo(inCopy.lab, { opacity: 0, y: inCopyY }, {
+          opacity: 1, y: 0, duration: 0.46, ease: 'expo.out', overwrite: false, immediateRender: false, force3D: true
+        }, 0.12);
+      }
+      if (inCopy.words.length) {
+        shiftTl.fromTo(inCopy.words, { opacity: 0, y: inCopyY }, {
+          opacity: 1, y: 0, duration: 0.42, ease: 'expo.out', overwrite: false, immediateRender: false, force3D: true
+        }, 0.17);
+      }
+      if (inCopy.rule) {
+        shiftTl.fromTo(inCopy.rule, { opacity: 0, y: inCopyY }, {
+          opacity: 1, y: 0, duration: 0.38, ease: 'expo.out', overwrite: false, immediateRender: false, force3D: true
+        }, 0.22);
+      }
+      if (inCopy.sub) {
+        shiftTl.fromTo(inCopy.sub, { opacity: 0, y: inCopyY }, {
+          opacity: 1, y: 0, duration: 0.36, ease: 'expo.out', overwrite: false, immediateRender: false, force3D: true
+        }, 0.26);
+      }
+      if (outTops.length) {
+        shiftTl.to(outTops, {
+          opacity: 0, duration: 0.1, ease: 'none', overwrite: false
+        }, 0.06);
+        shiftTl.to(outTops, {
+          y: outIlloY, duration: 0.36, ease: 'expo.out', overwrite: false
+        }, 0);
+      }
+      if (inTops.length) {
+        shiftTl.to(inTops, {
+          opacity: 1, duration: 0.1, ease: 'none', overwrite: false
+        }, 0.06);
+        shiftTl.to(inTops, {
+          y: 0, scale: 1, duration: 0.52, ease: 'expo.out', overwrite: false
+        }, 0);
+      }
+      if (ink) {
+        shiftTl.to(ink, {
+          xPercent: dest * 100, duration: SHIFT_DUR, ease: 'expo.out', overwrite: false
+        }, 0);
+      }
+      if (crossFloor && floor) {
+        shiftTl.to(floor, {
+          y: floorTo,
+          duration: SHIFT_DUR,
+          ease: 'expo.out',
+          overwrite: false,
+          onUpdate: function () { seatConnectors(pin, gsap.getProperty(floor, 'y')); }
+        }, 0);
+      }
+      if (crossFloor && legs) {
+        shiftTl.to(legs, {
+          scaleY: legTo,
+          svgOrigin: LEG_ORIGIN,
+          duration: SHIFT_DUR,
+          ease: 'expo.out',
+          overwrite: false
+        }, 0);
       }
     }
 
-    viz.appendChild(stack);
-    return viz;
+    function armTravelReset() {
+      if (ctrl.timer) window.clearTimeout(ctrl.timer);
+      ctrl.timer = window.setTimeout(function () {
+        ctrl.timer = 0;
+        if (ctrl.locked || ctrl.tween) return;
+        ctrl.travel = 0;
+        ctrl.active = false;
+      }, GESTURE_QUIET);
+    }
+
+    function wheelPixels(event) {
+      var dy = event.deltaY || 0;
+      if (event.deltaMode === 1) dy *= 16;
+      else if (event.deltaMode === 2) dy *= viewH();
+      return dy;
+    }
+
+    function inBand(st, y) {
+      return y >= st.start - 2 && y <= st.end + 2;
+    }
+
+    function handleDelta(dy, event) {
+      if (motion.reduce) return false;
+      var st = pinTrigger();
+      if (!st || !dy) return false;
+      var y = yNow();
+      if (y <= st.start + 1 && dy < 0) return false;
+      /* Yield native wheel only going DOWN past the pin so S03 can be
+         reached. Yielding on the way UP trapped the last coffee stage:
+         one notch left the pin, the next snapped back to st.end. */
+      if (y >= st.end - 1 && dy > 0) return false;
+      if (!inBand(st, y)) return false;
+      var rails = railStops(st);
+      var last = rails[rails.length - 1];
+      if (y > last + DOCK_PX && dy > 0) return false;
+      if (dockedAt(y, rails) >= rails.length - 1 && dy > 0) return false;
+      if (event.cancelable) event.preventDefault();
+      if (ctrl.locked) {
+        if (ctrl.tween) {
+          /* A continuing roll (events still arriving after the flick
+             tail) queues the next stage so there is no quiet gap. */
+          if (Date.now() - (ctrl.lockAt || 0) > ROLL_ARM_MS) {
+            ctrl.pendingDir = dy > 0 ? 1 : -1;
+          }
+          return true;
+        }
+        ctrl.locked = false;
+        ctrl.travel = 0;
+        ctrl.active = false;
+        ctrl.committed = false;
+        if (ctrl.unlockTimer) {
+          window.clearTimeout(ctrl.unlockTimer);
+          ctrl.unlockTimer = 0;
+        }
+      }
+      noteInput();
+      if (ctrl.tween) {
+        killTween();
+        y = yNow();
+      }
+      var dock = dockedAt(y, rails);
+      if (y < rails[0] - 0.5) {
+        scrubCurtain(st, rails, y, dy);
+        return true;
+      }
+      if (dock === 0 && dy < 0) {
+        scrubCurtain(st, rails, y, dy);
+        return true;
+      }
+      if (y > last + DOCK_PX && dy < 0) {
+        window.scrollTo(0, last);
+        ctrl.active = true;
+        ctrl.kind = 'step';
+        ctrl.origin = rails.length - 1;
+        ctrl.originY = last;
+        ctrl.park = last;
+        ctrl.settled = rails.length - 1;
+        ctrl.travel = 0;
+        return true;
+      }
+      if (dock < 0) {
+        if (dy < 0) {
+          var prev = -1;
+          var i;
+          for (i = rails.length - 1; i >= 0; i -= 1) {
+            if (rails[i] < y - DOCK_PX) {
+              prev = i;
+              break;
+            }
+          }
+          if (prev < 0) {
+            scrubCurtain(st, rails, y, dy);
+            return true;
+          }
+          commitStep(rails, Math.min(rails.length - 1, prev + 1), -1);
+          return true;
+        }
+        var near = nearestRailIndex(y, rails);
+        if (near > 2) near = 2;
+        window.scrollTo(0, rails[near]);
+        return true;
+      }
+      if (!ctrl.active || ctrl.kind !== 'step' || ctrl.origin !== dock) {
+        ctrl.active = true;
+        ctrl.kind = 'step';
+        ctrl.origin = dock;
+        ctrl.originY = rails[dock];
+        ctrl.travel = 0;
+        ctrl.committed = false;
+      }
+      ctrl.travel += dy;
+      if (Math.abs(ctrl.travel) >= STEP_PX) {
+        var dir = ctrl.travel >= 0 ? 1 : -1;
+        if (ctrl.origin === 0 && dir < 0) {
+          ctrl.travel = 0;
+          scrubCurtain(st, rails, rails[0], dy);
+          return true;
+        }
+        commitStep(rails, ctrl.origin, dir);
+        return true;
+      }
+      window.scrollTo(0, rails[ctrl.origin]);
+      armTravelReset();
+      return true;
+    }
+
+    function onWheel(event) {
+      if (event.ctrlKey || event.metaKey) return;
+      /* Section 03 owns the wheel while its pin is active. Past S02 the
+         native document scroller must keep moving — do not preventDefault. */
+      if (document.documentElement.classList.contains('is-cbx-ans-pin')) return;
+      if (document.documentElement.classList.contains('is-cbx-finish-pin')) return;
+      handleDelta(wheelPixels(event), event);
+    }
+
+    function keyDir(event) {
+      if (event.key === 'ArrowDown' || event.key === 'PageDown') return 1;
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') return -1;
+      if (event.key === ' ' || event.key === 'Spacebar') return event.shiftKey ? -1 : 1;
+      return 0;
+    }
+
+    function onKey(event) {
+      if (motion.reduce) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      var dir = keyDir(event);
+      if (!dir) return;
+      var target = event.target;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.tagName === 'BUTTON' || target.tagName === 'A' || target.isContentEditable)) return;
+      if (!document.documentElement.classList.contains('is-study-page')) return;
+      var st = pinTrigger();
+      if (!st) return;
+      var y = yNow();
+      if (!inBand(st, y)) return;
+      if (event.repeat) {
+        if (event.cancelable) event.preventDefault();
+        return;
+      }
+      noteInput();
+      if (ctrl.locked) {
+        if (event.cancelable) event.preventDefault();
+        if (ctrl.tween) {
+          if (motion.pin && motion.pin.classList.contains('is-shifting') && !ctrl.pendingDir) {
+            ctrl.pendingDir = dir;
+          }
+          return;
+        }
+        ctrl.locked = false;
+        ctrl.travel = 0;
+        ctrl.active = false;
+        ctrl.committed = false;
+        if (ctrl.unlockTimer) window.clearTimeout(ctrl.unlockTimer);
+        ctrl.unlockTimer = 0;
+      }
+      var rails = railStops(st);
+      var dock = dockedAt(y, rails);
+      if (y < rails[0] - DOCK_PX) {
+        if (event.cancelable) event.preventDefault();
+        if (dir > 0) animateTo(rails[0]);
+        return;
+      }
+      if (dock < 0) {
+        dock = nearestRailIndex(y, rails);
+        if (dock > 2) dock = 2;
+      }
+      if (dock === 0 && dir < 0) {
+        if (event.cancelable) event.preventDefault();
+        ctrl.settled = -1;
+        window.scrollTo(0, dockScrollY(st));
+        easeTo(st.start, { duration: 0.9, ease: 'power3.inOut' });
+        return;
+      }
+      if (dock >= rails.length - 1 && dir > 0) {
+        if (event.cancelable) event.preventDefault();
+        animateTo(st.end + 8);
+        return;
+      }
+      if (event.cancelable) event.preventDefault();
+      ctrl.origin = dock;
+      commitStep(rails, dock, dir);
+    }
+
+    function onTouchStart(event) {
+      if (motion.reduce || !event.touches || event.touches.length !== 1) {
+        ctrl.touchOn = false;
+        return;
+      }
+      ctrl.touchY = event.touches[0].clientY;
+      ctrl.touchOn = true;
+    }
+
+    function onTouchMove(event) {
+      if (!ctrl.touchOn || motion.reduce || !event.touches || event.touches.length !== 1) return;
+      var y = event.touches[0].clientY;
+      var dy = ctrl.touchY - y;
+      ctrl.touchY = y;
+      if (!dy) return;
+      handleDelta(dy, event);
+    }
+
+    function onTouchEnd() {
+      ctrl.touchOn = false;
+    }
+
+    ctrl.onWheel = onWheel;
+    ctrl.onKey = onKey;
+    ctrl.onTouchStart = onTouchStart;
+    ctrl.onTouchMove = onTouchMove;
+    ctrl.onTouchEnd = onTouchEnd;
+    function onScroll() {
+      publishSectionStep();
+    }
+
+    ctrl.onScroll = onScroll;
+    window.addEventListener('wheel', onWheel, { passive: false, capture: true });
+    window.addEventListener('keydown', onKey, { passive: false, capture: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: false, capture: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false, capture: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: false, capture: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: false, capture: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    motion.stepCtrl = ctrl;
   }
 
-  function buildBeat(beat) {
-    var section = el('section', 'film-beat' + (beat.layout === 'cover' ? ' film-beat--cover' : ' film-beat--chapter'));
-    section.setAttribute('data-film-beat', beat.id);
-    section.setAttribute('data-recipe', beat.recipe);
-    section.setAttribute('data-pin', beat.pin ? 'true' : 'false');
-    if (beat.hold) section.setAttribute('data-hold', beat.hold);
-    if (beat.finding) section.setAttribute('data-finding', 'true');
+  var MV_FLICK = ['s01-inv-012', 's02-card-free', 's03-card-supplier'];
+  var mvBurstTimer = 0;
+  var mvFlickTimer = 0;
 
-    var hold = el('div', 'film-hold');
-    hold.setAttribute('data-film-hold', '');
-    var stage = el('div', 'film-stage');
-    stage.setAttribute('data-film-stage', '');
+  function pulseMvArrive(pane, index) {
+    if (!isMultiverse() || motion.reduce || !pane) return;
+    var card = pane.querySelector('[data-cbx-layer="' + (MV_FLICK[index] || '') + '"]');
+    var prev = pane.querySelector('.is-mv-flick');
+    if (prev && prev !== card) prev.classList.remove('is-mv-flick');
+    pane.classList.remove('is-mv-burst');
+    if (pane.offsetWidth >= 0) pane.classList.add('is-mv-burst');
+    if (mvBurstTimer) window.clearTimeout(mvBurstTimer);
+    mvBurstTimer = window.setTimeout(function () {
+      pane.classList.remove('is-mv-burst');
+      mvBurstTimer = 0;
+    }, 420);
+    if (!card) return;
+    card.classList.remove('is-mv-flick');
+    if (card.offsetWidth >= 0) card.classList.add('is-mv-flick');
+    if (mvFlickTimer) window.clearTimeout(mvFlickTimer);
+    mvFlickTimer = window.setTimeout(function () {
+      card.classList.remove('is-mv-flick');
+      mvFlickTimer = 0;
+    }, 420);
+  }
 
-    if (beat.layout === 'cover') stage.appendChild(buildCover(beat));
-    else stage.appendChild(buildClaim(beat));
+  function applyBeat(root, index) {
+    var pane = root;
+    if (root && root.closest && !root.hasAttribute('data-cbx-growth')) {
+      pane = root.closest('[data-cbx-growth]');
+    }
+    if (!pane) return;
+    var arrived = pane.getAttribute('data-cbx-mv-seen') !== String(index);
+    pane.setAttribute('data-cbx-live-beat', String(index));
+    if (arrived) {
+      pane.setAttribute('data-cbx-mv-seen', String(index));
+      pulseMvArrive(pane, index);
+    }
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-beat]'), function (beat, i) {
+      beat.classList.toggle('is-on', i === index);
+    });
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-illo]'), function (illo, i) {
+      if (illo.getAttribute('data-cbx-illo') === 'scene') {
+        illo.classList.add('is-on');
+        return;
+      }
+      illo.classList.toggle('is-on', i === index);
+    });
+    Array.prototype.forEach.call(pane.querySelectorAll('[data-cbx-step]'), function (step, i) {
+      step.classList.toggle('is-on', i === index);
+      step.classList.toggle('is-past', i < index);
+    });
+  }
 
-    stage.appendChild(buildViz(beat));
-    stage.appendChild(captionStack(beat.captions || []));
+  function setupStatic(pin) {
+    if (!pin) return;
+    pin.classList.add('is-static');
+    pin.style.height = '';
+    var beats = pin.querySelectorAll('[data-cbx-beat]');
+    applyBeat(pin, Math.max(0, beats.length - 1));
+  }
 
-    hold.appendChild(stage);
-    section.appendChild(hold);
-    return section;
+  function bindCinematic(world, opts) {
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    var stage = world.querySelector('[data-cbx-stage]');
+    var pin = world.querySelector('[data-cbx-growth]');
+    var cover = world.querySelector('[data-cbx-section="01"]');
+    var onStep = opts.onStep;
+
+    motion.pin = pin;
+    motion.stage = stage;
+    if (!pin || !stage) {
+      watchSteps(cover, pin, onStep);
+      applyCbxRise(0);
+      return;
+    }
+
+    pin.classList.remove('is-static');
+    pin.classList.toggle('is-cinematic', !motion.reduce);
+    pin.classList.toggle('is-reduce', !!motion.reduce);
+    sizePane(stage);
+    applyCbxRise(0);
+
+    morphNodes(pin).forEach(function (node) {
+      gsap.set(node, { clearProps: 'opacity,visibility,transform,y,filter' });
+    });
+    applyBeat(pin, 0);
+    if (motion.reduce) posePersist(pin, 0);
+    else setRailInk(pin, 0);
+
+    motion.riseState.p = 0;
+
+    var tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: stage,
+        start: 'top top',
+        end: function () {
+          sizePane(stage);
+          return '+=' + Math.round(paneH() * (RISE_DUR + MORPH_VH));
+        },
+        pin: true,
+        pinSpacing: true,
+        scrub: true,
+        invalidateOnRefresh: true,
+        anticipatePin: 1,
+        refreshPriority: 1,
+        onRefresh: function () { sizePane(stage); },
+        onToggle: function (self) {
+          if (!self.isActive) {
+            tweenCbxRise(self.progress >= 1 ? 1 : 0, true);
+            setIdlePlaying(false);
+            releaseGrowth(pin, self.progress >= 1);
+          } else {
+            releaseGrowth(pin, false);
+          }
+          if (self.isActive) publishSectionStep();
+        },
+        onUpdate: function (self) {
+          var dur = tl.duration() || 1;
+          var morphStart = RISE_DUR / dur;
+          var riseTarget = 1;
+          if (morphStart > 0) {
+            riseTarget = Math.max(0, Math.min(1, self.progress / morphStart));
+          }
+          tweenCbxRise(riseTarget);
+          var morphP = 0;
+          if (self.progress > morphStart) {
+            morphP = (self.progress - morphStart) / Math.max(0.0001, 1 - morphStart);
+          }
+          /* A docked step has already seeked this timeline. Leave the
+             in-place crossfade in charge of copy, layers, and the ink. */
+          if (pin.classList.contains('is-shifting')) {
+            applyBeat(pin, beatIndexFromProgress(morphP));
+            publishSectionStep();
+            return;
+          }
+          applyBeat(pin, beatIndexFromProgress(morphP));
+          tickMorph(pin, morphP, riseTarget, self);
+          publishSectionStep();
+        }
+      }
+    });
+
+    tl.to({}, { duration: RISE_DUR });
+    tl.to({}, { duration: MORPH_VH });
+    tl.addLabel('stage0', RISE_DUR + STAGE_HOLD * 0.5);
+    tl.addLabel('stage1', RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD * 0.5);
+    tl.addLabel('stage2', RISE_DUR + STAGE_HOLD + TRANS_12 + STAGE_HOLD + TRANS_23 + STAGE_HOLD * 0.5);
+    if (!motion.reduce) wireScene(tl, pin);
+    motion.tween = tl;
+    if (tl.scrollTrigger) motion.triggers.push(tl.scrollTrigger);
+    motion.onStep = onStep;
+    bindStageStep();
+    publishSectionStep();
+  }
+
+  function refreshSoon() {
+    var ScrollTrigger = window.ScrollTrigger;
+    if (!ScrollTrigger) return;
+    ScrollTrigger.refresh();
+    motion.refreshTimers.push(window.setTimeout(function () { ScrollTrigger.refresh(); }, 160));
+    motion.refreshTimers.push(window.setTimeout(function () { ScrollTrigger.refresh(); }, 520));
+  }
+
+  function whenImages(pin, fn) {
+    if (!pin) {
+      fn();
+      return;
+    }
+    var imgs = pin.querySelectorAll('img');
+    var left = imgs.length;
+    if (!left) {
+      fn();
+      return;
+    }
+    var done = function () {
+      left -= 1;
+      if (left <= 0) fn();
+    };
+    Array.prototype.forEach.call(imgs, function (img) {
+      if (img.complete) done();
+      else {
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      }
+    });
+  }
+
+  function bind(world, opts) {
+    kill();
+    if (!world) return;
+    opts = opts || {};
+    var pin = world.querySelector('[data-cbx-growth]');
+    var cover = world.querySelector('[data-cbx-section="01"]');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    motion.reduce = !!(reduce && reduce.matches);
+    motion.onStep = opts.onStep || null;
+
+    function afterIllos() {
+      if (!gsap || !ScrollTrigger) {
+        setupStatic(pin);
+        restRise();
+        posePersist(pin, BEATS.length - 1);
+        if (ScrollTrigger) {
+          watchSteps(cover, pin, opts.onStep);
+        }
+        bindAnswers(world, opts);
+        return;
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
+
+      var touch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      if (touch && ScrollTrigger.normalizeScroll) {
+        ScrollTrigger.normalizeScroll(true);
+        motion.normalized = true;
+      }
+
+      bindCinematic(world, opts);
+      if (!motion.reduce) armIdle(pin);
+      bindAnswers(world, opts);
+      whenImages(pin, refreshSoon);
+    }
+
+    fillIllos(pin, afterIllos);
+  }
+
+  function bindAnswers(world, opts) {
+    if (!window.Cbx300Answers || !window.Cbx300Answers.bind) return;
+    window.Cbx300Answers.bind(world, {
+      onStep: opts && opts.onStep,
+      page: opts && opts.page,
+      reduce: motion.reduce,
+      onReady: function () {
+        if (window.Cbx300Finish && window.Cbx300Finish.bind) {
+          window.Cbx300Finish.bind(world, { reduce: motion.reduce });
+        }
+        if (window.ScrollTrigger && window.ScrollTrigger.sort) window.ScrollTrigger.sort();
+        if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh(true);
+      }
+    });
+    if (!motion.themeOn) {
+      motion.themeOn = function (event) {
+        var hit = event.target && event.target.closest && event.target.closest('[data-theme-toggle]');
+        if (!hit) return;
+        var y = window.scrollY || 0;
+        window.setTimeout(function () {
+          bindAnswers(world, opts);
+          window.scrollTo(0, y);
+          if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
+          window.scrollTo(0, y);
+        }, 40);
+      };
+      document.addEventListener('click', motion.themeOn);
+    }
+  }
+
+  function liveCount(world) {
+    if (!world) return 3;
+    var n = world.querySelectorAll('[data-cbx-live]').length;
+    return n || 3;
   }
 
   function mount(world, project) {
     if (!world) return null;
+    kill();
     world.innerHTML = '';
-    world.classList.add('film-world');
-    BEATS.forEach(function (beat) {
-      world.appendChild(buildBeat(beat));
-    });
+    world.classList.remove('film-world');
+    world.classList.add('cbx-world');
+    var stage = el('div', 'cbx-stage');
+    stage.setAttribute('data-cbx-stage', '');
+    var cover = buildCover(project);
+    stage.appendChild(cover);
+    armCover(cover);
+    world.appendChild(stage);
+    world.appendChild(buildGrowth());
+    if (window.Cbx300Answers && window.Cbx300Answers.build) {
+      world.appendChild(window.Cbx300Answers.build());
+    }
+    if (window.Cbx300Finish && window.Cbx300Finish.build) {
+      window.Cbx300Finish.build(world);
+    }
+    fillIllos(world, function () { armGlitch(world, { chrome: false }); });
+    armGlitch(world, { chrome: false });
     return {
-      beats: BEATS,
       project: project || null,
-      pageCount: function () { return BEATS.length; }
+      pageCount: function () { return liveCount(world); },
+      bind: function (opts) { bind(world, opts || {}); },
+      kill: kill
     };
   }
 
   return {
     mount: mount,
+    bind: bind,
+    kill: kill,
+    armGlitch: armGlitch,
+    applyCbxRise: applyCbxRise,
+    syncCloseInk: syncCloseInk,
+    applyBeat: applyBeat,
+    beatIndexFromProgress: beatIndexFromProgress,
+    pinSnapProgress: pinSnapProgress,
+    stageStops: stageStops,
+    dockScrollY: dockScrollY,
+    STEP_PX: STEP_PX,
+    META: META,
     BEATS: BEATS,
-    META: META
+    RISE_DUR: RISE_DUR,
+    STAGE_HOLD: STAGE_HOLD,
+    TRANS_12: TRANS_12,
+    TRANS_23: TRANS_23,
+    MORPH_VH: MORPH_VH
   };
 })();

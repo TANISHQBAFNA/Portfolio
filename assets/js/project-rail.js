@@ -161,10 +161,15 @@ window.ProjectRail = (function () {
     }
 
     function onWheel(event) {
+      var htmlEl = document.documentElement;
+      /* Study owns the wheel. Do not preventDefault — window must pan. */
+      if (htmlEl.classList.contains('is-study') || htmlEl.classList.contains('is-study-page')) {
+        return;
+      }
       if (locked) return;   // the board owns wheel while a project is open
       if (!isManaged() || event.ctrlKey) return;   // ctrl+wheel is browser zoom
-      var rise = parseFloat(document.documentElement.style.getPropertyValue('--rise') || '1');
-      if (document.documentElement.classList.contains('is-home-scroll') && rise > 0.01) {
+      var rise = parseFloat(htmlEl.style.getPropertyValue('--rise') || '1');
+      if (htmlEl.classList.contains('is-home-scroll') && rise > 0.01) {
         return;
       }
       var delta = normaliseWheel(event);

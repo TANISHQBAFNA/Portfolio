@@ -3,13 +3,15 @@
  * Window is the scroller. Pins stay sparse.
  *
  * Cut / Tunnel / Helix / Deck / Type — motion skins.
- * cbx300 — cream Infoviz scroll film (bank-calm, no glitch theatre).
+ * cbx300 — cream / Multiverse cover + Aisha growth track.
+ * Window is the scroller. Section 02 pins, then unlocks. No CaseScrollKit film.
  */
 window.ProjectStudy = (function () {
   'use strict';
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   var OPEN_MS = 900;
+  /* Wordmark flight matches the landing name move (MOVE_MS / EXIT_MS 900). */
   var CLOSE_MS = 900;
   var HOLD_MS = 400;
 
@@ -100,10 +102,61 @@ window.ProjectStudy = (function () {
       return '';
     }
 
+    function particlesCanvas() {
+      return document.querySelector('[data-particles]');
+    }
+
+    function visibleWorld() {
+      if (!root) return null;
+      var worlds = root.querySelectorAll('[data-world]');
+      var i;
+      for (i = 0; i < worlds.length; i++) {
+        if (!worlds[i].hidden) return worlds[i];
+      }
+      return null;
+    }
+
+    function coverHost() {
+      var world = visibleWorld();
+      if (!world) return null;
+      var cover = world.querySelector('.cbx-cover');
+      if (cover) return cover;
+      var slot = world.querySelector('[data-study-cover]');
+      if (slot) return slot;
+      slot = document.createElement('div');
+      slot.className = 'study-cover-web';
+      slot.setAttribute('data-study-cover', '');
+      slot.setAttribute('aria-hidden', 'true');
+      world.insertBefore(slot, world.firstChild);
+      return slot;
+    }
+
+    function parkParticles() {
+      var canvas = particlesCanvas();
+      var host = coverHost();
+      if (!canvas || !host) return;
+      if (!canvas.__particlesHome) canvas.__particlesHome = canvas.parentNode;
+      if (canvas.parentNode !== host) host.insertBefore(canvas, host.firstChild);
+      canvas.classList.add('is-study-cover');
+    }
+
+    function restoreParticles() {
+      var canvas = particlesCanvas();
+      if (!canvas || !canvas.__particlesHome) return;
+      if (canvas.parentNode !== canvas.__particlesHome) {
+        canvas.__particlesHome.appendChild(canvas);
+      }
+      canvas.classList.remove('is-study-cover');
+    }
+
     function killMotion() {
+      restoreParticles();
       if (caseKit && caseKit.kill) caseKit.kill();
       caseKit = null;
+      if (caseMount && caseMount.kill) caseMount.kill();
+      else if (window.Cbx300Case && window.Cbx300Case.kill) window.Cbx300Case.kill();
       html.classList.remove('is-study-film');
+      html.classList.remove('is-study-page');
       triggers.forEach(function (t) {
         if (t && t.kill) t.kill();
       });
@@ -179,7 +232,9 @@ window.ProjectStudy = (function () {
 
     function syncHead() {
       var head = headPx();
-      var stage = Math.max(240, Math.round(root.clientHeight || window.innerHeight) - head);
+      var vv = window.visualViewport;
+      var win = (vv && vv.height) ? vv.height : (window.innerHeight || 800);
+      var stage = Math.max(240, Math.round(win) - head);
       root.style.setProperty('--study-head', head + 'px');
       root.style.setProperty('--study-stage', stage + 'px');
     }
@@ -731,52 +786,46 @@ window.ProjectStudy = (function () {
 
     function bindCbx300() {
       var world = root.querySelector('[data-world="cbx300"]');
-      if (!world || !window.CaseScrollKit) return;
-      var beats = world.querySelectorAll('[data-film-beat]');
-      setTotal(beats.length);
+      if (!world) return;
+      var live = world.querySelectorAll('[data-cbx-live]');
+      setTotal(live.length || (caseMount && caseMount.pageCount ? caseMount.pageCount() : 2));
       setStep(0);
-      html.classList.add('is-study-film');
-      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger);
-        ScrollTrigger.config({ ignoreMobileResize: true });
+      html.classList.add('is-study-page');
+      window.scrollTo(0, 0);
+      if (root) root.scrollTop = 0;
+      if (window.Cbx300Case && window.Cbx300Case.armGlitch) {
+        window.Cbx300Case.armGlitch(world);
       }
-      caseKit = window.CaseScrollKit.bind({
-        scroller: null,
-        world: world,
-        headerOffset: headPx,
-        onStep: setStep,
-        startPage: pendingPage || '',
-        forceStatic: typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined'
-      });
+      var bindOpts = { onStep: setStep, headerOffset: headPx, page: pendingPage };
+      if (caseMount && caseMount.bind) caseMount.bind(bindOpts);
+      else if (window.Cbx300Case && window.Cbx300Case.bind) window.Cbx300Case.bind(world, bindOpts);
     }
 
     function bindMotion() {
       killMotion();
-      syncHead();
-      if (template === 'cbx300') {
-        bindCbx300();
-        afterLayout(function () {
-          if (window.ScrollTrigger) ScrollTrigger.refresh();
-        });
-        window.setTimeout(function () {
-          if (window.ScrollTrigger) ScrollTrigger.refresh();
-        }, 280);
-        return;
+      try {
+        syncHead();
+        if (template === 'cbx300') {
+          bindCbx300();
+          return;
+        }
+        if (reduceMotion.matches || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+          var scenes = visibleScenes();
+          setTotal(scenes.length);
+          return;
+        }
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.config({ ignoreMobileResize: true });
+        if (template === 'original') bindOriginal();
+        else if (template === 'tunnel') bindTunnel();
+        else if (template === 'helix') bindHelix();
+        else if (template === 'deck') bindDeck();
+        else if (template === 'type') bindType();
+        else bindCut();
+        ScrollTrigger.refresh();
+      } finally {
+        parkParticles();
       }
-      if (reduceMotion.matches || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-        var scenes = visibleScenes();
-        setTotal(scenes.length);
-        return;
-      }
-      gsap.registerPlugin(ScrollTrigger);
-      ScrollTrigger.config({ ignoreMobileResize: true });
-      if (template === 'original') bindOriginal();
-      else if (template === 'tunnel') bindTunnel();
-      else if (template === 'helix') bindHelix();
-      else if (template === 'deck') bindDeck();
-      else if (template === 'type') bindType();
-      else bindCut();
-      ScrollTrigger.refresh();
     }
 
     function flyMaxWidth() {
@@ -977,12 +1026,20 @@ window.ProjectStudy = (function () {
     function coverLive() {
       html.classList.remove('is-study-wipe');
       html.classList.add('is-study');
+      parkParticles();
     }
 
     function revealHome() {
       html.classList.add('is-study-wipe');
       html.classList.remove('is-study');
-      window.scrollTo(0, savedScroll);
+    }
+
+    /* Curtain is fully down. Kill the study scroller before any scrollTo
+       so --cbx-rise cannot ride the landing rail into view. */
+    function parkUnderCurtain() {
+      killMotion();
+      revealHome();
+      if (options.onClose) options.onClose();
     }
 
     function dropVeil(done) {
@@ -1127,6 +1184,7 @@ window.ProjectStudy = (function () {
       var fly = nodes.fly;
       var dest = nodes.project;
       var veil = nodes.veil;
+      html.classList.add('is-study-closing');
 
       function finishOut() {
         introTween = null;
@@ -1136,7 +1194,7 @@ window.ProjectStudy = (function () {
 
       if (reduceMotion.matches || typeof gsap === 'undefined' || !veil || !fly || !dest) {
         if (dest) dest.classList.remove('is-in');
-        revealHome();
+        parkUnderCurtain();
         finishOut();
         return;
       }
@@ -1179,8 +1237,7 @@ window.ProjectStudy = (function () {
           introHold = window.setTimeout(function () {
             unpaintFlyName(function () {
               seatFly(true);
-              revealHome();
-              if (options.onClose) options.onClose();
+              parkUnderCurtain();
               liftVeil(finishOut);
             });
           }, HOLD_MS);
@@ -1202,10 +1259,12 @@ window.ProjectStudy = (function () {
       caseMount = null;
       if (template === 'cbx300' && window.Cbx300Case) {
         caseMount = window.Cbx300Case.mount(root.querySelector('[data-world="cbx300"]'), project);
-        var caseWorld = root.querySelector('[data-world="cbx300"]');
-        var caseBeats = caseWorld ? caseWorld.querySelectorAll('[data-film-beat]') : [];
-        setTotal(caseBeats.length);
+        html.classList.add('is-study-page');
+        setTotal(caseMount && caseMount.pageCount ? caseMount.pageCount() : 2);
         setStep(0);
+        if (window.Cbx300Case.armGlitch) {
+          window.Cbx300Case.armGlitch(root.querySelector('[data-world="cbx300"]'));
+        }
       }
       root.scrollTop = 0;
       window.scrollTo(0, 0);
@@ -1228,12 +1287,18 @@ window.ProjectStudy = (function () {
       if (options.onOpen) options.onOpen(index);
     }
 
+    var pendingNext = -1;
+
     function finishClose() {
+      if (mode === 'off') return;
+      var reopen = pendingNext;
+      pendingNext = -1;
       killMotion();
       root.hidden = true;
       root.setAttribute('aria-hidden', 'true');
       html.classList.remove('is-study');
       html.classList.remove('is-study-wipe');
+      html.classList.remove('is-study-closing');
       mode = 'off';
       openIndex = -1;
       caseMount = null;
@@ -1243,7 +1308,20 @@ window.ProjectStudy = (function () {
       if (nodes.veil && typeof gsap !== 'undefined') {
         resetVeil(-110);
       }
-      window.scrollTo(0, savedScroll);
+      if (reopen >= 0) {
+        window.setTimeout(function () { open(reopen); }, 60);
+      }
+    }
+
+    function openNext() {
+      if (mode !== 'study' || openIndex < 0) return;
+      var next = openIndex + 1;
+      if (next >= projects.length) {
+        close();
+        return;
+      }
+      pendingNext = next;
+      close();
     }
 
     function close() {
@@ -1277,6 +1355,10 @@ window.ProjectStudy = (function () {
     window.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && mode === 'study') close();
     });
+    window.addEventListener('cbx-open-next', function () { openNext(); });
+    window.addEventListener('cbx-close-study', function () {
+      if (mode === 'study') close();
+    });
     window.addEventListener('resize', function () {
       if (mode !== 'study') return;
       syncHead();
@@ -1296,6 +1378,7 @@ window.ProjectStudy = (function () {
       },
       slideCount: function () {
         if (caseKit && caseKit.pageCount) return caseKit.pageCount();
+        if (caseMount && caseMount.pageCount) return caseMount.pageCount();
         return visibleScenes().length;
       }
     };

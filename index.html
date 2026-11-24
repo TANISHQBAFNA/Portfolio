@@ -89,9 +89,9 @@
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#0e1018' : '#f3eee4');
           var layout = document.createElement('link');
           layout.rel = 'stylesheet';
-          layout.href = 'assets/css/landing.css?v=aeo33';
+          layout.href = 'assets/css/landing.css?v=aeo35';
           document.head.appendChild(layout);
-          skin.href = 'assets/css/landing-multiverse.css?v=mv13';
+          skin.href = 'assets/css/landing-multiverse.css?v=mv14';
           root.classList.add('is-mv-skin-pending');
           var cover = document.createElement('style');
           cover.id = 'mv-fouc-cover';
@@ -110,7 +110,7 @@
           if (dark) root.classList.add('is-dark');
           else root.classList.remove('is-dark');
           document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#1E1510' : '#f4efe6');
-          skin.href = 'assets/css/landing.css?v=aeo33';
+          skin.href = 'assets/css/landing.css?v=aeo35';
           if (homeArrive) {
             root.classList.add('is-home-arrive');
             root.classList.add('is-home-arrive-pending');
@@ -233,10 +233,11 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=block" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=block" rel="stylesheet" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans:wght@700;800&family=Noto+Sans+Devanagari:wght@700;800&family=Noto+Sans+Arabic:wght@700;800&family=Noto+Sans+SC:wght@700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans:wght@700;800&family=Noto+Sans+Devanagari:wght@700;800&family=Noto+Sans+Arabic:wght@700;800&family=Noto+Sans+SC:wght@700&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/beyond-transition.css?v=bx17" />
-  <link rel="stylesheet" href="assets/css/cbx300-case.css?v=film13" />
+  <link rel="stylesheet" href="assets/css/cbx300-case.css?v=s111" />
+  <link rel="stylesheet" href="assets/css/cbx300-case-multiverse.css?v=mv14" />
 </head>
 
 <body class="landing">
@@ -312,8 +313,6 @@
 
       <figure class="portrait" data-portrait hidden>
         <div class="portrait__frame">
-          <img class="portrait__img" src="assets/img/tanishq-portrait.png" alt="Tanishq Bafna" width="880" height="1100"
-            decoding="async" fetchpriority="high" />
         </div>
       </figure>
     </section>
@@ -528,7 +527,7 @@
       </section>
     </div>
 
-    <div class="study-world film-world" data-world="cbx300" hidden></div>
+    <div class="study-world cbx-world" data-world="cbx300" hidden></div>
 
   </article>
 
@@ -551,23 +550,25 @@
 
   <script src="assets/vendor/gsap.min.js"></script>
   <script src="assets/vendor/ScrollTrigger.min.js"></script>
-  <script src="assets/js/iris-motion.js?v=hz98" defer></script>
+  <script src="assets/js/iris-motion.js?v=hz100" defer></script>
   <script>
     if (document.documentElement.classList.contains('is-multiverse')) {
-      document.write('<script src="assets/js/iris-motion-multiverse.js?v=mv9" defer><\/script>');
+      document.write('<script src="assets/js/iris-motion-multiverse.js?v=mv12" defer><\/script>');
     }
   </script>
   <script src="assets/js/project-data.js?v=hz99" defer></script>
   <script src="assets/js/folder-card.js?v=hz104" defer></script>
-  <script src="assets/js/project-rail.js?v=hz97" defer></script>
+  <script src="assets/js/project-rail.js?v=hz99" defer></script>
   <script src="assets/js/case-scroll-kit.js?v=film13" defer></script>
-  <script src="assets/js/cbx300-case.js?v=film13" defer></script>
-  <script src="assets/js/project-study.js?v=film10" defer></script>
+  <script src="assets/js/cbx300-case.js?v=s90" defer></script>
+  <script src="assets/js/cbx300-answers.js?v=s29" defer></script>
+  <script src="assets/js/cbx300-finish.js?v=s3" defer></script>
+  <script src="assets/js/project-study.js?v=s47" defer></script>
   <script src="assets/js/beyond-transition.js?v=bx20" defer></script>
   <script src="assets/js/landing.js?v=aeo33" defer></script>
   <script>
     if (document.documentElement.classList.contains('is-multiverse')) {
-      document.write('<script src="assets/js/landing-multiverse.js?v=mv10" defer><\/script>');
+      document.write('<script src="assets/js/landing-multiverse.js?v=mv11" defer><\/script>');
     }
   </script>
   <script>window.__GTM_ID__ = 'GTM-XXXXXXX';</script>

@@ -2,6 +2,7 @@
 
 > **2026-09-12:** First implement (PR #18) rejected on experience. Ship from the redesign bar: [`case-study-cbx300-redesign-bar.md`](case-study-cbx300-redesign-bar.md) (Echo simpler copy + Infoviz motion + cream vibe). Do not polish the wireframe.
 
+
 **For:** Portfolio opened-case experience (center folder with pages)  
 **Product language:** Hiring-manager skim first; no unexplained jargon  
 **Story:** Echo · **Experience:** Iris · **Build:** Camila  
@@ -64,6 +65,7 @@ Steal the *storytelling grammar*, not the housing topic or map chrome:
 6. **Close on a finding** — last page is “what this produced / next,” not more decoration.
 
 Camila: match Infoviz’s chapter rhythm + caption sync with GSAP ScrollTrigger; CBX300 content and Figma frames stay ours.
+
 
 ---
 

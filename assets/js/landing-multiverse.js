@@ -333,7 +333,13 @@
   }
 
   function wireTheme() {
-    applyTheme(systemDark());
+    var themeMatch = location.search.match(/[?&]theme=(dark|light)(?:&|$)/);
+    var saved = themeMatch ? themeMatch[1] : null;
+    if (!saved) {
+      try { saved = sessionStorage.getItem('tb-world-theme'); } catch (err) { saved = null; }
+    }
+    var dark = saved ? saved === 'dark' : systemDark();
+    applyTheme(dark);
     var btn = document.querySelector('[data-theme-toggle]');
     if (btn) {
       btn.addEventListener('click', function () {
@@ -342,6 +348,7 @@
     }
     var media = window.matchMedia('(prefers-color-scheme: dark)');
     function onSystem(e) {
+      if (saved) return;
       applyTheme(e.matches);
     }
     if (media.addEventListener) media.addEventListener('change', onSystem);
