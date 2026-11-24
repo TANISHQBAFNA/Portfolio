@@ -53,3 +53,8 @@ Web screens come from the CBX300 Figma "Interactive All journeys" page (1440 web
 | s03-ch3-web-pending-approvals | S03 Ch3 desk: approval queue + cover laptop | 22789:154433 |
 | s03-ch3-web-approve-payment | S03 Ch3 desk: payment detail + maker/checker trail | 22789:154618 |
 | cbx300-cover-{light,dark}-poster.jpg + assets/video/cbx300/cbx300-cover-{light,dark}.{mp4,webm} | S01 cover: code-built (HTML/CSS 3D) frameless browser + phone + lifted approval row, real masked screens only, no generated imagery, 5 s seamless parallax loop, 1600x900, H.264 + VP9, muted | — |
+
+## Nov 24 cleanups (native, from Figma)
+- Typos retyped in Lato at the exact Figma size/weight/colour: "User Managment" → "User Management", "Pending Approcal" → "Pending Approval" (s05-user-management), "Nex Step" → "Next Step" (s03-ch3-web-approve-payment).
+- s06-welcome now uses the keyboard-free Figma state "Welcome to Lisa Charlie Banking · 2" (7244:19269).
+- Grey "Promotions" placeholders on web dashboard / approve payment / bulk upload filled with the Figma "Story Promotions" Main Card content (14968:49928 / 14968:49932: Lato Bold 16/24 heading + original card / coin-bag art), on the placeholders' own fill and radius.
