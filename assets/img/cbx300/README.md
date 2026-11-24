@@ -48,4 +48,4 @@ Web screens come from the CBX300 Figma "Interactive All journeys" page (1440 web
 | s03-ch2-web-bulk-upload | S03 Ch2 desk: salary run as one file | 22789:131409 |
 | s03-ch3-web-pending-approvals | S03 Ch3 desk: approval queue + cover laptop | 22789:154433 |
 | s03-ch3-web-approve-payment | S03 Ch3 desk: payment detail + maker/checker trail | 22789:154618 |
-| cbx300-cover-{light,dark}-poster.jpg + assets/video/cbx300/cbx300-cover-{light,dark}.{mp4,webm} | S01 cover: generated studio scene (no UI generated), real masked web + phone screens composited in code, 5 s seamless code-driven loop, 1600x900, H.264 + VP9, muted | — |
+| cbx300-cover-{light,dark}-poster.jpg + assets/video/cbx300/cbx300-cover-{light,dark}.{mp4,webm} | S01 cover: code-built (HTML/CSS 3D) frameless browser + phone + lifted approval row, real masked screens only, no generated imagery, 5 s seamless parallax loop, 1600x900, H.264 + VP9, muted | — |
